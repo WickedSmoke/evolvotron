@@ -2,7 +2,8 @@
 
 From release 0.2.3:
  - Version to 0.2.4-devel
- - Get rid of troublesome system call to ../VERSION in common.pro and pass settings from configure script instead
+ - Get rid of troublesome system call to ../VERSION 
+   in common.pro and pass settings from configure script instead
  - Add not-very-useful .qt-mng image file output format
  - Add function stats to Properties dialog
  - Add function simplification (more useful for debugging than anything)
