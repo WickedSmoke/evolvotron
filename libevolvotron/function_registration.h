@@ -44,23 +44,25 @@ class FunctionRegistration
  public:
   
   //! Constructor.
-  FunctionRegistration(const char* n,FunctionNodeStubNewFnPtr fs,FunctionNodeCreateFnPtr fc,uint np,uint na,bool i)
+  FunctionRegistration(const char* n,FunctionNodeStubNewFnPtr fs,FunctionNodeCreateFnPtr fc,uint np,uint na,bool i,uint fnc)
     :_name(n)
     ,_stubnew_fn(fs)
     ,_create_fn(fc)
     ,_params(np)
     ,_args(na)
     ,_iterative(i)
+    ,_classification(fnc)
     {}
 
   //! Constructor (no name version)
-  FunctionRegistration(FunctionNodeStubNewFnPtr s,FunctionNodeCreateFnPtr fc,uint np,uint na,bool i)
+  FunctionRegistration(FunctionNodeStubNewFnPtr s,FunctionNodeCreateFnPtr fc,uint np,uint na,bool i,uint fnc)
     :_name(0)
     ,_stubnew_fn(s)
     ,_create_fn(fc)
     ,_params(np)
     ,_args(na)
     ,_iterative(i)
+    ,_classification(fnc)
     {}
 
   //! Accessor.
@@ -105,6 +107,12 @@ class FunctionRegistration
       return _iterative;
     }
 
+  //! Accessor.
+  const uint classification() const
+    {
+      return _classification;
+    }
+
  protected:
 
   //! Name of the function.
@@ -124,6 +132,9 @@ class FunctionRegistration
 
   //! Whether iterative
   bool _iterative;
+
+  //! Classification bits
+  uint _classification;
 };
 
 #endif

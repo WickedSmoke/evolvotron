@@ -141,6 +141,14 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
     return FunctionIdentity::stubnew(parameters,false);
   else if (r<base)
     return FunctionConstant::stubnew(parameters,false);
+  /* \todo Should just get something at random from function registry here instead 
+     else 
+     {
+       const FunctionRegistration*const fn_reg=parameters->random_function();
+       return fn_reg->stubnew_fn(parameters,false);
+     }
+   */
+
   else if (r<base+1*step)
     return FunctionCartesianToSpherical::stubnew(parameters,false);
   else if (r<base+2*step) 

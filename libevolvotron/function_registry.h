@@ -26,7 +26,9 @@
 #include <string>
 #include <map>
 #include <deque>
+#include <vector>
 #include <iostream>
+
 #include "useful.h"
 #include "function_registration.h"
 
@@ -41,10 +43,15 @@ class FunctionRegistry
  public:
   //! Return the singleton instance of the FunctionRegistry
   static FunctionRegistry*const get();
-
   //! Return the registration for the function named (returns 0 if unknown)
   const FunctionRegistration*const lookup(const std::string& f) const;
   
+  //! Lookup by number
+  const FunctionRegistration*const lookup(uint n) const;
+
+  //! Lookup by [0-1) random number
+  const FunctionRegistration*const lookup(float f) const;
+
   //! Dump list of registered functions
   std::ostream& status(std::ostream& out) const;
 
@@ -53,7 +60,10 @@ class FunctionRegistry
 
  protected:
   //! Dictionary from names to Registration objects
-  std::map<std::string,const FunctionRegistration*> _registry;
+  std::map<std::string,const FunctionRegistration*> _registry_by_name;
+
+  //! Just an array of Registration objects, for random picks
+  std::vector<const FunctionRegistration*> _registry_by_series;
 };
 
 #endif

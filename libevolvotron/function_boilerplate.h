@@ -29,6 +29,14 @@
 #include "function_node_info.h"
 #include "margin.h"
 
+//! Enum for classification bits
+enum
+  {
+    FnBase=1,
+    FnIterative=2,
+    FnFractal=4
+  };
+
 //! Template class to generate boilerplate for virtual methods.
 template <typename F,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class FunctionBoilerplate : public FunctionNode
 {
@@ -44,6 +52,10 @@ template <typename F,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class Functi
   
   //! Constant-ness is supplied by the specific class.
   virtual const bool is_constant() const
+    =0;
+
+  //! Bits give some classification of the function type
+  virtual const uint self_classification() const
     =0;
 
   //! Constructor
@@ -178,17 +190,20 @@ template <typename F,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> FunctionRegi
      &FunctionBoilerplate<F,PARAMETERS,ARGUMENTS,ITERATIVE>::create,
      PARAMETERS,
      ARGUMENTS,
-     ITERATIVE
+     ITERATIVE,
+     F::type_classification()
      );
   return &r;
 }
 
-#define FUNCTION_BEGIN(FN,NP,NA,IT) \
+#define FUNCTION_BEGIN(FN,NP,NA,IT,CL) \
    class FN : public FunctionBoilerplate<FN,NP,NA,IT> \
    {public: \
      FN(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter) \
-       :FunctionBoilerplate<FN,NP,NA,IT>(p,a,iter){} \
-     virtual ~FN() {}
+       :FunctionBoilerplate<FN,NP,NA,IT>(p,a,iter) {} \
+     virtual ~FN() {} \
+     static const uint type_classification() {return CL;} \
+     virtual const uint self_classification() const {return CL;}
 
 #define FUNCTION_END(FN) \
    }; \

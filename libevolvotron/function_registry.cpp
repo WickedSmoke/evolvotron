@@ -25,11 +25,21 @@
 //! Return the registration for the function named (returns 0 if unknown)
 const FunctionRegistration*const FunctionRegistry::lookup(const std::string& f) const
 {
-  std::map<std::string,const FunctionRegistration*>::const_iterator it=_registry.find(f);
-  if (it==_registry.end())
+  std::map<std::string,const FunctionRegistration*>::const_iterator it=_registry_by_name.find(f);
+  if (it==_registry_by_name.end())
     return 0;
   else
     return (*it).second;
+}
+
+const FunctionRegistration*const FunctionRegistry::lookup(uint n) const
+{
+  return _registry_by_series[n];
+}
+
+const FunctionRegistration*const FunctionRegistry::lookup(float f) const
+{
+  return lookup(static_cast<uint>(f*_registry_by_series.size()));
 }
 
 FunctionRegistry*const FunctionRegistry::get()
@@ -42,7 +52,7 @@ FunctionRegistry*const FunctionRegistry::get()
 std::ostream& FunctionRegistry::status(std::ostream& out) const
 {
   out << "Registered functions:\n";
-  for (std::map<std::string,const FunctionRegistration*>::const_iterator it=_registry.begin();it!=_registry.end();it++)
+  for (std::map<std::string,const FunctionRegistration*>::const_iterator it=_registry_by_name.begin();it!=_registry_by_name.end();it++)
     {
       out << "  " << (*it).first << "\n";
     }
@@ -52,7 +62,8 @@ std::ostream& FunctionRegistry::status(std::ostream& out) const
 FunctionRegistration*const FunctionRegistry::reg(const char* n,FunctionRegistration* r)
 {
   r->name(n);
-  _registry[n]=r;
+  _registry_by_name[n]=r;
+  _registry_by_series.push_back(r);
   return r;
 }
 

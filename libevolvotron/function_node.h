@@ -87,6 +87,10 @@ class FunctionNode
   virtual const bool is_constant() const
     =0;
 
+  //! Bits give some classification of the function type
+  virtual const uint self_classification() const
+    =0;
+
   //@{
   //! Query the node as to whether it is a FunctionPreTransform (return null if not).
   /*! This is useful for accumulating view transforms at the front end of a function tree without creating a new transform each time.

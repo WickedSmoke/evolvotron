@@ -31,7 +31,7 @@
 #include "function_boilerplate.h"
 
 //! Function class returning leaf node evaluated at given position; result is then transfomed by a 12-component linear transform.
-FUNCTION_BEGIN(FunctionPostTransform,12,1,false)
+FUNCTION_BEGIN(FunctionPostTransform,12,1,false,0)
 
   //! Return the evaluation of arg(0) at the transformed position argument.
   virtual const XYZ evaluate(const XYZ& p) const

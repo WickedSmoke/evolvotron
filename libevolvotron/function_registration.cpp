@@ -21,4 +21,3 @@
 */
 
 #include "function_registration.h"
-

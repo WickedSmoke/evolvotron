@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "random.h"
 
+class FunctionRegistration;
+
 //! Class encapsulating mutation parameters.
 /*! For example, magnitude of variations, probability of leaves being dropped.
   Also provides a random number generator.
@@ -100,6 +102,8 @@ class MutationParameters
       return _r01();
     }
 
+  //! Return a random function registration, appropriately biased by current settings
+  const FunctionRegistration*const random_function_registration() const;
 
   //! Accessor.
   const bool allow_iterative_nodes() const
@@ -122,7 +126,6 @@ class MutationParameters
     {
       _allow_fractal_nodes=v;
     }
-
 
   //! Accessor.
   const float magnitude() const

@@ -65,7 +65,7 @@ inline float trianglef(float x,float y)
 //------------------------------------------------------------------------------------------
 
 //! Function class representing a constant value.
-FUNCTION_BEGIN(FunctionConstant,3,0,false)
+FUNCTION_BEGIN(FunctionConstant,3,0,false,FnBase)
   
   //! Returns the constant value
   virtual const XYZ evaluate(const XYZ&) const
@@ -84,7 +84,7 @@ FUNCTION_END(FunctionConstant)
 //------------------------------------------------------------------------------------------
 
 //! Function class simply returning the position argument.
-FUNCTION_BEGIN(FunctionIdentity,0,0,false)
+FUNCTION_BEGIN(FunctionIdentity,0,0,false,FnBase)
 
   //! Simply return the position argument.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -109,7 +109,7 @@ REGISTER(FunctionNull);
 //------------------------------------------------------------------------------------------
 
 //! Function class returning position transfomed by a 12-component linear transform.
-FUNCTION_BEGIN(FunctionTransform,12,0,false)
+FUNCTION_BEGIN(FunctionTransform,12,0,false,FnBase)
 
   //! Return the transformed position argument.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -129,7 +129,7 @@ FUNCTION_END(FunctionTransform)
 //------------------------------------------------------------------------------------------
 
 //! Function class returning position transfomed by a 12-component linear transform.
-FUNCTION_BEGIN(FunctionTransformGeneralised,0,4,false)
+FUNCTION_BEGIN(FunctionTransformGeneralised,0,4,false,FnBase)
 
   //! Return the transformed position argument.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -157,7 +157,7 @@ REGISTER(FunctionPreTransform);
 //! Function class returning leaf node evaluated at position transfomed by a 12-component linear transform.
 /*! Unlike FunctionPreTransform, the basis vectors for the transform are not fixed but determined from leaf functions
  */
-FUNCTION_BEGIN(FunctionPreTransformGeneralised,0,5,false)
+FUNCTION_BEGIN(FunctionPreTransformGeneralised,0,5,false,0)
 
   //! Return the evaluation of arg(0) at the transformed position argument.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -185,7 +185,7 @@ REGISTER(FunctionPostTransform);
 //! Function class returning leaf node evaluated at given position; result is then transfomed by a 12-component linear transform.
 /*! Unlike FunctionPostTransform, the basis vectors for the transform are not fixed but determined from leaf functions
  */
-FUNCTION_BEGIN(FunctionPostTransformGeneralised,0,5,false)
+FUNCTION_BEGIN(FunctionPostTransformGeneralised,0,5,false,0)
 
   //! Return the evaluation of arg(0) at the transformed position argument.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -211,7 +211,7 @@ FUNCTION_END(FunctionPostTransformGeneralised)
 //------------------------------------------------------------------------------------------
 
 //! Transforms position transformed by a 30 paramter quadratic transform.
-FUNCTION_BEGIN(FunctionTransformQuadratic,30,0,false)
+FUNCTION_BEGIN(FunctionTransformQuadratic,30,0,false,FnBase)
 
   //! Return p transformed.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -245,7 +245,7 @@ FUNCTION_END(FunctionTransformQuadratic)
 //------------------------------------------------------------------------------------------
 
 //! Transforms cartesian coordinates to spherical
-FUNCTION_BEGIN(FunctionCartesianToSpherical,0,0,false)
+FUNCTION_BEGIN(FunctionCartesianToSpherical,0,0,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -270,7 +270,7 @@ FUNCTION_END(FunctionCartesianToSpherical)
 //------------------------------------------------------------------------------------------
 
 //! Transforms spherical coordinates to cartesian 
-FUNCTION_BEGIN(FunctionSphericalToCartesian,0,0,false)
+FUNCTION_BEGIN(FunctionSphericalToCartesian,0,0,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -297,7 +297,7 @@ FUNCTION_END(FunctionSphericalToCartesian)
 //------------------------------------------------------------------------------------------
 
 // Converts the position argument to spherical coords, pass these through the leaf node, and convert the result back to cartesian.
-FUNCTION_BEGIN(FunctionEvaluateInSpherical,0,1,false)
+FUNCTION_BEGIN(FunctionEvaluateInSpherical,0,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -329,7 +329,7 @@ FUNCTION_END(FunctionEvaluateInSpherical)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionRotate,0,1,false)
+FUNCTION_BEGIN(FunctionRotate,0,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -353,7 +353,7 @@ FUNCTION_END(FunctionRotate)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionSin,0,0,false)
+FUNCTION_BEGIN(FunctionSin,0,0,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -371,7 +371,7 @@ FUNCTION_END(FunctionSin)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionCos,0,0,false)
+FUNCTION_BEGIN(FunctionCos,0,0,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -389,7 +389,7 @@ FUNCTION_END(FunctionCos)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionSpiralLinear,0,1,false)
+FUNCTION_BEGIN(FunctionSpiralLinear,0,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -415,7 +415,7 @@ FUNCTION_END(FunctionSpiralLinear)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionSpiralLogarithmic,0,1,false)
+FUNCTION_BEGIN(FunctionSpiralLogarithmic,0,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -442,7 +442,7 @@ FUNCTION_END(FunctionSpiralLogarithmic)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionGradient,0,1,false)
+FUNCTION_BEGIN(FunctionGradient,0,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -465,7 +465,7 @@ FUNCTION_END(FunctionGradient)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionComposePair,0,2,false)
+FUNCTION_BEGIN(FunctionComposePair,0,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -483,7 +483,7 @@ FUNCTION_END(FunctionComposePair)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionComposeTriple,0,3,false)
+FUNCTION_BEGIN(FunctionComposeTriple,0,3,false,0)
   
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -501,7 +501,7 @@ FUNCTION_END(FunctionComposeTriple)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionAdd,0,2,false)
+FUNCTION_BEGIN(FunctionAdd,0,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -519,7 +519,7 @@ FUNCTION_END(FunctionAdd)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionMultiply,0,2,false)
+FUNCTION_BEGIN(FunctionMultiply,0,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -539,7 +539,7 @@ FUNCTION_END(FunctionMultiply)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionDivide,0,2,false)
+FUNCTION_BEGIN(FunctionDivide,0,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -565,7 +565,7 @@ FUNCTION_END(FunctionDivide)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionCross,0,2,false)
+FUNCTION_BEGIN(FunctionCross,0,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -585,7 +585,7 @@ FUNCTION_END(FunctionCross)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionMax,0,2,false)
+FUNCTION_BEGIN(FunctionMax,0,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -609,7 +609,7 @@ FUNCTION_END(FunctionMax)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionMin,0,2,false)
+FUNCTION_BEGIN(FunctionMin,0,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -636,7 +636,7 @@ FUNCTION_END(FunctionMin)
 //! Function returning components of one function modulus thos of another.
 /*! Sane always-positive modulus used to avoid funny business at zero.
  */
-FUNCTION_BEGIN(FunctionModulus,0,2,false)
+FUNCTION_BEGIN(FunctionModulus,0,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -660,7 +660,7 @@ FUNCTION_END(FunctionModulus)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionExp,0,0,false)
+FUNCTION_BEGIN(FunctionExp,0,0,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -679,7 +679,7 @@ FUNCTION_END(FunctionExp)
 //------------------------------------------------------------------------------------------
 
 //! Invert the leaf function using a radius-one origin centred sphere.
-FUNCTION_BEGIN(FunctionGeometricInversion,0,1,false)
+FUNCTION_BEGIN(FunctionGeometricInversion,0,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -701,7 +701,7 @@ FUNCTION_END(FunctionGeometricInversion)
 //------------------------------------------------------------------------------------------
 
 //! Implements reflection of sampling point about a plane
-FUNCTION_BEGIN(FunctionReflect,0,3,false)
+FUNCTION_BEGIN(FunctionReflect,0,3,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -734,7 +734,7 @@ FUNCTION_END(FunctionReflect)
 //------------------------------------------------------------------------------------------
 
 //! Implements reflection of sampling point about multiple planes
-FUNCTION_BEGIN(FunctionKaleidoscope,1,1,false)
+FUNCTION_BEGIN(FunctionKaleidoscope,1,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -763,7 +763,7 @@ FUNCTION_END(FunctionKaleidoscope)
 //! Like FunctionKaleidoscope but Z drives rotation of underlying function
 /*! Good for animation
  */
-FUNCTION_BEGIN(FunctionKaleidoscopeZRotate,2,1,false)
+FUNCTION_BEGIN(FunctionKaleidoscopeZRotate,2,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -790,7 +790,7 @@ FUNCTION_END(FunctionKaleidoscopeZRotate)
 //------------------------------------------------------------------------------------------
 
 //! Like FunctionKaleidoscope with a twist
-FUNCTION_BEGIN(FunctionKaleidoscopeTwist,2,1,false)
+FUNCTION_BEGIN(FunctionKaleidoscopeTwist,2,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -817,7 +817,7 @@ FUNCTION_END(FunctionKaleidoscopeTwist)
 //------------------------------------------------------------------------------------------
 
 //! Implements reflection of sampling point about multiple planes
-FUNCTION_BEGIN(FunctionWindmill,1,1,false)
+FUNCTION_BEGIN(FunctionWindmill,1,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -846,7 +846,7 @@ FUNCTION_END(FunctionWindmill)
 //! Like FunctionWindmill but Z drives rotation of underlying function
 /*! Good for animation
  */
-FUNCTION_BEGIN(FunctionWindmillZRotate,2,1,false)
+FUNCTION_BEGIN(FunctionWindmillZRotate,2,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -874,7 +874,7 @@ FUNCTION_END(FunctionWindmillZRotate)
 
 
 //! Like FunctionWindmill with twist
-FUNCTION_BEGIN(FunctionWindmillTwist,2,1,false)
+FUNCTION_BEGIN(FunctionWindmillTwist,2,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -901,7 +901,7 @@ FUNCTION_END(FunctionWindmillTwist)
 //------------------------------------------------------------------------------------------
 
 //! Function returns a value comprising the magnitude of three leaf functions.
-FUNCTION_BEGIN(FunctionMagnitudes,0,3,false)
+FUNCTION_BEGIN(FunctionMagnitudes,0,3,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -924,7 +924,7 @@ FUNCTION_END(FunctionMagnitudes)
 //------------------------------------------------------------------------------------------
 
 //! Function returns position magnitude.
-FUNCTION_BEGIN(FunctionMagnitude,0,0,false)
+FUNCTION_BEGIN(FunctionMagnitude,0,0,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -944,7 +944,7 @@ FUNCTION_END(FunctionMagnitude)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on the relative magnitudes of 2 other functions
-FUNCTION_BEGIN(FunctionChooseSphere,0,4,false)
+FUNCTION_BEGIN(FunctionChooseSphere,0,4,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -966,7 +966,7 @@ FUNCTION_END(FunctionChooseSphere)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on whether a rectangle contains a point
-FUNCTION_BEGIN(FunctionChooseRect,0,4,false)
+FUNCTION_BEGIN(FunctionChooseRect,0,4,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -991,7 +991,7 @@ FUNCTION_END(FunctionChooseRect)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in 3d mesh
-FUNCTION_BEGIN(FunctionChooseFrom2InCubeMesh,0,2,false)
+FUNCTION_BEGIN(FunctionChooseFrom2InCubeMesh,0,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1017,7 +1017,7 @@ FUNCTION_END(FunctionChooseFrom2InCubeMesh);
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in 3d mesh
-FUNCTION_BEGIN(FunctionChooseFrom3InCubeMesh,0,3,false)
+FUNCTION_BEGIN(FunctionChooseFrom3InCubeMesh,0,3,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1040,7 +1040,7 @@ FUNCTION_END(FunctionChooseFrom3InCubeMesh)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in 2d grid
-FUNCTION_BEGIN(FunctionChooseFrom2InSquareGrid,0,2,false)
+FUNCTION_BEGIN(FunctionChooseFrom2InSquareGrid,0,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1065,7 +1065,7 @@ FUNCTION_END(FunctionChooseFrom2InSquareGrid)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 3 functions based on position in 2d grid
-FUNCTION_BEGIN(FunctionChooseFrom3InSquareGrid,0,3,false)
+FUNCTION_BEGIN(FunctionChooseFrom3InSquareGrid,0,3,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1087,7 +1087,7 @@ FUNCTION_END(FunctionChooseFrom3InSquareGrid)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in grid of triangles 
-FUNCTION_BEGIN(FunctionChooseFrom2InTriangleGrid,0,2,false)
+FUNCTION_BEGIN(FunctionChooseFrom2InTriangleGrid,0,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1119,7 +1119,7 @@ FUNCTION_END(FunctionChooseFrom2InTriangleGrid)
 //! Function implements selection between 2 functions based on position in grid of triangles 
 /*! Not entirely sure this one produces a sensible pattern.  Needs explicitly testing.
  */
-FUNCTION_BEGIN(FunctionChooseFrom3InTriangleGrid,0,3,false)
+FUNCTION_BEGIN(FunctionChooseFrom3InTriangleGrid,0,3,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1148,7 +1148,7 @@ FUNCTION_END(FunctionChooseFrom3InTriangleGrid)
 //! Function implements selection between 3 functions based on position in grid of hexagons
 /*! Don't entirely understand how this works, but it looks nice.
  */
-FUNCTION_BEGIN(FunctionChooseFrom3InDiamondGrid,0,3,false)
+FUNCTION_BEGIN(FunctionChooseFrom3InDiamondGrid,0,3,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1193,7 +1193,7 @@ FUNCTION_END(FunctionChooseFrom3InDiamondGrid)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 3 functions based on position in grid of hexagons
-FUNCTION_BEGIN(FunctionChooseFrom3InHexagonGrid,0,3,false)
+FUNCTION_BEGIN(FunctionChooseFrom3InHexagonGrid,0,3,false,0)
 
   //! Co-ordinates of hexagon with given hex-grid coords
   static const XYZ hex(int x,int y)
@@ -1261,7 +1261,7 @@ FUNCTION_END(FunctionChooseFrom3InHexagonGrid)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in grid of hexagons
-FUNCTION_BEGIN(FunctionChooseFrom2InBorderedHexagonGrid,1,2,false)
+FUNCTION_BEGIN(FunctionChooseFrom2InBorderedHexagonGrid,1,2,false,0)
 
   //! Co-ordinates of hexagon with given hex-grid coords
   static const XYZ hex(int x,int y)
@@ -1356,7 +1356,7 @@ FUNCTION_END(FunctionChooseFrom2InBorderedHexagonGrid)
   param(0,1,2) is light source direction
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-FUNCTION_BEGIN(FunctionOrthoSphereShaded,3,2,false)
+FUNCTION_BEGIN(FunctionOrthoSphereShaded,3,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1396,7 +1396,7 @@ FUNCTION_END(FunctionOrthoSphereShaded)
   param(0,1,2) is light source direction
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-FUNCTION_BEGIN(FunctionOrthoSphereShadedBumpMapped,3,3,false)
+FUNCTION_BEGIN(FunctionOrthoSphereShadedBumpMapped,3,3,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1451,7 +1451,7 @@ FUNCTION_END(FunctionOrthoSphereShadedBumpMapped)
     arg(1) sampled using a normalised vector defines an environment for reflected rays
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-FUNCTION_BEGIN(FunctionOrthoSphereReflect,0,2,false)
+FUNCTION_BEGIN(FunctionOrthoSphereReflect,0,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1494,7 +1494,7 @@ FUNCTION_END(FunctionOrthoSphereReflect)
     arg(2) is bump map
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-FUNCTION_BEGIN(FunctionOrthoSphereReflectBumpMapped,0,3,false)
+FUNCTION_BEGIN(FunctionOrthoSphereReflectBumpMapped,0,3,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1547,7 +1547,7 @@ FUNCTION_END(FunctionOrthoSphereReflectBumpMapped)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFilter2D,2,1,false)
+FUNCTION_BEGIN(FunctionFilter2D,2,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1572,7 +1572,7 @@ FUNCTION_END(FunctionFilter2D)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFilter3D,3,1,false)
+FUNCTION_BEGIN(FunctionFilter3D,3,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1600,7 +1600,7 @@ FUNCTION_END(FunctionFilter3D)
 //------------------------------------------------------------------------------------------
 
 //! Sum of two evaluations of a function, one sampled at an offset and weighted.
-FUNCTION_BEGIN(FunctionShadow,4,1,false)
+FUNCTION_BEGIN(FunctionShadow,4,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1621,7 +1621,7 @@ FUNCTION_END(FunctionShadow)
 //------------------------------------------------------------------------------------------
 
 //! Like FunctionShadow but the offset is obtained from a function.
-FUNCTION_BEGIN(FunctionShadowGeneralised,1,2,false)
+FUNCTION_BEGIN(FunctionShadowGeneralised,1,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1641,7 +1641,7 @@ FUNCTION_END(FunctionShadowGeneralised)
 //------------------------------------------------------------------------------------------
 
 //! Multiply x and y by z
-FUNCTION_BEGIN(FunctionCone,0,0,false)
+FUNCTION_BEGIN(FunctionCone,0,0,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1660,7 +1660,7 @@ FUNCTION_END(FunctionCone)
 //------------------------------------------------------------------------------------------
 
 //! Multiply x and y by exp(z)
-FUNCTION_BEGIN(FunctionExpCone,0,0,false)
+FUNCTION_BEGIN(FunctionExpCone,0,0,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1682,7 +1682,7 @@ FUNCTION_END(FunctionExpCone)
 //! Separate influence of z co-ordinate.
 /*! Interesting as a top level node for animations as structure will tend to be fixed, with only colour map changing
  */
-FUNCTION_BEGIN(FunctionSeparateZ,3,2,false)
+FUNCTION_BEGIN(FunctionSeparateZ,3,2,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1706,7 +1706,7 @@ FUNCTION_END(FunctionSeparateZ)
 //! Perlin noise function.
 /*! Returns a single value replicated into all three channels
 */
-FUNCTION_BEGIN(FunctionNoiseOneChannel,0,0,false)
+FUNCTION_BEGIN(FunctionNoiseOneChannel,0,0,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1733,7 +1733,7 @@ FUNCTION_END(FunctionNoiseOneChannel)
 //! Multiscale noise function.
 /*! Returns a single value replicated into all three channels
 */
-FUNCTION_BEGIN(FunctionMultiscaleNoiseOneChannel,0,0,false)
+FUNCTION_BEGIN(FunctionMultiscaleNoiseOneChannel,0,0,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1767,7 +1767,7 @@ FUNCTION_END(FunctionMultiscaleNoiseOneChannel)
 //! Perlin noise function.
 /*! Returns three independent channels
 */
-FUNCTION_BEGIN(FunctionNoiseThreeChannel,0,0,false)
+FUNCTION_BEGIN(FunctionNoiseThreeChannel,0,0,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1793,7 +1793,7 @@ FUNCTION_END(FunctionNoiseThreeChannel)
 //! Perlin multiscale noise function.
 /*! Returns three independent channels
 */
-FUNCTION_BEGIN(FunctionMultiscaleNoiseThreeChannel,0,0,false)
+FUNCTION_BEGIN(FunctionMultiscaleNoiseThreeChannel,0,0,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1828,7 +1828,7 @@ FUNCTION_END(FunctionMultiscaleNoiseThreeChannel)
 //------------------------------------------------------------------------------------------
 
 //! Function repeatedly applying it's leaf function to the argument
-FUNCTION_BEGIN(FunctionIterate,0,1,true)
+FUNCTION_BEGIN(FunctionIterate,0,1,true,FnIterative)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1850,7 +1850,7 @@ FUNCTION_END(FunctionIterate)
 //------------------------------------------------------------------------------------------
 
 //! Function returning average value of evenly spaced samples between two points
-FUNCTION_BEGIN(FunctionAverageSamples,3,1,true)
+FUNCTION_BEGIN(FunctionAverageSamples,3,1,true,FnIterative)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1898,7 +1898,7 @@ FUNCTION_END(FunctionAverageSamples)
 //------------------------------------------------------------------------------------------
 
 //! Similar to average samples except one end has a higher weighting
-FUNCTION_BEGIN(FunctionStreak,3,1,true)
+FUNCTION_BEGIN(FunctionStreak,3,1,true,FnIterative)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1948,7 +1948,7 @@ FUNCTION_END(FunctionStreak)
 //------------------------------------------------------------------------------------------
 
 //! Average of samples around a ring
-FUNCTION_BEGIN(FunctionAverageRing,1,1,true)
+FUNCTION_BEGIN(FunctionAverageRing,1,1,true,FnIterative)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1977,7 +1977,7 @@ FUNCTION_END(FunctionAverageRing)
 //------------------------------------------------------------------------------------------
 
 //! Like FunctionAverageRing but subtract off the centre value
-FUNCTION_BEGIN(FunctionFilterRing,1,1,true)
+FUNCTION_BEGIN(FunctionFilterRing,1,1,true,FnIterative)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -2006,7 +2006,7 @@ FUNCTION_END(FunctionFilterRing)
 //------------------------------------------------------------------------------------------
 
 //! Function similar to FunctionAverageSamples but doing convolution
-FUNCTION_BEGIN(FunctionConvolveSamples,3,2,true)
+FUNCTION_BEGIN(FunctionConvolveSamples,3,2,true,FnIterative)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -2054,7 +2054,7 @@ FUNCTION_END(FunctionConvolveSamples)
 //------------------------------------------------------------------------------------------
 
 //! Function summing decreasing amounts of higher frequency versions of image
-FUNCTION_BEGIN(FunctionAccumulateOctaves,0,1,true)
+FUNCTION_BEGIN(FunctionAccumulateOctaves,0,1,true,FnIterative)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -2113,7 +2113,7 @@ inline const uint brot(const XYZ& z0,const XYZ& c,const uint iterations)
 //------------------------------------------------------------------------------------------
 
 //! Function selects arg to evaluate based on test for point in Mandelbrot set.
-FUNCTION_BEGIN(FunctionMandelbrotChoose,0,2,false)
+FUNCTION_BEGIN(FunctionMandelbrotChoose,0,2,true,FnIterative|FnFractal)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -2132,7 +2132,7 @@ FUNCTION_END(FunctionMandelbrotChoose)
 //-----------------------------------------------------------------------------------------
 
 //! Function returns -1 for points in set, 0-1 for escaped points
-FUNCTION_BEGIN(FunctionMandelbrotContour,0,0,true)
+FUNCTION_BEGIN(FunctionMandelbrotContour,0,0,true,FnIterative|FnFractal)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -2152,7 +2152,7 @@ FUNCTION_END(FunctionMandelbrotContour)
 //------------------------------------------------------------------------------------------
 
 //! Function selects arg to evaluate based on test for point in Julia set.
-FUNCTION_BEGIN(FunctionJuliaChoose,0,3,true)
+FUNCTION_BEGIN(FunctionJuliaChoose,0,3,true,FnIterative|FnFractal)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -2171,7 +2171,7 @@ FUNCTION_END(FunctionJuliaChoose)
 //------------------------------------------------------------------------------------------
 
 //! Function returns -1 for points in set, 0-1 for escaped points
-FUNCTION_BEGIN(FunctionJuliaContour,0,1,true)
+FUNCTION_BEGIN(FunctionJuliaContour,0,1,true,FnIterative|FnFractal)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -2197,7 +2197,8 @@ FUNCTION_END(FunctionJuliaContour)
   Maybe the whole static thing was a mistake.
   Should derive Function classes from FunctionBoilerplate<T> to provide Clone etc.
  */
-FUNCTION_BEGIN(FunctionCellular,0,1,true)
+/*
+FUNCTION_BEGIN(FunctionCellular,0,1,true,FnIterative)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p)
@@ -2214,6 +2215,7 @@ FUNCTION_BEGIN(FunctionCellular,0,1,true)
  protected:
 
 };
+*/
 // Not done yet.
 //REGISTER(FunctionCellular);
 

@@ -30,7 +30,7 @@
 #include "function_boilerplate.h"
 
 //! Function class simply forwarding to leaf node
-FUNCTION_BEGIN(FunctionNull,0,1,false)
+FUNCTION_BEGIN(FunctionNull,0,1,false,0)
 
   //! Simply return the position argument.
   virtual const XYZ evaluate(const XYZ& p) const

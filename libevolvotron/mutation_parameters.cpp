@@ -21,6 +21,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "mutation_parameters.h"
+#include "function_registration.h"
+#include "function_registry.h"
+#include "function_boilerplate.h"
 
 MutationParameters::MutationParameters(uint seed)
   :_r01(seed)
@@ -53,4 +56,26 @@ void MutationParameters::reset()
   _max_initial_iterations=16;
   _probability_iterations_change_step=0.25;
   _probability_iterations_change_jump=0.02;
+}
+
+const FunctionRegistration*const MutationParameters::random_function_registration() const
+{
+  uint supressed_function_classifications=0;
+  
+  if (!allow_fractal_nodes())
+    {
+      supressed_function_classifications|=FnFractal;
+    }
+  
+  if (!allow_iterative_nodes())
+    {
+      supressed_function_classifications|=FnIterative;
+    }
+  
+  const FunctionRegistration* fn_reg;
+  do
+    {
+      fn_reg=FunctionRegistry::get()->lookup(r01());
+    }
+  while (fn_reg->classification()&supressed_function_classifications);
 }
