@@ -81,7 +81,13 @@ int main(int argc,char* argv[])
 	    const XYZ p(
 			-1.0+2.0*(col+0.5)/width,
 			1.0-2.0*(row+0.5)/height,
-			-1.0f+2.0f*(frame+0.5f)/frames
+			(
+			 imagefn->sinusoidal_z()
+			 ?
+			 cos(M_PI*(frame+0.5f)/frames)
+			 :
+			 -1.0f+2.0f*(frame+0.5f)/frames
+			 )
 			);
 	    uint c[3];
 	    imagefn->get_rgb(p,c);

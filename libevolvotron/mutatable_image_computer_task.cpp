@@ -24,17 +24,17 @@
 
 MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImage* img,const QSize& s,uint f,uint lev)
   :_aborted(false)
-  ,_display(disp)
-  ,_image(img)
-  ,_size(s)
-  ,_frames(f)
-  ,_level(lev)
-  ,_current_pixel(0)
-  ,_current_col(0)
-  ,_current_row(0)
-  ,_current_frame(0)
-  ,_image_data(s.width()*s.height()*f)
-  ,_completed(false)
+   ,_display(disp)
+   ,_image(img)
+   ,_size(s)
+   ,_frames(f)
+   ,_level(lev)
+   ,_current_pixel(0)
+   ,_current_col(0)
+   ,_current_row(0)
+   ,_current_frame(0)
+   ,_image_data(s.width()*s.height()*f)
+   ,_completed(false)
 {
   assert(_image->ok());
 }

@@ -85,7 +85,13 @@ void MutatableImageComputer::run()
 		  const XYZ p(
 			      -1.0f+2.0f*(task()->current_col()+0.5f)/width,
 			       1.0f-2.0f*(task()->current_row()+0.5f)/height,
-			      -1.0f+2.0f*(task()->current_frame()+0.5f)/frames
+			      (
+			       task()->image()->sinusoidal_z()
+			       ?
+			       cos(M_PI*((task()->current_frame()+0.5f)/frames))
+			       :
+			       -1.0f+2.0f*(task()->current_frame()+0.5f)/frames
+			       )
 			      );
 		  
 		  uint c[3];

@@ -358,7 +358,7 @@ FunctionNode::~FunctionNode()
 {
   assert(ok());
   for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
-    delete (*it);
+    if (*it) delete (*it);
 }
 
 /*! There are 2 kinds of mutation:

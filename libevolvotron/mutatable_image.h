@@ -33,10 +33,13 @@
 class MutatableImage
 {
  protected:
+
   //! The top level FunctionNode of the image.
-  /*! Set at image construction time and can't be changed.
-   */
-  FunctionNode*const _root;
+  FunctionNode* _root;
+
+  //! Whether to sweep z sinusoidally (vs linearly)
+  bool _sinusoidal_z;
+
  public:
   
   //! Take ownership of the image tree with the specified root node.
@@ -49,7 +52,9 @@ class MutatableImage
   //! Create a new random image tree.
   MutatableImage(const MutationParameters& parameters,bool exciting=false)
     :_root(FunctionNode::stub(parameters,exciting))
+    ,_sinusoidal_z(true)
     {
+      //! \todo _sinusoidal_z should be obtained from AnimationParameters when it exists
       assert(_root!=0);
     }
 
@@ -70,6 +75,12 @@ class MutatableImage
       return _root;
     }
 
+  //! Accessor.
+  const bool sinusoidal_z() const
+    {
+      return _sinusoidal_z;
+    }
+
   //! Clone this image.
   MutatableImage*const deepclone() const
     {
@@ -77,11 +88,7 @@ class MutatableImage
     }
 
   //! Mutate this image
-  void mutate(const MutationParameters& p)
-    {
-      //! \todo There should be a chance of a glitch or insert or substitute type mutation here.
-      root()->mutate(p);
-    }
+  void mutate(const MutationParameters& p);
 
   //! Evaluate the image at specified coordinate.
   const XYZ operator()(const XYZ& p) const

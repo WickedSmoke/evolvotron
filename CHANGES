@@ -7,7 +7,8 @@ From release 0.2.0:
  - x and -X command line options to specify specifc top level function types.
  - FunctionKaleidoscope, FunctionWindmill, FunctionStreak, FunctionSeparateZ added
  - Added -f <frames> option to evolvotron_render
- - Internals restuctured.
+ - Internals restuctured (avoids FunctionNodeUsing::evaluate wrapper), speed improvement ?
+ - Mutations of top-level node can occur
 
 From release 0.1.4:
  - Bump version to 0.2.0 

@@ -102,6 +102,12 @@ FUNCTION_END(FunctionIdentity)
 
 //------------------------------------------------------------------------------------------
 
+#include "function_null.h"
+
+REGISTER(FunctionNull);
+
+//------------------------------------------------------------------------------------------
+
 //! Function class returning position transfomed by a 12-component linear transform.
 FUNCTION_BEGIN(FunctionTransform,12,0,false)
 

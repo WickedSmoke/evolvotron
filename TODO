@@ -13,12 +13,10 @@ Animation
 - Sync animation to xmms beat somehow ?
 - Option to sweep z sinusoidally or linearly
 - Option to bounce or cycle z
+- Make frames, frame-rate, sine vs. linear, loop vs. bounce properties of the image.
 
 Conventional
 ------------
-- Doxygen will need some help dealing with FUNCTION_BEGIN, FUNCTION_END
-- Should be chance of a glitch/substitute/insert at top level node held by MutatableImage
-  Separate out mutation code and have it take a ptr to a ptr to a FunctionNode.
 - Get rid of heat/cool etc buttons cluttering up status bar and just have autocool tick, and reheat button ?
 - Check qmake can be found by configure.
   Check $(QTDIR)/bin first... RH seem to be unusual in copying it to /usr/bin

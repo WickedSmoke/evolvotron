@@ -14,6 +14,7 @@ HEADERS += \
         functions.h \
         function_node.h \
         function_node_info.h \
+        function_null.h \
         function_pre_transform.h \
         function_post_transform.h \
         function_registration.h \
@@ -44,6 +45,7 @@ SOURCES += \
         functions.cpp \
         function_node.cpp \
         function_node_info.cpp \
+        function_null.cpp \
         function_pre_transform.cpp \
         function_post_transform.cpp \
         function_registration.cpp \
@@ -64,7 +66,6 @@ SOURCES += \
         tuple.cpp \
 	useful.cpp \
 	xyz.cpp
-
 
 #########################
 # Target to build assembler listings for specific files of interest

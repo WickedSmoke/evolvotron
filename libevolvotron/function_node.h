@@ -87,7 +87,6 @@ class FunctionNode
   virtual FunctionPreTransform*const is_a_FunctionPreTransform();
   //@}
 
-
   //@{
   //! Query the node as to whether it is a FunctionPostTransform (return null if not).
   /*! This is useful for accumulating colour transforms at the back end of a function tree without creating a new transform each time.
@@ -96,8 +95,6 @@ class FunctionNode
   virtual const FunctionPostTransform*const is_a_FunctionPostTransform() const;
   virtual FunctionPostTransform*const is_a_FunctionPostTransform();
   //@}
-
-
 
   //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
   static FunctionNode*const stub(const MutationParameters& parameters,bool exciting);
@@ -144,6 +141,12 @@ class FunctionNode
       return params()[n];
     }
 
+  //! Accessor
+  std::vector<float>& params()
+    {
+      return _params;
+    }
+
   //! Accessor.
   const uint iterations() const
     {
@@ -151,13 +154,19 @@ class FunctionNode
     }
 
   //! Accessor.
+  const std::vector<FunctionNode*>& args() const
+    {
+      return _args;
+    }
+  
+  //! Accessor.
   void args(const std::vector<FunctionNode*>& a)
     {
       _args=a;
     }
 
-  //! Accessor.
-  const std::vector<FunctionNode*>& args() const
+  //! Accessor
+  std::vector<FunctionNode*>& args()
     {
       return _args;
     }
@@ -195,18 +204,6 @@ class FunctionNode
 
   //! Impose a new set of parameters and arguments on the node.  Existing arguments are cleaned up.
   void impose(std::vector<float>& p,std::vector<FunctionNode*>& a);
-
-  //! Accessor (non-const version is protected, required internally to obtain non-const iterators).
-  std::vector<float>& params()
-    {
-      return _params;
-    }
-  
-  //! Accessor (non-const version is protected, required internally to obtain non-const iterators).
-  std::vector<FunctionNode*>& args()
-    {
-      return _args;
-    }
 };
 
 #endif

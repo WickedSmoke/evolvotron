@@ -154,16 +154,19 @@ class MutatableImageComputerTask
     {
       return _current_col;
     }
+
   //! Accessor.
   const uint current_row() const
     {
       return _current_row;
     }
+
   //! Accessor.
   const uint current_frame() const
     {
       return _current_frame;
     }
+
   //! Accessor.
   const uint current_pixel() const
     {
