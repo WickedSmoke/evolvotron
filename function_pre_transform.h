@@ -27,10 +27,11 @@
 #define _function_pre_transform_h_
 
 #include "xyz.h"
+#include "function.h"
 #include "function_node.h"
 
 //! Function class returning leaf node evaluated at position transfomed by a 12-component linear transform.
-class FunctionPreTransform
+class FunctionPreTransform : public Function
 {
  public:
 

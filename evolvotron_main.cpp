@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "evolvotron_main.h"
 #include "xyz.h"
 #include "function_node.h"
+#include "function_node_using.h"
 #include "function_pre_transform.h"
 #include "function_post_transform.h"
 
@@ -352,7 +353,7 @@ void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImage
      (
       new FunctionNodeUsing<FunctionPostTransform>
       (
-       FunctionNode::stubparams(mutation_parameters(),12),
+       FunctionNode::stubparams(mutation_parameters(),12,false),
        args
        )
       )

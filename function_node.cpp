@@ -23,9 +23,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <algorithm>
 #include <iostream>
 
+#include "function_node.h"
+#include "function_node_using.h"
+
 #include "mutatable_image.h"
 #include "matrix.h"
+
 #include "function.h"
+// This is the ONLY place this should be included as FunctionNode::stub will instantiate everything
+#include "functions.h"
 
 const std::vector<FunctionNode*> FunctionNode::cloneargs() const
 {
@@ -73,82 +79,82 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   if (r<(1.0f-parameters.proportion_constant())*parameters.identity_supression()*base)
     {
       if (parameters.r01()<0.5f)
-	return new FunctionNodeUsing<FunctionTransform>(stubparams(parameters,12),stubargs(parameters,0));
+	return FunctionNodeUsing<FunctionTransform>::stubnew(parameters);
       else
-	return new FunctionNodeUsing<FunctionTransformQuadratic>(stubparams(parameters,30),stubargs(parameters,0));	
+	return FunctionNodeUsing<FunctionTransformQuadratic>::stubnew(parameters);
     }
   else if (r<(1.0f-parameters.proportion_constant())*base)
-    return new FunctionNodeUsing<FunctionIdentity>(stubparams(parameters,0),stubargs(parameters,0));
+    return FunctionNodeUsing<FunctionIdentity>::stubnew(parameters);
   else if (r<base)
-    return new FunctionNodeUsing<FunctionConstant>(stubparams(parameters,3),stubargs(parameters,0));
+    return FunctionNodeUsing<FunctionConstant>::stubnew(parameters);
   else if (r<base+1*step)
-    return new FunctionNodeUsing<FunctionCartesianToSpherical>(stubparams(parameters,0),stubargs(parameters,0));
+    return FunctionNodeUsing<FunctionCartesianToSpherical>::stubnew(parameters);
   else if (r<base+2*step) 
-    return new FunctionNodeUsing<FunctionSphericalToCartesian>(stubparams(parameters,0),stubargs(parameters,0));
+    return FunctionNodeUsing<FunctionSphericalToCartesian>::stubnew(parameters);
   else if (r<base+3*step) 
-    return new FunctionNodeUsing<FunctionEvaluateInSpherical>(stubparams(parameters,0),stubargs(parameters,1));
+    return FunctionNodeUsing<FunctionEvaluateInSpherical>::stubnew(parameters);
   else if (r<base+4*step) 
-    return new FunctionNodeUsing<FunctionRotate>(stubparams(parameters,0),stubargs(parameters,1));
+    return FunctionNodeUsing<FunctionRotate>::stubnew(parameters);
   else if (r<base+5*step) 
-    return new FunctionNodeUsing<FunctionSin>(stubparams(parameters,0),stubargs(parameters,0));
+    return FunctionNodeUsing<FunctionSin>::stubnew(parameters);
   else if (r<base+6*step) 
-    return new FunctionNodeUsing<FunctionCos>(stubparams(parameters,0),stubargs(parameters,0));
+    return FunctionNodeUsing<FunctionCos>::stubnew(parameters);
   else if (r<base+7*step) 
-    return new FunctionNodeUsing<FunctionSpiralLinear>(stubparams(parameters,0),stubargs(parameters,1));
+    return FunctionNodeUsing<FunctionSpiralLinear>::stubnew(parameters);
   else if (r<base+8*step) 
-    return new FunctionNodeUsing<FunctionSpiralLogarithmic>(stubparams(parameters,0),stubargs(parameters,1));
+    return FunctionNodeUsing<FunctionSpiralLogarithmic>::stubnew(parameters);
   else if (r<base+9*step) 
-    return new FunctionNodeUsing<FunctionGradient>(stubparams(parameters,0),stubargs(parameters,1));
+    return FunctionNodeUsing<FunctionGradient>::stubnew(parameters);
   else if (r<base+10*step) 
-    return new FunctionNodeUsing<FunctionComposePair>(stubparams(parameters,0),stubargs(parameters,2));
+    return FunctionNodeUsing<FunctionComposePair>::stubnew(parameters);
   else if (r<base+11*step) 
-    return new FunctionNodeUsing<FunctionAdd>(stubparams(parameters,0),stubargs(parameters,2));
+    return FunctionNodeUsing<FunctionAdd>::stubnew(parameters);
   else if (r<base+12*step) 
-    return new FunctionNodeUsing<FunctionMultiply>(stubparams(parameters,0),stubargs(parameters,2));
+    return FunctionNodeUsing<FunctionMultiply>::stubnew(parameters);
   else if (r<base+13*step) 
-    return new FunctionNodeUsing<FunctionDivide>(stubparams(parameters,0),stubargs(parameters,2));
+    return FunctionNodeUsing<FunctionDivide>::stubnew(parameters);
   else if (r<base+14*step) 
-    return new FunctionNodeUsing<FunctionCross>(stubparams(parameters,0),stubargs(parameters,2));
+    return FunctionNodeUsing<FunctionCross>::stubnew(parameters);
   else if (r<base+15*step) 
-    return new FunctionNodeUsing<FunctionGeometricInversion>(stubparams(parameters,0),stubargs(parameters,1));
+    return FunctionNodeUsing<FunctionGeometricInversion>::stubnew(parameters);
   else if (r<base+16*step) 
-    return new FunctionNodeUsing<FunctionMax>(stubparams(parameters,0),stubargs(parameters,2));
+    return FunctionNodeUsing<FunctionMax>::stubnew(parameters);
   else if (r<base+17*step) 
-    return new FunctionNodeUsing<FunctionMin>(stubparams(parameters,0),stubargs(parameters,2));
+    return FunctionNodeUsing<FunctionMin>::stubnew(parameters);
   else if (r<base+18*step) 
-    return new FunctionNodeUsing<FunctionMod>(stubparams(parameters,0),stubargs(parameters,2));
+    return FunctionNodeUsing<FunctionMod>::stubnew(parameters);
   else if (r<base+19*step) 
-    return new FunctionNodeUsing<FunctionComposeTriple>(stubparams(parameters,0),stubargs(parameters,3));
+    return FunctionNodeUsing<FunctionComposeTriple>::stubnew(parameters);
   else if (r<base+20*step) 
-    return new FunctionNodeUsing<FunctionReflect>(stubparams(parameters,0),stubargs(parameters,3));
+    return FunctionNodeUsing<FunctionReflect>::stubnew(parameters);
   else if (r<base+21*step) 
-    return new FunctionNodeUsing<FunctionMagnitudes>(stubparams(parameters,0),stubargs(parameters,3));
+    return FunctionNodeUsing<FunctionMagnitudes>::stubnew(parameters);
   else if (r<base+22*step) 
-    return new FunctionNodeUsing<FunctionChooseSphere>(stubparams(parameters,0),stubargs(parameters,4));
+    return FunctionNodeUsing<FunctionChooseSphere>::stubnew(parameters);
   else if (r<base+23*step) 
-    return new FunctionNodeUsing<FunctionChooseRect>(stubparams(parameters,0),stubargs(parameters,4));
+    return FunctionNodeUsing<FunctionChooseRect>::stubnew(parameters);
   else if (r<base+24*step)
-    return new FunctionNodeUsing<FunctionTransformGeneralised>(stubparams(parameters,0),stubargs(parameters,4));
+    return FunctionNodeUsing<FunctionTransformGeneralised>::stubnew(parameters);
   else if (r<base+25*step)
-    return new FunctionNodeUsing<FunctionPreTransform>(stubparams(parameters,12),stubargs(parameters,1));
+    return FunctionNodeUsing<FunctionPreTransform>::stubnew(parameters);
   else if (r<base+26*step)
-    return new FunctionNodeUsing<FunctionPreTransformGeneralised>(stubparams(parameters,0),stubargs(parameters,5));
+    return FunctionNodeUsing<FunctionPreTransformGeneralised>::stubnew(parameters);
   else if (r<base+27*step)
-    return new FunctionNodeUsing<FunctionPostTransform>(stubparams(parameters,12),stubargs(parameters,1));
+    return FunctionNodeUsing<FunctionPostTransform>::stubnew(parameters);
   else if (r<base+28*step)
-    return new FunctionNodeUsing<FunctionPostTransformGeneralised>(stubparams(parameters,0),stubargs(parameters,5));
+    return FunctionNodeUsing<FunctionPostTransformGeneralised>::stubnew(parameters);
   else if (r<base+29*step)
-    return new FunctionNodeUsing<FunctionIterate>(stubparams(parameters,1,true),stubargs(parameters,1),true);
+    return FunctionNodeUsing<FunctionIterate>::stubnew(parameters);
   else if (r<base+30*step)
-    return new FunctionNodeUsing<FunctionAverageSamples>(stubparams(parameters,1,true),stubargs(parameters,3),true);
+    return FunctionNodeUsing<FunctionAverageSamples>::stubnew(parameters);
   else if (r<base+31*step)
-    return new FunctionNodeUsing<FunctionMandelbrotChoose>(stubparams(parameters,1,true),stubargs(parameters,2),true);
+    return FunctionNodeUsing<FunctionMandelbrotChoose>::stubnew(parameters);
   else if (r<base+32*step)
-    return new FunctionNodeUsing<FunctionMandelbrotContour>(stubparams(parameters,1,true),stubargs(parameters,0),true);
+    return FunctionNodeUsing<FunctionMandelbrotContour>::stubnew(parameters);
   else if (r<base+33*step)
-    return new FunctionNodeUsing<FunctionJuliaChoose>(stubparams(parameters,1,true),stubargs(parameters,3),true);
+    return FunctionNodeUsing<FunctionJuliaChoose>::stubnew(parameters);
   else //if (r<base+34*step)
-    return new FunctionNodeUsing<FunctionJuliaContour>(stubparams(parameters,1,true),stubargs(parameters,1),true);
+    return FunctionNodeUsing<FunctionJuliaContour>::stubnew(parameters);
 }
 
 FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
@@ -166,15 +172,15 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
 	{
 	  std::vector<float> params_in;
 	  std::vector<FunctionNode*> args_in;
-	  args_in.push_back(FunctionNode::stub(parameters));
-	  args_in.push_back(FunctionNode::stub(parameters));
-	  args_in.push_back(FunctionNode::stub(parameters));
-	  args_in.push_back(FunctionNode::stub(parameters));
+	  args_in.push_back(FunctionNode::stub(parameters,false));
+	  args_in.push_back(FunctionNode::stub(parameters,false));
+	  args_in.push_back(FunctionNode::stub(parameters,false));
+	  args_in.push_back(FunctionNode::stub(parameters,false));
 	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_in,args_in));
 	}
       else
 	{
-	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransform>(stubparams(parameters,12),stubargs(parameters,0)));
+	  args_toplevel.push_back(FunctionNodeUsing<FunctionTransform>::stubnew(parameters));
 	}
       
       // This one is crucial: we REALLY want something interesting to happen within here.
@@ -185,15 +191,15 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
 	{
 	  std::vector<float> params_out;
 	  std::vector<FunctionNode*> args_out;
-	  args_out.push_back(FunctionNode::stub(parameters));
-	  args_out.push_back(FunctionNode::stub(parameters));
-	  args_out.push_back(FunctionNode::stub(parameters));
-	  args_out.push_back(FunctionNode::stub(parameters));
+	  args_out.push_back(FunctionNode::stub(parameters,false));
+	  args_out.push_back(FunctionNode::stub(parameters,false));
+	  args_out.push_back(FunctionNode::stub(parameters,false));
+	  args_out.push_back(FunctionNode::stub(parameters,false));
 	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_out,args_out));
 	}
       else
 	{
-	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransform>(stubparams(parameters,12),stubargs(parameters,0)));
+	  args_toplevel.push_back(FunctionNodeUsing<FunctionTransform>::stubnew(parameters));
 	}
 	
       root=new FunctionNodeUsing<FunctionComposeTriple>(params_toplevel,args_toplevel);
@@ -220,7 +226,7 @@ const std::vector<FunctionNode*> FunctionNode::stubargs(const MutationParameters
 {
   std::vector<FunctionNode*> ret;
   for (uint i=0;i<n;i++)
-    ret.push_back(stub(parameters));
+    ret.push_back(stub(parameters,false));
   return ret;
 }
 
@@ -315,7 +321,7 @@ void FunctionNode::mutate(const MutationParameters& parameters)
       if (parameters.r01()<parameters.probability_glitch())
 	{
 	  delete (*it);
-	  (*it)=stub(parameters);
+	  (*it)=stub(parameters,false);
 	}
     }
 
@@ -336,7 +342,7 @@ void FunctionNode::mutate(const MutationParameters& parameters)
 	  std::vector<FunctionNode*> a;
 
 	  a.push_back((*it));
-	  a.push_back(stub(parameters));
+	  a.push_back(stub(parameters,false));
 
 	  (*it)=new FunctionNodeUsing<FunctionComposePair>(p,a);
 	}

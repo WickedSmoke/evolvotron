@@ -34,7 +34,6 @@
 
 #include "mutation_parameters.h"
 
-
 class Registration
 {
  public:
@@ -62,9 +61,6 @@ class Registry
     return reg;
   }
 };
-
-
-
 
 class FunctionPreTransform;
 template <typename F> class FunctionNodeUsing;
@@ -114,19 +110,19 @@ class FunctionNode
   //@}
 
   //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
-  static FunctionNode*const stub(const MutationParameters& parameters,bool exciting=false);
+  static FunctionNode*const stub(const MutationParameters& parameters,bool exciting);
 
   //! This returns a random bit of tree suitable for use as a starting image.
   static FunctionNode*const initial(const MutationParameters& parameters);
 
   //! This returns a vector of random parameter values.
-  static const std::vector<float> stubparams(const MutationParameters& parameters,uint n,bool iter=false);
+  static const std::vector<float> stubparams(const MutationParameters& parameters,uint n,bool iter);
 
   //! This returns a vector of new random bits of tree.
   static const std::vector<FunctionNode*> stubargs(const MutationParameters& parameters,uint n);
 
   //! Constructor given an array of params. and args (these MUST be provided; there are no alterative constructors).
-  FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a,bool iter=false);
+  FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a,bool iter);
 
   //! Destructor.
   virtual ~FunctionNode();
@@ -214,97 +210,5 @@ class FunctionNode
       return _args;
     }
 };
-
-//! Template class to generate boilerplate for virtual methods.
-template <typename F> class FunctionNodeUsing : public FunctionNode
-{
- public:
-
-  //! Registration member encapsulates class meta-information needed to 
-  static Registration registration;
-  
- protected:
-  
-  //! Evaluation supplied by the wrapped class.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return F::evaluate(*this,p);
-    }
-  
- public:
-  
-  //! Constant-ness supplied by the wrapped class.
-  virtual const bool is_constant() const
-    {
-      return F::is_constant(*this);
-    }
-  
-  //! Constructor
-  FunctionNodeUsing(const std::vector<float>& p,const std::vector<FunctionNode*>& a,bool iter=false)
-    :FunctionNode(p,a,iter)
-    {
-      assert(params().size()==F::parameters());
-      assert(args().size()==F::arguments());
-      assert(!iter || (params().size()>0));
-    }
-  
-  //! Destructor.
-  virtual ~FunctionNodeUsing()
-    {}
-  
-  //! Return a deeploned copy.
-  virtual FunctionNode*const deepclone() const
-    {
-      return new FunctionNodeUsing<F>(cloneparams(),cloneargs(),param0_is_iterations());
-    }
-  
-  //! Internal self-consistency check.  We can add some extra checks.
-  virtual const bool ok() const
-    {
-      return 
-	(
-	 params().size()==F::parameters() &&
-	 args().size()==F::arguments() &&
-	 (!param0_is_iterations() || (params().size()>0)) &&
-	 FunctionNode::ok()
-	 );
-    }
-
-  //! Implementation depends on template parameter
-  virtual const FunctionNodeUsing<FunctionPreTransform>*const is_a_FunctionNodeUsingFunctionPreTransform() const;
-
-  //! Implementation depends on template parameter
-  virtual FunctionNodeUsing<FunctionPreTransform>*const is_a_FunctionNodeUsingFunctionPreTransform();
-};
-
-//! In the general case this still returns 0
-template <typename F> inline const FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsing<F>::is_a_FunctionNodeUsingFunctionPreTransform() const
-{
-  return 0;
-}
-
-//! In the general case this still returns 0
-template <typename F> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsing<F>::is_a_FunctionNodeUsingFunctionPreTransform()
-{
-  return 0;
-}
-
-//! Specialisation for FunctionPreTransform
-template <> inline const FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsing<FunctionPreTransform>::is_a_FunctionNodeUsingFunctionPreTransform() const
-{
-  return this;
-}
-
-//! Specialisation for FunctionPreTransform
-template <> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsing<FunctionPreTransform>::is_a_FunctionNodeUsingFunctionPreTransform()
-{
-  return this;
-}
-
-//! You'd expect this to live in the .cpp, but instantiation should only be triggered ONCE by REGISTER macros in function.h which is only included in function_node.cpp.
-/*! There is the possibility of associating a name with the association using typeid(F).name()
-  but it's not very useful as it has name mangling stuff attached (on gcc anyway).
- */
-template <typename F> Registration FunctionNodeUsing<F>::registration;
 
 #endif

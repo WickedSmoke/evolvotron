@@ -27,10 +27,11 @@
 #define _function_post_transform_h_
 
 #include "xyz.h"
+#include "function.h"
 #include "function_node.h"
 
 //! Function class returning leaf node evaluated at given position; result is then transfomed by a 12-component linear transform.
-class FunctionPostTransform
+class FunctionPostTransform : public Function
 {
  public:
 

@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 # append debug or debug
-CONFIG+= qt thread release
+CONFIG+= qt thread debug
 
 ##################
 # Improved optimisation options from qmake defaults
@@ -27,7 +27,9 @@ HEADERS += \
 	dialog_mutation_parameters.h \
 	evolvotron_main.h \
         function.h \
+        functions.h \
         function_node.h \
+        function_node_using.h \
         function_pre_transform.h \
         function_post_transform.h \
 	license.h \
@@ -52,7 +54,9 @@ SOURCES += \
 	evolvotron.cpp \
 	evolvotron_main.cpp \
         function.cpp \
+        functions.cpp \
         function_node.cpp \
+        function_node_using.cpp \
         function_pre_transform.cpp \
         function_post_transform.cpp \
 	license.cpp \
