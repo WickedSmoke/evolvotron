@@ -54,8 +54,9 @@ int main(int argc,char* argv[])
 
   Args args(argc,argv);
 
-  uint rows=6;
-  uint cols=8;
+  // Used to use 6x8 but as images get more detailed they need to be bigger
+  uint rows=5;
+  uint cols=7;
   uint threads=2;
 
   std::ofstream sink("/dev/null");

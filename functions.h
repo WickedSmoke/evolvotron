@@ -567,7 +567,7 @@ class FunctionSpiralLinear : public Function
       const float r=p.magnitude();
       float theta=atan2(p.y(),p.x());
       if (theta<0.0f) theta+=2.0f*M_PI;
-      const float winding=floor(r-theta/(2.0*M_PI));
+      const float winding=floorf(r-theta/(2.0*M_PI));
       
       const float x=2.0f*winding+theta/M_PI;
       const float y=2.0f*r-x;
@@ -609,7 +609,7 @@ class FunctionSpiralLogarithmic : public Function
       float theta=atan2(p.y(),p.x());
       if (theta<0.0f) theta+=2.0f*M_PI;
       const float lnr=log(r);
-      const float winding=floor(lnr-theta/(2.0*M_PI));
+      const float winding=floorf(lnr-theta/(2.0*M_PI));
       
       const float x=2.0f*winding+theta/M_PI;
       const float y=2.0f*lnr-x;
@@ -983,6 +983,38 @@ REGISTER(FunctionMod);
 
 //------------------------------------------------------------------------------------------
 
+class FunctionExp : public Function
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      return XYZ(exp(p.x()),exp(p.y()),exp(p.z()));
+    }
+  
+  //! Is not constant.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionExp);
+
+//------------------------------------------------------------------------------------------
+
 //! Invert the leaf function using a radius-one origin centred sphere.
 class FunctionGeometricInversion : public Function
 {
@@ -1102,6 +1134,40 @@ REGISTER(FunctionMagnitudes);
 
 //------------------------------------------------------------------------------------------
 
+//! Function returns position magnitude.
+class FunctionMagnitude : public Function
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const float m=p.magnitude();
+      return XYZ(m,m,m);
+    }
+  
+  //! Is not constant.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionMagnitude);
+
+//------------------------------------------------------------------------------------------
+
 //! Function implements selection between 2 functions based on the relative magnitudes of 2 other functions
 class FunctionChooseSphere : public Function
 {
@@ -1174,6 +1240,198 @@ class FunctionChooseRect : public Function
 };
 
 REGISTER(FunctionChooseRect);
+
+//------------------------------------------------------------------------------------------
+
+//! Function implements selection between 2 functions based on position in checkerboard
+class FunctionChooseCheckerboard : public Function
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const int x=static_cast<int>(floorf(p.x()));
+      const int y=static_cast<int>(floorf(p.y()));
+      const int z=static_cast<int>(floorf(p.z()));
+
+      if ((x+y+z)&1)
+	return our.arg(0)(p);
+      else
+	return our.arg(1)(p);
+    }
+  
+  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionChooseCheckerboard);
+
+//------------------------------------------------------------------------------------------
+
+//! Function implements selection between 2 functions based on position in grid of triangles 
+class FunctionChooseTriangleboard : public Function
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      static const XYZ d0(1.0f         ,0.0f         ,0.0f);
+      static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0f);
+      static const XYZ d2(cos(2*M_PI/3),sin(2*M_PI/3),0.0f);
+      
+      const int a=static_cast<int>(floorf(p%d0));
+      const int b=static_cast<int>(floorf(p%d1));
+      const int c=static_cast<int>(floorf(p%d2));
+
+      if ((a+b+c)&1)
+	return our.arg(0)(p);
+      else
+	return our.arg(1)(p);
+    }
+  
+  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionChooseTriangleboard);
+
+//------------------------------------------------------------------------------------------
+
+//! Function implements selection between 3 functions based on position in grid of hexagons
+class FunctionChoosePseudocubeboard : public Function
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 3;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      static const XYZ d0(1.0f         ,0.0f         ,0.0f);
+      static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0f);
+      static const XYZ d2(cos(2*M_PI/3),sin(2*M_PI/3),0.0f);
+      
+      const float p0=p%d0;
+      const float p1=p%d1;
+      const float p2=p%d2;
+
+      const int i0=lrintf(p0);
+      const int i1=lrintf(p1);
+      const int i2=lrintf(p2);
+      
+      const float m0=fabsf(p0-i0);
+      const float m1=fabsf(p1-i1);
+      const float m2=fabsf(p2-i2);
+
+      if (m0<=m1 && m0<=m2)
+	return our.arg(0)(p);
+      else if (m1<=m0 && m1<=m2)
+	return our.arg(1)(p);
+      else 
+	return our.arg(2)(p);
+    }
+  
+  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionChoosePseudocubeboard);
+
+//------------------------------------------------------------------------------------------
+
+//! Function implements selection between 3 functions based on position in grid of hexagons
+class FunctionChooseHexboard : public Function
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 3;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      static const XYZ d0(1.0f         ,0.0f         ,0.0f);
+      static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0f);
+      static const XYZ d2(cos(2*M_PI/3),sin(2*M_PI/3),0.0f);
+      
+      const float p0=p%d0;
+      const float p1=p%d1;
+      const float p2=p%d2;
+
+      const int i0=lrintf(p0);
+      const int i1=lrintf(p1);
+      const int i2=lrintf(p2);
+      
+      const float m0=fabsf(p0-i0);
+      const float m1=fabsf(p1-i1);
+      const float m2=fabsf(p2-i2);
+
+      if (m0>=m1 && m0>=m2)
+	return our.arg(0)(p);
+      else if (m1>=m0 && m1>=m2)
+	return our.arg(1)(p);
+      else 
+	return our.arg(2)(p);
+    }
+  
+  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionChooseHexboard);
 
 //------------------------------------------------------------------------------------------
 

@@ -98,9 +98,9 @@ void MutatableImageComputer::run()
 		  v.y(clamped(v.y(),0.0f,255.0f));
 		  v.z(clamped(v.z(),0.0f,255.0f));
 		  
-		  const uint red  =(uint)floor(v.x());
-		  const uint blue =(uint)floor(v.y());
-		  const uint green=(uint)floor(v.z());
+		  const uint red  =(uint)floorf(v.x());
+		  const uint blue =(uint)floorf(v.y());
+		  const uint green=(uint)floorf(v.z());
 		  
 		  task()->image_data()[task()->pixel()]=((red<<16)|(green<<8)|(blue));
 
