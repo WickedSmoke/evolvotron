@@ -3,9 +3,10 @@ TEMPLATE = app
 # append debug or release
 CONFIG+= qt thread release
 
-#########
+##################
 # Better optimisations than qmake defaults IF you have the right processor.
 # These two lines do appear to generate SSE instructions on the authors setup.
+#
 #QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
 #QMAKE_CXXFLAGS_RELEASE += -march=i686 -O3 -mfpmath=sse -msse2 -fomit-frame-pointer -ffast-math
 
@@ -96,3 +97,9 @@ realclean.commands = rm -r -f doc
 #
 MOC_DIR = moc
 
+##################
+# Use these for profiling
+#
+#QMAKE_CXXFLAGS_RELEASE -= -fomit-frame-pointer
+#QMAKE_LFLAGS_RELEASE += -pg
+#QMAKE_CXXFLAGS_RELEASE += -pg
