@@ -17,45 +17,39 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 /*! \file 
-  \brief Interface for class DialogAbout.
+  \brief Interface for class DialogMutatableImageDisplay.
 */
 
-#ifndef _dialog_about_h_
-#define _dialog_about_h_
+#ifndef _dialog_mutatable_image_display_h_
+#define _dialog_mutatable_image_display_h_
 
 #include <qdialog.h>
 #include <qvbox.h>
 #include <qlabel.h>
-#include <qtextedit.h>
 #include <qpushbutton.h>
 
 #include "useful.h"
-#include "license.h"
 
-//! Provides an "About" dialog box.
-/*! About dialog displays author info, web addresses and license info.
+//! Provides a "Properties" style dialog box for manipulating 
+/*! Make this modal for simplicity: 
+  avoids spawned images changing underneath us, 
+  and the possibility of opening one for every display.
  */
-class DialogAbout : public QDialog
+class DialogMutatableImageDisplay : public QDialog
 {
  private:
   Q_OBJECT
 
  public:
   //! Constructor.
-  DialogAbout(QWidget* parent);
+  DialogMutatableImageDisplay(QWidget* parent);
 
   //! Destructor.
-  virtual ~DialogAbout()
+  virtual ~DialogMutatableImageDisplay()
     {}
 
   //! Vertical layout.
   QVBox* _vbox;
-
-  //! Label for name/release/author etc
-  QLabel* _label;
-
-  //! Scrolling text area for GPL.
-  QTextEdit* _license;
 
   //! Button to close dialog.
   QPushButton* _ok;
@@ -63,7 +57,5 @@ class DialogAbout : public QDialog
   //! Need to pass resizes on to vbox or things just get chopped.
   virtual void resizeEvent(QResizeEvent*);
 };
-
-
 
 #endif

@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "useful.h"
 #include "mutatable_image.h"
 #include "mutatable_image_computer.h"
+#include "dialog_mutatable_image_display.h"
 
 class EvolvotronMain;
 class MutatableImageComputerTask;
@@ -94,6 +95,9 @@ class MutatableImageDisplay : public QWidget
 
   //! The image function being displayed (its root node).
   MutatableImage* _image;
+
+  //! Properties dialog.
+  DialogMutatableImageDisplay* _properties;
 
   //! Context (right-click) menu.
   QPopupMenu* _menu;

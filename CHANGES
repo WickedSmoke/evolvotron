@@ -10,6 +10,7 @@ From release 0.2.0:
  - Internals: function framework changed (avoids FunctionNodeUsing::evaluate wrapper), speed improvement ?
  - Internals: Type of top-level node can mutate, MutatableImage more sane.
  - "Undo" keyboard accelerator works 
+ - Per-image display "Properties" dialog added (placeholder)
 
 From release 0.1.4:
  - Bump version to 0.2.0 

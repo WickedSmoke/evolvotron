@@ -61,16 +61,19 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
    ,_locked(false)
    ,_current_display_level(0)
    ,_image(0)
+   ,_properties(0)
    ,_menu(0)
    ,_menu_big(0)
 {
   
-  // We DO want background drawn for fixed size because window could be bigger than image (not entirely satisfactory however: flickers)
+  // We DO want background drawn for fixed size because window could be bigger than image (not entirely satisfactory however: still flickers)
   if (!fixed_size)
     {
       // This will stop the widget being cleared to grey before paintEvent is called (supposed to reduce flicker; not 100% though).
       setBackgroundMode(Qt::NoBackground);
     }
+
+  _properties=new DialogMutatableImageDisplay(this);
 
   _menu=new QPopupMenu(this);  
 
@@ -133,6 +136,9 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       _menu->insertSeparator();
       _menu->insertItem("L&oad function",this,SLOT(menupick_load_function()));
     }
+
+  _menu->insertSeparator();
+  _menu->insertItem("&Properties...",_properties,SLOT(exec()));
 
   main()->hello(this);
 

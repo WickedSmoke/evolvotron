@@ -17,30 +17,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 /*! \file
-  \brief Implementation of class DialogAbout.
+  \brief Implementation of class DialogMutatableImageDisplay.
 */
 
-#include "dialog_about.h"
+#include "dialog_mutatable_image_display.h"
 
-static const char*const about_string="\nEvolvotron " EVOLVOTRON_BUILD "\n\nAuthor: timday@timday.com\n\nHome page: http://evolvotron.sourceforge.net\n\nProject page: http://sourceforge.net/projects/evolvotron\n\nLicense:";
-
-DialogAbout::DialogAbout(QWidget* parent)
+DialogMutatableImageDisplay::DialogMutatableImageDisplay(QWidget* parent)
   :QDialog(parent)
 {
-  setCaption("About evolvotron");
-  setMinimumSize(400,300);
+  setCaption("Image Properties");
+  setMinimumSize(128,128);
 
   _vbox=new QVBox(this);
-
-  // This should be the ONLY place a release number appears (other than CHANGES and the tar file name).  
-  // I can't be doing with changing release numbers in a zillion places... one ALWAYS gets missed.
-  _label=new QLabel(about_string,_vbox);
-  _label->setAlignment(Qt::AlignHCenter|_label->alignment());
-  
-  _license=new QTextEdit(_vbox);
-  _license->setReadOnly(true);
-  _license->setTextFormat(PlainText);
-  _license->setText(license_string);
 
   _ok=new QPushButton("OK",_vbox);
 
@@ -54,7 +42,7 @@ DialogAbout::DialogAbout(QWidget* parent)
 	  );
 }
 
-void DialogAbout::resizeEvent(QResizeEvent*)
+void DialogMutatableImageDisplay::resizeEvent(QResizeEvent*)
 {
   _vbox->resize(size());
 }
