@@ -57,6 +57,8 @@ void MutationParameters::reset()
   _probability_insert=0.02;
   _probability_substitute=0.02;
 
+  _proportion_basic=0.7;
+
   _proportion_constant=0.5;
   _identity_supression=1.0;
 
@@ -75,7 +77,7 @@ FunctionNode*const MutationParameters::random_function_stub(bool exciting) const
 {
   // Base mutations are Constant or Identity types.  
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
-  const float base=0.7;
+  const float base=proportion_basic();
 
   const float r=(exciting ? base+(1.0f-base)*r01() : r01());
 

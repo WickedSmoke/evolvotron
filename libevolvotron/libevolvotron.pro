@@ -8,6 +8,7 @@ CONFIG += staticlib
 HEADERS += \
         args.h \
 	dialog_about.h \
+	dialog_functions.h \
 	dialog_help.h \
         dialog_mutatable_image_display.h \
 	dialog_mutation_parameters.h \
@@ -43,8 +44,9 @@ HEADERS += \
 
 SOURCES += \
         args.cpp \
-	dialog_help.cpp \
 	dialog_about.cpp \
+	dialog_help.cpp \
+	dialog_functions.cpp \
         dialog_mutatable_image_display.cpp \
 	dialog_mutation_parameters.cpp \
 	evolvotron_main.cpp \

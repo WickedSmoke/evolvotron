@@ -63,6 +63,9 @@ class MutationParameters
   //! Specifies the probability of a node being replaced with an alternate type.
   float _probability_substitute;
 
+  //! Specifies the proportion of basic node types.
+  float _proportion_basic;
+
   //! Specifies the proportion of Constant nodes vs Position type nodes.
   float _proportion_constant;
 
@@ -243,6 +246,22 @@ class MutationParameters
       _probability_iterations_change_jump=v;
     }
 
+  //! Accessor.
+  const float proportion_basic() const
+    {
+      return _proportion_basic;
+    }
+  //! Accessor.
+  void proportion_basic(float p)
+    {
+      _proportion_basic=p;
+    }
+
+  //! Calculate branching ratio for above calls
+  /* Call user should be checking this and diluting with boring nodes to keep it under control
+   */
+  const float random_function_branching_ratio() const;
+
     //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
   FunctionNode*const MutationParameters::random_function_stub(bool exciting) const;
     
@@ -253,11 +272,6 @@ class MutationParameters
 
   //! Return a random function registration, appropriately biased by current settings
   const FunctionRegistration*const random_function_registration() const;
-
-  //! Calculate branching ratio for above calls
-  /* Call user should be checking this and diluting with boring nodes to keep it under control
-   */
-  const float random_function_branching_ratio() const;
 };
 
 #endif

@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2004 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -233,6 +233,8 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
 
   _dialog_mutation_parameters=new DialogMutationParameters(this,&_mutation_parameters);
 
+  _dialog_functions=new DialogFunctions(this,&_mutation_parameters);
+
   _menubar=new QMenuBar(this);
 
   _popupmenu_file=new QPopupMenu;
@@ -254,11 +256,12 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _popupmenu_settings->setCheckable(true);
 
   _popupmenu_settings->insertItem("Mutation &parameters...",_dialog_mutation_parameters,SLOT(show()));
+  _popupmenu_settings->insertItem("&Functions...",_dialog_functions,SLOT(show()));
 
 #ifdef FULLSCREEN
   _popupmenu_settings->insertSeparator();
 
-  _menu_item_number_fullscreen=_popupmenu_settings->insertItem("&Fullscreen",this,SLOT(toggle_fullscreen()));
+  _menu_item_number_fullscreen=_popupmenu_settings->insertItem("Full&screen",this,SLOT(toggle_fullscreen()));
   _menu_item_number_hide_menu=_popupmenu_settings->insertItem("Hide &menu and statusbar",this,SLOT(toggle_hide_menu()));  
 
   _popupmenu_settings->setItemChecked(_menu_item_number_fullscreen,start_fullscreen);
@@ -768,7 +771,10 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
 
   if (reset_mutation_parameters)
     {
+      // Invoking reset on the 1st dialog actually resets the parameters 
       _dialog_mutation_parameters->reset();
+      // This one just serves to setup the dialog from the now reset parameters
+      _dialog_functions->setup_from_mutation_parameters();
     }
 
   last_spawned_image(0,&EvolvotronMain::spawn_normal);
