@@ -74,8 +74,8 @@ executable.files = evolvotron
 # Make a .tar.gz
 #
 tgz.target = evolvotron.tar.gz
-tgz.depends = README BUILD LICENSE TODO CHANGES evolvotron.pro doxygen.cfg $$HEADERS $$SOURCES
-tgz.commands = tar cvfz evolvotron.tar.gz README BUILD LICENSE TODO CHANGES evolvotron.pro doxygen.cfg $$HEADERS $$SOURCES 
+tgz.depends = README BUILD LICENSE TODO CHANGES configure evolvotron.pro doxygen.cfg $$HEADERS $$SOURCES
+tgz.commands = tar cvfz evolvotron.tar.gz README BUILD LICENSE TODO CHANGES configure evolvotron.pro doxygen.cfg $$HEADERS $$SOURCES 
 QMAKE_EXTRA_UNIX_TARGETS += tgz
 
 #####################################
