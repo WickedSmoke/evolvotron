@@ -7,14 +7,16 @@ if [ -z "$QTDIR" ] ; then
   exit 1
 fi
 
-# QMAKESPEC possibly also required on some systems
+# QMAKESPEC is possibly also required on some systems
 # See Qt/qmake docs for your system and Evolvotron README if you have any problems.
 
 # NB Don't run "qmake -project" again!!! (It wipes evolvotron.pro)
 
-echo "GCC version:"
+echo "You will be using gcc version:"
 gcc --version
 
-qmake evolvotron.pro 
+echo "Running qmake..."
 
+qmake main.pro
 
+echo "...configuration completed - you can do 'make' next"

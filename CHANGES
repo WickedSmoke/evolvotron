@@ -1,5 +1,9 @@
 [Most recent at top]
 
+From release 0.1.2:
+ - Build lib and separate executables.  Use qmake "subdirs" at top level, move code into subdirs.
+ - Add evolvotron_render executable.
+
 From release 0.1.1:
  - Bump version to 0.1.2.  This is purely a bug-fix release.
  - Gentoo compile bug fix (Karl Robillard)

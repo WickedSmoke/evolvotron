@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Execute this to package up evolvotron as a .tar.gz
+
+VERSION=`./VERSION`
+
+cd ..
+
+FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,CHANGES,VERSION,configure,doxygen.cfg,mktgz,mkdoc}`
+
+FILES_H=`find evolvotron -name moc -prune -o -name '*.h' -print`
+FILES_CPP=`find evolvotron -name moc -prune -o -name '*.cpp' -print`
+FILES_PRO=`find evolvotron -name moc -prune -o -name '*.pro' -print`
+
+FILES="$FILES_MISC $FILES_H $FILES_CPP $FILES_PRO"
+
+tar cvfz evolvotron/evolvotron.tar.gz $FILES
+
+echo "***"
+echo "*** Suggestion: mv evolvotron.tar.gz evolvotron-$VERSION.tar.gz"
+echo "***"

@@ -1,0 +1,6 @@
+#!/bin/sh -v
+
+mkdir -p doc
+
+doxygen doxygen.cfg
+
