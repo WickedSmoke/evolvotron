@@ -1826,9 +1826,10 @@ class FunctionAverageSamples : public FunctionIterative
 	}
       else
 	{
+	  // In the case of two iterations the samples will be at p0 and p1
 	  p0=p-baseline;
 	  p1=p+baseline;
-	  delta=(p1-p0)/our.iterations();
+	  delta=(p1-p0)/(our.iterations()-1);
 	}
 
       XYZ ret(0.0f,0.0f,0.0f);
