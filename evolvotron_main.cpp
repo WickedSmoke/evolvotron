@@ -177,12 +177,12 @@ void EvolvotronMain::spawn_warped(MutatableImageDisplay* spawning_display)
 	{
 	  std::vector<MutatableImageNode*> args;
 
-	  // NB We don't generate any z co-ordinates so the random transform remains in the image plane.
+	  // NB We don't generate any z co-ordinates (except z identity) so the random transform remains in the image plane.
 	  // (completely random transforms mostly look too dissimilar; they are different slices of the 3D image volume)
 	  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),1.0)));
 	  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),2.0)));
 	  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),2.0)));
-	  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),2.0)));
+	  args.push_back(new MutatableImageNodeConstant(XYZ(0.0,0.0,1.0f)));
 	  args.push_back(spawning_image->deepclone());
 	  
 	  (*it)->image(new MutatableImageNodePreTransform(args));
