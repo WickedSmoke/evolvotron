@@ -30,6 +30,8 @@ DialogMutatableImageDisplay::DialogMutatableImageDisplay(QWidget* parent)
 
   _vbox=new QVBox(this);
 
+  _message=new QLabel(QString(""),_vbox);
+
   _ok=new QPushButton("OK",_vbox);
 
   //! \todo: These button settings don't seem to do anything.  Find out what's up.
@@ -40,9 +42,21 @@ DialogMutatableImageDisplay::DialogMutatableImageDisplay(QWidget* parent)
 	  _ok,SIGNAL(clicked()),
 	  this,SLOT(hide())
 	  );
+
+  // Shrink to fit contents
+  adjustSize();
 }
 
 void DialogMutatableImageDisplay::resizeEvent(QResizeEvent*)
 {
   _vbox->resize(size());
 }
+
+void DialogMutatableImageDisplay::set_message(const std::string& m)
+{
+  _message->setText(QString(m.c_str()));
+  
+  // Might need more space for message
+  adjustSize();
+}
+

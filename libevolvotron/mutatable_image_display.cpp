@@ -215,6 +215,8 @@ void MutatableImageDisplay::image(MutatableImage* i)
   assert(_image==0 || _image->ok());
   assert(i==0 || i->ok());
 
+  _properties->set_message(std::string("Not yet implemented"));
+
   // This might have already been done (e.g by resizeEvent), but it can't hurt to be sure.
   main()->farm()->abort_for(this);
 

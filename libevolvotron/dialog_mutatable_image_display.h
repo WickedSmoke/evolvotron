@@ -39,6 +39,17 @@ class DialogMutatableImageDisplay : public QDialog
 {
  private:
   Q_OBJECT
+    
+ protected:
+
+  //! Vertical layout.
+  QVBox* _vbox;
+
+  //! Message displaying some info about the image.
+  QLabel* _message;
+
+  //! Button to close dialog.
+  QPushButton* _ok;
 
  public:
   //! Constructor.
@@ -48,14 +59,11 @@ class DialogMutatableImageDisplay : public QDialog
   virtual ~DialogMutatableImageDisplay()
     {}
 
-  //! Vertical layout.
-  QVBox* _vbox;
-
-  //! Button to close dialog.
-  QPushButton* _ok;
-
   //! Need to pass resizes on to vbox or things just get chopped.
   virtual void resizeEvent(QResizeEvent*);
+
+  //! Set message in text area
+  void set_message(const std::string& m);
 };
 
 #endif
