@@ -102,7 +102,8 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
   //! Save this node.
   virtual std::ostream& save_function(std::ostream& out,uint indent) const
     {
-      out << Margin(indent) << "<f type=\"" << _registration.name() << "\">\n";
+      out << Margin(indent) << "<f>\n";
+      out << Margin(indent+1) << "<type>" << _registration.name() << "</type>\n";
       Superclass::save_function(out,indent+1);
       out << Margin(indent) << "</f>\n";
       return out;

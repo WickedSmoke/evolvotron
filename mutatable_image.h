@@ -46,6 +46,11 @@ class MutatableImage
       assert(_root!=0);
     }
 
+  //! Build a MutatableImage given a description
+  /*! The ok flag will be true unless there's a problem, in which case there will be an explanation in report.
+   */
+  MutatableImage(const FunctionNodeInfo* info,bool& ok,std::string& report);
+
   //! Create a new random image tree.
   MutatableImage(const MutationParameters& parameters,bool exciting=false)
     :_root(FunctionNode::stub(parameters,exciting))

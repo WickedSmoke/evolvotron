@@ -36,6 +36,7 @@
 
 #include "function_registry.h"
 
+class FunctionNodeInfo;
 
 class FunctionPreTransform;
 template <typename F> class FunctionNodeUsing;

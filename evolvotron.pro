@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 # append debug or debug
-CONFIG+= qt thread release
+CONFIG+= qt thread debug
 
 ##################
 # Improved optimisation options from qmake defaults
@@ -29,6 +29,7 @@ HEADERS += \
         function.h \
         functions.h \
         function_node.h \
+        function_node_info.h \
         function_node_using.h \
         function_pre_transform.h \
         function_post_transform.h \
@@ -59,6 +60,7 @@ SOURCES += \
         function.cpp \
         functions.cpp \
         function_node.cpp \
+        function_node_info.cpp \
         function_node_using.cpp \
         function_pre_transform.cpp \
         function_post_transform.cpp \

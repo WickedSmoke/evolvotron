@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "function_node.h"
 #include "function_node_using.h"
+#include "function_node_info.h"
 
 #include "mutatable_image.h"
 #include "matrix.h"
