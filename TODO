@@ -1,4 +1,9 @@
-- Make files unpack to subdirectory.
+- Generalise "parameters" along with "args".
+- Make tar files unpack to subdirectory.
+- More specific warp options: zoom, pan, rotate.
+  Should recognize a top-level pre-transform node type and modify it rather
+  than adding yet another node
+  (NB make sure recolour's post-transform is "inside").
 - Should be a single position transform under user control attached to top level of every image.
   Use to zoom in/out, rotate/translate etc repeatedly without accumulating loads of extra nodes.
 - Add control over MutatableImageNodePositionTransformedQuadratic vs MutatableImageNodePositionTransformed proportions
@@ -53,5 +58,11 @@
 - Rationalise MutatableImageNode::stub so more work is done by Node constructors
   (just pass in a MutationParameters).  Have to keep existing ctor. form for deepclone though.
 - Special reset which uses iterative types to set up nothing but Mandelbrot/Julia-set type functions.
-- Generalise "parameters" along with "args".
 - Avoid misleading moire patterns by jittering
+- Combining/breeding image pairs.
+  Use drag-and-drop
+  Either:
+    Create a new top level node with 2 or more args and add the parents to it.
+    Create a new random stub and insert the parents at random points.
+    Insert one image at a random point into the other.
+    Concatenate the 2 images.

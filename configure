@@ -6,7 +6,7 @@
 # Some users report problems with QMAKESPEC not being defined.
 # If you're one of them try uncommenting the line below
 # (obviously, if you're not on a linux machine you may need to change the
-# value to; consult the qmake documentation for allowed values).
+# value; consult the qmake documentation for allowed values).
 #export QMAKESPEC=linux-g++
 
 qmake evolvotron.pro

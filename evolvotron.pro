@@ -9,9 +9,12 @@ CONFIG+= qt thread release
 # seem to be needed to generate SSE instructions on the authors setup.
 # The larger inline limit helps with template generated code.
 # There is a nice summary of gcc optimisation options at http://freshmeat.net/articles/view/730/
+#
 # Uncomment BOTH of the next two lines on a P4 system:
-# QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
-# QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2 -O3 -ffast-math -funroll-loops -finline-limit=4000 
+QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
+QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2 -O3 -ffast-math -funroll-loops -finline-limit=4000 -fomit-frame-pointer
+#
+# On a P3 try -msse instead of -msse2 ?
 
 # Input
 HEADERS += \
@@ -72,10 +75,12 @@ executable.files = evolvotron
 
 #######################################
 # Make a .tar.gz
-#
+# This is build from the parent directory so it will unpack tidily
+TGZ_FILES = README BUILD LICENSE TODO CHANGES configure evolvotron.pro doxygen.cfg $$HEADERS $$SOURCES
+TGZ_FILES_PREFIXED = $$join(TGZ_FILES," evolvotron/","evolvotron/") 
 tgz.target = evolvotron.tar.gz
-tgz.depends = README BUILD LICENSE TODO CHANGES configure evolvotron.pro doxygen.cfg $$HEADERS $$SOURCES
-tgz.commands = tar cvfz evolvotron.tar.gz README BUILD LICENSE TODO CHANGES configure evolvotron.pro doxygen.cfg $$HEADERS $$SOURCES 
+tgz.depends = $$TGZ_FILES
+tgz.commands = cd .. ; tar cvfz evolvotron/evolvotron.tar.gz $$TGZ_FILES_PREFIXED
 QMAKE_EXTRA_UNIX_TARGETS += tgz
 
 #####################################
