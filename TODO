@@ -4,10 +4,6 @@ imply it will be done sooner or later than other items!
 Animation
 ---------
 - More warp types (rotate time into space etc)
-- The main thread seems to do a lot of work unpacking initial
-  low-resolution QImages to high-resolution QPixmaps.
-  Could be fixed by jumping straight to the highest resolution
-  available in the "done" queue instead of working through them all.
 - More control over animation (frames & framerate) from edit/options menu
   (or on a display by display basis ?  Then "big" images could have
   more frames and higher framerates)
@@ -15,9 +11,12 @@ Animation
   at low-res render levels
 - Support animation in evolvotron_render 
 - Sync animation to xmms beat somehow ?
+- Option to sweep z sinusoidally or linearly
+- Option to bounce or cycle z
 
 Conventional
 ------------
+- Get rid of heat/cool etc buttons cluttering up status bar and just have autocool tick, and reheat button ?
 - Check qmake can be found by configure.
   Check $(QTDIR)/bin first... RH seem to be unusual in copying it to /usr/bin
 - evolvotron_render default output (or with filename "-") should be to stdout.
@@ -46,7 +45,7 @@ Conventional
 - Get rid of silly xyz and matrix dependence on general tuples and templates.
   (Can be optimised, but only with heavyweight compile options.)
 - Profile & optimise.
-  Not too happy with FunctionNodeUsing<F> evaluate overhead of function wrapper for F::evaluate
+  Not too happy with FunctionNodeUsing<F> - evaluate overhead of function wrapper for F::evaluate
 - Spawn recoloured could be linear, quadratic (or generalised?) versions.
 - Locked attribute should be an image property, not a display property.
   (Would play nicer with Undo)
@@ -109,5 +108,7 @@ Conventional
   (just pass in a MutationParameters).  
 - Avoid misleading moire patterns by jittering samples
 - No low-res images option for when using remotely via X11 over slow link
-  (they take longer to display than compute) (running over compressed ssh helps though).
-- Think of more functions
+  (they take longer to display than compute) (running over compressed ssh helps a lot though).
+- Think of more functions:
+    Kelaidascope reflector
+    Blending counterparts for switching/choosing functions.

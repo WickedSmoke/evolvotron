@@ -273,8 +273,6 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
       _offscreen_image_data.clear();
       _offscreen_image_data.swap(task->image_data());
       
-      std::clog << "[" << task->frames() << "]";
-
       for (uint f=0;f<task->frames();f++)
 	{
 	  _offscreen_image.push_back

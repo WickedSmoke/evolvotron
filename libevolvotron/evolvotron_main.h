@@ -178,6 +178,12 @@ class EvolvotronMain : public QMainWindow
   //! An owned pointer to the current transform factory (needed for Respawn).
   TransformFactory* _transform_factory;
 
+  //! A function name to be tested (no test if empty)
+  std::string _test_function;
+
+  //! Flag specifying whether test function should be exposed
+  bool _test_function_unwrapped;
+
   //! Accessor.
   const MutatableImage*const last_spawned_image() const
     {
@@ -225,7 +231,28 @@ class EvolvotronMain : public QMainWindow
 
   //! Destructor.
   ~EvolvotronMain();
+
+  //! Accessor
+  const std::string& test_function() const
+    {
+      return _test_function;
+    }
   
+  //! Accessor. Returns true if function name recognised
+  const bool test_function(const std::string& f);
+  
+  //! Accessor.
+  const bool test_function_unwrapped() const
+    {
+      return _test_function_unwrapped;
+    }
+
+  //! Accessor.
+  void test_function_unwrapped(bool v)
+    {
+      _test_function_unwrapped=v;
+    }
+
   //! Accessor.
   std::vector<MutatableImageDisplay*>& displays()
     {

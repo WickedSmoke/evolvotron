@@ -4,6 +4,7 @@ From release 0.2.0:
  - Bump version to 0.2.1-devel
  - Priority to displaying (not computing) higher resolution images
    (saves time enlarging low res images unnecessarily)
+ - x and -X command line options to specify specifc top level function types.
 
 From release 0.1.4:
  - Bump version to 0.2.0 

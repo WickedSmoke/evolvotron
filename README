@@ -71,7 +71,7 @@ If you change them, do "make distclean" and ./BUILD to ensure
 Makefiles are rebuilt.
 
 Here's the times for a 2.4GHz P4 to run a 2048x2048 evolvotron_render
-(gcc 3.2 compiled) on a benchmark image:
+(gcc 3.2 compiled) on a benchmark image function:
   Qt defaults (-O2):                                        30.6s
    -O2 -> -O3:                                              28.6s
    add -fomit-frame-pointer                                 28.2s
@@ -79,7 +79,7 @@ Here's the times for a 2.4GHz P4 to run a 2048x2048 evolvotron_render
    add -ffast-math                                          26.5s
    add arch/cpu -> -march=pentium4 -mfpmath=sse -msse2      23.6s
    add -finline-limit=4000                                  19.4s
-(but that last one involves a 32m build time, cf ~2m for the others)
+(but that last one involves a 32m build time (!!!), cf ~2m for the others)
 ]
 
 BUILD PROBLEMS
@@ -143,7 +143,6 @@ Paolo Greppi built it on OSX like this:
  - make ... while compiling, it keeps saying
    c++: unrecognized option `-pthread'
 
-
 INSTALL
 =======
 Doing
@@ -168,14 +167,12 @@ If you'd rather just do it by hand, all you need to do is copy the executables
 to wherever you like (e.g ~/bin, /usr/local/bin).
 There are no extra supporting files which need to be in special places.
 
-USAGE & INTERFACE
-=================
+USAGE
+=====
 
-BASICS
-------
-You will need a fast machine, or patience
-(if you still find it slow on a P3 or P4 machine make sure you have compiled it with
-the SSE options enabled... see BUILD OPTIONS section above).
+You will need a fast machine, or patience.
+(A little more performance can be obtained from messing with the compile flags:
+see the BUILD OPTIONS section above).
 
 On starting the application, a grid of images is displayed.
 (For some reason the default size is quite small: you'll 
@@ -198,14 +195,49 @@ although complex looking, are actually implemented by a single function node
 and may leave you stuck too.
 
 COMMAND LINE OPTIONS
---------------------
-  -geometry <width>x<height> : usual Qt/X option to set on-screen size in pixels
-  -g <rows> <cols> : sets number of image display cells (defaults 7 by 5)
-  -t <threads> : sets number of compute threads (defaults to 2)
-  -v : verbose mode (mainly to assist debugging)
-  -f <frames> : Number of frames in animations (defaults to 1 i.e no animation)
-  -r <framerate> : Rate at which frames are displayed (integer).  (Defaults to 8).
- 
+====================
+
+USER OPTIONS
+------------
+  -geometry <width>x<height>
+	- Usual Qt/X option to set on-screen size in pixels
+
+  -g <rows> <cols>
+	- Sets number of image display cells (defaults 7 by 5)
+
+  -t <threads>
+	- Sets number of compute threads (defaults to 2)
+
+ANIMATION OPTIONS
+-----------------
+
+  -f <frames>
+	- Number of frames in animations (defaults to 1 i.e no animation)
+
+  -r <framerate>
+	- Rate at which frames are displayed (integer).  (Defaults to 8).
+
+DEBUGGING/POWER-USER OPTIONS
+----------------------------
+  -v 
+	- Verbose mode, writes to application stderr (mainly to assist debugging)
+
+  -x <functionname>
+	- Force a specific function type to be used at the top level of all function trees.
+	The specifed function is still wrapped (concatenated) by spatial and colour warping
+	functions which may disguise it considerably.
+	A list of function names understood by evolvotron is output during app startup
+	when the -v option is specified.
+	Example: evolvotron -x FunctionSpiralLinear
+
+ -X <functionname>
+	- Similar to -x except that the specified function is NOT wrapped by space/colour transforms.
+	NB For functions without leaf nodes or parameters (e.g FunctionSphericalToCartesian) this doesn't
+	leave any scope for variation or future mutation.
+	 
+MOUSE CONTROL
+============= 
+
 RIGHT-CLICK CONTEXT MENU
 ------------------------
 Right clicking on an image gets you a few more options:
@@ -278,6 +310,9 @@ A CTRL-ALT-middle drag shears the image (the best way to see what this does
 is to click in the corner of an image and move the mouse horizontally or
 vertically).
 
+GUI ELEMENTS
+============
+
 MAIN MENU BAR
 -------------
 On the application's main menu-bar, the Edit menu lets you undo
@@ -344,6 +379,7 @@ files foo.f000000.ppm, foo.f000001.ppm... will be saved.
 You can convert these to a MNG (a multi-frame PNG) playing at
 approx. 8 frames per second with: 
   convert -delay 12 foo.f??????.ppm foo.mng
+(I have had some problems with .mng format; try .gif instead if this is the case).
 
 ADVANCED USAGE
 ==============

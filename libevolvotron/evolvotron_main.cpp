@@ -205,7 +205,6 @@ void EvolvotronMain::last_spawned_image(const MutatableImage* image,SpawnMemberF
   _last_spawn_method=method;
 }
 
-    
 /*! Constructor sets up GUI components and fires up QTimer.
  */
 EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frames,uint framerate,uint n_threads)
@@ -215,6 +214,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
    ,_last_spawned_image(0)
    ,_last_spawn_method(&EvolvotronMain::spawn_normal)
    ,_transform_factory(0)
+   ,_test_function_unwrapped(false)
 {
   setMinimumSize(600,400);
 
@@ -316,6 +316,17 @@ EvolvotronMain::~EvolvotronMain()
   delete _farm;
 
   std::clog << "...completed Evolvotron shutdown\n";  
+}
+
+const bool EvolvotronMain::test_function(const std::string& f)
+{
+  if (FunctionRegistry::get()->lookup(f))
+    {
+      _test_function=f;
+      return true;
+    }
+  else
+    return false;
 }
 
 void EvolvotronMain::spawn_normal(const MutatableImage* image,MutatableImageDisplay* display)
@@ -577,10 +588,26 @@ void EvolvotronMain::tick()
   the second function as being the "actual" image (we use an "exciting" stub to avoid boring constants or identities),
   and the final function as being a colour-space transform.
   Basically the idea is to give lots of opportunities for stuff to happen.
+
+  If a test function was specified then we use that as the top level node.
  */
 void EvolvotronMain::reset(MutatableImageDisplay* display)
 {
-  FunctionNode*const root=FunctionNode::initial(mutation_parameters());
+  FunctionNode* root;
+  if (test_function().empty())
+    {
+      root=FunctionNode::initial(mutation_parameters());
+    }
+  else if (test_function_unwrapped())
+    {
+      FunctionNodeStubNewFnPtr rootfn=FunctionRegistry::get()->lookup(test_function())->stubnew_fn();
+      root=(*rootfn)(mutation_parameters());
+    }
+  else
+    {
+      root=FunctionNode::initial(mutation_parameters(),FunctionRegistry::get()->lookup(test_function()));
+    }
+	
   history().replacing(display);
   display->image(new MutatableImage(root));
 }

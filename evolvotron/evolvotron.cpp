@@ -97,6 +97,19 @@ int main(int argc,char* argv[])
       exit(1);
     }
 
+  bool testfn_unwrapped=false;
+  std::string testfn;
+  if (args.option("-x",1))
+    {
+      args.after() >> testfn;
+    }
+
+  if (args.option("-X",1))
+    {
+      args.after() >> testfn;
+      testfn_unwrapped=true;
+    }
+
   std::clog
     << "Evolvotron version "
     << EVOLVOTRON_BUILD
@@ -113,6 +126,23 @@ int main(int argc,char* argv[])
   FunctionRegistry::get()->status(std::clog);
 
   EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),frames,framerate,threads);
+
+  if (!testfn.empty())
+    {
+      std::clog
+	<< "Testing function: "
+	<< testfn
+	<< (testfn_unwrapped ? " (unwrapped)" : " (wrapped)")
+	<< "\n";
+
+      if (!main_widget->test_function(testfn))
+	{
+	  std::cerr << "Unrecognised function name specified for -x option\n";
+	  exit(1);
+	}
+
+      main_widget->test_function_unwrapped(testfn_unwrapped);
+    }
   
   app.setMainWidget(main_widget);
   main_widget->show();
