@@ -611,6 +611,10 @@ void MutatableImageDisplay::menupick_load_function()
 	    {
 	      QMessageBox::warning(this,"Evolvotron",("Function loaded with warnings:\n"+report).c_str(),QMessageBox::Ok,QMessageBox::NoButton);
 	    }
+	  
+	  main()->history().begin_action("load");
+	  main()->history().replacing(this);
+	  main()->history().end_action();
 	  image(new_image);
 	}
     }
