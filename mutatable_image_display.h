@@ -1,0 +1,135 @@
+// Source file for evolvotron
+// Copyright (C) 2002 Tim Day
+/*
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
+/*! \file 
+  \brief Interface for class MutatableImageDisplay
+*/
+
+#ifndef _mutatable_image_display_h_
+#define _mutatable_image_display_h_
+
+#include <qwidget.h>
+#include <qpixmap.h>
+#include <qpopupmenu.h>
+
+#include "useful.h"
+#include "mutatable_image.h"
+#include "mutatable_image_computer.h"
+
+class EvolvotronMain;
+class MutatableImageComputerTask;
+
+//! Widget responsible for displaying a MutatableImage (which is the same as a MutatableImageNode currently).
+/*! A MutatableImageDisplay is responsible for displaying the image computed from the MutatableImageNode it owns.
+  Computations are split off into separate threads to take advantage of multiprocessor machines.
+ */
+class MutatableImageDisplay : public QWidget
+{
+  Q_OBJECT
+
+ protected:
+  //! Pointer back to the application object to access services.
+  EvolvotronMain*const _main;
+
+  //! Flag for whether context menu should display all options.
+  bool _full_functionality;
+
+  //! Flag indicating resize is in progress (between resizeEvent and subsequent paintEvent).
+  /*! Used to supress unnecessary task spawning.
+   */
+  bool _resize_in_progress;
+
+  //! Flag indicating the display is considered locked and shouldn't be loaded with a new image.
+  bool _locked;
+
+  //! The resolution level currently displaying (0=1-for-1 pixels, 1=half resolution etc).
+  /*! Needed to handle possible (but unlikely?) out of order task returns from multiple compute threads.
+   */
+  uint _current_display_level;
+
+  //! Offscreen image buffer.
+  QPixmap* _offscreen_buffer;
+
+  //! The image being displayed (its root node).
+  MutatableImageNode* _image;
+
+  //! Context (right-click) menu.
+  QPopupMenu* _menu;
+
+  //@{
+  //! Position of item in menu.
+  uint _menu_item_number_spawn;
+  uint _menu_item_number_lock;
+  uint _menu_item_number_big;
+  uint _menu_item_number_save;
+  //@}
+
+ public:
+  //! Constructor.
+  MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full);
+
+  //! Destructor.
+  virtual ~MutatableImageDisplay();
+
+  //! Accessor.
+  MutatableImageNode*const image()
+    {
+      return _image;
+    }
+
+  //! Accessor.
+  const bool locked() const
+    {
+      return _locked;
+    }
+
+  //! Accessor.
+  EvolvotronMain*const main() const
+    {
+      return _main;
+    }
+
+  //! Load a new image (clears up old image, starts new compute tasks).
+  void image(MutatableImageNode* image);
+
+  //! Evolvotron main calls this with completed (but possibly aborted) tasks.
+  void deliver(MutatableImageComputerTask* task);
+
+ protected:
+  //! Usual handler for repaint events.
+  virtual void paintEvent(QPaintEvent* event);
+
+  //! Usual handler for resize events.
+  virtual void resizeEvent(QResizeEvent* event);
+
+  //! Handler for mouse events.
+  virtual void mousePressEvent(QMouseEvent* event);
+
+  protected slots:
+
+  //! Called from context menu and also by click event.
+  void menupick_spawn();
+
+  //! Called from context menu.
+  void menupick_bigwin();
+
+  //! Called from context menu.
+  void menupick_lock();
+};
+
+#endif

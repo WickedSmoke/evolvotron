@@ -1,0 +1,123 @@
+ABOUT
+=====
+[This was the original "Project Purpose and Summarization" for sourceforge.]
+
+Evolvotron
+Interactive "generative art" software to evolve images/textures/patterns through 
+an iterative process of random mutation and user-selection driven evolution.  
+If you like lava lamps, and still think the Mandelbrot set is cool, this could 
+be the software for you.
+
+Coded using C++ and STL.  Uses Qt GUI libraries.  Multithreaded.
+
+LICENSE
+=======
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+[The license should be in the LICENSE file in this directory]
+
+BUILDING
+========
+This has only been tested on RedHat8.0, but there's no reason it shouldn't
+work on any platform with a correctly set up qmake.
+
+You should just be able to do
+
+  ./BUILD
+
+(All this does is a qmake followed by a make!)
+
+This should give you a "evolvotron" executable which you can run with
+  ./evolvotron
+or install where you like.
+
+USING
+=====
+You will need a fast machine, or patience.
+
+On starting the app, a grid of images is displayed.
+(grid size not yet under command line control sorry).
+
+Repeat the following until bored:
+ - Click (singleclick) on an image you like to 
+   spawn the generation of its mutant offspring.
+ - Wait until variations on it are regenerated in sufficient 
+   detail that you can decide which one you like best again.
+
+Right clicking on an image gets you a few more options: 
+ - you can "lock" an image 
+ - you can get a big image in a single frame 
+   (which is resizeable, so you can get up to almost full-screen size).
+
+IMPORTANT: Initially you should select images with some sort of variation.
+If you select a uniform image, you may get stuck in a degenerate zone with 
+little to mutate and therefore little chance of escape to a more interesting 
+area.  You can always restart from the "File" menu.
+
+The status bar shows how many "tasks" are outstanding.  
+Each "task" is the recomputation of an image at some resolution.
+Tasks are prioritised by their number of pixels (small image => higher priority).
+This is why, if the main grid is still recomputing, a "big" image 
+will appear to freeze after it has reached a certain resolution, 
+at least until other lower resolution tasks have completed. 
+
+The initial release focuses very much on getting the display and 
+multi-threading aspects of the software done right; less work has 
+been done on the functions comprising the images so the variety you'll 
+obtain is a bit limited, although something quite striking can sometimes 
+be obtained.  This will be addressed in the next release.
+
+Currently the software runs 2 compute threads so those of 
+you lucky enough to have dual processor machines should see some 
+benefit (or see it deadlock :^)... Be warned that I haven't had 
+an opportunity  to test on more than a single processor.  
+The number of compute threads will be under command-line-option 
+control at some point.
+
+If you want to save anything, for now you'll have to use "import" 
+or similar to do a screen/window capture.
+
+INSTALL
+=======
+Doing 
+  make install
+will attempt to install the executable in /usr/local/bin
+
+BUILDING CODE DOCUMENTATION
+===========================
+If you have doxygen (and graphviz NB!!!) and want to build the documentation 
+subdirectory too, execute 
+  make doc
+The code documentation then appears in ./doc/html/
+
+CLEANING UP
+===========
+To clean up this directory, do
+  make clean
+which deletes everything except the doc directory.
+Do 
+  make realclean
+to get rid of everything including the doc directory.
+
+GRIPE
+=====
+I originally wanted to use gtkmm for this app 'cos Gtk looks so sexy when themed, and I'd already done
+a Qt app ("fracplanet") and wanted to judge for myself how gtkmm compared.  However, I couldn't find 
+any gtkmm RPMs for RedHat (I did find some old ones on "freshrpms", but when I tried to use them RH's 
+pkg-conf didn't seem to be set up right to actually build anything).  Sure, I could have probably 
+compiled the sources, but most people aren't going to bother and so if I want to write software
+people will actually download and try then it's going to have to use the libs which come with the
+distros, or at least which have hassle free ready-to-go RPMs available.
+Maybe next time.

@@ -1,0 +1,61 @@
+// Source file for evolvotron
+// Copyright (C) 2002 Tim Day
+/*! \page License License
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
+/*! \file
+  \brief Application boilerplate for evolvotron executable (contains "main").
+*/
+
+/*! \mainpage Evolvotron : image evolver
+
+  \author Tim Day 
+
+  \section introduction Introduction
+  "Evolvotron" is an interactive tool for producing "generative art".
+  Images are generated from function trees, which are then mutated and evolved through a process of user selection.
+
+  \todo For new features to be added, see the TODO file.
+ */
+
+#include <iostream>
+
+#include <qapplication.h>
+
+#include "evolvotron_main.h"
+
+//! Application code
+int main(int argc,char* argv[])
+{
+  QApplication app(argc,argv);
+
+  //! \todo: Use getopt to pick up size arguments
+
+  // Columns, rows, threads
+  EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(8,6),2);
+
+  main_widget->resize(800,600);
+
+  app.setMainWidget(main_widget);
+  main_widget->show();
+
+  std::cerr << "Commencing main loop...\n";
+
+  main_widget->reset();
+
+  return app.exec();
+}

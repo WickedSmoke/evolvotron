@@ -1,0 +1,6 @@
+- More functions (sin, rotate, sawtooth, multiply, divide).
+- Control grid size and number of threads from command line options.
+- Control over mutation parameters (dialog box)
+- Quick "Hotter"/"Colder" controls
+- Use hourglass cursor over displays which haven't got final high resolution yet ?
+- Release 0.0.0

@@ -1,0 +1,15 @@
+[check]
+QMAKE_CACHE_VERSION = 1.03a
+QMAKE_ABSOLUTE_SOURCE_PATH = 
+MOC_DIR = moc/
+UI_DIR = 
+UI_HEADERS_DIR = 
+UI_SOURCES_DIR = 
+[depend]
+toxique.cpp = toxique_main.h
+toxique_main.cpp = toxique_main.h
+toxique_main.h = 
+[mocable]
+toxique.cpp = *qmake_ignore*
+toxique_main.cpp = *qmake_ignore*
+toxique_main.h = moc
