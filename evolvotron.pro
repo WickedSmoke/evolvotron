@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 # append debug or debug
-CONFIG+= qt thread debug
+CONFIG+= qt thread release
 
 ##################
 # Improved optimisation options from qmake defaults

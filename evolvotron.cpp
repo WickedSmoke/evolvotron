@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002 Tim Day
+// Copyright (C) 2002,2003 Tim Day
 /*! \page License License
 
 This program is free software; you can redistribute it and/or
