@@ -48,9 +48,12 @@ class FunctionRegistry : public Singleton<FunctionRegistry>
 
   //! Return the registration for the function named (returns 0 if unknown)
   const FunctionRegistration*const lookup(const std::string& f) const;
+
+  //! typedefed for convenience
+  typedef std::vector<const FunctionRegistration*> Registrations;
   
   //! Just get the collection of registrations.
-  const std::vector<const FunctionRegistration*>& registrations() const
+  const Registrations& registrations() const
     {
       return _registry_by_series;
     }
@@ -67,7 +70,7 @@ class FunctionRegistry : public Singleton<FunctionRegistry>
   std::map<std::string,const FunctionRegistration*> _registry_by_name;
 
   //! Just an array of Registration objects, for random picks
-  std::vector<const FunctionRegistration*> _registry_by_series;
+  Registrations _registry_by_series;
 };
 
 //! Yes it's a static instance declared in a header file but that's how nifty counters work.

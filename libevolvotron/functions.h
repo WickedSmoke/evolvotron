@@ -382,17 +382,24 @@ FUNCTION_END(FunctionSpiralLogarithmic)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionGradient,0,1,false,0)
+FUNCTION_BEGIN(FunctionGradientOfMagnitude,0,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const float epsilon=1e-4;
-      const XYZ vepsilon(epsilon,epsilon,epsilon);
       
-      const XYZ v0(arg(0)(p-vepsilon));
-      const XYZ v1(arg(0)(p+vepsilon));
-      return (v1-v0)/(2.0*epsilon);
+      const XYZ v0(arg(0)(p));
+      const XYZ vx(arg(0)(p+XYZ(epsilon,0.0f,0.0f)));
+      const XYZ vy(arg(0)(p+XYZ(0.0f,epsilon,0.0f)));
+      const XYZ vz(arg(0)(p+XYZ(0.0f,0.0f,epsilon)));
+
+      const float m0=v0.magnitude();
+      const float mx=vx.magnitude();
+      const float my=vy.magnitude();
+      const float mz=vz.magnitude();
+
+      return XYZ(mx-m0,my-m0,mz-m0)/epsilon;
     }
   
   //! Is constant if the function being gradient-ed is.
@@ -401,7 +408,105 @@ FUNCTION_BEGIN(FunctionGradient,0,1,false,0)
       return arg(0).is_constant();
     }
 
-FUNCTION_END(FunctionGradient)
+FUNCTION_END(FunctionGradientOfMagnitude)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionDivergenceOfMagnitude,0,1,false,0)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const float epsilon=1e-4;
+      
+      const XYZ v0(arg(0)(p));
+      const XYZ vx(arg(0)(p+XYZ(epsilon,0.0f,0.0f)));
+      const XYZ vy(arg(0)(p+XYZ(0.0f,epsilon,0.0f)));
+      const XYZ vz(arg(0)(p+XYZ(0.0f,0.0f,epsilon)));
+
+      const float m0=v0.magnitude();
+      const float mx=vx.magnitude();
+      const float my=vy.magnitude();
+      const float mz=vz.magnitude();
+      const float d=(mx+my+mz-3.0f*m0)/epsilon;
+
+      return XYZ(d,d,d);
+    }
+  
+  //! Is constant if the function being gradient-ed is.
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionDivergenceOfMagnitude)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionDivergence,0,1,false,0)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const float epsilon=1e-4;
+      
+      const XYZ v0(arg(0)(p));
+      const XYZ vx(arg(0)(p+XYZ(epsilon,0.0f,0.0f)));
+      const XYZ vy(arg(0)(p+XYZ(0.0f,epsilon,0.0f)));
+      const XYZ vz(arg(0)(p+XYZ(0.0f,0.0f,epsilon)));
+      return (vx+vy+vz-3.0f*v0)/epsilon;
+    }
+  
+  //! Is constant if the function being gradient-ed is.
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionDivergence)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionCurl,0,1,false,0)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const float epsilon=1e-4;
+      
+      const XYZ v0(arg(0)(p));
+      const XYZ vx(arg(0)(p+XYZ(epsilon,0.0f,0.0f)));
+      const XYZ vy(arg(0)(p+XYZ(0.0f,epsilon,0.0f)));
+      const XYZ vz(arg(0)(p+XYZ(0.0f,0.0f,epsilon)));
+
+      const XYZ d_dx((vx-v0)/epsilon);
+      const XYZ d_dy((vy-v0)/epsilon);
+      const XYZ d_dz((vz-v0)/epsilon);
+
+      const float dzdy=d_dy.z();
+      const float dydz=d_dz.y();
+
+      const float dxdz=d_dz.x();
+      const float dzdx=d_dx.z();
+
+      const float dydx=d_dx.y();
+      const float dxdy=d_dy.x();
+
+      return XYZ
+	(
+	 dzdy-dydz,
+	 dxdz-dzdx,
+	 dydx-dxdy
+	 );
+    }
+  
+  //! Is constant if the function being gradient-ed is.
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionCurl)
 
 //------------------------------------------------------------------------------------------
 

@@ -32,7 +32,7 @@ FunctionRegistry::FunctionRegistry()
 
 FunctionRegistry::~FunctionRegistry()
 {
-  for (std::vector<const FunctionRegistration*>::const_iterator it=_registry_by_series.begin();it!=_registry_by_series.end();it++)
+  for (Registrations::const_iterator it=_registry_by_series.begin();it!=_registry_by_series.end();it++)
     delete (*it);
   // std::clog << "FunctionRegistry destroyed\n";
 }

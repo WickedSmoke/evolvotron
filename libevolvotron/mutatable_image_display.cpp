@@ -365,15 +365,21 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
   delete task;
 }
 
-void MutatableImageDisplay::lock(bool l)
+void MutatableImageDisplay::lock(bool l,bool record_in_history)
 {
   // This might be called (with l=false) with null _image during start-up reset.
   if (_image)
     {
-      main()->history().begin_action(l ? "lock" : "unlock");
-      main()->history().replacing(this);
+      if (record_in_history)
+	{
+	  main()->history().begin_action(l ? "lock" : "unlock");
+	  main()->history().replacing(this);
+	}
       _image->locked(l);
-      main()->history().end_action();
+      if (record_in_history)
+	{
+	  main()->history().end_action();
+	}
     }
 
   _menu->setItemChecked(_menu_item_number_lock,l);
@@ -688,7 +694,7 @@ void MutatableImageDisplay::menupick_spawn_warped_pan_z()
  */
 void MutatableImageDisplay::menupick_lock()
 {
-  lock(!_image->locked());
+  lock(!_image->locked(),true);
 }
 
 void MutatableImageDisplay::menupick_simplify()

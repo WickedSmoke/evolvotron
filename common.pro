@@ -1,8 +1,8 @@
 # Shared definitions included by the other .pro files
 # qmake should NOT be executed on this file directly
 
-# append debug or debug
-CONFIG+= qt thread release
+# append debug or release
+CONFIG+= qt thread debug
 
 ##################
 # Set install path.

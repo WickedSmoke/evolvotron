@@ -54,6 +54,27 @@ extern "C"
 #include "dialog_mutation_parameters.h"
 #include "dialog_functions.h"
 
+//! Utility class to expand "restart with" menu picks
+class SignalExpanderRestartWith : public QObject
+{
+ private:
+  Q_OBJECT
+
+  const FunctionRegistration*const _fn;
+ public:
+  SignalExpanderRestartWith(QObject* parent,const FunctionRegistration* fn)
+    :QObject(parent)
+    ,_fn(fn)
+    {}
+  public slots:
+    void restart_with()
+    {
+      emit restart_with(_fn);
+    }
+ signals:
+  void restart_with(const FunctionRegistration*);
+};
+
 //! Top level GUI component for evolvotron application
 class EvolvotronMain : public QMainWindow
 {
@@ -145,6 +166,15 @@ class EvolvotronMain : public QMainWindow
 
   //! The menubar.
   QMenuBar* _menubar;
+
+  //! Submenu for restarts.
+  QPopupMenu* _popupmenu_restart_with;
+
+  //! Submenu for restarts.
+  QPopupMenu* _popupmenu_restart_with_wrapped;
+
+  //! Submenu for restarts.
+  QPopupMenu* _popupmenu_restart_with_unwrapped;
 
   //! The file menu.
   QPopupMenu* _popupmenu_file;
@@ -352,7 +382,6 @@ class EvolvotronMain : public QMainWindow
 
   //! Signalled by menu item.  Simplifies all functions.
   void simplify_constants();
-
  public slots:
 
   //! Signalled by menu item.
@@ -369,6 +398,12 @@ class EvolvotronMain : public QMainWindow
   
   //! Forwards to reset(true)
   void reset_cold();
+
+  //! Restart with a specific function
+  void restart_with_wrapped(const FunctionRegistration* fn);
+
+  //! Restart with a specific function
+  void restart_with_unwrapped(const FunctionRegistration* fn);
 
   //! Resets and randomizes function weightings
   void reset_randomized();

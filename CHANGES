@@ -6,7 +6,11 @@ From release 0.3.1:
  - Mandelbrot & Julia set only in x,y plane.  Julia set uses fixed parameters.
  - Add Juliabrot.
  - Fix "Randomize" button on "All" functions tab.
- - Add restart with randomized functions to menu
+ - Add restart with randomized functions to File menu
+ - Add restart with specific functions to File menu
+ - Undo after reset works better
+ - Fix broken FunctionGradient.
+   Replace with GradientOfMagnitude, DivergenceOfMagnitude, Divergence...
 
 From release 0.3.0:
  - Version to 0.3.1

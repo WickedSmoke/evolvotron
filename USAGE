@@ -88,7 +88,8 @@ POWER-USER & DEBUG OPTIONS
 	This is primarily intended to assist debugging.
         This option used to be useful for getting a list of supported function 
 	names for use with the -x/-X options, but those can now be inspected
-        via the Settings/Functions dialog.
+        via the Settings/Functions dialog or the "restart with specific function"
+        menu item.
 
   -x <functionname>
 	Force a specific function type to be used at the top level 
@@ -272,10 +273,12 @@ MAIN MENU BAR
   Items to restart, reset and quit the application.
   The difference between restart and reset is that reset 
   sets the mutation parameters back the their default values.
-  The randomize functions version of restart scrambles the
-  relative probability of the various function types (if you
+  The "randomize function weights" version of restart scrambles
+  the relative probability of the various function types (if you
   think evolvotron just keeps generating the same kinds of
-  images give it a try).
+  images give it a try).  The "restart with specifc function"
+  item duplicates the functionality of the "-x" and "-X" command-line
+  options.
 - Edit menu:
   "Undo" lets you undo certain actions: e.g spawn,
   middle-button adjustment, simplification and lock/unlock.
@@ -358,8 +361,8 @@ an animated GIF playing at approx. 8 frames per second with:
 If you save an animation as "QT-MNG" a single file will be
 generated.  NB THIS IS IN A PROPRIETARY QT FORMAT WHICH PREDATES
 MULTI-FRAME PNG (also known as MNG) AND IS UNLIKELY TO BE
-READABLE BY ANYTHING OTHER THAN QT PROGRAMS.  In other words,
-it's not very useful.  Image viewers will generally recognise
+READABLE BY ANYTHING OTHER THAN QT PROGRAMS.  So it's not 
+actually very useful.  Image viewers will generally recognise
 it as PNG and display the first frame, but that's all.
 
 ADVANCED USAGE

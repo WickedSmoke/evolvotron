@@ -161,12 +161,17 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   return parameters.random_function_stub(exciting);
 }
 
-/*! If a specific function's registration (ie meta info) is provided then that will be used as the wrapped function type.
+/*! The choice of initial structure to start from is quite crucial to giving a good user experience.
+  We concatenate 3 functions.  The outer 2 are transforms.
+  You can think of the first function as a co-ordinate transform,
+  the second function as being the "actual" image (we use an "exciting" stub to avoid boring constants or identities),
+  and the final function as being a colour-space transform.
+  Basically the idea is to give lots of opportunities for stuff to happen.
+  If a specific function's registration (ie meta info) is provided then that will be used as the wrapped function type, but this overrides the constant checking (as a constant might have been specified).
  */
 FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn)
 {
   FunctionNode* root;
-  bool image_is_constant;
   
   do
     {
@@ -228,14 +233,13 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
       
       assert(root->ok());
       
-      image_is_constant=root->is_constant();
-      
-      if (image_is_constant)
+      if (root->is_constant() && !specific_fn)
 	{
 	  delete root;
+	  root=0;
 	}
     }
-  while (image_is_constant);
+  while (!root);
   
   assert(root->ok());
   

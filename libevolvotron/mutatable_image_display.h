@@ -164,7 +164,7 @@ class MutatableImageDisplay : public QWidget
   void deliver(MutatableImageComputerTask* task);
 
   //! Set the lock state.
-  void lock(bool l);
+  void lock(bool l,bool record_in_history);
 
  protected:
   //! Usual handler for repaint events.

@@ -27,8 +27,9 @@ Known bugs:
 
 - Undo doesn't always work how you'd expect.
   e.g respawn after undo doesn't respawn from what you'd expect.
+  Undo of a reset or restart doesn't put the mutation parameters & function weightings back how they were.
 
-- Moire patterns mean small images can show structures
+- Moire patterns & undersampling mean small images can show structures
   not actually present in larger resolution versions.
 
 - Once image colours become saturated there's not much which will cause

@@ -240,10 +240,52 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
 
   _menubar=new QMenuBar(this);
 
+  _popupmenu_restart_with=new QPopupMenu;
+
+  {
+    _popupmenu_restart_with_wrapped=new QPopupMenu;
+    _popupmenu_restart_with_unwrapped=new QPopupMenu;
+    
+    // Downsize fonts 'cos function list is so huge
+    const QFont& current_font=_popupmenu_restart_with_wrapped->font();
+    QFont replacement_font(current_font.family(),std::max(6,current_font.pointSize()-2));
+
+    _popupmenu_restart_with_wrapped->setFont(replacement_font);
+    _popupmenu_restart_with_unwrapped->setFont(replacement_font);
+    _popupmenu_restart_with->insertItem("&Wrapped",_popupmenu_restart_with_wrapped);
+    _popupmenu_restart_with->insertItem("&Unwrapped",_popupmenu_restart_with_unwrapped);
+  }
+
+  for (
+       FunctionRegistry::Registrations::const_iterator it=FunctionRegistry::get()->registrations().begin();
+       it!=FunctionRegistry::get()->registrations().end();
+       it++
+       )
+    {
+      QString label((*it)->name());
+      label.replace("Function","");  // Attempt to make menu take up less space
+
+      SignalExpanderRestartWith*const xw=new SignalExpanderRestartWith(this,*it);
+      _popupmenu_restart_with_wrapped->insertItem(label,xw,SLOT(restart_with()));
+      connect(
+	      xw,SIGNAL(restart_with(const FunctionRegistration*)),
+	      this,SLOT(restart_with_wrapped(const FunctionRegistration*))
+	      );
+
+      SignalExpanderRestartWith*const xu=new SignalExpanderRestartWith(this,*it);
+      _popupmenu_restart_with_unwrapped->insertItem(label,xu,SLOT(restart_with()));
+      connect(
+	      xu,SIGNAL(restart_with(const FunctionRegistration*)),
+	      this,SLOT(restart_with_unwrapped(const FunctionRegistration*))
+	      );
+    }
+
   _popupmenu_file=new QPopupMenu;
-  _popupmenu_file->insertItem("Res&tart (randomized fns)",this,SLOT(reset_randomized()));
-  _popupmenu_file->insertItem("&Restart",this,SLOT(reset_warm()));
   _popupmenu_file->insertItem("Re&set",this,SLOT(reset_cold()));
+  _popupmenu_file->insertItem("&Restart",this,SLOT(reset_warm()));
+  _popupmenu_file->insertItem("Restart (random function &weights)",this,SLOT(reset_randomized()));
+  _popupmenu_file->insertItem("Restart with specific &function",_popupmenu_restart_with);
+  _popupmenu_file->insertSeparator();
   _popupmenu_file->insertItem("&Quit",qApp,SLOT(quit()));
   _menubar->insertItem("&File",_popupmenu_file);
 
@@ -707,14 +749,6 @@ void EvolvotronMain::toggle_hide_menu()
 }
 
 /*! Set up an initial random image in the specified display. 
-
-  The choice of initial structure to start from is quite crucial to giving a good user experience.
-  We concatenate 3 functions.  The outer 2 are transforms.
-  You can think of the first function as a co-ordinate transform,
-  the second function as being the "actual" image (we use an "exciting" stub to avoid boring constants or identities),
-  and the final function as being a colour-space transform.
-  Basically the idea is to give lots of opportunities for stuff to happen.
-
   If a test function was specified then we use that as the top level node.
  */
 void EvolvotronMain::reset(MutatableImageDisplay* display)
@@ -767,7 +801,7 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
   for (std::vector<MutatableImageDisplay*>::iterator it=displays().begin();it!=displays().end();it++)
     {
       if (clear_locks)
-	(*it)->lock(false);
+	(*it)->lock(false,false);  // lock method mustn't make it's own history recording
 
       if (!(*it)->locked())
 	reset(*it);
@@ -784,6 +818,23 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
   last_spawned_image(0,&EvolvotronMain::spawn_normal);
 
   history().end_action();
+}
+
+void EvolvotronMain::restart_with_wrapped(const FunctionRegistration* fn)
+{
+  _test_function=fn->name();
+  _test_function_unwrapped=false;
+  reset(false,false);
+  _test_function=std::string();
+}
+
+void EvolvotronMain::restart_with_unwrapped(const FunctionRegistration* fn)
+{
+  _test_function=fn->name();
+  _test_function_unwrapped=true;
+  reset(false,false);
+  _test_function=std::string();
+  _test_function_unwrapped=false;
 }
 
 void EvolvotronMain::reset_randomized()
