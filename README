@@ -99,6 +99,9 @@ architectures or perhaps look in your QT installation's mkspecs directory.
 (RedHat defines QTDIR for the normal user environment, and seems to work fine
 without explicitly setting QMAKESPEC.  A Mandrake user reports having to set both.)
 
+A Gentoo user reports having to add BOTH "/usr/qt/3/bin/" AND 
+"$QTDIR/bin" to their path.
+
 A Debian (3.0r1) user reports Debian's Qt package not including qmake.
 They eventually got hold of a version from somewhere (Trolltech?).
 Attempting a regular build they apparently encountered a header/library
@@ -507,6 +510,7 @@ THANKS
   Karl Robillard
   Linc Davis
   Paolo Greppi  
+  Marcin Wojtczuk
 for feedback, suggestions and patches.
 
 ...to the participants in a SIGGRAPH conference panel many

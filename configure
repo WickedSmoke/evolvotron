@@ -25,4 +25,4 @@ echo "Running qmake..."
 
 qmake main.pro
 
-echo "...configuration completed - you can do 'make' next"
+echo "...configuration completed - you can do 'make' now"
