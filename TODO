@@ -1,6 +1,13 @@
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
+- Check qmake can be found by configure.
+  Check $(QTDIR)/bin first... RH seem to be unusual in copying it to /usr/bin
+- evolvotron_render default output (or with filename "-") should be to stdout.
+  (The problem is that Qt's image writing libs only support file output).
+  Could create a /tmp file behind the scenes, or write something simple like PPM.
+- Use QString throughout file accessing code... need to support unicode filenames.
+- File save dialogs should remember which directory they were last accessing.
 - Replace FunctionNode::stub() with FunctionRegistry based code
 - Create registry of all function node types (done)
   - Use to bring up a panel for setting relative frequencies (check for exploding branching ratios)
