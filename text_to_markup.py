@@ -32,12 +32,12 @@ def line_of_equals(n):
 class TextToMarkup:
 
     def __init__(self,m,s):        
-        self.startup=True
-        self.scope_p=False
-        self.scope_ul=False
-        self.scope_li=False
-        self.done_title=False
-        self.skipnextline=False
+        self.startup=1       # True
+        self.scope_p=0       # False
+        self.scope_ul=0      # False
+        self.scope_li=0      # False
+        self.done_title=0    # False
+        self.skipnextline=0  # False
         self.mode=m
         self.stringify=s
 
@@ -79,7 +79,7 @@ class TextToMarkup:
 
     def process_paragraph_text(self,txt):
 
-        is_code=False
+        is_code=0 # False
         specialbreak=txt[len(txt)-1]==":" 
         r="  "
 
@@ -87,22 +87,22 @@ class TextToMarkup:
             if txt[1]==" ":
                 txt=txt[2:]
             else:
-                specialbreak=True
+                specialbreak=1 # True
             if self.scope_ul and self.scope_li:
                 r+="</li>"
-                self.scope_li=False
+                self.scope_li=0 # False
             if not self.scope_ul:
                 r+="<ul>"
-                self.scope_ul=True
+                self.scope_ul=1 # True
             if not self.scope_li:
                 r+="<li>"
-                self.scope_li=True
+                self.scope_li=1 # True
 
         elif txt[0]=="$":
-            is_code=True
+            is_code=1           # True
             r+="<code>"
             txt=txt[2:]
-            specialbreak=True
+            specialbreak=1      # True
 
         for w in txt.split():
             r+=self.process_word(w)
@@ -120,12 +120,12 @@ class TextToMarkup:
         if self.mode=="html":
             self.dispose("<html>")
 
-        while True:
-
+        while 1:    # True
+ 
             if self.startup:
                 self.currline_raw=in_stream.readline()
                 self.nextline_raw=in_stream.readline()
-                self.startup=False
+                self.startup=0   # False
             else:
                 self.currline_raw=self.nextline_raw            
                 self.nextline_raw=in_stream.readline()
@@ -134,7 +134,7 @@ class TextToMarkup:
                 break
 
             if self.skipnextline:
-                self.skipnextline=False
+                self.skipnextline=0 # False
                 continue
 
             # Should track last line too
@@ -144,7 +144,7 @@ class TextToMarkup:
             if len(self.currline)>2 and self.nextline==line_of_equals(len(self.currline)):
                 if self.done_title:
                     self.dispose("<h2>"+string.capwords(self.currline)+"</h2>")
-                    self.skipnextline=True
+                    self.skipnextline=1 # True
                     continue
                 else:
                     if (self.mode=="html"):
@@ -156,12 +156,12 @@ class TextToMarkup:
                     elif (self.mode=="qml"):
                         self.dispose("<qt title='"+string.capwords(self.currline)+"'>")
                     self.dispose("<h1>"+string.capwords(self.currline)+"</h1>")
-                    self.done_title=True
-                    self.skipnextline=True
+                    self.done_title=1 # True
+                    self.skipnextline=1 # True
                     continue
             elif len(self.currline)>2 and self.nextline==line_of_dashes(len(self.currline)):
                 self.dispose("<h3>"+string.capwords(self.currline)+"</h3>")
-                self.skipnextline=True
+                self.skipnextline=1 # True
                 continue
             elif self.scope_p:
                 if (len(self.currline)):
@@ -169,16 +169,16 @@ class TextToMarkup:
                 else:
                     if self.scope_li:
                         self.dispose("</li>")
-                        self.scope_li=False
+                        self.scope_li=0 # False
                     if self.scope_ul:
                         self.dispose("</ul>")
-                        self.scope_ul=False                        
+                        self.scope_ul=0 # False                        
                     self.dispose("</p>")
-                    self.scope_p=False
+                    self.scope_p=0 # False
             elif len(self.currline):
                 self.dispose("<p>")
                 self.dispose(self.process_paragraph_text(self.currline))
-                self.scope_p=True
+                self.scope_p=1 # True
             else:
                 self.dispose("")
 
@@ -191,14 +191,14 @@ class TextToMarkup:
 if __name__=='__main__':
 
     mode=None
-    stringify=False
+    stringify=0 # False
     for i in xrange(1,len(sys.argv)):
         if sys.argv[i]=="-qml":
             mode="qml"
         if sys.argv[i]=="-html":
             mode="html"
         elif sys.argv[i]=="-s":
-            stringify=True
+            stringify=1 # True
             
     t2m=TextToMarkup(mode,stringify)    # "html" and "qml" are alternatives.  Should be stringify option.
     t2m.process(sys.stdin,sys.stdout)
