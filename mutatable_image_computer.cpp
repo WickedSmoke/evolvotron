@@ -27,6 +27,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image_computer_farm.h"
 #include "mutatable_image_computer_task.h"
 
+// This is needed for tanh
+#include <cmath>
+
 MutatableImageComputer::MutatableImageComputer(MutatableImageComputerFarm* frm)
   :_farm(frm)
   ,_task(0)
@@ -88,12 +91,18 @@ void MutatableImageComputer::run()
 		  const MutatableImage*const image=task()->image();
 
 		  // Actually calculate a pixel value from the image.
-		  const XYZ pv((*image)(p));
+		  // The nominal range is -1.0 to 1.0
+		  XYZ pv((*image)(p));
+
+		  // Use smooth tanh to avoid hard clamping.
+		  pv.x(tanh(pv.x()));
+		  pv.y(tanh(pv.y()));
+		  pv.z(tanh(pv.z()));
 
 		  // Scale nominal -1.0 to 1.0 range to 0-255
 		  XYZ v(127.5*(pv+XYZ(1.0,1.0,1.0)));
 		  
-		  // Clamp out of range values.
+		  // Clamp out of range values just in case
 		  v.x(clamped(v.x(),0.0f,255.0f));
 		  v.y(clamped(v.y(),0.0f,255.0f));
 		  v.z(clamped(v.z(),0.0f,255.0f));
