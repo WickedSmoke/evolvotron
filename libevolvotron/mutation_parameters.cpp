@@ -30,13 +30,6 @@ MutationParameters::MutationParameters(uint seed)
   :_r01(seed)
 {
   reset();
-
-  for (
-       std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
-       it!=FunctionRegistry::get()->registrations().end();
-       it++
-       )
-    _function_weighting.insert(std::make_pair(*it,1.0f));
 }
 
 MutationParameters::~MutationParameters()
@@ -44,12 +37,6 @@ MutationParameters::~MutationParameters()
 
 void MutationParameters::reset()
 {
-  // Leave these off by default because they're slow
-  _allow_iterative_nodes=false;
-
-  // Leave these off by default because they're ugly
-  _allow_fractal_nodes=false;
-
   _magnitude=0.5;
   
   _probability_glitch=0.02;
@@ -66,6 +53,13 @@ void MutationParameters::reset()
   _max_initial_iterations=16;
   _probability_iterations_change_step=0.25;
   _probability_iterations_change_jump=0.02;
+
+  for (
+       std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
+       it!=FunctionRegistry::get()->registrations().end();
+       it++
+       )
+    _function_weighting.insert(std::make_pair(*it,1.0f));
 }
 
 void MutationParameters::general_cool(float f)
@@ -119,31 +113,15 @@ FunctionNode*const MutationParameters::random_function() const
 }
 
 const FunctionRegistration*const MutationParameters::random_function_registration() const
-{
-  uint supressed_function_classifications=0;
-  
-  if (!allow_fractal_nodes())
-    {
-      supressed_function_classifications|=FnFractal;
-    }
-  
-  if (!allow_iterative_nodes())
-    {
-      supressed_function_classifications|=FnIterative;
-    }
-  
-  const FunctionRegistration* fn_reg;
-  do
-    {
-      fn_reg=FunctionRegistry::get()->lookup(r01());
-    }
-  while (fn_reg->classification()&supressed_function_classifications);
-
+{  
+  //! \todo Needs to take function weighting into account (rename function when done)
+  const FunctionRegistration* fn_reg=FunctionRegistry::get()->lookup(r01());
   return fn_reg;
 }
 
 const float MutationParameters::random_function_branching_ratio() const
 {
+  //! \todo This is WRONG.
   float t=0.0f;
   for (
        std::map<const FunctionRegistration*,float>::const_iterator it=_function_weighting.begin();
@@ -154,4 +132,9 @@ const float MutationParameters::random_function_branching_ratio() const
       t+=(*it).second*(*it).first->params();
     }
   return t/_function_weighting.size();
+}
+
+void MutationParameters::change_function_weighting(const FunctionRegistration* fn,float w)
+{
+  _function_weighting[fn]=w;
 }

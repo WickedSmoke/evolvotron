@@ -42,12 +42,6 @@ class MutationParameters
    */
   mutable Random01 _r01;
 
-  //! Disables generation of (computationally intensive) iterative nodes.
-  bool _allow_iterative_nodes;
-
-  //! Disables generation of Mandelbrot & Julia set node types.
-  bool _allow_fractal_nodes;
-
   //! Specifies the magnitude of random changes to FunctionNodeConstant.
   float _magnitude;
 
@@ -115,28 +109,6 @@ class MutationParameters
   const float r01() const
     {
       return _r01();
-    }
-
-  //! Accessor.
-  const bool allow_iterative_nodes() const
-    {
-      return _allow_iterative_nodes;
-    }
-  //! Accessor.
-  void allow_iterative_nodes(bool v) 
-    {
-      _allow_iterative_nodes=v;
-    }
-
-  //! Accessor.
-  const bool allow_fractal_nodes() const
-    {
-      return _allow_fractal_nodes;
-    }
-  //! Accessor.
-  void allow_fractal_nodes(bool v) 
-    {
-      _allow_fractal_nodes=v;
     }
 
   //! Accessor.
@@ -265,9 +237,13 @@ class MutationParameters
    */
   const float random_function_branching_ratio() const;
 
-    //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
+  //! This returns a new random bit of tree.
+  /*! Setting the "exciting" flag avoids the most basic node types, but only at the top level of the stub tree.
+   */
   FunctionNode*const MutationParameters::random_function_stub(bool exciting) const;
     
+  void change_function_weighting(const FunctionRegistration* fn,float w);
+
  protected:
 
   //! Return a random function appropriately biased by current settings

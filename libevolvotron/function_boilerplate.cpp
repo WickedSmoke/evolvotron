@@ -18,9 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /*! \file
   \brief Implementation of specific Function classes.
-  Except there's nothing here because it's all in the header.
+  Except there's virtually nothing here because it's all in the header (templates).
 */
 
 #include "function_boilerplate.h"
-
 

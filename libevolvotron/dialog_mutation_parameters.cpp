@@ -83,12 +83,6 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   _spinbox_substitute->setSuffix(QString("/%1").arg(_scale));
   QToolTip::add(_spinbox_substitute,"Probability of function node's type being changed");
 
-  _checkbox_iterative=new QCheckBox("Allow iterative nodes",_vbox);
-  _checkbox_fractal  =new QCheckBox("Allow fractal nodes",_vbox);
-
-  QToolTip::add(_checkbox_iterative,"Allow computationally intensive iterative node types (required for Mandelbrot/Julia nodes).");
-  QToolTip::add(_checkbox_fractal  ,"Allow Mandelbrot and Julia set nodes (also requires iterative node types).");
-
   setup_from_mutation_parameters();
 
   // Do this AFTER setup
@@ -99,9 +93,6 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   connect(_spinbox_insert,SIGNAL(valueChanged(int)),this,SLOT(changed_insert(int)));
   connect(_spinbox_substitute,SIGNAL(valueChanged(int)),this,SLOT(changed_substitute(int)));
  
-  connect(_checkbox_iterative,SIGNAL(stateChanged(int)),this,SLOT(changed_iterative(int)));
-  connect(_checkbox_fractal  ,SIGNAL(stateChanged(int)),this,SLOT(changed_fractal(int)));
-
   _vbox->setStretchFactor(_grid_parameters,1);
 
   _ok=new QPushButton("OK",_vbox);
@@ -119,9 +110,6 @@ void DialogMutationParameters::resizeEvent(QResizeEvent*)
 
 void DialogMutationParameters::setup_from_mutation_parameters()
 {
-  _checkbox_iterative->setChecked(_mutation_parameters->allow_iterative_nodes());
-  _checkbox_fractal  ->setChecked(_mutation_parameters->allow_fractal_nodes());
-
   _spinbox_magnitude ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->magnitude()));
   _spinbox_glitch    ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_glitch()));
   _spinbox_shuffle   ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_shuffle()));
@@ -204,35 +192,6 @@ void DialogMutationParameters::changed_insert(int v)
 void DialogMutationParameters::changed_substitute(int v)
 {
   _mutation_parameters->probability_substitute(v/static_cast<float>(_scale));
-  parameters_changed();
-}
-
-/*! Disabling iterative nodes also supresses fractal nodes.
- */
-void DialogMutationParameters::changed_iterative(int v)
-{
-  _mutation_parameters->allow_iterative_nodes(v==2);
-
-  if (v!=2)
-    {
-      _mutation_parameters->allow_fractal_nodes(false);
-      _checkbox_fractal->setChecked(false);
-    }
-
-  parameters_changed();
-}
-
-/*! Enabling fractal nodes also enables iterative nodes.
- */
-void DialogMutationParameters::changed_fractal(int v)
-{
-  _mutation_parameters->allow_fractal_nodes(v==2);
-
-  if (v==2)
-    {
-      _mutation_parameters->allow_iterative_nodes(true);
-      _checkbox_iterative->setChecked(true);
-    }
   parameters_changed();
 }
 

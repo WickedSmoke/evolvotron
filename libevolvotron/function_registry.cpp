@@ -22,6 +22,21 @@
 
 #include "function_registry.h"
 
+uint NiftyCounter<FunctionRegistry>::_count=0;
+FunctionRegistry* Singleton<FunctionRegistry>::_singleton_instance=0;
+
+FunctionRegistry::FunctionRegistry()
+{
+  // std::clog << "FunctionRegistry created\n";
+}
+
+FunctionRegistry::~FunctionRegistry()
+{
+  for (std::vector<const FunctionRegistration*>::const_iterator it=_registry_by_series.begin();it!=_registry_by_series.end();it++)
+    delete (*it);
+  // std::clog << "FunctionRegistry destroyed\n";
+}
+
 //! Return the registration for the function named (returns 0 if unknown)
 const FunctionRegistration*const FunctionRegistry::lookup(const std::string& f) const
 {
@@ -42,13 +57,6 @@ const FunctionRegistration*const FunctionRegistry::lookup(float f) const
   return lookup(static_cast<uint>(f*_registry_by_series.size()));
 }
 
-FunctionRegistry*const FunctionRegistry::get()
-{
-  //! Can't declare this as a static class member because of C++ static initializer fiasco.
-  static FunctionRegistry _instance;
-  return &_instance;
-}
-
 std::ostream& FunctionRegistry::status(std::ostream& out) const
 {
   out << "Registered functions:\n";
@@ -59,12 +67,24 @@ std::ostream& FunctionRegistry::status(std::ostream& out) const
   return out;
 }
 
-FunctionRegistration*const FunctionRegistry::reg(const char* n,FunctionRegistration* r)
+const bool FunctionRegistry::reg(const char* n,const FunctionRegistration& r)
 {
-  r->name(n);
-  _registry_by_name[n]=r;
-  _registry_by_series.push_back(r);
-  return r;
+  //std::clog << "Registering " << n << ": ";
+  const std::string ns(n);
+  if (_registry_by_name.find(ns)!=_registry_by_name.end())
+    {
+      //std::clog << " repeat registration ignored.\n";
+      return false;
+    }
+  else
+    {
+      const FunctionRegistration*const definitive_reg=new FunctionRegistration(n,r);
+
+      _registry_by_name[ns]=definitive_reg;
+      _registry_by_series.push_back(definitive_reg);
+      //std::clog << ns << " registered successfully.\n";
+      return true;
+    }
 }
 
 

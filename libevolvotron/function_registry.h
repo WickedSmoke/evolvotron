@@ -30,19 +30,21 @@
 #include <iostream>
 
 #include "useful.h"
+
 #include "function_registration.h"
 
-//! Macro to force instantiation of static registration members, and register them with Registry.
-#define REGISTER(FN) static const FunctionRegistration*const force_ ## FN = FunctionRegistry::get()->reg(#FN,FN::get_registration())
-
 //! Class acting as a dictionary from function name to registration info.
-/*! Singleton pattern.  Instance is obtained using get() method (NB workround for static initializer fiasco)
+/*! Intended to be used as singleton; get() obtains instance.
+  This holds the "definitive" collection of registrations.  FunctionRegistrations can be compared using pointer identiy.
  */
-class FunctionRegistry
+class FunctionRegistry : public Singleton<FunctionRegistry>
 {
  public:
-  //! Return the singleton instance of the FunctionRegistry
-  static FunctionRegistry*const get();
+  //! Constuctor public to Singleton boilerplate can new it.
+  /*! \todo Figure out how to make this protected/private.
+   */
+  FunctionRegistry();
+  ~FunctionRegistry();
 
   //! Return the registration for the function named (returns 0 if unknown)
   const FunctionRegistration*const lookup(const std::string& f) const;
@@ -62,8 +64,8 @@ class FunctionRegistry
   //! Dump list of registered functions
   std::ostream& status(std::ostream& out) const;
 
-  //! Probably not used as everything should be pre_registered by static initialisers
-  FunctionRegistration*const reg(const char* n,FunctionRegistration* r);
+  //! Register a function.  Handle duplicates gracefully.  A copy is taken.
+  const bool reg(const char* n,const FunctionRegistration& r);
 
  protected:
   //! Dictionary from names to Registration objects
@@ -72,5 +74,8 @@ class FunctionRegistry
   //! Just an array of Registration objects, for random picks
   std::vector<const FunctionRegistration*> _registry_by_series;
 };
+
+//! Yes it's a static instance declared in a header file but that's how nifty counters work.
+static NiftyCounter<FunctionRegistry> nifty_function_registry;
 
 #endif

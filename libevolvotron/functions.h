@@ -30,6 +30,7 @@
 #include <cmath>
 
 #include "useful.h"
+#include "function_registry.h"
 #include "function_boilerplate.h"
 
 //! Sane modulus function always returning a number in the range [0,y)
@@ -65,15 +66,7 @@ inline float trianglef(float x,float y)
 //------------------------------------------------------------------------------------------
 
 #include "function_core.h"
-
-REGISTER(FunctionConstant);
-REGISTER(FunctionIdentity);
-REGISTER(FunctionTransform);
-
 #include "function_null.h"
-
-REGISTER(FunctionNull);
-
 
 //------------------------------------------------------------------------------------------
 
@@ -98,8 +91,6 @@ FUNCTION_END(FunctionTransformGeneralised)
 //------------------------------------------------------------------------------------------
 
 #include "function_pre_transform.h"
-
-REGISTER(FunctionPreTransform);
 
 //------------------------------------------------------------------------------------------
 
@@ -126,8 +117,6 @@ FUNCTION_END(FunctionPreTransformGeneralised)
 //------------------------------------------------------------------------------------------
 
 #include "function_post_transform.h"
-
-REGISTER(FunctionPostTransform);
 
 //------------------------------------------------------------------------------------------
 
@@ -340,7 +329,7 @@ FUNCTION_END(FunctionCos)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionSpiralLinear,0,1,false,0)
+FUNCTION_BEGIN(FunctionSpiralLinear,0,1,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -366,7 +355,7 @@ FUNCTION_END(FunctionSpiralLinear)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionSpiralLogarithmic,0,1,false,0)
+FUNCTION_BEGIN(FunctionSpiralLogarithmic,0,1,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -686,7 +675,7 @@ FUNCTION_END(FunctionReflect)
 //------------------------------------------------------------------------------------------
 
 //! Implements reflection of sampling point about multiple planes
-FUNCTION_BEGIN(FunctionKaleidoscope,1,1,false,0)
+FUNCTION_BEGIN(FunctionKaleidoscope,1,1,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -715,7 +704,7 @@ FUNCTION_END(FunctionKaleidoscope)
 //! Like FunctionKaleidoscope but Z drives rotation of underlying function
 /*! Good for animation
  */
-FUNCTION_BEGIN(FunctionKaleidoscopeZRotate,2,1,false,0)
+FUNCTION_BEGIN(FunctionKaleidoscopeZRotate,2,1,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -742,7 +731,7 @@ FUNCTION_END(FunctionKaleidoscopeZRotate)
 //------------------------------------------------------------------------------------------
 
 //! Like FunctionKaleidoscope with a twist
-FUNCTION_BEGIN(FunctionKaleidoscopeTwist,2,1,false,0)
+FUNCTION_BEGIN(FunctionKaleidoscopeTwist,2,1,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -769,7 +758,7 @@ FUNCTION_END(FunctionKaleidoscopeTwist)
 //------------------------------------------------------------------------------------------
 
 //! Implements reflection of sampling point about multiple planes
-FUNCTION_BEGIN(FunctionWindmill,1,1,false,0)
+FUNCTION_BEGIN(FunctionWindmill,1,1,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -798,7 +787,7 @@ FUNCTION_END(FunctionWindmill)
 //! Like FunctionWindmill but Z drives rotation of underlying function
 /*! Good for animation
  */
-FUNCTION_BEGIN(FunctionWindmillZRotate,2,1,false,0)
+FUNCTION_BEGIN(FunctionWindmillZRotate,2,1,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -826,7 +815,7 @@ FUNCTION_END(FunctionWindmillZRotate)
 
 
 //! Like FunctionWindmill with twist
-FUNCTION_BEGIN(FunctionWindmillTwist,2,1,false,0)
+FUNCTION_BEGIN(FunctionWindmillTwist,2,1,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -943,7 +932,7 @@ FUNCTION_END(FunctionChooseRect)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in 3d mesh
-FUNCTION_BEGIN(FunctionChooseFrom2InCubeMesh,0,2,false,0)
+FUNCTION_BEGIN(FunctionChooseFrom2InCubeMesh,0,2,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -969,7 +958,7 @@ FUNCTION_END(FunctionChooseFrom2InCubeMesh);
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in 3d mesh
-FUNCTION_BEGIN(FunctionChooseFrom3InCubeMesh,0,3,false,0)
+FUNCTION_BEGIN(FunctionChooseFrom3InCubeMesh,0,3,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -992,7 +981,7 @@ FUNCTION_END(FunctionChooseFrom3InCubeMesh)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in 2d grid
-FUNCTION_BEGIN(FunctionChooseFrom2InSquareGrid,0,2,false,0)
+FUNCTION_BEGIN(FunctionChooseFrom2InSquareGrid,0,2,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1017,7 +1006,7 @@ FUNCTION_END(FunctionChooseFrom2InSquareGrid)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 3 functions based on position in 2d grid
-FUNCTION_BEGIN(FunctionChooseFrom3InSquareGrid,0,3,false,0)
+FUNCTION_BEGIN(FunctionChooseFrom3InSquareGrid,0,3,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1039,7 +1028,7 @@ FUNCTION_END(FunctionChooseFrom3InSquareGrid)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in grid of triangles 
-FUNCTION_BEGIN(FunctionChooseFrom2InTriangleGrid,0,2,false,0)
+FUNCTION_BEGIN(FunctionChooseFrom2InTriangleGrid,0,2,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1071,7 +1060,7 @@ FUNCTION_END(FunctionChooseFrom2InTriangleGrid)
 //! Function implements selection between 2 functions based on position in grid of triangles 
 /*! Not entirely sure this one produces a sensible pattern.  Needs explicitly testing.
  */
-FUNCTION_BEGIN(FunctionChooseFrom3InTriangleGrid,0,3,false,0)
+FUNCTION_BEGIN(FunctionChooseFrom3InTriangleGrid,0,3,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1100,7 +1089,7 @@ FUNCTION_END(FunctionChooseFrom3InTriangleGrid)
 //! Function implements selection between 3 functions based on position in grid of hexagons
 /*! Don't entirely understand how this works, but it looks nice.
  */
-FUNCTION_BEGIN(FunctionChooseFrom3InDiamondGrid,0,3,false,0)
+FUNCTION_BEGIN(FunctionChooseFrom3InDiamondGrid,0,3,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1145,7 +1134,7 @@ FUNCTION_END(FunctionChooseFrom3InDiamondGrid)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 3 functions based on position in grid of hexagons
-FUNCTION_BEGIN(FunctionChooseFrom3InHexagonGrid,0,3,false,0)
+FUNCTION_BEGIN(FunctionChooseFrom3InHexagonGrid,0,3,false,FnStructure)
 
   //! Co-ordinates of hexagon with given hex-grid coords
   static const XYZ hex(int x,int y)
@@ -1213,7 +1202,7 @@ FUNCTION_END(FunctionChooseFrom3InHexagonGrid)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in grid of hexagons
-FUNCTION_BEGIN(FunctionChooseFrom2InBorderedHexagonGrid,1,2,false,0)
+FUNCTION_BEGIN(FunctionChooseFrom2InBorderedHexagonGrid,1,2,false,FnStructure)
 
   //! Co-ordinates of hexagon with given hex-grid coords
   static const XYZ hex(int x,int y)
@@ -1308,7 +1297,7 @@ FUNCTION_END(FunctionChooseFrom2InBorderedHexagonGrid)
   param(0,1,2) is light source direction
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-FUNCTION_BEGIN(FunctionOrthoSphereShaded,3,2,false,0)
+FUNCTION_BEGIN(FunctionOrthoSphereShaded,3,2,false,FnRender)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1348,7 +1337,7 @@ FUNCTION_END(FunctionOrthoSphereShaded)
   param(0,1,2) is light source direction
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-FUNCTION_BEGIN(FunctionOrthoSphereShadedBumpMapped,3,3,false,0)
+FUNCTION_BEGIN(FunctionOrthoSphereShadedBumpMapped,3,3,false,FnRender)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1403,7 +1392,7 @@ FUNCTION_END(FunctionOrthoSphereShadedBumpMapped)
     arg(1) sampled using a normalised vector defines an environment for reflected rays
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-FUNCTION_BEGIN(FunctionOrthoSphereReflect,0,2,false,0)
+FUNCTION_BEGIN(FunctionOrthoSphereReflect,0,2,false,FnRender)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -1446,7 +1435,7 @@ FUNCTION_END(FunctionOrthoSphereReflect)
     arg(2) is bump map
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-FUNCTION_BEGIN(FunctionOrthoSphereReflectBumpMapped,0,3,false,0)
+FUNCTION_BEGIN(FunctionOrthoSphereReflectBumpMapped,0,3,false,FnRender)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -2148,6 +2137,8 @@ FUNCTION_END(FunctionJuliaContour)
   WILL cause slow start-up due to precompute, although compute-on-demand should help a bit.
   Maybe the whole static thing was a mistake.
   Should derive Function classes from FunctionBoilerplate<T> to provide Clone etc.
+  NO! Do this properly.  Threads should share a MutatableImage (ref. counted) which can hold this kind of state.
+  Locking method to check it is valid before compute starts.  Read during main evaluation should be lock-free.
  */
 /*
 FUNCTION_BEGIN(FunctionCellular,0,1,true,FnIterative)

@@ -44,7 +44,6 @@ FUNCTION_BEGIN(FunctionNull,0,1,false,0)
       return arg(0).is_constant();
     }
 
-// Don't use FUNCTION_END because we don't want to REGISTER here.
-};
+FUNCTION_END(FunctionNull)
 
 #endif

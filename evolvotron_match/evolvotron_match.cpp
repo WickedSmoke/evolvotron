@@ -175,8 +175,6 @@ int main(int argc,char* argv[])
       if (i%reset==0)
 	{
 	  mutation_parameters.reset();
-	  mutation_parameters.allow_iterative_nodes(true);
-	  mutation_parameters.allow_fractal_nodes(true);
 	}
       else
 	{

@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image.h"
 
 // This is the ONLY place this should be included as FunctionNode::stub will instantiate everything
+//! \todo Would like functions.h to only be included in one file to avoid multiple statics
 #include "functions.h"
 
 const std::vector<FunctionNode*> FunctionNode::cloneargs() const

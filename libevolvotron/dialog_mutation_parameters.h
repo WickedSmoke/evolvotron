@@ -83,12 +83,6 @@ class DialogMutationParameters : public QDialog
   QSpinBox* _spinbox_substitute;
   //@}
 
-  //@{
-  //! Checkbox to supress certain function node types
-  QCheckBox* _checkbox_iterative;
-  QCheckBox* _checkbox_fractal;
-  //@}
-
   //! Button to close dialog.
   QPushButton* _ok;
 
@@ -128,13 +122,6 @@ class DialogMutationParameters : public QDialog
   void changed_insert(int v);
   void changed_substitute(int v);
   //@}
-  
-  //@{
-  //! Signalled by checkbox.
-  void changed_iterative(int v);
-  void changed_fractal(int v);
-  //@}
-
 };
 
 #endif

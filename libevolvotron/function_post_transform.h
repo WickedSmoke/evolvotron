@@ -58,7 +58,6 @@ FUNCTION_BEGIN(FunctionPostTransform,12,1,false,0)
       return this;
     }
 
- // Don't use FUNCTION_END because we don't want to REGISTER here 
-};
+FUNCTION_END(FunctionPostTransform)
 
 #endif

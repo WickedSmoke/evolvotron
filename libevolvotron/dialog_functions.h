@@ -39,7 +39,34 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "useful.h"
 #include "mutation_parameters.h"
 
-#include "vbox_scrollview.h"
+//! Utility class for DialogFunctions
+/*! Would ideally live in dialog_functions.cpp, but that causes (moc-related?) problems with linking;
+  seems to need wider visibility.  \todo Move to own file and only include in dialog_functions.cpp
+ */
+class SignalExpander : public QObject
+{
+private:
+  Q_OBJECT
+  
+  QObject* _tgt;
+  const FunctionRegistration*const _fn;
+public:
+  SignalExpander(QObject* parent,QObject* tgt,const FunctionRegistration* fn)
+    :QObject(parent)
+    ,_tgt(tgt)
+    ,_fn(fn)
+  {}
+public slots:
+  void changed_weighting(int v)
+  {
+    emit changed_function_weighting(_fn,v);
+  }
+
+signals:
+  void changed_function_weighting(const FunctionRegistration*,int);
+};
+
+
 
 //! Provides a dialog for controlling which functions are available.
 class DialogFunctions : public QDialog
@@ -73,9 +100,6 @@ class DialogFunctions : public QDialog
   //! Proportion of non-constant nodes which are 12-parameter transforms
   QSlider* _slider_identity_supression;
 
-  //! Scrolling area for per-function controls
-  VBoxScrollView* _scrollview;
-
   //! Button to close dialog.
   QPushButton* _ok;
 
@@ -95,10 +119,11 @@ class DialogFunctions : public QDialog
  protected slots:
    
    //@{
-   //! Signalled by slider.
+   //! Signalled by sliders.
    void changed_target_branching_ratio(int v);
    void changed_proportion_constant(int v);
    void changed_identity_supression(int v);
+   void changed_function_weighting(const FunctionRegistration*,int v);
    //@}
 };
 

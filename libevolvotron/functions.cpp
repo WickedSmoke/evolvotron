@@ -20,7 +20,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of specific Function classes.
   Except there's nothing here because it's all in the header.
 */
+ 
+// This was supposed to localize class registration in this file, but doesn't.  See REGISTER definition.
+#define DO_REGISTRATION
 
+#include "useful.h"
+#include "function_boilerplate.h"
+#include "function_registry.h"             
 #include "functions.h"
 
 Noise FunctionNoiseOneChannel::_noise(100);

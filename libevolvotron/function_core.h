@@ -44,8 +44,7 @@ FUNCTION_BEGIN(FunctionConstant,3,0,false,FnCore)
       return true;
     }
 
-// Don't use FUNCTION_END because we don't want to REGISTER here.
-};
+FUNCTION_END(FunctionConstant)
 
 //------------------------------------------------------------------------------------------
 
@@ -64,8 +63,7 @@ FUNCTION_BEGIN(FunctionIdentity,0,0,false,FnCore)
       return false;
     }
 
-// Don't use FUNCTION_END because we don't want to REGISTER here.
-};
+FUNCTION_END(FunctionIdentity)
 
 //------------------------------------------------------------------------------------------
 
@@ -85,8 +83,7 @@ FUNCTION_BEGIN(FunctionTransform,12,0,false,FnCore)
       return false;
     }
 
-// Don't use FUNCTION_END because we don't want to REGISTER here.
-};
+FUNCTION_END(FunctionTransform)
 
 //------------------------------------------------------------------------------------------
 

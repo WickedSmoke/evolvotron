@@ -91,6 +91,47 @@ extern void constraint_violation(const char* test,const char* src_file,uint src_
 //! Use this to provide assert-like behaviour which is never disabled.
 #define constraint(TEST) {if (!TEST) {constraint_violation(#TEST,__FILE__,__LINE__);}}
 
+template <typename T> class NiftyCounter
+{
+ private:
+  //! \warning Derived classes must explicitly declare nulled instance of this in appropriate .cpp
+  static uint _count;
+ public:
+  NiftyCounter()
+    {
+      if (_count++==0) T::singleton_create();
+    }
+  ~NiftyCounter()
+    {
+      if (--_count==0) T::singleton_destroy();
+    }
+};
+
+template <typename T> class Singleton
+{
+ public:
+  static void singleton_create()
+    {
+      if (!_singleton_instance) _singleton_instance=new T();
+    }
+  static void singleton_destroy()
+    {
+      delete _singleton_instance;
+      _singleton_instance=0;
+    }
+  static T*const get()
+    {
+      if (!_singleton_instance) singleton_create(); 
+      return _singleton_instance;
+    }
+    
+ protected:
+  Singleton()
+    {}
+
+  //! \warning Derived classes must explicitly declare nulled instance of this in appropriate .cpp
+  static T* _singleton_instance;  
+};
 
 #endif
 

@@ -22,6 +22,9 @@ Animation
 
 Conventional
 ------------
+- DialogFunctions and DialogMutationParameters don't notice when the other dialog modifies MutationParameters.
+  Fortunately this doesn't matter because they (will) control completely disjoint aspects of it.
+  Could do with proper model update propagation/validation if things get any more complex though..
 - linz and -spheremap need rationalising before we add more projections
 - Ability to change linz and spheremap attributes on properties menu.
 - Supplement spheremaps with... what ?  Cubemaps ?  Volume output ?

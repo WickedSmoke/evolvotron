@@ -25,18 +25,10 @@
 #define _function_boilerplate_h_
 
 #include "useful.h"
+#include "function_registry.h"
 #include "function_node.h"
 #include "function_node_info.h"
 #include "margin.h"
-
-//! Enum for classification bits
-enum
-  {
-    FnCore=1,           // Constant, Identity or Transform: the 3 zero-child diluting functions
-    FnStructure=2,      // Functions which give rise to a lot of structure e.g spirals and grids
-    FnIterative=4,      // Iterative functions
-    FnFractal=8         // Fractal functions
-  };
 
 //! Template class to generate boilerplate for virtual methods.
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class FunctionBoilerplate : public FunctionNode
@@ -45,7 +37,7 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class
   typedef FunctionNode Superclass;
   
   //! Registration member returns a pointer to class meta-information.
-  static FunctionRegistration*const get_registration();
+  static const FunctionRegistration get_registration();
   
   //! Evaluation is supplied by the specific class.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -124,24 +116,24 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class
   virtual std::ostream& save_function(std::ostream& out,uint indent) const
     {
       out << Margin(indent) << "<f>\n";
-      out << Margin(indent+1) << "<type>" << get_registration()->name() << "</type>\n";
+      out << Margin(indent+1) << "<type>" << get_registration().name() << "</type>\n";
       Superclass::save_function(out,indent+1);
       out << Margin(indent) << "</f>\n";
       return out;
     }
 };
 
-//! You'd expect this to live in the .cpp, but instantiation should only be triggered ONCE by REGISTER macros in function.h which is only included in function_node.cpp.
 /*! We could obtain a type name obtained from typeid BUT:
-  - it has some strange numbers attached (with gcc 3.2 anyway) although we overwrite them later anyway.
-  - the strings returned from it seem to bomb if you try and do anything with them during static initialisation.
-  So we use the no-name registration and the programmer-friendly name gets filled in by the REGISTER macro later.
-  We could declare r as a static class member instead, but the static initializer fiasco strikes again.
+  - it has some strange numbers attached (with gcc 3.2 anyway).
+  - the strings returned from it seem to bomb if you try and do anything with them too soon (ie during static initialisation).
+  So we use the no-name registration and the programmer-friendly name gets filled in by the REGISTER macro.
+  \warning Returns a new instance of the registration for each invokation,
+  but should only be being called once if REGISTER is used correctly (once for each class).
 */
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> 
-	     FunctionRegistration*const FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE>::get_registration()
+	     const FunctionRegistration FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE>::get_registration()
 {
-  static FunctionRegistration r
+  return FunctionRegistration
     (
      /*typeid(FUNCTION).name(),*/
      &FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE>::stubnew,
@@ -151,7 +143,6 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE>
      ITERATIVE,
      FUNCTION::type_classification()
      );
-  return &r;
 }
 
 #define FUNCTION_BEGIN(FN,NP,NA,IT,CL) \
@@ -163,9 +154,18 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE>
      static const uint type_classification() {return CL;} \
      virtual const uint self_classification() const {return CL;}
 
-#define FUNCTION_END(FN) \
-   }; \
-   REGISTER(FN);
+ 
+//! Macro to push registrations through to registry.
+/*! The idea was that this would only be defined in functions.cpp,
+  (where there is a #define DO_REGISTRATION)
+  so there would only be one file performing registration.
+  In practice this doesn't work, so we just register in every unit
+  a function has visibility and let the registry ignore duplicates.
+  (a NiftyCounter would work in much the same way, discarding duplicates using it's counter).
+*/
+#define REGISTER(FN) static const bool registered_ ## FN =FunctionRegistry::get()->reg(#FN,FN::get_registration());
+
+#define FUNCTION_END(FN) };REGISTER(FN)
 
 #endif
 

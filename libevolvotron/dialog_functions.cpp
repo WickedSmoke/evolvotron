@@ -24,6 +24,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <qtooltip.h>
 #include <qgroupbox.h>
+#include <qtabwidget.h>
+
+#include "vbox_scrollview.h"
 
 #include "dialog_functions.h"
 #include "function_registry.h"
@@ -33,7 +36,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
   :QDialog(parent)
   ,_parent(parent)
-   ,_mutation_parameters(mp)
+  ,_mutation_parameters(mp)
 {
   assert(_parent!=0);
 
@@ -46,41 +49,61 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
   QGroupBox* c0=new QGroupBox(3,Qt::Horizontal,"Diluted branching ratio",_vbox);
   new QLabel("0.1",c0);
   _slider_target_branching_ratio=new QSlider(10,90,1,50,Qt::Horizontal,c0);
-  QToolTip::add(_slider_target_branching_ratio,"The branching ratio is diluted to <1.0 to prevent new function-trees being infinitely large.");
+  QToolTip::add(_slider_target_branching_ratio,"The branching ratio must be diluted to <1.0 to prevent formation of infinitely large function-trees.");
   new QLabel("0.9",c0);
 
-  QGroupBox* c1=new QGroupBox(3,Qt::Horizontal,"Diluting nodes: proportion constant",_vbox);
+  QGroupBox* c1=new QGroupBox(3,Qt::Horizontal,"Of diluting nodes, proportion constant:",_vbox);
   new QLabel("0.0",c1);
   _slider_proportion_constant=new QSlider(0,100,1,50,Qt::Horizontal,c1);
   new QLabel("1.0",c1);
   QToolTip::add(_slider_proportion_constant,"This specifies the proportion of diluting nodes which will be constant.");
 
-  QGroupBox* c2=new QGroupBox(3,Qt::Horizontal,"Non-constant diluting nodes: proportion transformed",_vbox);
+  QGroupBox* c2=new QGroupBox(3,Qt::Horizontal,"Of non-constant diluting nodes, proportion transformed",_vbox);
   new QLabel("0.0",c2);
   _slider_identity_supression=new QSlider(0,100,1,50,Qt::Horizontal,c2);
   QToolTip::add(_slider_identity_supression,"This specifies the proportion of non-constant diluting nodes which will be transforms (c.f identity nodes).");
   new QLabel("1.0",c2);
-  
-  setup_from_mutation_parameters();
 
-  _scrollview=new VBoxScrollView(_vbox);
+  QGroupBox* c3=new QGroupBox(1,Qt::Horizontal,"Specific function weightings",_vbox);
+  QTabWidget* tabs=new QTabWidget(c3/*_vbox*/);
 
-  for (std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
-       it!=FunctionRegistry::get()->registrations().end();
-       it++)
+  for (int c=-1;c<FnClassifications;c++)
     {
-      QGroupBox* g=new QGroupBox(3,Qt::Horizontal,(*it)->name(),_scrollview->contentParent());
+      VBoxScrollView* scrollview=new VBoxScrollView(this);
+      if (c==-1) 
+	tabs->addTab(scrollview,"All");
+      else 
+	tabs->addTab(scrollview,function_classification_name[c]);
 
-      QSizePolicy spx(QSizePolicy::Expanding,QSizePolicy::Preferred);
-      g->setSizePolicy(spx);
-
-      new QLabel("2^-10",g);
-      QSlider* s=new QSlider(-8,8,1,0,Qt::Horizontal,g);
-      s->setSizePolicy(spx);
-      new QLabel("2^10",g);
+      for (std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
+	   it!=FunctionRegistry::get()->registrations().end();
+	   it++)
+	{
+	  const FunctionRegistration*const fn=(*it);
+	  if (c==-1 || fn->classification()&(1<<c))
+	    {
+	      QGroupBox* g=new QGroupBox(3,Qt::Horizontal,fn->name(),scrollview->contentParent());
+	      
+	      QSizePolicy spx(QSizePolicy::Expanding,QSizePolicy::Preferred);
+	      g->setSizePolicy(spx);
+	      
+	      new QLabel("2^-10",g);
+	      QSlider* s=new QSlider(-10,0,1,0,Qt::Horizontal,g);
+	      s->setSizePolicy(spx);
+	      new QLabel("1",g);
+	      
+	      SignalExpander*const sx=new SignalExpander(this,this,fn);
+	      connect(
+		      s,SIGNAL(valueChanged(int)),
+		      sx,SLOT(changed_weighting(int))
+		      );
+	      connect(
+		      sx,SIGNAL(changed_function_weighting(const FunctionRegistration*,int)),
+		      this,SLOT(changed_function_weighting(const FunctionRegistration*,int))
+		      );
+	    }
+	}
     }
-  
-  _vbox->setStretchFactor(_scrollview,1);
   
   _ok=new QPushButton("OK",_vbox);
   
@@ -98,10 +121,13 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 	  _slider_proportion_constant,SIGNAL(valueChanged(int)),
 	  this,SLOT(changed_proportion_constant(int))
 	  );
+
   connect(
 	  _slider_identity_supression,SIGNAL(valueChanged(int)),
 	  this,SLOT(changed_identity_supression(int))
 	  );
+
+  setup_from_mutation_parameters();
 }
 
 DialogFunctions::~DialogFunctions()
@@ -130,6 +156,9 @@ void DialogFunctions::setup_from_mutation_parameters()
   _slider_proportion_constant->setValue(static_cast<int>(0.5f+100.0f*_mutation_parameters->proportion_constant()));
   _slider_identity_supression->setValue(static_cast<int>(0.5f+100.0f*_mutation_parameters->identity_supression()));
 
+  /*! \warning We DON'T NEED to set the function weighting sliders too
+    because they're the only way function weightings can be modified currently.
+  */
 }
 
 void DialogFunctions::changed_target_branching_ratio(int v)
@@ -161,3 +190,11 @@ void DialogFunctions::changed_identity_supression(int v)
   _mutation_parameters->identity_supression(v/100.0f);
 }
 
+void DialogFunctions::changed_function_weighting(const FunctionRegistration* fn,int v)
+{
+  const float w=pow(2,v);
+  std::clog << fn->name() << " weighting changed to " << w << "\n";
+  _mutation_parameters->change_function_weighting(fn,w);
+
+  setup_from_mutation_parameters();
+}

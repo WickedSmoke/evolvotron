@@ -31,13 +31,26 @@ class FunctionNode;
 class MutationParameters;
 class FunctionNodeInfo;
 
+//! Enum for classification bits
+enum
+  {
+    FnCore=1,           // Constant, Identity or Transform: the 3 zero-child diluting functions
+    FnStructure=2,      // Functions which give rise to a lot of structure e.g spirals and grids
+    FnRender=4,         // Functions which use rendering algorithms
+    FnIterative=8,      // Iterative functions
+    FnFractal=16,       // Fractal functions
+    FnClassifications=5 // The number of function classifications defined.
+  };
+
+extern const char*const function_classification_name[FnClassifications];
+
 //! Define FunctionNodeStubNewFnPtr for convenience.
 typedef FunctionNode*const (*FunctionNodeStubNewFnPtr)(const MutationParameters&,bool);
 typedef FunctionNode*const (*FunctionNodeCreateFnPtr)(const FunctionNodeInfo*,std::string&);
 
 //! Class for meta information about functions.
 /*! We use char*'s for the name 'cos they aren't dynamic so might as well use the strings from the object code.
-  (Also it avoids headaches with std::string in static initialisers).
+  (Also it avoids possible headaches with std::string in static initialisers).
  */
 class FunctionRegistration
 {
@@ -64,6 +77,29 @@ class FunctionRegistration
     ,_iterative(i)
     ,_classification(fnc)
     {}
+
+  //! Constructor (copy)
+  FunctionRegistration(const FunctionRegistration& f)
+    :_name(f._name)
+    ,_stubnew_fn(f._stubnew_fn)
+    ,_create_fn(f._create_fn)
+    ,_params(f._params)
+    ,_args(f._args)
+    ,_iterative(f._iterative)
+    ,_classification(f._classification)
+    {}
+
+  //! Constructor (copy with name override)
+  FunctionRegistration(const char* name,const FunctionRegistration& f)
+    :_name(name)
+    ,_stubnew_fn(f._stubnew_fn)
+    ,_create_fn(f._create_fn)
+    ,_params(f._params)
+    ,_args(f._args)
+    ,_iterative(f._iterative)
+    ,_classification(f._classification)
+    {}
+
 
   //! Accessor.
   const char*const name() const
