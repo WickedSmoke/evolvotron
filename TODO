@@ -1,11 +1,10 @@
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
-- Load/save to XML file.
 - More functions (reflection from environment, Perlin noise).
-- More iterative functions (e.g average along a segment between two co-ordinates).
+- More iterative functions
 - Get rid of silly xyz and matrix dependence on general tuples and templates.
-  Can be optimised, but only with heavyweight compile options.
+  (Can be optimised, but only with heavyweight compile options.)
 - Spawn recoloured could be linear, quadratic, or generalised versions.
 - Compute volumes in Z direction.
   Oscillate z co-ordinate with time.
@@ -55,6 +54,7 @@ imply it will be done sooner or later than other items!
 - "Move all locked to start" on edit menu
   (or move them to a "safe area", or save them in reloadable form).
 - Save whole grid as a single image (from File menu).
+- Save whole grid to an XML file.
 - Context menu option to bring up info about an image
   (in particular number of nodes and max depth)
 - Reference counting for images

@@ -3,6 +3,6 @@
 # Script to echo the current version number.
 # THIS IS THE ONLY PLACE A VERSION NUMBER SHOULD BE SPECIFIED
 
-# NB If you edit this, delete dialog_about.o (or just make clean) as there is no dependency check
+# NB If you edit this, make clean and rebuild as there is no dependency checking
 
-echo "0.1.0-pre0"
+echo "0.1.0"

@@ -161,8 +161,15 @@ Right clicking on an image gets you a few more options:
    save a small grid image, the size you see on the screen is the size
    you get in the file.  Note that the save won't be allowed until the
    full resolution image has been generated.
- - "Save function"
- - "Load function"
+ - "Save function" to store the function to an XML file.
+ - "Load function" to load a stored function from an XML file.
+   NB if the file was saved from a different version numbered
+   evolvotron, a warning message will be generated.
+   Save/load of functions is an experimental feature and you should
+   not count on future versions of evolvotron being able to load
+   files saved from old versions, or producing the same image
+   from a loaded function.  Attempting to load functions from later
+   versions into earlier versions is even less likely to succeed.
 
 MIDDLE MOUSE BUTTON
 -------------------

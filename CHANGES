@@ -1,7 +1,7 @@
 [Most recent at top]
 
 From release 0.0.5:
- - Bump version to 0.1.0-pre0
+ - Bump version to 0.1.0
  - Fix nasty bug in computers where a task could be delivered and deleted while
    the compute thread was still setting state in it
    (timing related so it never happened with ccmalloc and valgrind).
