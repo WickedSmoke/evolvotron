@@ -11,8 +11,8 @@ CONFIG+= qt thread release
 # There is a nice summary of gcc optimisation options at http://freshmeat.net/articles/view/730/
 #
 # Uncomment BOTH of the next two lines on a P4 system:
-QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
-QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2 -O3 -ffast-math -funroll-loops -finline-limit=4000 -fomit-frame-pointer
+#QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
+#QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2 -O3 -ffast-math -funroll-loops -finline-limit=4000 -fomit-frame-pointer
 #
 # On a P3 try -msse instead of -msse2 ?
 
@@ -31,6 +31,7 @@ HEADERS += \
 	mutatable_image_display.h \
 	mutation_parameters.h \
 	random.h \
+        transform.h \
         tuple.h \
 	useful.h \
 	xyz.h
@@ -50,6 +51,7 @@ SOURCES += \
 	mutatable_image_display.cpp \
 	mutation_parameters.cpp \
 	random.cpp \
+        transform.cpp \
         tuple.cpp \
 	useful.cpp \
 	xyz.cpp

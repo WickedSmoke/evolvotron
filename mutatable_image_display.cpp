@@ -76,34 +76,47 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       // We want to use a checkmark for "Locked"
       _menu->setCheckable(true);
 
-      _menu_item_number_respawn=_menu->insertItem("&Respawn",this,SLOT(menupick_respawn()));
+      _menu->insertItem("&Respawn",this,SLOT(menupick_respawn()));
 
       _menu->insertSeparator();
 
-      _menu_item_number_spawn=_menu->insertItem("&Spawn",this,SLOT(menupick_spawn()));
-      _menu_item_number_spawn_recoloured=_menu->insertItem("Re&colour",this,SLOT(menupick_spawn_recoloured()));
-      _menu_item_number_spawn_warped=_menu->insertItem("&Warp",this,SLOT(menupick_spawn_warped()));
+      _menu->insertItem("&Spawn",this,SLOT(menupick_spawn()));
+      _menu->insertItem("Spawn re&coloured",this,SLOT(menupick_spawn_recoloured()));
+
+      _menu_warped=new QPopupMenu(this);
+      _menu_warped->insertItem("&Random",this,SLOT(menupick_spawn_warped_random()));
+      _menu_warped->insertItem("Zoom &In",this,SLOT(menupick_spawn_warped_zoom_in()));
+      _menu_warped->insertItem("Zoom &Out",this,SLOT(menupick_spawn_warped_zoom_out()));
+      _menu_warped->insertItem("R&otate",this,SLOT(menupick_spawn_warped_rotate()));
+      _menu_warped->insertItem("&Pan XY",this,SLOT(menupick_spawn_warped_pan_xy()));
+      _menu_warped->insertItem("&Pan X",this,SLOT(menupick_spawn_warped_pan_x()));
+      _menu_warped->insertItem("&Pan Y",this,SLOT(menupick_spawn_warped_pan_y()));
+
+      _menu->insertItem("&Spawn &warped",_menu_warped);
 
       _menu->insertSeparator();
 
       _menu_item_number_lock =_menu->insertItem("&Lock",this,SLOT(menupick_lock()));
 
       _menu->insertSeparator();
-      
+
       _menu_big=new QPopupMenu(this);
-      _menu_big_item_number_resizable  =_menu_big->insertItem("&Resizable",this,SLOT(menupick_big_resizable()));
-      _menu_big_item_number_1024x1024  =_menu_big->insertItem("&1024x1024",this,SLOT(menupick_big_1024x1024()));
-      _menu_big_item_number_2048x2048  =_menu_big->insertItem("&2048x2048",this,SLOT(menupick_big_2048x2048()));
-      _menu_big_item_number_4096x4096  =_menu_big->insertItem("&4096x4096",this,SLOT(menupick_big_4096x4096()));
+      _menu_big->insertItem("&Resizable",this,SLOT(menupick_big_resizable()));
       _menu_big->insertSeparator();
+      _menu_big->insertItem("&512x512",this,SLOT(menupick_big_512x512()));
+      _menu_big->insertItem("&1024x1024",this,SLOT(menupick_big_1024x1024()));
+      _menu_big->insertItem("&2048x2048",this,SLOT(menupick_big_2048x2048()));
+      _menu_big->insertItem("&4096x4096",this,SLOT(menupick_big_4096x4096()));
+      _menu_big->insertSeparator();
+      _menu_big->insertItem("640x&480",this,SLOT(menupick_big_640x480()));
+      _menu_big->insertItem("1024x&768",this,SLOT(menupick_big_1024x768()));
+      _menu_big->insertItem("1280x&960",this,SLOT(menupick_big_1280x960()));
+      _menu_big->insertItem("1&600x1200",this,SLOT(menupick_big_1600x1200()));
 
-      _menu_big_item_number_1280x960   =_menu_big->insertItem("1280x&960",this,SLOT(menupick_big_1280x960()));
-      _menu_big_item_number_1600x1200  =_menu_big->insertItem("1&600x1200",this,SLOT(menupick_big_1600x1200()));
-
-      _menu_item_number_big  =_menu->insertItem("&Big",_menu_big);
+      _menu->insertItem("&Big",_menu_big);
     }
 
-  _menu_item_number_save =_menu->insertItem("&Save",this,SLOT(menupick_save()));
+  _menu->insertItem("&Save",this,SLOT(menupick_save()));
 
   main()->hello(this);
 
@@ -279,12 +292,33 @@ void MutatableImageDisplay::menupick_spawn_recoloured()
   main()->spawn_recoloured(this);
 }
 
-/*! This slot is called by selecting the "Spawn Warped" context menu item
+/*! This slot is called by selecting the "Spawn Warped/Random" context menu item
  */
-void MutatableImageDisplay::menupick_spawn_warped()
+void MutatableImageDisplay::menupick_spawn_warped_random()
 {
   main()->spawn_warped(this);
 }
+
+void MutatableImageDisplay::menupick_spawn_warped_zoom_in()
+{
+  //! \todo: Implement.
+  // Should pass a pointer to a TransformFactoryRandomZoomIn to spawn_warped which can call it with a random number generator.
+}
+
+void MutatableImageDisplay::menupick_spawn_warped_zoom_out()
+{}
+
+void MutatableImageDisplay::menupick_spawn_warped_rotate()
+{}
+
+void MutatableImageDisplay::menupick_spawn_warped_pan_xy()
+{}
+
+void MutatableImageDisplay::menupick_spawn_warped_pan_x()
+{}
+
+void MutatableImageDisplay::menupick_spawn_warped_pan_y()
+{}
 
 /*! This slot is called by selecting the "Lock" context menu item.
   It stops the image from being overwritten by a new image.
@@ -337,9 +371,14 @@ void MutatableImageDisplay::menupick_big_resizable()
   spawn_big(false,QSize(0,0));
 }
 
-void MutatableImageDisplay::menupick_big_1024x1024()
+void MutatableImageDisplay::menupick_big_640x480()
 {
-  spawn_big(true,QSize(1024,1024));
+  spawn_big(true,QSize(640,480));
+}
+
+void MutatableImageDisplay::menupick_big_1024x768()
+{
+  spawn_big(true,QSize(1024,768));
 }
 
 void MutatableImageDisplay::menupick_big_1280x960()
@@ -350,6 +389,16 @@ void MutatableImageDisplay::menupick_big_1280x960()
 void MutatableImageDisplay::menupick_big_1600x1200()
 {
   spawn_big(true,QSize(1600,1200));
+}
+
+void MutatableImageDisplay::menupick_big_512x512()
+{
+  spawn_big(true,QSize(512,512));
+}
+
+void MutatableImageDisplay::menupick_big_1024x1024()
+{
+  spawn_big(true,QSize(1024,1024));
 }
 
 void MutatableImageDisplay::menupick_big_2048x2048()

@@ -44,6 +44,7 @@ This has only been tested on RedHat8.0, but there's no reason it shouldn't
 work on any platform with a correctly set up qmake (which is all the
 configure step does, using the specification in evolvotron.pro).
 
+You do NOT need to be root until the (optional) install stage.
 You can either do the "traditional"
 
   ./configure
@@ -69,7 +70,11 @@ something like
 export QMAKESPEC=linux=g++
 as appropriate to your architecture; consult the qmake documentation for
 recognised values (or look for your qt installation's "mkspecs" directory
-and try the name of the appropriate subdirectory).
+and try the name of the appropriate subdirectory).  In this case you
+will probably need to set your QTDIR too.  These need to be defined
+when you execute both the qmake and the make (so make life easy and
+define them in your .bashrc or .bash_profile).
+[This problem was reported on Mandrake 9.0]
 
 Note that qmake's default optimisation settings are pretty conservative
 (-O2 -march=i386).  IF you have a chip with sse instuctions or similar, 

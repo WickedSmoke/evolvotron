@@ -28,9 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "tuple.h"
 
 //! Class to hold vectors in 3D cartesian co-ordinates.
-/*! Direct access to the x,y,z members is permitted.
-    There is a general assumption that the co-ordinate system will be right handed,
-    and that for terrain type applications x and y will be plan position and z will be height.
+/*! Direct access to the x,y,z members is not permitted.
  */
 class XYZ : public Tuple<3,float>
 {

@@ -272,6 +272,8 @@ void EvolvotronMain::spawn_recoloured(const MutatableImageNode* image,MutatableI
 void EvolvotronMain::spawn_warped(const MutatableImageNode* image,MutatableImageDisplay* display)
 {
   std::vector<MutatableImageNode*> args;
+
+  //! \todo: Should check for a pre-transform class instance at the head of the image (query the dieplay) and if possible apply a transform to it without creating a new node.
   
   // NB We don't generate any z co-ordinates (except z identity) so the random transform remains in the image plane.
   // (completely random transforms mostly look too dissimilar; they are different slices of the 3D image volume)

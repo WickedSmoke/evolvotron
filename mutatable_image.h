@@ -30,6 +30,8 @@
 
 #include "mutation_parameters.h"
 
+class MutatableImageNodePreTransform;
+
 //! Abstract base class for all kinds of mutatable image node.
 class MutatableImageNode
 {
@@ -75,6 +77,11 @@ class MutatableImageNode
    */
   virtual const bool is_constant() const
     =0;
+
+  //! Query the node as to whether it is a MutatableImageNodePostTransform (return null if not).
+  /*! This is useful for accumulating view transforms at the front end of a function tree without creating a new transform each time.
+   */
+  virtual MutatableImageNodePreTransform*const is_a_MutatableImageNodePreTransform();
 
   //! This returns a new random bit of tree.  Setting the "exciting" avoids basic node types, but only at the top level of the stub tree.
   static MutatableImageNode* stub(const MutationParameters& parameters,bool exciting=false);
@@ -780,6 +787,11 @@ class MutatableImageNodePreTransform : public MutatableImageNode
  public:
   //! Query whether node value is independent of position argument.
   virtual const bool is_constant() const;
+
+  //! Query the node as to whether it is a MutatableImageNodePostTransform (return null if not).
+  /*! This is useful for accumulating view transforms at the front end of a function tree without creating a new transform each time.
+   */
+  virtual MutatableImageNodePreTransform*const is_a_MutatableImageNodePreTransform();
 
   //! Constructor.
   MutatableImageNodePreTransform(const std::vector<MutatableImageNode*>& a);

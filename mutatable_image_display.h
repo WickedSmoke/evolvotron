@@ -83,26 +83,26 @@ class MutatableImageDisplay : public QWidget
   //! Context (right-click) menu.
   QPopupMenu* _menu;
 
+  //! Submenu for spawn warped options.
+  QPopupMenu* _menu_warped;
+
   //! Submenu for Big image options.
   QPopupMenu* _menu_big;
 
-  //@{
   //! Position of item in menu.
-  uint _menu_item_number_respawn;
-  uint _menu_item_number_spawn;
-  uint _menu_item_number_spawn_recoloured;
-  uint _menu_item_number_spawn_warped;
+  /*! This is the only menu item we need to retain this information for becuase we need it to set the lock check-mark.
+   */
   uint _menu_item_number_lock;
-  uint _menu_item_number_big;
-  uint _menu_item_number_save;
-  //@}
 
   //@{
   //! Position of item in menu_big.
   uint _menu_big_item_number_resizable;
-  uint _menu_big_item_number_1024x1024;
+  uint _menu_big_item_number_640x480;
+  uint _menu_big_item_number_1024x768;
   uint _menu_big_item_number_1280x960;
   uint _menu_big_item_number_1600x1200;
+  uint _menu_big_item_number_512x512;
+  uint _menu_big_item_number_1024x1024;
   uint _menu_big_item_number_2048x2048;
   uint _menu_big_item_number_4096x4096;
   //@}
@@ -169,7 +169,25 @@ class MutatableImageDisplay : public QWidget
   void menupick_spawn_recoloured();
 
   //! Called from context menu.
-  void menupick_spawn_warped();
+  void menupick_spawn_warped_random();
+
+  //! Called from context menu.
+  void menupick_spawn_warped_zoom_in();
+
+  //! Called from context menu.
+  void menupick_spawn_warped_zoom_out();
+
+  //! Called from context menu.
+  void menupick_spawn_warped_rotate();
+
+  //! Called from context menu.
+  void menupick_spawn_warped_pan_xy();
+
+  //! Called from context menu.
+  void menupick_spawn_warped_pan_x();
+
+  //! Called from context menu.
+  void menupick_spawn_warped_pan_y();
 
   //! Called from context menu.
   void menupick_lock();
@@ -181,7 +199,16 @@ class MutatableImageDisplay : public QWidget
   void menupick_big_resizable();
 
   //! Called from "Big" submenu of context menu.
+  void menupick_big_512x512();
+
+  //! Called from "Big" submenu of context menu.
   void menupick_big_1024x1024();
+
+  //! Called from "Big" submenu of context menu.
+  void menupick_big_640x480();
+
+  //! Called from "Big" submenu of context menu.
+  void menupick_big_1024x768();
 
   //! Called from "Big" submenu of context menu.
   void menupick_big_1280x960();
@@ -198,7 +225,6 @@ class MutatableImageDisplay : public QWidget
  protected:
   //! Common code for big slots.
   void spawn_big(bool scrollable,const QSize& sz);
-
 };
 
 #endif

@@ -237,6 +237,11 @@ void MutatableImageNode::mutate(const MutationParameters& parameters)
     }
 }
 
+MutatableImageNodePreTransform*const MutatableImageNode::is_a_MutatableImageNodePreTransform()
+{
+  return 0;
+}
+
 /*******************************************/
 
 /*! No work to be done for evaluate because _value is already set.
@@ -1120,6 +1125,11 @@ const XYZ MutatableImageNodePreTransform::evaluate(const XYZ& p) const
 const bool MutatableImageNodePreTransform::is_constant() const
 {
   return arg(4).is_constant();
+}
+
+MutatableImageNodePreTransform*const MutatableImageNodePreTransform::is_a_MutatableImageNodePreTransform()
+{
+  return this;
 }
 
 MutatableImageNodePreTransform::MutatableImageNodePreTransform(const std::vector<MutatableImageNode*>& a)

@@ -1,9 +1,11 @@
 [Most recent at top]
 
 From release 0.0.4
- - Bump version to 0.0.5
+ - Bump version to "development for 0.0.5" ***CHANGE FOR RELEASE***
  - configure script changed to sh from csh
  - Release tar files now unpack to an evolvotron/ subdirectory
+ - More "Big" size options
+ - Spawn warped offers more precise control
 
 From release 0.0.3:
  - Bump version to 0.0.4
