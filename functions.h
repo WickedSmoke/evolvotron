@@ -28,6 +28,28 @@
 #ifndef _functions_h_
 #define _functions_h_
 
+#include <cmath>
+
+#include "useful.h"
+
+//! Sane modulus function always returning a number in the range 0-y
+inline float modulus(float x,float y)
+{
+  if (y<0) y=-y;
+  float r=fmod(x,y);
+  if (r<0.0f) r+=y;
+  return r;
+}
+
+inline uint modulus(int x,int y)
+{
+  if (y<0) y=-y;
+  int r=x%y;
+  if (r<0) r+=y;
+  assert(r>=0);
+  return r;
+}
+
 #include "function.h"
 //------------------------------------------------------------------------------------------
 
@@ -945,7 +967,10 @@ REGISTER(FunctionMin);
 
 //------------------------------------------------------------------------------------------
 
-class FunctionMod : public Function
+//! Function returning components of one function modulus thos of another.
+/*! Sane always-positive modulus used to avoid funny business at zero.
+ */
+class FunctionModulus : public Function
 {
  public:
   //! No parameters.
@@ -966,9 +991,9 @@ class FunctionMod : public Function
       const XYZ v0(our.arg(0)(p));
       const XYZ v1(our.arg(1)(p));
       return XYZ(
-		 fmod(v0.x(),fabs(v1.x())),
-		 fmod(v0.y(),fabs(v1.y())),
-		 fmod(v0.z(),fabs(v1.z()))
+		 modulus(v0.x(),fabs(v1.x())),
+		 modulus(v0.y(),fabs(v1.y())),
+		 modulus(v0.z(),fabs(v1.z()))
 		 );
     }
   
@@ -979,7 +1004,7 @@ class FunctionMod : public Function
     }
 };
 
-REGISTER(FunctionMod);
+REGISTER(FunctionModulus);
 
 //------------------------------------------------------------------------------------------
 
@@ -1243,8 +1268,8 @@ REGISTER(FunctionChooseRect);
 
 //------------------------------------------------------------------------------------------
 
-//! Function implements selection between 2 functions based on position in checkerboard
-class FunctionChooseCheckerboard : public Function
+//! Function implements selection between 2 functions based on position in 3d mesh
+class FunctionChooseFrom2InCubeMesh : public Function
 {
  public:
   //! No parameters.
@@ -1279,12 +1304,124 @@ class FunctionChooseCheckerboard : public Function
     }
 };
 
-REGISTER(FunctionChooseCheckerboard);
+REGISTER(FunctionChooseFrom2InCubeMesh);
+
+//------------------------------------------------------------------------------------------
+
+//! Function implements selection between 2 functions based on position in 3d mesh
+class FunctionChooseFrom3InCubeMesh : public Function
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Three arguments.
+  static const uint arguments()
+    {
+      return 3;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const int x=static_cast<int>(floorf(p.x()));
+      const int y=static_cast<int>(floorf(p.y()));
+      const int z=static_cast<int>(floorf(p.z()));
+
+      return our.arg(modulus(x+y+z,3))(p);
+    }
+  
+  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionChooseFrom3InCubeMesh);
+
+//------------------------------------------------------------------------------------------
+
+//! Function implements selection between 2 functions based on position in 2d grid
+class FunctionChooseFrom2InSquareGrid : public Function
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const int x=static_cast<int>(floorf(p.x()));
+      const int y=static_cast<int>(floorf(p.y()));
+
+      if ((x+y)&1)
+	return our.arg(0)(p);
+      else
+	return our.arg(1)(p);
+    }
+  
+  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionChooseFrom2InSquareGrid);
+
+//------------------------------------------------------------------------------------------
+
+//! Function implements selection between 2 functions based on position in 2d grid
+class FunctionChooseFrom3InSquareGrid : public Function
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Three arguments.
+  static const uint arguments()
+    {
+      return 3;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const int x=static_cast<int>(floorf(p.x()));
+      const int y=static_cast<int>(floorf(p.y()));
+
+      return our.arg(modulus(x+y,3))(p);
+    }
+  
+  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionChooseFrom3InSquareGrid);
 
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in grid of triangles 
-class FunctionChooseTriangleboard : public Function
+class FunctionChooseFrom2InTriangleGrid : public Function
 {
  public:
   //! No parameters.
@@ -1323,14 +1460,57 @@ class FunctionChooseTriangleboard : public Function
     }
 };
 
-REGISTER(FunctionChooseTriangleboard);
+REGISTER(FunctionChooseFrom2InTriangleGrid);
 
 //------------------------------------------------------------------------------------------
 
-//! Function implements selection between 3 functions based on position in grid of hexagons`
+//! Function implements selection between 2 functions based on position in grid of triangles 
+/*! Not entirely sure this one produces a sensible pattern.  Needs explicitly testing.
+ */
+class FunctionChooseFrom3InTriangleGrid : public Function
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Three arguments.
+  static const uint arguments()
+    {
+      return 3;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      static const XYZ d0(1.0f         ,0.0f         ,0.0f);
+      static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0f);
+      static const XYZ d2(cos(2*M_PI/3),sin(2*M_PI/3),0.0f);
+      
+      const int a=static_cast<int>(floorf(p%d0));
+      const int b=static_cast<int>(floorf(p%d1));
+      const int c=static_cast<int>(floorf(p%d2));
+
+      return our.arg(modulus(a+b+c,3))(p);
+    }
+  
+  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionChooseFrom3InTriangleGrid);
+
+//------------------------------------------------------------------------------------------
+
+//! Function implements selection between 3 functions based on position in grid of hexagons
 /*! Don't entirely understand how this works, but it looks nice.
  */
-class FunctionChoosePseudocubeboard : public Function
+class FunctionChooseFrom3InDiamondGrid : public Function
 {
  public:
   //! No parameters.
@@ -1348,22 +1528,27 @@ class FunctionChoosePseudocubeboard : public Function
   //! Evaluate function.
   static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
     {
+      // Basis vectors for hex grid
       static const XYZ d0(1.0f         ,0.0f         ,0.0f);
       static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0f);
       static const XYZ d2(cos(2*M_PI/3),sin(2*M_PI/3),0.0f);
       
+      // Dot with basis
       const float p0=p%d0;
       const float p1=p%d1;
       const float p2=p%d2;
 
-      const int i0=lrintf(p0);
-      const int i1=lrintf(p1);
-      const int i2=lrintf(p2);
-      
+      // Find nearest on-grid point
+      const int i0=(int)floorf(p0+0.5f);
+      const int i1=(int)floorf(p1+0.5f);
+      const int i2=(int)floorf(p2+0.5f);
+
+      // Measure distance
       const float m0=fabsf(p0-i0);
       const float m1=fabsf(p1-i1);
       const float m2=fabsf(p2-i2);
 
+      // Closest one decides which function
       if (m0<=m1 && m0<=m2)
 	return our.arg(0)(p);
       else if (m1<=m0 && m1<=m2)
@@ -1379,12 +1564,12 @@ class FunctionChoosePseudocubeboard : public Function
     }
 };
 
-REGISTER(FunctionChoosePseudocubeboard);
+REGISTER(FunctionChooseFrom3InDiamondGrid);
 
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 3 functions based on position in grid of hexagons
-class FunctionChooseHexboard : public Function
+class FunctionChooseFrom3InHexagonGrid : public Function
 {
  public:
   //! No parameters.
@@ -1393,12 +1578,13 @@ class FunctionChooseHexboard : public Function
       return 0;
     }
 
-  //! Two arguments.
+  //! Three arguments.
   static const uint arguments()
     {
       return 3;
     }
 
+  //! Co-ordinates of hexagon with given hex-grid coords
   static const XYZ hex(int x,int y)
     {
       const float k=sqrt(3.0f)/2.0f;
@@ -1408,42 +1594,153 @@ class FunctionChooseHexboard : public Function
 		 0.0f
 		 );
     }
-  
-  //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+
+  //! Finds hex-grid coordinates of hex containing cartesian px,py
+  static void nearest_hex(float px,float py,int &hx,int& hy)
     {
       // Initial guess at which hex we're in:
       const float k=sqrt(3.0f)/2.0f;
 
-      const int xn=(int)rintf(p.x()/k);
-      const int yn=(int)(
-			 (xn&1) 
+      const int nx=(int)rintf(px/k);
+      const int ny=(int)(
+			 (nx&1) 
 			 ? 
-			 rintf(p.y()-0.5f) 
+			 rintf(py-0.5f) 
 			 : 
-			 rintf(p.y())
+			 rintf(py)
 			 );
 
-      int xb=xn;
-      int yb=yn;
-      const XYZ ph=hex(xn,yn);
-      float m2b=(XYZ(p.x(),p.y(),0.0f)-ph).magnitude2();
-
-      for (int yd=-1;yd<=1;yd++)
-	for (int xd=-1;xd<=1;xd++)
-	  if (!(yd==0 && xd==0))
+      hx=nx;
+      hy=ny;
+      const XYZ ph=hex(nx,ny);
+      float m2b=(XYZ(px,py,0.0f)-ph).magnitude2();
+      
+      for (int dy=-1;dy<=1;dy++)
+	for (int dx=-1;dx<=1;dx++)
+	  if (!(dy==0 && dx==0))
 	    {
-	      const float m2=(XYZ(p.x(),p.y(),0.0f)-hex(xn+xd,yn+yd)).magnitude2();
+	      const float m2=(XYZ(px,py,0.0f)-hex(nx+dx,ny+dy)).magnitude2();
 	      if (m2<m2b)
 		{
-		  xb=xn+xd;
-		  yb=yn+yd;
+		  hx=nx+dx;
+		  hy=ny+dy;
 		  m2b=m2;
 		}
 	    }
+    } 
+  
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      int hx;
+      int hy;
+      nearest_hex(p.x(),p.y(),hx,hy);
+      const uint which=hy+((hx&1)? 2 : 0);
+      return our.arg(modulus(which,3))(p);
+    }
+    
+  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+};
 
-      const uint which=yb+((xb&1)? 2 : 0);
-      return our.arg(which%3)(p);
+REGISTER(FunctionChooseFrom3InHexagonGrid);
+
+//------------------------------------------------------------------------------------------
+
+//! Function implements selection between 2 functions based on position in grid of hexagons
+class FunctionChooseFrom2InBorderedHexagonGrid : public Function
+{
+ public:
+  //! One parameter controlling border width
+  static const uint parameters()
+    {
+      return 1;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Co-ordinates of hexagon with given hex-grid coords
+  static const XYZ hex(int x,int y)
+    {
+      const float k=sqrt(3.0f)/2.0f;
+      return XYZ(
+		 x*k,
+		 y+((x&1) ? 0.5f : 0.0f),
+		 0.0f
+		 );
+    }
+
+  //! Finds hex-grid coordinates of hex containing cartesian px,py
+  static void nearest_hex(float px,float py,int &hx,int& hy)
+    {
+      // Initial guess at which hex we're in:
+      const float k=sqrt(3.0f)/2.0f;
+
+      const int nx=(int)rintf(px/k);
+      const int ny=(int)(
+			 (nx&1) 
+			 ? 
+			 rintf(py-0.5f) 
+			 : 
+			 rintf(py)
+			 );
+
+      hx=nx;
+      hy=ny;
+      const XYZ ph=hex(nx,ny);
+      float m2b=(XYZ(px,py,0.0f)-ph).magnitude2();
+      
+      for (int dy=-1;dy<=1;dy++)
+	for (int dx=-1;dx<=1;dx++)
+	  if (!(dy==0 && dx==0))
+	    {
+	      const float m2=(XYZ(px,py,0.0f)-hex(nx+dx,ny+dy)).magnitude2();
+	      if (m2<m2b)
+		{
+		  hx=nx+dx;
+		  hy=ny+dy;
+		  m2b=m2;
+		}
+	    }
+    } 
+  
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      int hx;
+      int hy;
+      nearest_hex(p.x(),p.y(),hx,hy);
+
+      bool in_border=false;
+
+      // Hex centres are separated by 1.0 so limit border size
+      const float b=modulus(our.param(0),0.5f);
+
+      // Step along grid co-ordinates in various directions.  If there's a nearer point, we're in the border.
+      for (uint a=0;a<6;a++)
+	{
+	  const float dx=b*sin(a*M_PI/3.0f);
+	  const float dy=b*cos(a*M_PI/3.0f);
+	  
+	  int ax;
+	  int ay;
+	  nearest_hex(p.x()+dx,p.y()+dy,ax,ay);
+
+	  if (hx!=ax || hy!=ay)
+	    {
+	      in_border=true;
+	      break;
+	    }
+	}
+
+      return our.arg(in_border)(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
@@ -1453,7 +1750,7 @@ class FunctionChooseHexboard : public Function
     }
 };
 
-REGISTER(FunctionChooseHexboard);
+REGISTER(FunctionChooseFrom2InBorderedHexagonGrid);
 
 //------------------------------------------------------------------------------------------
 
@@ -1497,30 +1794,47 @@ REGISTER(FunctionIterate);
 class FunctionAverageSamples : public FunctionIterative
 {
  public:
-  //! No parameters.
+  //! Three parameters.
   static const uint parameters()
     {
-      return 0;
+      return 3;
     }
 
-  //! Three arguments.
+  //! One argument.
   static const uint arguments()
     {
-      return 3;
+      return 1;
     }
 
   //! Evaluate function.
   static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
     {
-      XYZ p0(our.arg(1)(p));
-      const XYZ p1(our.arg(2)(p));
-      const XYZ d((p1-p0)/our.iterations());
+      const XYZ baseline(our.param(0),our.param(1),our.param(2));
+     
+      XYZ p0;
+      XYZ p1;
+      XYZ delta;
+      
+      if (our.iterations()==1)
+	{
+	  p0=p;
+	  p1=p;
+	  delta=XYZ(0.0f,0.0f,0.0f);
+	}
+      else
+	{
+	  p0=p-baseline;
+	  p1=p+baseline;
+	  delta=(p1-p0)/our.iterations();
+	}
+
       XYZ ret(0.0f,0.0f,0.0f);
+      XYZ ps=p0;
 
       for (uint i=0;i<our.iterations();i++)
 	{
-	  ret+=our.arg(0)(p0);
-	  p0+=d;
+	  ret+=our.arg(0)(ps);
+	  ps+=delta;
 	}
       ret/=our.iterations();
       return ret;
@@ -1534,6 +1848,111 @@ class FunctionAverageSamples : public FunctionIterative
 };
 
 REGISTER(FunctionAverageSamples);
+
+//------------------------------------------------------------------------------------------
+
+//! Function similar to FunctionAverageSamples but doing convolution
+class FunctionConvolveSamples : public FunctionIterative
+{
+ public:
+  //! Three parameters.
+  static const uint parameters()
+    {
+      return 3;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const XYZ baseline(our.param(0),our.param(1),our.param(2));
+     
+      XYZ p0;
+      XYZ p1;
+      XYZ delta;
+      
+      if (our.iterations()==1)
+	{
+	  p0=p;
+	  p1=p;
+	  delta=XYZ(0.0f,0.0f,0.0f);
+	}
+      else
+	{
+	  p0=p-baseline;
+	  p1=p+baseline;
+	  delta=(p1-p0)/our.iterations();
+	}
+
+      XYZ ret(0.0f,0.0f,0.0f);
+      XYZ ps=p0;
+
+      for (uint i=0;i<our.iterations();i++)
+	{
+	  ret+=(our.arg(0)(ps)*our.arg(1)(ps));
+	  ps+=delta;
+	}
+      ret/=our.iterations();
+      return ret;
+    }
+  
+  //! Is constant if sampled leaf function is.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionConvolveSamples);
+
+//------------------------------------------------------------------------------------------
+
+//! Function summing decreasing amounts of higher frequency versions of image
+class FunctionAccumulateOctaves : public FunctionIterative
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! One argument.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      XYZ ret(0.0f,0.0f,0.0f);
+      float k=0.0f;
+      for (uint i=0;i<our.iterations();i++)
+	{
+	  const float scale=(1<<i);
+	  const float iscale=1.0f/scale;
+	  ret+=iscale*(our.arg(0)(scale*p));
+	  k+=iscale;
+	}
+      ret/=k;
+      return ret;
+    }
+  
+  //! Is constant if sampled leaf function is.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionAccumulateOctaves);
+
 
 //------------------------------------------------------------------------------------------
 

@@ -3,11 +3,12 @@ imply it will be done sooner or later than other items!
 
 - More functions (reflection from environment, Perlin noise).
 - More iterative functions
+- Option to spawn images with a given top level node type
+  (would be great for testing)
 - Get rid of silly xyz and matrix dependence on general tuples and templates.
   (Can be optimised, but only with heavyweight compile options.)
 - Spawn recoloured could be linear, quadratic, or generalised versions.
-- Compute volumes in Z direction.
-  Oscillate z co-ordinate with time.
+- Option to compute volumes in Z direction and oscillate z co-ordinate with time.
 - Locked attribute should be an image property, not a display property.
   (Would play nicer with Undo)
 - Create registry of all function node types
