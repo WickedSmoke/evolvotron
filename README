@@ -1,3 +1,12 @@
+NOTE
+====
+Looking for a ./configure or a Makefile ?
+Try 
+  ./qconfigure ; make
+or
+  ./BUILD
+instead.
+
 INTRODUCTION
 ============
 
@@ -50,23 +59,23 @@ online documentation; I'm hoping this won't cause any problems]
  
 You do NOT need to be root until the (optional) final install stage.
 
-In the top level directory, you can either do the "traditional"
+In the top level directory, you can either do
 
-  ./configure
+  ./qconfigure
   make
 
 or just have both done for you by doing
 
   ./BUILD
 
+[Note that qconfigure was formerly named configure; however this
+was causing some confusion as it is NOT an autoconf generated configure
+script and doesn't support any of the usual configure options.
+Edit the qconfigure script or the .pro files instead.]
+
 [Note that BUILD also adds $QTDIR/bin to the path while it runs the 
 commands, and is probably the easiest way to build if your PATH doesn't 
 include a directory containing qmake and you like it that way.]
-
-[Note also that the configure script has nothing to do with the GNU
-autoconf tools.  If you're expecting it to support the usual options,
-sorry, you're out of luck.  You'll have to edit the configure script
-or the .pro files instead to change most things.]
 
 Make will recurse into and build the libevolvotron directory
 (which is 99% of the work) and some additional subdirectories with 
@@ -148,7 +157,7 @@ If you can fix it, the patches would be even better!
 Another possibly problematic area (only because it's new and not widely tested)
 is the automatic building of a marked-up version of the USAGE file.
 If this causes problems, comment out the two lines running ./text_to_markup.py
-in the ./configure file and just retain the echo.  The important thing is that
+in the ./qconfigure file and just retain the echo.  The important thing is that
 there be a quote-delimited string in ./libevolvotron/usage_text.h
 
 And the hackiest build yet:
@@ -164,23 +173,23 @@ front of the other -I paths.  Yuk.
 
 BUILD OPTIONS
 =============
-A few things are available through the configure script.
+A few things are available through the qconfigure script.
 [NB These simply don't work on older gcc or qt installations,
 but they don't add that much so don't worry about it.]
 
 Usage:
-  ./configure [p4|p3|xp] [fs]
+  ./qconfigure [p4|p3|xp] [fs]
 
-(Any command line arguments given to ./BUILD are passed through to configure,
+(Any command line arguments given to ./BUILD are passed through to qconfigure,
 so you can do e.g "./BUILD fs p4").
 
-If you rerun configure or build with a different option to the last time
+If you rerun qconfigure or build with a different option to the last time
 you almost certainly need to do a "make distclean" to clean up old
 code and Makefiles. 
 
 FUNCTIONALITY OPTIONS
 ---------------------
-Specify 'fs' on the ./configure commandline to enable
+Specify 'fs' on the ./qconfigure commandline to enable
 fullscreen support (which is off by default, but is recommended).
 
 If you select fullscreen support but your version of Qt is too
@@ -199,8 +208,8 @@ you rebuild to make sure Makefiles are rebuilt.
 
 The easiest way to get some additional CPU-specific optimisations
 is to use the configuration option:
-  ./configure <cpu>
-where <cpu> is p3,p4 or xp as appropriate e.g ./configure p4
+  ./qconfigure <cpu>
+where <cpu> is p3,p4 or xp as appropriate e.g ./qconfigure p4
 and rebuild from clean (again, "make distclean" is a good idea).
 
 If you attempt to run the resulting executable on incompatible
@@ -216,7 +225,7 @@ here's the times for a 2.4GHz P4 to run a 2048x2048 evolvotron_render
     add -fomit-frame-pointer                                 28.2s
     add -funroll-loops                                       26.8s
     add -ffast-math                                          26.5s
-  With 'p4' configure option:
+  With 'p4' qconfigure option:
     arch/cpu -> -march=pentium4 -mfpmath=sse -msse2          23.6s
   With modification to common.pro:
     add -finline-limit=4000                                  19.4s
@@ -234,7 +243,7 @@ Linc Davis reports:
 
 Paolo Greppi built it on OSX like this:
  - get qt for osx http://www.trolltech.com/download/qt/mac.html
- - configure qt with -thread to compile threading support
+ - qconfigure qt with -thread to compile threading support
    (takes a lot of time)
  - remember to:
         sudo ln -sf /usr/local/qt/lib/libqt-mt.3.dylib /usr/lib
@@ -267,9 +276,9 @@ the make install.
 There are some man pages in ./man/man1 (not copied anywhere by make install).  
 
 Also of possible interest is an evolvotron.html file prepared from the USAGE
-file during the configure step.
+file during the qconfigure step.
 
-NB If you change a ".pro" file, you'll need to ./configure again 
+NB If you change a ".pro" file, you'll need to ./qconfigure again 
 to make changes take effect.
 
 INSTALL PROBLEMS

@@ -10,6 +10,8 @@ From release 0.2.3:
  - Don't use True and False in doc-building python script
    (seems to be quite new thing, not in 2.1.x ?).  Use 0 and 1 instead.
  - Internal changes
+ - New dialog for function weightings
+ - configure renamed to qconfigure to avoid confusion with autconf
 
 From release 0.2.2:
  - Version to 0.2.3

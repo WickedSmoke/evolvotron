@@ -549,7 +549,7 @@ FUNCTION_BEGIN(FunctionMax,0,2,false,0)
 		 std::max(v0.z(),v1.z())
 		 );
     }
-`  
+  
   //! Is constant if both leaf functions are.
   virtual const bool is_constant() const
     {
