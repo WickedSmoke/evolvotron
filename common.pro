@@ -5,41 +5,49 @@
 CONFIG+= qt thread release
 
 ##################
-# Improved optimisation options from qmake defaults.
-# The README contains some timings showing the (fairly small) effect of changing these.
-# 
-# Use the next two lines for slight improvement
-# Now leaving these ON for general distribution as they DO have SOME effect and should be portable.
-QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O3 -fomit-frame-pointer -funroll-loops -ffast-math 
-#
-# The following architecture options make the compiled executables less portable.
-# (On a different setup you may need to change what's subtracted out of the flags.)
-# NB -march=X implies -mcpu=X... no need to specify both the same
-#
-# Use the next two lines ONLY IF you have the right processor (P4)
-#MAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
-#MAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
-#
-# Here's the same thing for P3 
-#QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
-#QMAKE_CXXFLAGS_RELEASE += -march=pentium3 -mfpmath=sse -msse
-#
-# Here's the same thing (UNTESTED) for Athalon-XP
-#QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
-#QMAKE_CXXFLAGS_RELEASE += -march=athalon-xp -mfpmath=sse -msse
-#
-# The next line seems to generate nicer assembler (with better SSE register usage) from some templated code.
-# WARNING: gcc grows HUGE (>500MB!!!) and it takes AGES (30mins!!!) with this option.
-# Of curiosity value for the hardcore only.
-#QMAKE_CXXFLAGS_RELEASE += -finline-limit=4000
-
-##################
 # Set install path.
 # For a system-wide install use the next line (and remember to "su" for the "make install" stage)
 # INSTALLPATH = /usr/local/bin
 # For a personal install use something like the next line
 INSTALLPATH = /home/$(USER)/bin
+
+##################
+# Improved optimisation options from qmake defaults.
+# The README contains some timings showing the (fairly small) effect of changing these.
+# 
+# Use the next two lines for slight improvement
+# Now leaving these ON for general distribution as they DO have SOME effect 
+# (or at least they have in the past... see the README), and should be portable.
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -O3 -fomit-frame-pointer -funroll-loops -ffast-math 
+
+##################
+# Architecture specific optimisations
+# The following architecture options make the compiled executables less portable.
+# (On a different setup you may need to change what's subtracted out of the flags.)
+# NB -march=X implies -mcpu=X... no need to specify both the same
+
+contains(CPU, p4 ){ 
+  QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
+  QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
+}
+
+contains(CPU, p3 ){
+  QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
+  QMAKE_CXXFLAGS_RELEASE += -march=pentium3 -mfpmath=sse -msse
+}
+
+contains(CPU, xp ){
+  QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
+  QMAKE_CXXFLAGS_RELEASE += -march=athalon-xp -mfpmath=sse -msse
+}
+
+##################
+# Optimisation insanity
+# The next line seems to generate nicer assembler (with better SSE register usage) from some templated code.
+# WARNING: gcc grows HUGE (>500MB!!!) and it takes AGES (30mins!!!) with this option.
+# Of curiosity value for the hardcore only.
+#QMAKE_CXXFLAGS_RELEASE += -finline-limit=4000
 
 #######################################
 # Version numbering.  This is ENTIRELY controlled by what is echoed by the VERSION script

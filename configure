@@ -12,10 +12,10 @@ fi
 
 # NB Don't run "qmake -project" again!!! (It wipes evolvotron.pro)
 
-# Should test "which qmake" here.  If not found, add $(QTDIR)/bin to path
+# TODO: Should test "which qmake" here.  If not found, add $(QTDIR)/bin to path
 
 echo "Your qmake version is:"
-qmake --version
+qmake --version 
 
 echo
 echo "Your gcc version is (unless qmake is set up to use a different one):"
@@ -23,6 +23,6 @@ gcc --version
 
 echo "Running qmake..."
 
-qmake main.pro
+qmake "CPU=$1" main.pro 
 
-echo "...configuration completed - you can do 'make' now"
+echo "...configuration completed - ready to do 'make' now"
