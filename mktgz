@@ -6,7 +6,7 @@ VERSION=`./VERSION`
 
 cd ..
 
-FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,CHANGES,VERSION,USAGE,BUGS,qconfigure,doxygen.cfg,mktgz,mkdoc,text_to_markup.py}`
+FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,CHANGES,VERSION,USAGE,BUGS,configure,doxygen.cfg,mktgz,mkdoc,text_to_markup.py}`
 FILES_EXTRAS=`ls evolvotron/extras/{README,spheremap.pov,spheremap.sh}`
 
 # NB Don't ship automatically generated .h file or contents of pkg
