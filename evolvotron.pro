@@ -6,8 +6,8 @@ CONFIG+= qt thread release
 #########
 # Better optimisations than qmake defaults IF you have the right processor.
 # These two lines do appear to generate SSE instructions on the authors setup.
-QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
-QMAKE_CXXFLAGS_RELEASE += -march=i686 -O3 -mfpmath=sse -msse2 -fomit-frame-pointer -ffast-math
+#QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
+#QMAKE_CXXFLAGS_RELEASE += -march=i686 -O3 -mfpmath=sse -msse2 -fomit-frame-pointer -ffast-math
 
 # Input
 HEADERS += \
