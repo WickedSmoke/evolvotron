@@ -67,7 +67,7 @@ BUILD PROBLEMS/OPTIONS
 ========================
 Check you have your QTDIR environment defined, and possibly also your
 QMAKESPEC too.  The former should point to your Qt installation.  The latter
-will be something like "linux=g++" if needed; check the Qt docs for other
+will be something like "linux-g++" if needed; check the Qt docs for other
 architectures or perhaps look in your QT installation's mkspecs directory.
 (RedHat defines QTDIR for the normal user environment, and seems to work fine
 without explicitly setting QMAKESPEC.  A Mandrake user reports having to set both.)
@@ -81,7 +81,7 @@ the other -I paths.
 
 Note that qmake's default optimisation settings are pretty conservative
 (-O2 -march=i386).  IF you have a chip with sse instuctions or similar, 
-then I would highly recomend uncommenting and/or editing the couple of
+then I would highly recomend uncommenting and/or editing some of the
 lines modifying  QMAKE_CXXFLAGS_RELEASE near the start of "evolvotron.pro"
 
 [Other platforms: 

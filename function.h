@@ -242,4 +242,30 @@ class FunctionPostTransformGeneralised
 
 //------------------------------------------------------------------------------------------
 
+//! Transforms position transformed by a 30 paramter quadratic transform.
+class FunctionTransformQuadratic
+{
+ public:
+
+  //! 30 parameters: 12 linear plus 9 cross terms plus 9 squared terms.
+  static const uint parameters()
+    {
+      return 30;
+    }
+
+  //! 0 leaf arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Return p transformed.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p);
+
+  //! Unlikely to ever be constant (requires all parameters zero).
+  static const bool is_constant(const FunctionNode& our);
+};
+
+//------------------------------------------------------------------------------------------
+
 #endif

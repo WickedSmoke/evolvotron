@@ -290,26 +290,6 @@ template <typename F> Registration FunctionNodeUsing<F>::registration(typeid(F).
 
 //----------------------------------------------------------------------------------------
 
-//! This node type is intended as a substitute for FunctionNodePositionTransformed.  
-class FunctionNodePositionTransformedQuadratic : public FunctionNode
-{
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Returns true if the function is independent of it's position argument (obviously generally false in this case).
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  FunctionNodePositionTransformedQuadratic(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
-
-  //! Destructor.
-  virtual ~FunctionNodePositionTransformedQuadratic();
-
-  //! Returns a clone.
-  virtual FunctionNode*const deepclone() const;
-};
 
 //! This node implements XYZ to spherical co-ords
 class FunctionNodeXYZToSpherical : public FunctionNode

@@ -155,3 +155,32 @@ const bool FunctionPostTransformGeneralised::is_constant(const FunctionNode& our
 }
 
 //------------------------------------------------------------------------------------------
+
+REGISTER(FunctionTransformQuadratic);
+
+const XYZ FunctionTransformQuadratic::evaluate(const FunctionNode& our,const XYZ& p)
+{
+  const XYZ translate(our.param( 0),our.param( 1),our.param( 2));
+  const XYZ basis_x  (our.param( 3),our.param( 4),our.param( 5));
+  const XYZ basis_y  (our.param( 6),our.param( 7),our.param( 8));
+  const XYZ basis_z  (our.param( 9),our.param(10),our.param(11));
+  const XYZ basis_xy (our.param(12),our.param(13),our.param(14));
+  const XYZ basis_xz (our.param(15),our.param(16),our.param(17));
+  const XYZ basis_yz (our.param(18),our.param(19),our.param(20));
+  const XYZ basis_xx (our.param(21),our.param(22),our.param(23));
+  const XYZ basis_yy (our.param(24),our.param(25),our.param(26));
+  const XYZ basis_zz (our.param(27),our.param(28),our.param(29));
+
+  return 
+    translate
+    +basis_x*p.x()+basis_y*p.y()+basis_z*p.z()
+    +basis_xy*(p.x()*p.y())+basis_xz*(p.x()*p.z())+basis_yz*(p.y()*p.z())
+    +basis_xx*(p.x()*p.x())+basis_yy*(p.y()*p.y())+basis_zz*(p.z()*p.z());
+}
+
+const bool FunctionTransformQuadratic::is_constant(const FunctionNode&)
+{
+  return false;
+}
+
+//------------------------------------------------------------------------------------------

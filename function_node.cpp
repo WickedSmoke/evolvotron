@@ -75,7 +75,7 @@ FunctionNode* FunctionNode::stub(const MutationParameters& parameters,bool excit
       if (parameters.r01()<0.5f)
 	return new FunctionNodeUsing<FunctionTransform>(stubparams(parameters,12),stubargs(parameters,0));
       else
-	return new FunctionNodePositionTransformedQuadratic(stubparams(parameters,30),stubargs(parameters,0));	
+	return new FunctionNodeUsing<FunctionTransformQuadratic>(stubparams(parameters,30),stubargs(parameters,0));	
     }
   else if (r<(1.0f-parameters.proportion_constant())*base)
     return new FunctionNodeUsing<FunctionIdentity>(stubparams(parameters,0),stubargs(parameters,0));
@@ -165,7 +165,7 @@ const std::vector<float> FunctionNode::stubparams(const MutationParameters& para
 {
   std::vector<float> ret;
   for (uint i=0;i<n;i++)
-    ret.push_back(M_SQRT2*(-1.0f+2.0f*parameters.r01()));
+    ret.push_back(-1.0f+2.0f*parameters.r01());
   return ret;
 }
 
@@ -265,49 +265,6 @@ const bool FunctionNode::ok() const
 }
 
 static Registry registry;
-
-/*******************************************/
-
-const XYZ FunctionNodePositionTransformedQuadratic::evaluate(const XYZ& p) const
-{
-  const XYZ translate(param( 0),param( 1),param( 2));
-  const XYZ basis_x  (param( 3),param( 4),param( 5));
-  const XYZ basis_y  (param( 6),param( 7),param( 8));
-  const XYZ basis_z  (param( 9),param(10),param(11));
-  const XYZ basis_xy (param(12),param(13),param(14));
-  const XYZ basis_xz (param(15),param(16),param(17));
-  const XYZ basis_yz (param(18),param(19),param(20));
-  const XYZ basis_xx (param(21),param(22),param(23));
-  const XYZ basis_yy (param(24),param(25),param(26));
-  const XYZ basis_zz (param(27),param(28),param(29));
-
-  return 
-    translate
-    +basis_x*p.x()+basis_y*p.y()+basis_z*p.z()
-    +basis_xy*(p.x()*p.y())+basis_xz*(p.x()*p.z())+basis_yz*(p.y()*p.z())
-    +basis_xx*(p.x()*p.x())+basis_yy*(p.y()*p.y())+basis_zz*(p.z()*p.z());
-}
-
-const bool FunctionNodePositionTransformedQuadratic::is_constant() const
-{
-  return false;
-}
-
-FunctionNodePositionTransformedQuadratic::FunctionNodePositionTransformedQuadratic(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-:FunctionNode(p,a)
-{
-  assert(params().size()==30);
-  assert(args().size()==0);
-}
-
-FunctionNodePositionTransformedQuadratic::~FunctionNodePositionTransformedQuadratic()
-{}
-
-FunctionNode*const FunctionNodePositionTransformedQuadratic::deepclone() const
-{
-  return new FunctionNodePositionTransformedQuadratic
-    (cloneparams(),cloneargs());
-}
 
 /*******************************************/
 

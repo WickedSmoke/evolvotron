@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 # append debug or debug
-CONFIG+= qt thread debug
+CONFIG+= qt thread release
 
 ##################
 # Improved optimisation options from qmake defaults
@@ -17,7 +17,7 @@ QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
 #
 # Use the next line for a "super-release" final build only.
 # It takes ages and gcc grows huge, so not good for development.
-# But it does a better job with template code, especially if SSE code is enabled
+# But it does do a MUCH better job with template code, especially if SSE code is enabled
 #QMAKE_CXXFLAGS_RELEASE += -funroll-loops -finline-limit=4000
 
 # Input

@@ -336,18 +336,24 @@ void EvolvotronMain::spawn_normal(const MutatableImage* image,MutatableImageDisp
 }
 
 void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImageDisplay* display)
-{
-  std::vector<float> params;
+{  
+  history().replacing(display);
 
   std::vector<FunctionNode*> args;
-  args.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
-  args.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
-  args.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
-  args.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
   args.push_back(image->root()->deepclone());
-  
-  history().replacing(display);
-  display->image(new MutatableImage(new FunctionNodeUsing<FunctionPostTransform>(params,args)));
+
+  //! \todo Option to use a FunctionPostTransformQuadratic might be interesting. How about a FunctionPostTransform*Generalised ?
+  display->image
+    (
+     new MutatableImage
+     (
+      new FunctionNodeUsing<FunctionPostTransform>
+      (
+       FunctionNode::stubparams(mutation_parameters(),12),
+       args
+       )
+      )
+     );
 }
 
 void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisplay* display)
@@ -563,8 +569,6 @@ void EvolvotronMain::tick()
   the second function as being the "actual" image (we use an "exciting" stub to avoid boring constants or identities),
   and the final function as being a colour-space transform.
   Basically the idea is to give lots of opportunities for stuff to happen.
-
-  \todo Why using boring constant nodes here when could be inserting interesting stubs instead ?
  */
 void EvolvotronMain::reset(MutatableImageDisplay* display)
 {
@@ -578,20 +582,21 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
   
       std::vector<float> params_in;
       std::vector<FunctionNode*> args_in;
-      args_in.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
-      args_in.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
-      args_in.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
-      args_in.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
+      args_in.push_back(FunctionNode::stub(mutation_parameters()));
+      args_in.push_back(FunctionNode::stub(mutation_parameters()));
+      args_in.push_back(FunctionNode::stub(mutation_parameters()));
+      args_in.push_back(FunctionNode::stub(mutation_parameters()));
       args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_in,args_in));
   
+      // This one is crucial: we REALLY want something interesting to happen within here.
       args_toplevel.push_back(FunctionNode::stub(mutation_parameters(),true));
 
       std::vector<float> params_out;
       std::vector<FunctionNode*> args_out;
-      args_out.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
-      args_out.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
-      args_out.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
-      args_out.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
+      args_out.push_back(FunctionNode::stub(mutation_parameters()));
+      args_out.push_back(FunctionNode::stub(mutation_parameters()));
+      args_out.push_back(FunctionNode::stub(mutation_parameters()));
+      args_out.push_back(FunctionNode::stub(mutation_parameters()));
       args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_out,args_out));
 
       root=new FunctionNodeConcatenateTriple(params_toplevel,args_toplevel);
