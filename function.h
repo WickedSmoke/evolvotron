@@ -1188,4 +1188,248 @@ REGISTER(FunctionChooseRect);
 
 //------------------------------------------------------------------------------------------
 
+//! Function repeatedly applying it's leaf function to the argument
+class FunctionIterate
+{
+ public:
+  //! One parameter (the iteration count).
+  static const uint parameters()
+    {
+      return 1;
+    }
+
+  //! One argument.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      XYZ ret(p);
+      for (uint i=0;i<our.iterations();i++)
+	ret=our.arg(0)(ret);
+      return ret;
+    }
+  
+  //! Is constant if leaf function is.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionIterate);
+
+//------------------------------------------------------------------------------------------
+
+//! Function returning average value of evenly spaced samples between two points
+class FunctionAverageSamples
+{
+ public:
+  //! One parameter (the iteration count).
+  static const uint parameters()
+    {
+      return 1;
+    }
+
+  //! Three arguments.
+  static const uint arguments()
+    {
+      return 3;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      XYZ p0(our.arg(1)(p));
+      const XYZ p1(our.arg(2)(p));
+      const XYZ d((p1-p0)/our.iterations());
+      XYZ ret(0.0f,0.0f,0.0f);
+
+      for (uint i=0;i<our.iterations();i++)
+	{
+	  ret+=our.arg(0)(p0);
+	  p0+=d;
+	}
+      ret/=our.iterations();
+      return ret;
+    }
+  
+  //! Is constant if sampled leaf function is.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionAverageSamples);
+
+//------------------------------------------------------------------------------------------
+
+//! Generalised (3D) Mandelbrot iterator for fractal functions.
+/*! Returns i in 0 to _iterations inclusive.  i==_iterations implies "in" set.
+ */
+inline const uint brot(const XYZ& z0,const XYZ& c,const uint iterations)
+{
+  XYZ z(z0);
+  uint i;
+  for (i=0;i<iterations;i++)
+    {
+      const float x2=z.x()*z.x();
+      const float y2=z.y()*z.y();
+      const float z2=z.z()*z.z();
+      
+      if (x2+y2+z2>4.0f)
+	break;
+      
+      XYZ nz;
+      nz.x(x2-y2-z2+c.x());
+      nz.y(2.0f*z.x()*z.y()+c.y());
+      nz.z(2.0f*z.x()*z.z()+c.z());
+      
+      z=nz;
+    }
+
+  return i;
+}
+
+//------------------------------------------------------------------------------------------
+
+//! Function selects arg to evaluate based on test for point in Mandelbrot set.
+class FunctionMandelbrotChoose
+{
+ public:
+  //! One parameter (the iteration count).
+  static const uint parameters()
+    {
+      return 1;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      return (brot(XYZ(0.0f,0.0f,0.0f),p,our.iterations())==our.iterations() ? our.arg(0)(p) : our.arg(1)(p));
+    }
+  
+  //! Can't be constant unless functions are the same.
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionMandelbrotChoose);
+
+//------------------------------------------------------------------------------------------
+
+//! Function returns -1 for points in set, 0-1 for escaped points
+class FunctionMandelbrotContour
+{
+ public:
+  //! One parameter (the iteration count).
+  static const uint parameters()
+    {
+      return 1;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const uint i=brot(XYZ(0.0f,0.0f,0.0f),p,our.iterations());
+      return (i==our.iterations() ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/our.iterations()));
+    }
+  
+  //! Not constant.
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionMandelbrotContour);
+
+//------------------------------------------------------------------------------------------
+
+//! Function selects arg to evaluate based on test for point in Julia set.
+class FunctionJuliaChoose
+{
+ public:
+  //! One parameter (the iteration count).
+  static const uint parameters()
+    {
+      return 1;
+    }
+
+  //! Three arguments.
+  static const uint arguments()
+    {
+      return 3;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      return (brot(p,our.arg(2)(p),our.iterations())==our.iterations() ? our.arg(0)(p) : our.arg(1)(p));
+    }
+  
+  //! Can't be constant unless functions are the same.
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionJuliaChoose);
+
+//------------------------------------------------------------------------------------------
+
+//! Function returns -1 for points in set, 0-1 for escaped points
+class FunctionJuliaContour
+{
+ public:
+  //! One parameter (the iteration count).
+  static const uint parameters()
+    {
+      return 1;
+    }
+
+  //! One argument.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const uint i=brot(p,our.arg(0)(p),our.iterations());
+      return (i==our.iterations() ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/our.iterations()));
+    }
+  
+  //! Not constant.
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionJuliaContour);
+
+//------------------------------------------------------------------------------------------
+
+
 #endif

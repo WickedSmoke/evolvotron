@@ -138,17 +138,17 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   else if (r<base+28*step)
     return new FunctionNodeUsing<FunctionPostTransformGeneralised>(stubparams(parameters,0),stubargs(parameters,5));
   else if (r<base+29*step)
-    return new FunctionNodeIterativeMap(stubparams(parameters,0),stubargs(parameters,1),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeUsing<FunctionIterate>(stubparams(parameters,1,true),stubargs(parameters,1),true);
   else if (r<base+30*step)
-    return new FunctionNodeIterativeMapAccumulator(stubparams(parameters,0),stubargs(parameters,2),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeUsing<FunctionAverageSamples>(stubparams(parameters,1,true),stubargs(parameters,3),true);
   else if (r<base+31*step)
-    return new FunctionNodeIterativeMandelbrotChoose(stubparams(parameters,0),stubargs(parameters,2),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeUsing<FunctionMandelbrotChoose>(stubparams(parameters,1,true),stubargs(parameters,2),true);
   else if (r<base+32*step)
-    return new FunctionNodeIterativeMandelbrotContour(stubparams(parameters,0),stubargs(parameters,0),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeUsing<FunctionMandelbrotContour>(stubparams(parameters,1,true),stubargs(parameters,0),true);
   else if (r<base+33*step)
-    return new FunctionNodeIterativeJuliaChoose(stubparams(parameters,0),stubargs(parameters,3),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeUsing<FunctionJuliaChoose>(stubparams(parameters,1,true),stubargs(parameters,3),true);
   else //if (r<base+34*step)
-    return new FunctionNodeIterativeJuliaContour(stubparams(parameters,0),stubargs(parameters,1),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeUsing<FunctionJuliaContour>(stubparams(parameters,1,true),stubargs(parameters,1),true);
 }
 
 FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
@@ -224,17 +224,23 @@ const std::vector<FunctionNode*> FunctionNode::stubargs(const MutationParameters
   return ret;
 }
 
-const std::vector<float> FunctionNode::stubparams(const MutationParameters& parameters,uint n)
+const std::vector<float> FunctionNode::stubparams(const MutationParameters& parameters,uint n,bool iter)
 {
   std::vector<float> ret;
   for (uint i=0;i<n;i++)
-    ret.push_back(-1.0f+2.0f*parameters.r01());
+    {
+      if (i==0 && iter)
+	ret.push_back(1.0f+floor(parameters.r01()*parameters.max_initial_iterations()));
+      else
+	ret.push_back(-1.0f+2.0f*parameters.r01());
+    }
   return ret;
 }
 
-FunctionNode::FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+FunctionNode::FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a,bool iter)
   :_args(a)
   ,_params(p)
+  ,_param0_is_iterations(iter)
 {
   assert(ok());
 }
@@ -268,7 +274,38 @@ void FunctionNode::mutate(const MutationParameters& parameters)
   
   // Perturb any parameters we have
   for (std::vector<float>::iterator it=params().begin();it!=params().end();it++)
-    (*it)+=parameters.magnitude()*(-1.0f+2.0f*parameters.r01());
+    {
+      if (_param0_is_iterations && it==params().begin())
+	{
+	  if (parameters.r01()<parameters.probability_iterations_change_step())
+	    {
+	      if (parameters.r01()<0.5)
+		{
+		  if ((*it)>=2.0f) (*it)--;
+		}
+	      else
+		{
+		  (*it)++;
+		}
+	    }
+	  if (parameters.r01()<parameters.probability_iterations_change_jump())
+	    {
+	      if (parameters.r01()<0.5)
+		{
+		  if ((*it)>1.0f) (*it)=floor((*it)/2.0f+0.5f);
+		}
+	      else
+		{
+		  (*it)*=2.0f;
+		}
+	    }
+	  if ((*it)<1.0f) (*it)=1.0f;
+	}
+      else
+	{
+	  (*it)+=parameters.magnitude()*(-1.0f+2.0f*parameters.r01());
+	}
+    }
   
   // Then go to work on the argument structure...
   
@@ -328,283 +365,3 @@ const bool FunctionNode::ok() const
 }
 
 static Registry registry;
-
-
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-/*******************************************/
-
-FunctionNodeIterative::FunctionNodeIterative(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
-  :FunctionNode(p,a)
-   ,_iterations(i)
-{}
-
-FunctionNodeIterative::~FunctionNodeIterative()
-{}
-
-void FunctionNodeIterative::mutate(const MutationParameters& parameters)
-{
-  // Take care of mutating any branches using base class code.
-  FunctionNode::mutate(parameters);
-
-  if (parameters.r01()<parameters.probability_iterations_change_step())
-    {
-      if (parameters.r01()<0.5)
-	{
-	  if (_iterations>1) _iterations--;
-	}
-      else
-	{
-	  _iterations++;
-	}
-    }
-
-  if (parameters.r01()<parameters.probability_iterations_change_jump())
-    {
-      if (parameters.r01()<0.5)
-	{
-	  if (_iterations>1) _iterations/=2;
-	}
-      else
-	{
-	  _iterations*=2;
-	}
-    }
-}
-
-/*******************************************/
-
-const XYZ FunctionNodeIterativeMap::evaluate(const XYZ& p) const
-{
-  XYZ ret(p);
-
-  for (uint i=0;i<_iterations;i++)
-    {
-      ret=arg(0)(p);
-    }
-
-  return ret;
-}
-
-const bool FunctionNodeIterativeMap::is_constant() const
-{
-  // Assumes _iterations>0
-  return arg(0).is_constant();
-}
-
-FunctionNodeIterativeMap::FunctionNodeIterativeMap(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
-  :FunctionNodeIterative(p,a,i)
-{
-  assert(params().size()==0);
-  assert(args().size()==1);
-}
-
-FunctionNodeIterativeMap::~FunctionNodeIterativeMap()
-{}
-
-FunctionNode*const FunctionNodeIterativeMap::deepclone() const
-{
-  return new FunctionNodeIterativeMap(cloneparams(),cloneargs(),_iterations);
-}
-
-/*******************************************/
-
-const XYZ FunctionNodeIterativeMapAccumulator::evaluate(const XYZ& p) const
-{
-  XYZ q(p);
-  XYZ ret(0.0f,0.0f,0.0f);
-
-  for (uint i=0;i<_iterations;i++)
-    {
-      ret+=arg(0)(q);
-      q=arg(1)(q);
-    }
-
-  return ret/_iterations;
-}
-
-const bool FunctionNodeIterativeMapAccumulator::is_constant() const
-{
-  // If arg0 is constant then we get the same value everywhere.  
-  // If arg1 is constant we still perform a lookup of arg0 at 2 different places.
-  return (arg(0).is_constant());
-}
-
-FunctionNodeIterativeMapAccumulator::FunctionNodeIterativeMapAccumulator(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
-  :FunctionNodeIterative(p,a,i)
-{
-  assert(params().size()==0);
-  assert(args().size()==2);
-}
-
-FunctionNodeIterativeMapAccumulator::~FunctionNodeIterativeMapAccumulator()
-{}
-
-FunctionNode*const FunctionNodeIterativeMapAccumulator::deepclone() const
-{
-  return new FunctionNodeIterativeMapAccumulator(cloneparams(),cloneargs(),_iterations);
-}
-
-/*******************************************/
-
-/*! Returns i in 0 to _iterations inclusive.  i==_iterations implies "in" set.
- */
-const uint FunctionNodeIterativeZSquaredPlusC::iterate(const XYZ& z0,const XYZ& c) const
-{
-  XYZ z(z0);
-  uint i;
-  for (i=0;i<_iterations;i++)
-    {
-      const float x2=z.x()*z.x();
-      const float y2=z.y()*z.y();
-      const float z2=z.z()*z.z();
-
-      if (x2+y2+z2>4.0f)
-	break;
-
-      XYZ nz;
-      nz.x(x2-y2-z2+c.x());
-      nz.y(2.0f*z.x()*z.y()+c.y());
-      nz.z(2.0f*z.x()*z.z()+c.z());
-
-      z=nz;
-    }
-
-  return i;
-}
-  
-FunctionNodeIterativeZSquaredPlusC::FunctionNodeIterativeZSquaredPlusC(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
-  :FunctionNodeIterative(p,a,i)
-{}
-
-FunctionNodeIterativeZSquaredPlusC::~FunctionNodeIterativeZSquaredPlusC()
-{}
-
-
-/*******************************************/
-
-const XYZ FunctionNodeIterativeMandelbrotChoose::evaluate(const XYZ& p) const
-{
-  return (iterate(XYZ(0.0f,0.0f,0.0f),p)==_iterations ? arg(0)(p) : arg(1)(p));
-}
-
-const bool FunctionNodeIterativeMandelbrotChoose::is_constant() const
-{
-  return false;
-}
-
-FunctionNodeIterativeMandelbrotChoose::FunctionNodeIterativeMandelbrotChoose(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
-  :FunctionNodeIterativeZSquaredPlusC(p,a,i)
-{
-  assert(params().size()==0);
-  assert (args().size()==2);
-}
-
-FunctionNodeIterativeMandelbrotChoose::~FunctionNodeIterativeMandelbrotChoose()
-{}
-
-FunctionNode*const FunctionNodeIterativeMandelbrotChoose::deepclone() const
-{
-  return new FunctionNodeIterativeMandelbrotChoose(cloneparams(),cloneargs(),_iterations);
-}
-
-/*******************************************/
-
-const XYZ FunctionNodeIterativeMandelbrotContour::evaluate(const XYZ& p) const
-{
-  const uint i=iterate(XYZ(0.0f,0.0f,0.0f),p);
-  return (i==_iterations ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/_iterations));
-}
-
-const bool FunctionNodeIterativeMandelbrotContour::is_constant() const
-{
-  return false;
-}
-
-FunctionNodeIterativeMandelbrotContour::FunctionNodeIterativeMandelbrotContour(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
-  :FunctionNodeIterativeZSquaredPlusC(p,a,i)
-{
-  assert(params().size()==0);
-  assert (args().size()==2);
-}
-
-FunctionNodeIterativeMandelbrotContour::~FunctionNodeIterativeMandelbrotContour()
-{}
-
-FunctionNode*const FunctionNodeIterativeMandelbrotContour::deepclone() const
-{
-  return new FunctionNodeIterativeMandelbrotContour(cloneparams(),cloneargs(),_iterations);
-}
-
-/*******************************************/
-
-const XYZ FunctionNodeIterativeJuliaChoose::evaluate(const XYZ& p) const
-{
-  return (iterate(p,arg(0)(p))==_iterations ? arg(1)(p) : arg(2)(p));
-}
-
-const bool FunctionNodeIterativeJuliaChoose::is_constant() const
-{
-  return false;
-}
-
-FunctionNodeIterativeJuliaChoose::FunctionNodeIterativeJuliaChoose(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
-  :FunctionNodeIterativeZSquaredPlusC(p,a,i)
-{
-  assert(params().size()==0);
-  assert(args().size()==3);
-}
-
-FunctionNodeIterativeJuliaChoose::~FunctionNodeIterativeJuliaChoose()
-{}
-
-FunctionNode*const FunctionNodeIterativeJuliaChoose::deepclone() const
-{
-  return new FunctionNodeIterativeJuliaChoose(cloneparams(),cloneargs(),_iterations);
-}
-
-/*******************************************/
-
-const XYZ FunctionNodeIterativeJuliaContour::evaluate(const XYZ& p) const
-{
-  const uint i=iterate(p,arg(0)(p));
-  return (i==_iterations ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/_iterations));
-}
-
-const bool FunctionNodeIterativeJuliaContour::is_constant() const
-{
-  return false;
-}
-
-FunctionNodeIterativeJuliaContour::FunctionNodeIterativeJuliaContour(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
-  :FunctionNodeIterativeZSquaredPlusC(p,a,i)
-{
-  assert(params().size()==0);
-  assert (args().size()==1);
-}
-
-FunctionNodeIterativeJuliaContour::~FunctionNodeIterativeJuliaContour()
-{}
-
-FunctionNode*const FunctionNodeIterativeJuliaContour::deepclone() const
-{
-  return new FunctionNodeIterativeJuliaContour(cloneparams(),cloneargs(),_iterations);
-}
-

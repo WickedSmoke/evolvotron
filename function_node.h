@@ -26,12 +26,45 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <string>
 
 #include "useful.h"
 #include "xyz.h"
 #include "transform.h"
 
 #include "mutation_parameters.h"
+
+
+class Registration
+{
+ public:
+  Registration()
+    {}
+};
+
+class Registry
+{
+ public:
+  std::map<std::string,const Registration*> _registry;
+
+  Registry()
+    {}
+
+  /*
+    void add(const Registration* reg)
+    {
+      _registry[reg->_name]=reg;
+    }
+  */
+  static const Registration*const add(const std::string& name,const Registration* reg)
+  {
+    std::clog << "Registry : add " << name << "\n";
+    return reg;
+  }
+};
+
+
+
 
 class FunctionPreTransform;
 template <typename F> class FunctionNodeUsing;
@@ -47,6 +80,9 @@ class FunctionNode
   //! The parameters (ie constant values) for this node.
   std::vector<float> _params;
     
+  //! Flag indicating that parameter zero contains an iteration count and should be treated differently.
+  bool _param0_is_iterations;
+
  protected:
 
   //! This returns a deep-cloned copy of the node's children.
@@ -84,13 +120,13 @@ class FunctionNode
   static FunctionNode*const initial(const MutationParameters& parameters);
 
   //! This returns a vector of random parameter values.
-  static const std::vector<float> stubparams(const MutationParameters& parameters,uint n);
+  static const std::vector<float> stubparams(const MutationParameters& parameters,uint n,bool iter=false);
 
   //! This returns a vector of new random bits of tree.
   static const std::vector<FunctionNode*> stubargs(const MutationParameters& parameters,uint n);
 
   //! Constructor given an array of params. and args (these MUST be provided; there are no alterative constructors).
-  FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
+  FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a,bool iter=false);
 
   //! Destructor.
   virtual ~FunctionNode();
@@ -112,6 +148,21 @@ class FunctionNode
     {
       assert(n<params().size());
       return params()[n];
+    }
+
+  //! Accessor.
+  const bool param0_is_iterations() const
+    {
+      return _param0_is_iterations;
+    }
+
+  //! Return the number of iterations (should only be invoked for nodes where param(0) is intended to be an iteration count).
+  const uint iterations() const
+    {
+      assert(_param0_is_iterations);
+      const unsigned int ret=static_cast<int>(floor(param(0)));
+      assert(ret>0);
+      return ret;
     }
 
   //! Accessor.
@@ -164,35 +215,6 @@ class FunctionNode
     }
 };
 
-class Registration
-{
- public:
-  Registration()
-    {}
-};
-
-class Registry
-{
- public:
-  std::map<std::string,const Registration*> _registry;
-
-  Registry()
-    {}
-
-  /*
-    void add(const Registration* reg)
-    {
-      _registry[reg->_name]=reg;
-    }
-  */
-  static const Registration* add(const std::string& name,const Registration* reg)
-  {
-    std::clog << "Registry : add " << name << "\n";
-    return reg;
-  }
-};
-
-
 //! Template class to generate boilerplate for virtual methods.
 template <typename F> class FunctionNodeUsing : public FunctionNode
 {
@@ -218,11 +240,12 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
     }
   
   //! Constructor
-  FunctionNodeUsing(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-    :FunctionNode(p,a)
+  FunctionNodeUsing(const std::vector<float>& p,const std::vector<FunctionNode*>& a,bool iter=false)
+    :FunctionNode(p,a,iter)
     {
       assert(params().size()==F::parameters());
       assert(args().size()==F::arguments());
+      assert(!iter || (params().size()>0));
     }
   
   //! Destructor.
@@ -232,7 +255,7 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
   //! Return a deeploned copy.
   virtual FunctionNode*const deepclone() const
     {
-      return new FunctionNodeUsing<F>(cloneparams(),cloneargs());
+      return new FunctionNodeUsing<F>(cloneparams(),cloneargs(),param0_is_iterations());
     }
   
   //! Internal self-consistency check.  We can add some extra checks.
@@ -242,6 +265,7 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
 	(
 	 params().size()==F::parameters() &&
 	 args().size()==F::arguments() &&
+	 (!param0_is_iterations() || (params().size()>0)) &&
 	 FunctionNode::ok()
 	 );
     }
@@ -279,189 +303,8 @@ template <> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsi
 
 //! You'd expect this to live in the .cpp, but instantiation should only be triggered ONCE by REGISTER macros in function.h which is only included in function_node.cpp.
 /*! There is the possibility of associating a name with the association using typeid(F).name()
-  but it's not very useful as it has name mangling stuff attached.
+  but it's not very useful as it has name mangling stuff attached (on gcc anyway).
  */
 template <typename F> Registration FunctionNodeUsing<F>::registration;
-
-//----------------------------------------------------------------------------------------
-
-//! Base class for iterative node types.
-/*! evaluate, is_constant and deepclone methods remain virtual.
- */
-class FunctionNodeIterative : public FunctionNode
-{
- private:
-
- protected:
-  
-  //! Number of iterations performed (or maximum number).
-  uint _iterations;
-
- public:
-  //! Constructor.
-  FunctionNodeIterative(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
-
-  //! Destructor.
-  virtual ~FunctionNodeIterative();
-  
-  void mutate(const MutationParameters& parameters);
-};
-
-//! Repeatedly apply function to argument.
-class FunctionNodeIterativeMap : public FunctionNodeIterative
-{
- private:
-
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Query whether node value is independent of position argument.
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  FunctionNodeIterativeMap(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
-
-  //! Destructor.
-  virtual ~FunctionNodeIterativeMap();
-
-  //! Return a clone.
-  virtual FunctionNode*const deepclone() const;
-};
-
-//! Accumulate function values as parameter is mapped
-class FunctionNodeIterativeMapAccumulator : public FunctionNodeIterative
-{
- private:
-
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Query whether node value is independent of position argument.
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  FunctionNodeIterativeMapAccumulator(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
-
-  //! Destructor.
-  virtual ~FunctionNodeIterativeMapAccumulator();
-
-  //! Return a clone.
-  virtual FunctionNode*const deepclone() const;
-};
-
-//! Abstract base class for Mandelbrot and Julie sets.
-class FunctionNodeIterativeZSquaredPlusC : public FunctionNodeIterative
-{
- protected:
-  //! Shared iteration code.
-  const uint iterate(const XYZ& z0,const XYZ& c) const;
-  
- public:
-  //! Constructor.
-  FunctionNodeIterativeZSquaredPlusC(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
-
-  //! Destructor;
-  ~FunctionNodeIterativeZSquaredPlusC();
-};
-
-//! Do Mandelbrot Set test to choose between two functions.
-class FunctionNodeIterativeMandelbrotChoose : public FunctionNodeIterativeZSquaredPlusC
-{
- private:
-
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Query whether node value is independent of position argument.
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  FunctionNodeIterativeMandelbrotChoose(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
-
-  //! Destructor.
-  virtual ~FunctionNodeIterativeMandelbrotChoose();
-
-  //! Return a clone.
-  virtual FunctionNode*const deepclone() const;
-};
-
-//! Do Mandelbrot Set returning co-ordinate filled with normalised iterations, or -1 in set.
-class FunctionNodeIterativeMandelbrotContour : public FunctionNodeIterativeZSquaredPlusC
-{
- private:
-
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Query whether node value is independent of position argument.
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  FunctionNodeIterativeMandelbrotContour(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
-
-  //! Destructor.
-  virtual ~FunctionNodeIterativeMandelbrotContour();
-
-  //! Return a clone.
-  virtual FunctionNode*const deepclone() const;
-};
-
-//! Do Julia test to choose between two functions.
-/*! Julia set parameter is picked up from an extra argument c.f Mandelbrot
- */
-class FunctionNodeIterativeJuliaChoose : public FunctionNodeIterativeZSquaredPlusC
-{
- private:
-
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Query whether node value is independent of position argument.
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  FunctionNodeIterativeJuliaChoose(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
-
-  //! Destructor.
-  virtual ~FunctionNodeIterativeJuliaChoose();
-
-  //! Return a clone.
-  virtual FunctionNode*const deepclone() const;
-};
-
-//! Do Julia set returning co-ordinate filled with normalised iterations, or -1 in set.
-/*! Julia set parameter is picked up from an extra argument c.f Mandelbrot
- */
-class FunctionNodeIterativeJuliaContour : public FunctionNodeIterativeZSquaredPlusC
-{
- private:
-
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Query whether node value is independent of position argument.
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  FunctionNodeIterativeJuliaContour(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
-
-  //! Destructor.
-  virtual ~FunctionNodeIterativeJuliaContour();
-
-  //! Return a clone.
-  virtual FunctionNode*const deepclone() const;
-};
 
 #endif
