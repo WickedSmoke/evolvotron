@@ -111,6 +111,18 @@ class EvolvotronMain : public QMainWindow
   //! Keeps track of which displays are still resizing
   std::set<const MutatableImageDisplay*> _resizing;
 
+  //! An owned deepclone of the last image spawned (used to regenerate single displays).
+  MutatableImageNode* _last_spawned;
+
+  //! Accessor.
+  const MutatableImageNode*const last_spawned() const
+    {
+      return _last_spawned;
+    }
+  
+  //! Not just an accessor.  Takes a deepclone and deletes it when replaced.
+  void last_spawned(const MutatableImageNode* image);
+      
  public:
   //! Constructor.
   EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_threads);
@@ -137,6 +149,9 @@ class EvolvotronMain : public QMainWindow
   //! Mutates the image held by the given display to all the other displays owned.
   void spawn(MutatableImageDisplay* spawning_display);
 
+  //! Regenerates a single display.
+  void respawn(MutatableImageDisplay* display);
+
   //! Similar to spawn except just changes the colouration of the image.
   void spawn_recoloured(MutatableImageDisplay* spawning_display);
 
@@ -149,13 +164,18 @@ class EvolvotronMain : public QMainWindow
   //! Called from display destructor to indicate the display is no longer available for the disposal of its completed tasks.
   void goodbye(MutatableImageDisplay*);
 
+ protected:
+  //! Reset the specified display.
+  void reset(MutatableImageDisplay* display);
+
  protected slots:
-   //! Signalled by timer.
+  //! Signalled by timer.
   void tick();
 
  public slots:
-   //! Signalled by menu item.
+  //! Signalled by menu item.
   void reset();
+ 
 
 };
 

@@ -425,7 +425,7 @@ class MutatableImageNodeMagnitudes : public MutatableImageNode
 };
 
 //! This node implements selection between 2 functions based on the relative magnitudes of 2 other functions
-class MutatableImageNodeChoose : public MutatableImageNode
+class MutatableImageNodeChooseSphere : public MutatableImageNode
 {
  private:
 
@@ -435,15 +435,14 @@ class MutatableImageNodeChoose : public MutatableImageNode
   
  public:
   //! Constructor.
-  MutatableImageNodeChoose(const std::vector<MutatableImageNode*>& a);
+  MutatableImageNodeChooseSphere(const std::vector<MutatableImageNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeChoose();
+  virtual ~MutatableImageNodeChooseSphere();
 
   //! Return a clone.
   virtual MutatableImageNode*const deepclone() const;
 };
-
 
 //! This node implements something like a 3D transform.
 class MutatableImageNodePreTransform : public MutatableImageNode

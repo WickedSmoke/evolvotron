@@ -76,11 +76,18 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       // We want to use a checkmark for "Locked"
       _menu->setCheckable(true);
 
-      _menu_item_number_spawn=_menu->insertItem("&Spawn",this,SLOT(menupick_spawn()));
-      _menu_item_number_spawn_recoloured=_menu->insertItem("&Recolour",this,SLOT(menupick_spawn_recoloured()));
-      _menu_item_number_spawn_warped=_menu->insertItem("&Warp",this,SLOT(menupick_spawn_warped()));
+      _menu_item_number_respawn=_menu->insertItem("&Respawn",this,SLOT(menupick_respawn()));
+
       _menu->insertSeparator();
+
+      _menu_item_number_spawn=_menu->insertItem("&Spawn",this,SLOT(menupick_spawn()));
+      _menu_item_number_spawn_recoloured=_menu->insertItem("Re&colour",this,SLOT(menupick_spawn_recoloured()));
+      _menu_item_number_spawn_warped=_menu->insertItem("&Warp",this,SLOT(menupick_spawn_warped()));
+
+      _menu->insertSeparator();
+
       _menu_item_number_lock =_menu->insertItem("&Lock",this,SLOT(menupick_lock()));
+
       _menu->insertSeparator();
       
       _menu_big=new QPopupMenu(this);
@@ -89,6 +96,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       _menu_big_item_number_2048x2048  =_menu_big->insertItem("&2048x2048",this,SLOT(menupick_big_2048x2048()));
       _menu_big_item_number_4096x4096  =_menu_big->insertItem("&4096x4096",this,SLOT(menupick_big_4096x4096()));
       _menu_big->insertSeparator();
+
       _menu_big_item_number_1280x960   =_menu_big->insertItem("1280x&960",this,SLOT(menupick_big_1280x960()));
       _menu_big_item_number_1600x1200  =_menu_big->insertItem("1&600x1200",this,SLOT(menupick_big_1600x1200()));
 
@@ -241,6 +249,13 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
 	  menupick_spawn();
 	}
     }
+}
+
+/*! This slot is called by selecting the "Respawn" context menu item
+ */
+void MutatableImageDisplay::menupick_respawn()
+{
+  main()->respawn(this);
 }
 
 /*! This slot is called by selecting the "Spawn" context menu item, or by clicking the image

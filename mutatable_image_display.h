@@ -88,6 +88,7 @@ class MutatableImageDisplay : public QWidget
 
   //@{
   //! Position of item in menu.
+  uint _menu_item_number_respawn;
   uint _menu_item_number_spawn;
   uint _menu_item_number_spawn_recoloured;
   uint _menu_item_number_spawn_warped;
@@ -154,6 +155,9 @@ class MutatableImageDisplay : public QWidget
   virtual void mousePressEvent(QMouseEvent* event);
 
   protected slots:
+
+  //! Called from context menu.
+  void menupick_respawn();
 
   //! Called from context menu and also by click event.
   void menupick_spawn();

@@ -62,7 +62,10 @@ Repeat the following until bored:
    detail that you can decide which one you like best again.
 
 Right clicking on an image gets you a few more options:
- - "Spawn" is the same as clicking an image
+ - "Respawn" regenerates just the current image from whatever was last spawned
+   (note that "recolour" or "warp" don't count as a spawn).
+ - "Spawn" is the same as clicking an image.  It generates mutated images to all
+   unlocked images in the grid.
  - "Recolour" to produce different coloured variants of the selected image
  - "Warp" to produce variants of the image with different spatial co-ordinates
  - "Lock" to prevent an image from being overwritten by spawns from other images

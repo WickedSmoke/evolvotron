@@ -78,7 +78,7 @@ MutatableImageNode* MutatableImageNode::stub(Random01& r01)
   else if (r<0.94) 
     return new MutatableImageNodeMagnitudes(stubvector(r01,3));
   else if (r<0.95) 
-    return new MutatableImageNodeChoose(stubvector(r01,4));
+    return new MutatableImageNodeChooseSphere(stubvector(r01,4));
   else if (r<0.975)
     return new MutatableImageNodePostTransform(stubvector(r01,5));
   else 
@@ -526,7 +526,7 @@ MutatableImageNode*const MutatableImageNodeMagnitudes::deepclone() const
 
 /*******************************************/
 
-const XYZ MutatableImageNodeChoose::evaluate(const XYZ& p) const
+const XYZ MutatableImageNodeChooseSphere::evaluate(const XYZ& p) const
 {
   const float m0=(arg(0)(p)).magnitude2();
   const float m1=(arg(1)(p)).magnitude2();
@@ -537,18 +537,18 @@ const XYZ MutatableImageNodeChoose::evaluate(const XYZ& p) const
     return arg(3)(p);
 }
 
-MutatableImageNodeChoose::MutatableImageNodeChoose(const std::vector<MutatableImageNode*>& a)
+MutatableImageNodeChooseSphere::MutatableImageNodeChooseSphere(const std::vector<MutatableImageNode*>& a)
   :MutatableImageNode(a)
 {
   assert(args().size()==4);
 }
 
-MutatableImageNodeChoose::~MutatableImageNodeChoose()
+MutatableImageNodeChooseSphere::~MutatableImageNodeChooseSphere()
 {}
 
-MutatableImageNode*const MutatableImageNodeChoose::deepclone() const
+MutatableImageNode*const MutatableImageNodeChooseSphere::deepclone() const
 {
-  return new MutatableImageNodeChoose(cloneargs());
+  return new MutatableImageNodeChooseSphere(cloneargs());
 }
 
 /*******************************************/
