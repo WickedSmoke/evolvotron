@@ -1,9 +1,16 @@
 #!/bin/sh
 
-# Don't run qmake -project again!!! (It wipes evolvotron.pro)
+if [ -z "$QTDIR" ] ; then
+  echo "QTDIR not defined"
+  echo "You almost certainly need QTDIR defined and pointing at your QT installation"
+  echo "If you know different, edit ./configure and remove this test."
+  exit 1
+fi
 
-# qmake probably requires a QTDIR (and perhaps QMAKESPEC) environmental variable defined
+# QMAKESPEC possibly also required on some systems
 # See Qt/qmake docs for your system and Evolvotron README if you have any problems.
+
+# Don't run "qmake -project" again!!! (It wipes evolvotron.pro)
 
 qmake evolvotron.pro
 

@@ -2,9 +2,11 @@
 
 From release 0.0.5:
  - Bump version to pre-0.0.6
- - Fix nasty bug in computers where a task could be delivered and deleted while the computer was still setting state in it
-   (timing related so uncrackable using ccmalloc or valgrind).
+ - Fix nasty bug in computers where a task could be delivered and deleted while
+   the computer was still setting state in it
+   (timing related so it never happened with ccmalloc and valgrind).
  - Internal changes necessary for file save/load
+ - configure checks QTDIR defined (biggest cause of build problems)
 
 From release 0.0.4
  - Bump version to 0.0.5

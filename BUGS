@@ -1,20 +1,18 @@
 Known bugs:
 
-  - Some instability, most likely to appear when using middle-button drag
-
   - Undo doesn't always work how you'd expect
-    (e.g undoing a single-image respawn undoes too much).
+    - better than it used to be though
 
   - Undo and lock don't interact well.
-    (So need to make lock a property of images, not displays).
+    (Solution: make lock a property of images, not displays).
 
   - Recolour behaves strangely sometimes (?)
     (e.g spawns all-black images or subtly warped images)
 
-  - Segv once observed on attempting to resize immediately on app startup.
-    Never suceeded in reproducing this.
-
   - Moire patterns mean small images can show structures
     not actually present in larger resolution versions.
+
+  - Once image colours become saturated there's not much which will cause
+    them to scale back down to sensible ranges.
 
 

@@ -153,8 +153,8 @@ Right clicking on an image gets you a few more options:
  - "Lock" to prevent an image from being overwritten by spawns from other
    images (select again to toggle).
  - "Big" to produce a blow-up of the image in a single window.
-   (either a scrollable view of a fixed size image, or in a freely
-   resizable window)
+   (submenu selects either a scrollable view of a fixed size image,
+   or a freely resizable window)
  - "Save" to save the image in a file (.ppm or .png format).
    Note that this is most useful on a "Big" blown-up image: if you
    save a small grid image, the size you see on the screen is the size
@@ -226,7 +226,7 @@ TIPS
   of image you want to get out of it.  You'll be disappointed.
 - I get the best results when I click the image which most
   immediately catches my eye as they start appearing.  If you stop
-  to think about it too much things seem to go downhill.
+  to think about it too much then things seem to go downhill.
 - If you seem to be just getting the same old spirals all the time,
   stop clicking on spirals!  (The same goes for random mush).
 - Don't get too hung up on using the warp and middle-mouse drag
@@ -240,9 +240,9 @@ ADVANCED USAGE
 ==============
 Evolvotron's idea of an image is a function which converts
 XYZ co-ordinates to an RGB colour (however we can only display
-a plane for now so the input Z is fixed to zero, although you can
-get some idea of what's going on by selecting the "PanZ" option
-of an image's "Warp" menu item).
+a 2D plane for now so the input Z is fixed to zero, although
+you can get some idea of what's going on parallel Z planes by
+selecting the "PanZ" option of an image's "Warp" menu item).
 
 The image functions are constructed from trees of function nodes.
 (In the mathematical expression 1+(2*x) the "+" and the "*" would
@@ -264,7 +264,7 @@ replacement of a function branch by a new random stub (a "Glitch" mutation),
 a random shuffle of a node's arguments, and the insertion of random nodes
 between a node and it's children.  The probability (per function node)
 of these mutations is controlled from spinboxes on the dialog (expressed as 
-chances-in-a-million), as is the size of perturbations from constant.
+chances-in-a-million), as is the size of perturbations to constants.
 
 It is useful to think of the constant perturbations as being a thermal effect
 (hence the "heat" and "cool" buttons), while structural alterations are
@@ -276,7 +276,7 @@ So why would you want to change the mutation parameters from the initial
 defaults ?  Basically, if you're getting too much variation in spawned images 
 (this tends to happen after many generations of images, by which time the
 function trees have grown quite large and therefore are experiencing a lot
-of mutations), cool and/or shield.
+of mutations) then cool and/or shield.
 If all the images look too similar, heat and/or irradiate.
 
 2 types of function node are considered fundamental: constant nodes

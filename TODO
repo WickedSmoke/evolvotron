@@ -1,9 +1,11 @@
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
-- Add check for QTDIR definition in configure
-  (lots of people have it undefined it seems).
 - Load/save to XML file.
+- More functions (reflection from environment, Perlin noise).
+- More iterative functions (e.g average along a segment between two co-ordinates).
+- Compute volumes in Z direction.
+  Oscillate z co-ordinate with time.
 - Locked attribute should be an image property, not a display property.
   (Would play nicer with Undo)
 - Create registry of all function node types
@@ -11,7 +13,7 @@ imply it will be done sooner or later than other items!
   - Allow iterative/allow fractal would then become convenience buttons for quick-setting a whole group of frequencies
 - Undo needs to save more state to work properly (e.g state for respawn)
 - Have a function type which can suck in random images from directories of images
-  (specify by environmental variable ?)
+  (specified by environmental variable ?)
 - Check spew of tasks from drag-adjust can't get out of order in multithread compute farm and come back in wrong order
   (associate tasks with an original image instance/serial number as well as an originating display ?)
 - Optimise drag: just recompute new area (needs image subregions for tasks).
@@ -19,7 +21,7 @@ imply it will be done sooner or later than other items!
   as they've been computed to a certain resolution.
 - Pure command line tools to mutate a saved file (generates more xml files from an xml file)
   and render a saved file (generates image file from an xml file).
-- Web front end to command line tools to run an evolvotron web-server.
+- Web front end to commandline tools: an evolvotron web-server.
 - Command line option for border around images... indicate locked status.
 - Maybe add "view" menu: like warp but just applying to current image (like drag)
   (would need explicit control over amounts: maybe drag approach better ?).
@@ -33,16 +35,12 @@ imply it will be done sooner or later than other items!
     Create a new top level node with 2 or more args and add the parents to it.
     Create a new random stub and insert the parents at random points.
     Insert one image at a random point into the other.
-    Concatenate the 2 images.
-- Generalise "parameters" along with "args".
+    Concatenate (function compose) the 2 images.
 - Add control over MutatableImageNodePositionTransformedQuadratic vs MutatableImageNodePositionTransformed proportions
   (do as part of rationalising all of function selection)
-- Non-isotropic scaling & shear warp options.
 - Command line option to enable/disable fractal and iterative types.
 - Replace/augment "Lock" with a "save" or "put-aside" window (could make history/undo simpler).
 - "Unlock all" on edit menu
-- More iterative functions (e.g average along a segment between two co-ordinates).
-- More functions (reflection from environment, Perlin noise).
 - Reset & Restart should bring up modal "are you sure" dialog box which can also contain check boxes for what to reset:
     mutation parameters
     function freqencies (when implemented)
@@ -69,19 +67,18 @@ imply it will be done sooner or later than other items!
   Would the process of getting there be interesting (e.g as an animation) ?
 - Compute farms on multiple remote machines.
 - Tasks should be a tile of an image
-  (compute threads could parallelise "Big" images then).
+  (multiple compute threads could work on single "Big" images then).
 - Menu options to add/remove rows/columns from display grid
 - Autocool of mutation parameters
   (probably shouldn't be on by default; control from command line).
 - Heat/cool etc should act in proportion to current values
   (probably wanted for autocool).
-- Evolve other things e.g parameters of celluar automata/reaction diffusion equations/iterated function systems.
+- Evolve other things
+  e.g parameters of celluar automata/reaction diffusion equations/iterated function systems.
+- Special reset which uses iterative types to set up nothing but Mandelbrot/Julia-set type functions.
 - Rationalise MutatableImageNode::stub so more work is done by Node constructors
   (just pass in a MutationParameters).  Have to keep existing ctor. form for deepclone though.
-- Special reset which uses iterative types to set up nothing but Mandelbrot/Julia-set type functions.
-- Avoid misleading moire patterns by jittering
-- Compute volumes in Z direction.
-  Oscillate z co-ordinate with time.
+- Avoid misleading moire patterns by jittering samples
 - No low-res images option for when using remotely via X11 over slow link
   (they take longer to display than compute).
 

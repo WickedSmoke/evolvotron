@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 # append debug or debug
-CONFIG+= qt thread debug
+CONFIG+= qt thread release
 
 ##################
 # Better optimisations than qmake defaults IF you have the right processor.
@@ -11,11 +11,12 @@ CONFIG+= qt thread debug
 # There is a nice summary of gcc optimisation options at
 # http://freshmeat.net/articles/view/730/
 #
-# Uncomment BOTH of the next two lines on a P4 system:
-#QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
-#QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2 -O3 -ffast-math -funroll-loops -finline-limit=4000 -fomit-frame-pointer
+# Uncomment 2 or 3 of the next two lines on a P4 system:
+QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
+QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2 -O3 -ffast-math  -fomit-frame-pointer
+#QMAKE_CXXFLAGS_RELEASE += -funroll-loops -finline-limit=4000
 #
-# On a P3 try -msse instead of -msse2 ?
+# (On a P3 try -msse instead of -msse2 ?)
 
 # Input
 HEADERS += \
