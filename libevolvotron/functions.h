@@ -389,46 +389,11 @@ FUNCTION_END(FunctionSpiralLogarithmic)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionGradientOfMagnitude,0,1,false,0)
+FUNCTION_BEGIN(FunctionGradient,3,1,false,0)
      
   //! Evaluate function.
   /*! Gradient converts scalar to vector, so need a scalar to work on.
-   */
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ vx0(arg(0)(p-XYZ(epsilon,0.0,0.0)));
-      const XYZ vy0(arg(0)(p-XYZ(0.0,epsilon,0.0)));
-      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,epsilon)));
-
-      const XYZ vx1(arg(0)(p+XYZ(epsilon,0.0,0.0)));
-      const XYZ vy1(arg(0)(p+XYZ(0.0,epsilon,0.0)));
-      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,epsilon)));
-
-      const real mx0=vx0.magnitude();
-      const real my0=vy0.magnitude();
-      const real mz0=vz0.magnitude();
-
-      const real mx1=vx1.magnitude();
-      const real my1=vy1.magnitude();
-      const real mz1=vz1.magnitude();
-
-      return XYZ(mx1-mx0,my1-my0,mz1-mz0)*inv_epsilon2;
-    }
-  
-  //! Is constant if the function being gradient-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
-FUNCTION_END(FunctionGradientOfMagnitude)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionGradientDot,3,1,false,0)
-     
-  //! Evaluate function.
-  /*! Gradient converts scalar to vector, so need a scalar to work on.
+    \todo Gradient in a particular direction and generalised version.
    */
   virtual const XYZ evaluate(const XYZ& p) const
     {
@@ -451,11 +416,11 @@ FUNCTION_BEGIN(FunctionGradientDot,3,1,false,0)
       return arg(0).is_constant();
     }
 
-FUNCTION_END(FunctionGradientDot)
+FUNCTION_END(FunctionGradient)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionGradientDotGeneral,0,2,false,0)
+FUNCTION_BEGIN(FunctionGradientGeneralised,0,2,false,0)
      
   //! Evaluate function.
   /*! Gradient converts scalar to vector, so need a scalar to work on.
@@ -481,114 +446,7 @@ FUNCTION_BEGIN(FunctionGradientDotGeneral,0,2,false,0)
       return arg(0).is_constant();
     }
 
-FUNCTION_END(FunctionGradientDotGeneral)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionGradientX,0,1,false,0)
-     
-  //! Evaluate function.
-  /*! Gradient converts scalar to vector, so need a scalar to work on.
-   */
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ vx0(arg(0)(p-XYZ(epsilon,0.0,0.0)));
-      const XYZ vx1(arg(0)(p+XYZ(epsilon,0.0,0.0)));
-
-      return (vx1-vx0)*inv_epsilon2;
-    }
-  
-  //! Is constant if the function being gradient-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
-FUNCTION_END(FunctionGradientX)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionGradientY,0,1,false,0)
-     
-  //! Evaluate function.
-  /*! Gradient converts scalar to vector, so need a scalar to work on.
-   */
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ vy0(arg(0)(p-XYZ(0.0,epsilon,0.0)));
-      const XYZ vy1(arg(0)(p+XYZ(0.0,epsilon,0.0)));
-
-      return (vy1-vy0)*inv_epsilon2;
-    }
-  
-  //! Is constant if the function being gradient-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
-FUNCTION_END(FunctionGradientY)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionGradientZ,0,1,false,0)
-     
-  //! Evaluate function.
-  /*! Gradient converts scalar to vector, so need a scalar to work on.
-   */
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,epsilon)));
-      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,epsilon)));
-
-      return (vz1-vz0)*inv_epsilon2;
-    }
-  
-  //! Is constant if the function being gradient-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
-FUNCTION_END(FunctionGradientZ)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionDivergenceOfMagnitude,0,1,false,0)
-
-  //! Evaluate function.
-  /*! Divergence maps scalar to a scalar.
-   */
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ vx0(arg(0)(p-XYZ(epsilon,0.0,0.0)));
-      const XYZ vy0(arg(0)(p-XYZ(0.0,epsilon,0.0)));
-      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,epsilon)));
-
-      const XYZ vx1(arg(0)(p+XYZ(epsilon,0.0,0.0)));
-      const XYZ vy1(arg(0)(p+XYZ(0.0,epsilon,0.0)));
-      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,epsilon)));
-
-      const real mx0=vx0.magnitude();
-      const real my0=vy0.magnitude();
-      const real mz0=vz0.magnitude();
-
-      const real mx1=vx1.magnitude();
-      const real my1=vy1.magnitude();
-      const real mz1=vz1.magnitude();
-
-      const real d=(mx1-mx0+my1-my0+mz1-mz0)*inv_epsilon2;
-
-      return XYZ(d,d,d);
-    }
-  
-  //! Is constant if the function being gradient-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
-FUNCTION_END(FunctionDivergenceOfMagnitude)
+FUNCTION_END(FunctionGradientGeneralised)
 
 //------------------------------------------------------------------------------------------
 
