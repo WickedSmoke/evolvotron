@@ -227,7 +227,7 @@ class EvolvotronMain : public QMainWindow
 
  public:
   //! Constructor.
-  EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frames,uint framerate,uint n_threads);
+  EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frames,uint framerate,uint n_threads,bool start_fullscreen,bool start_menuhidden);
 
   //! Destructor.
   ~EvolvotronMain();
@@ -309,6 +309,9 @@ class EvolvotronMain : public QMainWindow
   void list_known(std::ostream& out) const;
 
  protected:
+  //! Handle key-presses
+  void keyPressEvent(QKeyEvent* e);
+
   //! Reset the specified display.
   void reset(MutatableImageDisplay* display);
 
@@ -319,7 +322,7 @@ class EvolvotronMain : public QMainWindow
   //! Signalled by menu item.  Forwards to History object.
   void undo();
 
-  public slots:
+ public slots:
    
   //! Signalled by menu item.  Public because called from evolvotron app wrapper.
   void reset(bool reset_mutation_parameters,bool reset_locks);

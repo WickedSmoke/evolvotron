@@ -54,14 +54,14 @@ or just have both done for you by doing
 
   ./BUILD
 
-[Note that BUILD also adds $QTDIR/bin to the path while it runs the commands,
-and is probably the easiest way to build if your PATH doesn't include a directory
-containing qmake and you like it that way.]
+[Note that BUILD also adds $QTDIR/bin to the path while it runs the 
+commands, and is probably the easiest way to build if your PATH doesn't 
+include a directory containing qmake and you like it that way.]
 
 Make will recurse into and build the libevolvotron directory
-(which is 99% of the work) and some additional subdirectories with executables.
-Among other things, this will give you an "evolvotron" executable which you
-can run immediately with
+(which is 99% of the work) and some additional subdirectories with 
+executables.  Among other things, this will give you an "evolvotron" 
+executable which you can run immediately with
   ./evolvotron/evolvotron
 and/or copy where you like (see INSTALL section).
 
@@ -225,11 +225,14 @@ Selecting one of the "warp" options from the contect menu (right-click on
 an image) can also help by introducing an additional opportunity for
 mutation on subsequent spawns.
 
-Note that spirals, grids and tiles, although complex looking, are actually
-implemented by a single function node and may leave you stuck too.
+Note that various spirals, grids and tiles, although complex looking,
+are actually implemented by a single function node and may leave you stuck too.
 
 COMMAND LINE OPTIONS
 ====================
+NB You cannot simply munge single character options into one big string
+(i.e "-FM" is not the same as "-F -M") and space IS required between 
+options and numeric arguments (ie use "-t 4" not "-t4") 
 
 USER OPTIONS
 ------------
@@ -242,6 +245,26 @@ USER OPTIONS
   -t <threads>
 	- Sets number of compute threads (defaults to 2)
 
+  -F
+	- Start in "fullscreen" mode (NB for Qt on X11 this means 
+	a screen-filling borderless undecorated window is used; 
+	it's not simply maximising the window, and it's not the 
+	sort of framebuffer hijacking used by SDL games).  The Qt 
+	documentation claims some window managers may not be entirely
+	cooperative with this (in which case sorry, you're on your own).  
+	evolvotron actions which bring up dialog boxes (e.g save) seem
+	to behave sensibly but child windows (e.g from "Big") tend to 
+	disappear behind the screen-filling main window, but then this 
+	mode isn't really intended for doing anything more than clicking
+	away at a big screen full of images.  Can be toggled
+	within the  application using ctrl-f.  The Esc key will 
+	also exit it.
+
+  -M
+	- Start with menu and status bar hidden.  Nice with -F.
+	Can be toggled within the application using ctrl-m.
+	The Esc key will also exit it.
+
 ANIMATION OPTIONS
 -----------------
 
@@ -251,29 +274,32 @@ ANIMATION OPTIONS
   -r <framerate>
 	- Rate at which frames are displayed (integer).  (Defaults to 8).
 
-DEBUGGING/POWER-USER OPTIONS
-----------------------------
+POWER-USER & DEBUG OPTIONS
+--------------------------
   -v 
-	- Verbose mode, writes various things to application stderr (mainly to assist debugging).
-        Probably most useful for getting a list of supported function names for use with the
-        -x/-X options.
+	- Verbose mode, writes various things to application stderr 
+	(mainly to assist debugging).
+        Probably most useful for getting a list of supported function 
+	names for use with the -x/-X options.
 
   -x <functionname>
-	- Force a specific function type to be used at the top level of all function trees.
-	The specifed function is still wrapped by spatial and colour warping
-	functions which may disguise it considerably.
-	A list of function names understood by evolvotron is output during app startup
-	when the -v option is specified.
+	- Force a specific function type to be used at the top level 
+	of all function trees.  The specifed function is still wrapped 
+	by spatial and colour warping functions which may disguise 
+	it considerably.  A list of all the function names understood 
+	by evolvotron is output during app startup when the -v option 
+	is specified.
 	Example: evolvotron -x FunctionSpiralLinear
 
  -X <functionname>
-	- Similar to -x except that the specified function is NOT wrapped by space/colour transforms.
-	NB For functions without leaf nodes or parameters (e.g FunctionSphericalToCartesian) this doesn't
+	- Similar to -x except that the specified function is NOT wrapped 
+	by space/colour transforms.  NB For functions without leaf nodes 
+	or parameters (e.g FunctionSphericalToCartesian) this doesn't
 	leave any scope for variation or future mutation.
         Example: evolvotron -X FunctionKaleidoscope
 
 Note that you can also specify iterative & fractal function types as an argument to -x/-X,
-even though they are disabled by default in the mutation parameters.
+even when they are disabled (as they are by default) in the mutation parameters.
 
 MOUSE CONTROL
 ============= 
@@ -347,9 +373,27 @@ If it all goes horribly wrong, undo and try again.
 
 A CTRL-middle drag rotates the image about its centre.
 
-A CTRL-ALT-middle drag shears the image (the best way to see what this does
-is to click in the corner of an image and move the mouse horizontally or
-vertically).
+A CTRL-ALT-middle drag shears the image (the best way to see what
+this does is to click in the corner of an image and move the mouse
+horizontally or vertically).
+
+KEYBOARD CONTROL
+================
+Ctrl-f toggles full-screen mode (on X11, Qt does this by asking the
+window manager for a screen-filling undecorated window, and the
+documentation contains dire warnings about problems with broken
+window managers).  See also "-F" command line option.
+NB The application may completely disappear from the screen for 
+a brief interval while switching mode.
+
+Ctrl-m toggles status and menu-bar hiding, which is nice when
+in full-screen mode.  See also "-M" command line option.
+
+Esc kills full-screen and/or menu-hiding, putting the application
+into its normal default state. 
+
+Ctrl-r does a restart (for convenience when the menu bar
+is hidden, because this is such a common operation).
 
 GUI ELEMENTS
 ============
@@ -561,7 +605,7 @@ necessary manual dexterity and imagination too.  Evolvotron, and its
 predecessors developed on and off over a decade since I first came across 
 the idea, are an attempt to compensate for this using the skills I do have 
 i.e some mathematical sensibility and the ability to write working code
-(well, sometimes).  If you like an image it produces, then as far as
+(well, sometimes).  And if you like an image it produces, then as far as
 I'm concerned that's as satisfying a result as if you liked something
 I'd drawn myself.
 

@@ -807,12 +807,13 @@ void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
       top_level_widget=display;
     }
   
-  //Used to the size explicitly here, but it seems to work better without
+  //Used to set the size explicitly here, but it seems to work better without (on some versions of Qt anyway)
   //top_level_widget->resize(512,512);
 
   top_level_widget->show();
-      
+
+  //Try this:
+  //top_level_widget->showFullScreen();
+
   display->image(_image->deepclone());
 }
-
-

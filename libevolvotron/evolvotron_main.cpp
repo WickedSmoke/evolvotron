@@ -206,7 +206,7 @@ void EvolvotronMain::last_spawned_image(const MutatableImage* image,SpawnMemberF
 
 /*! Constructor sets up GUI components and fires up QTimer.
  */
-EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frames,uint framerate,uint n_threads)
+EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frames,uint framerate,uint n_threads,bool start_fullscreen,bool start_menuhidden)
   :QMainWindow(parent,0,Qt::WType_TopLevel|Qt::WDestructiveClose)
    ,_history(this)
    ,_statusbar_tasks(0)
@@ -296,6 +296,17 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
 
   // Run tick() at 100Hz
   _timer->start(10);
+
+  if (start_fullscreen)
+    {
+      showFullScreen();
+    }
+
+  if (start_menuhidden)
+    {
+      menuBar()->hide();
+      statusBar()->hide();
+    }
 }
 
 /*! If this is being destroyed then the whole application is going down.
@@ -579,6 +590,48 @@ void EvolvotronMain::tick()
 	break;
     }
 }    
+
+void EvolvotronMain::keyPressEvent(QKeyEvent* e)
+{
+  if (e->key()==Qt::Key_Escape)
+    {
+      // Esc key used to back out of menu hide and full screen mode
+      // Might rescue a few users who have got into those states accidentally
+      showNormal();
+      menuBar()->show();
+      statusBar()->show();
+    }
+  else if (e->key()==Qt::Key_F && !(e->state()^Qt::ControlButton))
+    {
+      //Ctrl-F toggles fullscreen mode
+      if (isFullScreen()) 
+	showNormal();
+      else showFullScreen();
+    }
+  else if (e->key()==Qt::Key_M && !(e->state()^Qt::ControlButton))
+    {
+      //Ctrl-M toggles menu and status-bar display
+      if (menuBar()->isHidden())
+	menuBar()->show();
+      else if (menuBar()->isShown())
+	menuBar()->hide();
+
+      if (statusBar()->isHidden())
+	statusBar()->show();
+      else if (statusBar()->isShown())
+	statusBar()->hide();
+    }
+  else if (e->key()==Qt::Key_R && !(e->state()^Qt::ControlButton))
+    {
+      //Ctrl-R does a reset because that's most useful in full-screen mode
+      reset_warm();
+    }
+  else
+    {
+      // Perhaps it's for someone else
+      e->ignore();
+    }
+}
 
 /*! Set up an initial random image in the specified display. 
 

@@ -110,6 +110,10 @@ int main(int argc,char* argv[])
       testfn_unwrapped=true;
     }
 
+  // Use same keys as used by app to toggle modes
+  bool start_fullscreen=args.option("-F");
+  bool start_menuhidden=args.option("-M");
+
   std::clog
     << "Evolvotron version "
     << EVOLVOTRON_BUILD
@@ -125,7 +129,7 @@ int main(int argc,char* argv[])
     << "Functions registered:\n";
   FunctionRegistry::get()->status(std::clog);
 
-  EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),frames,framerate,threads);
+  EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),frames,framerate,threads,start_fullscreen,start_menuhidden);
 
   if (!testfn.empty())
     {
