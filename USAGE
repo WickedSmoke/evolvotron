@@ -172,7 +172,7 @@ It also works on enlarged images, although it's virtually unusable without
 a bit of practice on smaller, faster ones (just boldly make the adjustment
 you want, release the button... and wait).
 
-Changes made can be rolled-back on the main Edit->Undo menu item,
+Changes made can be rolled-back on the main Edit/Undo menu item,
 one drag-action at a time.
 
 An unmodified middle-mouse drag pans the image around following
@@ -340,7 +340,7 @@ branches, for example) and the values of the constant embedded
 within it, the image can be changed.
 
 The mutation parameters are under control from the dialog accessible via the
-Edit->Mutation Parameters... menu, and also from buttons on the status bar).
+Settings/Mutation Parameters menu, and also from buttons on the status bar).
 
 There are two kinds of mutation: perturbations to the magnitude of constants, 
 and structural mutations which rearrage the function tree of an image.  
@@ -371,7 +371,7 @@ If all the images look too similar, heat and/or irradiate.
 2 types of function node are considered fundamental: constant nodes
 (which return a constant) and position nodes (which should really be
 called identity nodes) which return their position argument.  There
-are two slider controls to affect things realted to these:
+are two slider controls to affect things related to these:
  - "proportion constant" controls the proportion of fundamental nodes
    which are constants.  Changing this from its default value of 0.5 doesn't
    actually seem to have much effect.

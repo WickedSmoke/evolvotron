@@ -3,6 +3,8 @@ imply it will be done sooner or later than other items!
 
 Animation
 ---------
+- Use PNGImagePacker class to build MNGs.
+  Probably needs to be a build option as this seems to be a recent thing.
 - More warp types (rotate time into space etc)
 - More control over animation (frames & framerate) from edit/options menu
   (or on a display by display basis ?  Then "big" images could have
@@ -17,6 +19,9 @@ Animation
 
 Conventional
 ------------
+- "Evolvotron corpus"; publish mode & viewer app to see other users' creations
+  How ?  PHP+SQL somewhere ? IRC ? RSS ? 
+- More detail under GUI Elements section of docs
 - Proper dependency and generation by qmake of libevolvotron/usage_text.h
 - Rationalise configure options: fs/nofs doc/nodoc
 - -h & --help option.  Print version and functions supported.
