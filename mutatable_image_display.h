@@ -190,6 +190,9 @@ class MutatableImageDisplay : public QWidget
   void menupick_spawn_warped_pan_y();
 
   //! Called from context menu.
+  void menupick_spawn_warped_pan_z();
+
+  //! Called from context menu.
   void menupick_lock();
 
   //! Called from context menu.

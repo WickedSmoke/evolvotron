@@ -73,9 +73,10 @@ QMAKE_CXXFLAGS_DEBUG += -pthread
 #######################################
 # Install targets
 #
-INSTALLS += executable
+# This doesn't work on RedHat... tries to strip install directory, not file
 executable.path = /usr/local/bin
 executable.files = evolvotron
+INSTALLS += executable
 
 #######################################
 # Make a .tar.gz

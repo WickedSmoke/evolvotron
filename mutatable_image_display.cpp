@@ -92,6 +92,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       _menu_warped->insertItem("&Pan XY",this,SLOT(menupick_spawn_warped_pan_xy()));
       _menu_warped->insertItem("Pan &X",this,SLOT(menupick_spawn_warped_pan_x()));
       _menu_warped->insertItem("Pan &Y",this,SLOT(menupick_spawn_warped_pan_y()));
+      _menu_warped->insertItem("Pan &Z",this,SLOT(menupick_spawn_warped_pan_z()));
 
       _menu->insertItem("Spawn &warped",_menu_warped);
 
@@ -340,6 +341,13 @@ void MutatableImageDisplay::menupick_spawn_warped_pan_x()
 void MutatableImageDisplay::menupick_spawn_warped_pan_y()
 {
   TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0f,0.0f,0.0f),XYZ(0.0f,1.0f,0.0f));
+
+  main()->spawn_warped(this,transform_factory);
+}
+
+void MutatableImageDisplay::menupick_spawn_warped_pan_z()
+{
+  TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0f,0.0f,0.0f),XYZ(0.0f,0.0f,1.0f));
 
   main()->spawn_warped(this,transform_factory);
 }

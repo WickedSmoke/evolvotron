@@ -1,12 +1,12 @@
+- Last method used should point to an object encapsulating the behaviour
+  (so warp spawn method can encapsulate a transform factory).
+  Needed for breeding behaviour (so can keep 2 last images).
+- Undo needs to restore _last_spawned too (but do above first and keep hisory of spawn methods).
 - Generalise "parameters" along with "args".
-- Make tar files unpack to subdirectory.
-- Maybe add view menu like warp but just applying to current image
-- Should be a single position transform under user control attached to top level of every image.
-  Use to zoom in/out, rotate/translate etc repeatedly without accumulating loads of extra nodes.
+- Maybe add "view" menu: like warp but just applying to current image (would need explicit control over amounts).
 - Add control over MutatableImageNodePositionTransformedQuadratic vs MutatableImageNodePositionTransformed proportions
   (part of rationalising all of function selection)
 - Non-isotropic scaling & shear warp options.
-- Add "standard" configure step.
 - Command line option to enable/disable fractal and iterative types.
 - Replace "Lock" with a "save" or "put-aside" window (could make history/undo simpler).
 - "Unlock all" on edit menu
@@ -23,7 +23,6 @@
 - Option to increase number of iterations of certain types of iterative node in an image (i.e "accuracy")
   (probably makes sense for Mandelbrot/Julia or a sampling blur where it just increases the detail, 
   but less useful for repeated function map).
-- Undo needs to restore _last_spawned too
 - "Move all locked to start" on edit menu
   (or move them to a "safe area", or save them in reloadable form).
 - Save whole grid as a single image (from File menu).
@@ -33,7 +32,7 @@
   (far too much deepcloning currently; e.g to tasks and history).
   But if it ain't broken don't fix it.
 - Use hourglass cursor over displays which haven't got final high resolution yet ?
-  (Need combined hourglass/pointer cursor but Qt doesn't have one built in).
+  (Really need combined hourglass/pointer cursor but Qt doesn't have one built in).
 - Computing zero co-ordinate sometimes gives unusual output (black lines across images).
   Avoid by jittering co-ordinate (would break up jaggies), or just avoid exact zero ?
 - Why stop at screen resolution ? Antialiasing by supersampling.
@@ -43,9 +42,9 @@
   How close would it get and how quickly ?  
   Would the process of getting there be interesting (e.g as an animation) ?
 - Compute farms on multiple remote machines.
-- Tasks should be a tile of an image.
+- Tasks should be a tile of an image
+  (compute threads could parallelise "Big" images then).
 - Menu options to add/remove rows/columns from display grid
-- Proper progress bar based on number of pixels to be computed
 - Autocool of mutation parameters
   (probably shouldn't be on by default; control from command line).
 - Heat/cool etc should act in proportion to current values
@@ -63,3 +62,5 @@
     Create a new random stub and insert the parents at random points.
     Insert one image at a random point into the other.
     Concatenate the 2 images.
+- Compute volumes in Z direction.
+  Use time as z co-ordinate.
