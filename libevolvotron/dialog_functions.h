@@ -59,7 +59,14 @@ class DialogFunctions : public QDialog
   QLabel* _branching_ratio;
 
   //! Required branching ratio after dilution
-  QSlider* _target_branching_ratio_slider;
+  QSlider* _slider_target_branching_ratio;
+
+  //! Proportion of diluting nodes which are pure constants
+  QSlider* _slider_proportion_constant;
+
+  //! Proportion of non-constant nodes which are 12-parameter transforms
+  QSlider* _slider_identity_supression;
+
 
   //! Button to close dialog.
   QPushButton* _ok;

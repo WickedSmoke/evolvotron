@@ -41,18 +41,18 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 
   _branching_ratio=new QLabel(_vbox);
 
-  QGroupBox* c=new QGroupBox(3,Qt::Horizontal,"Diluted branching ratio",_vbox);
-  new QLabel("0.1",c);
-  _target_branching_ratio_slider=new QSlider(10,90,1,50,Qt::Horizontal,c);
-  QToolTip::add(_target_branching_ratio_slider,"The branching ratio is diluted to <1.0 to prevent new function-trees being infinitely large.");
-  new QLabel("0.9",c);
+  QGroupBox* c0=new QGroupBox(3,Qt::Horizontal,"Diluted branching ratio",_vbox);
+  new QLabel("0.1",c0);
+  _slider_target_branching_ratio=new QSlider(10,90,1,50,Qt::Horizontal,c0);
+  QToolTip::add(_slider_target_branching_ratio,"The branching ratio is diluted to <1.0 to prevent new function-trees being infinitely large.");
+  new QLabel("0.9",c0);
 
   setup_from_mutation_parameters();
 
   _ok=new QPushButton("OK",_vbox);
 
   connect(
-	  _target_branching_ratio_slider,SIGNAL(valueChanged(int)),
+	  _slider_target_branching_ratio,SIGNAL(valueChanged(int)),
 	  this,SLOT(changed_target_branching_ratio(int))
 	  );
 
@@ -82,7 +82,7 @@ void DialogFunctions::setup_from_mutation_parameters()
     << "Dilution proportion: " << s;
   _branching_ratio->setText(msg.str().c_str());
 
-  _target_branching_ratio_slider->setValue(static_cast<int>(100.0f*br+0.5f));
+  _slider_target_branching_ratio->setValue(static_cast<int>(100.0f*br+0.5f));
 }
 
 
