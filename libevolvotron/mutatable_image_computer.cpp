@@ -39,16 +39,22 @@ MutatableImageComputer::MutatableImageComputer(MutatableImageComputerFarm* frm)
 
 MutatableImageComputer::~MutatableImageComputer()
 {
+  std::clog << "Deleting a computer...\n";
+
   kill();
   wait();
 
   delete _task;
+
+  std::clog << "...deleted a computer\n";
 }
 
 /*! Compute threads run this method untill killed (probably by the destructor being invoked by the original spawning thread.
  */
 void MutatableImageComputer::run()
 {
+  std::clog << "Thread starting\n";
+
   // Run until something sets the kill flag 
   while(!communications().kill())
     {
@@ -72,12 +78,8 @@ void MutatableImageComputer::run()
 	      const uint width=task()->size().width();
 	      const uint pixels=height*width;
 
-	      while (task()->pixel()<pixels)
+	      while (!communications().kill_or_abort_or_defer() && task()->pixel()<pixels)
 		{
-		  if (communications().kill()) exit();
-		  if (communications().abort()) break;
-		  if (communications().defer()) break;
-		  
 		  const uint row=task()->pixel()/width;
 		  const uint col=task()->pixel()%width;
 		
@@ -97,28 +99,33 @@ void MutatableImageComputer::run()
 		}
 	    }
 	  
-	  if (communications().defer() && !communications().abort())
+	  // Maybe should capture copies of the flags for use here
+	  if (!communications().kill())
 	    {
-	      // \todo Optimisation: Add a progress tracker to Task class so deferred tasks can continue from where they left off.
-	      farm()->push_todo(task());
-	      communications().defer(false);
-	      _task=0;
-	    }
-	  else
-	    {
-	      if (communications().abort())
+	      if (communications().defer() && !communications().abort())
 		{
-		  task()->abort();
+		  // \todo Optimisation: Add a progress tracker to Task class so deferred tasks can continue from where they left off.
+		  farm()->push_todo(task());
+		  communications().defer(false);
+		  _task=0;
 		}
+	      else
+		{
+		  if (communications().abort())
+		    {
+		      task()->abort();
+		    }
 	      
-	      communications().defer(false);
-	      communications().abort(false);
+		  communications().defer(false);
+		  communications().abort(false);
 
-	      farm()->push_done(task());	  
-	      _task=0;
+		  farm()->push_done(task());	  
+		  _task=0;
+		}
 	    }
 	}
     }
+  std::clog << "Thread shutting down\n";
 }
 
 bool MutatableImageComputer::defer_if_less_important_than(uint pri)

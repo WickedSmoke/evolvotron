@@ -112,9 +112,11 @@ class MutatableImageComputer : public QThread
       //! Mutex-protected accessor.
       void kill(bool v)
 	{
+	  std::clog << "Signalling kill...\n";
 	  _mutex.lock();
 	  _kill=v;
 	  _mutex.unlock();
+	  std::clog << "...signalled kill\n";
 	}
       //! Mutex-protected accessor.
       const bool kill() const
@@ -124,20 +126,28 @@ class MutatableImageComputer : public QThread
 	  _mutex.unlock();
 	  return ret;
 	}
+      //! Check union of all flags with only one mutex lock.
+      const bool kill_or_abort_or_defer() const
+	{
+	  _mutex.lock();
+	  const bool ret=(_kill || _abort || _defer);
+	  _mutex.unlock();
+	  return ret;
+	}
     };
 
-  // Instance of communications
+  //! Instance of communications flags.
   Communications _communications;
   
-  //! The actual compute code, launched by invoking start() in the constructor
+  //! The actual compute code, launched by invoking start() in the constructor.
   virtual void run();
 
-  //! Accessor 
+  //! Accessor.
   Communications& communications()
     {
       return _communications;
     }
-  //! Accessor 
+  //! Accessor.
   const Communications& communications() const
     {
       return _communications;
