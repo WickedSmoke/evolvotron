@@ -760,6 +760,33 @@ FUNCTION_END(FunctionKaleidoscope)
 
 //------------------------------------------------------------------------------------------
 
+//! Like FunctionKaleidoscope with a twist
+FUNCTION_BEGIN(FunctionKaleidoscopeTwist,2,1,false)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const uint n=2+static_cast<uint>(floor(8.0f*fabs(param(0))));
+
+      const float a=atan2(p.x(),p.y());
+      const float r=sqrt(p.x()*p.x()+p.y()*p.y());
+      
+      const float sa=trianglef(a-r*param(1),M_PI/n);
+
+      const XYZ s(r*sin(sa),r*cos(sa),p.z());
+      return arg(0)(s);
+    }
+  
+  //! Is constant if sampled function is
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionKaleidoscopeTwist)
+
+//------------------------------------------------------------------------------------------
+
 //! Implements reflection of sampling point about multiple planes
 FUNCTION_BEGIN(FunctionWindmill,1,1,false)
 
@@ -784,6 +811,33 @@ FUNCTION_BEGIN(FunctionWindmill,1,1,false)
     }
 
 FUNCTION_END(FunctionWindmill)
+
+//------------------------------------------------------------------------------------------
+
+//! Like FunctionWindmill with twist
+FUNCTION_BEGIN(FunctionWindmillTwist,2,1,false)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const uint n=1+static_cast<uint>(floor(8.0f*fabs(param(0))));
+
+      const float a=atan2(p.x(),p.y());
+      const float r=sqrt(p.x()*p.x()+p.y()*p.y());
+      
+      const float sa=modulusf(a-r*param(1),M_PI/n);
+
+      const XYZ s(r*sin(sa),r*cos(sa),p.z());
+      return arg(0)(s);
+    }
+  
+  //! Is constant if sampled function is
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionWindmillTwist)
 
 //------------------------------------------------------------------------------------------
 

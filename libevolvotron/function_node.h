@@ -111,7 +111,7 @@ class FunctionNode
   static const std::vector<float> stubparams(const MutationParameters& parameters,uint n);
 
   //! This returns a vector of new random bits of tree.
-  static const std::vector<FunctionNode*> stubargs(const MutationParameters& parameters,uint n);
+  static const std::vector<FunctionNode*> stubargs(const MutationParameters& parameters,uint n,bool exciting=false);
 
   //! Return a suitable starting value for a node's iteration count (assuming it's iterative).
   static const uint FunctionNode::stubiterations(const MutationParameters& parameters);

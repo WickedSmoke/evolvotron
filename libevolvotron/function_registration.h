@@ -32,7 +32,7 @@ class MutationParameters;
 class FunctionNodeInfo;
 
 //! Define FunctionNodeStubNewFnPtr for convenience.
-typedef FunctionNode*const (*FunctionNodeStubNewFnPtr)(const MutationParameters&);
+typedef FunctionNode*const (*FunctionNodeStubNewFnPtr)(const MutationParameters&,bool);
 typedef FunctionNode*const (*FunctionNodeCreateFnPtr)(const FunctionNodeInfo*,std::string&);
 
 //! Class for meta information about functions.

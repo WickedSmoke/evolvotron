@@ -5,7 +5,7 @@ From release 0.2.0:
  - Display (not compute) priority to higher resolution images
    (saves time enlarging low res images unnecessarily)
  - x and -X command line options to specify specifc top level function types.
- - FunctionKaleidoscope, FunctionWindmill, FunctionStreak, FunctionSeparateZ added
+ - FunctionKaleidoscope, FunctionKaleidoscopeTwist, FunctionWindmill, FunctionWindmillTwist, FunctionStreak, FunctionSeparateZ added
  - Added -f <frames> option to evolvotron_render
  - Internals: function framework changed (avoids FunctionNodeUsing::evaluate wrapper), speed improvement ?
  - Internals: Type of top-level node can mutate, MutatableImage more sane.
@@ -40,7 +40,7 @@ From release 0.1.1:
  - Bump version to 0.1.2.  This is purely a bug-fix release.
  - Gentoo compile bug fix (Karl Robillard)
  - Disable implicit QString conversion (use explicit latin1() method).
- - Workround "C++ static initialize fiasco" by moving problem static members
+ - Workround "C++ static initializer fiasco" by moving problem static members
    into instance-get methods.
  
 From release 0.1.0:

@@ -61,16 +61,16 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
   const float base=0.7;
 
-  uint steps=65;
+  uint steps=67;
 
   if (!parameters.allow_fractal_nodes())
     {
-      steps=minimum(steps,61u);     // Currently 4 fractal types
+      steps=minimum(steps,63u);     // Currently 4 fractal types
     }
 
   if (!parameters.allow_iterative_nodes())
     {
-      steps=minimum(steps,54u);     // Currently 7 non-fractal iterative types (including multiscale noise - not strictly iterative but expensive)
+      steps=minimum(steps,56u);     // Currently 7 non-fractal iterative types (including multiscale noise - not strictly iterative but expensive)
     }
 
   const float step=(1.0-base)/steps;
@@ -80,144 +80,148 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   if (r<(1.0f-parameters.proportion_constant())*parameters.identity_supression()*base)
     {
       if (parameters.r01()<0.5f)
-	return FunctionTransform::stubnew(parameters);
+	return FunctionTransform::stubnew(parameters,false);
       else
-	return FunctionTransformQuadratic::stubnew(parameters);
+	return FunctionTransformQuadratic::stubnew(parameters,false);
     }
   else if (r<(1.0f-parameters.proportion_constant())*base)
-    return FunctionIdentity::stubnew(parameters);
+    return FunctionIdentity::stubnew(parameters,false);
   else if (r<base)
-    return FunctionConstant::stubnew(parameters);
+    return FunctionConstant::stubnew(parameters,false);
   else if (r<base+1*step)
-    return FunctionCartesianToSpherical::stubnew(parameters);
+    return FunctionCartesianToSpherical::stubnew(parameters,false);
   else if (r<base+2*step) 
-    return FunctionSphericalToCartesian::stubnew(parameters);
+    return FunctionSphericalToCartesian::stubnew(parameters,false);
   else if (r<base+3*step) 
-    return FunctionEvaluateInSpherical::stubnew(parameters);
+    return FunctionEvaluateInSpherical::stubnew(parameters,false);
   else if (r<base+4*step) 
-    return FunctionRotate::stubnew(parameters);
+    return FunctionRotate::stubnew(parameters,false);
   else if (r<base+5*step) 
-    return FunctionSin::stubnew(parameters);
+    return FunctionSin::stubnew(parameters,false);
   else if (r<base+6*step) 
-    return FunctionCos::stubnew(parameters);
+    return FunctionCos::stubnew(parameters,false);
   else if (r<base+7*step) 
-    return FunctionSpiralLinear::stubnew(parameters);
+    return FunctionSpiralLinear::stubnew(parameters,false);
   else if (r<base+8*step) 
-    return FunctionSpiralLogarithmic::stubnew(parameters);
+    return FunctionSpiralLogarithmic::stubnew(parameters,false);
   else if (r<base+9*step) 
-    return FunctionGradient::stubnew(parameters);
+    return FunctionGradient::stubnew(parameters,false);
   else if (r<base+10*step) 
-    return FunctionComposePair::stubnew(parameters);
+    return FunctionComposePair::stubnew(parameters,false);
   else if (r<base+11*step) 
-    return FunctionAdd::stubnew(parameters);
+    return FunctionAdd::stubnew(parameters,false);
   else if (r<base+12*step) 
-    return FunctionMultiply::stubnew(parameters);
+    return FunctionMultiply::stubnew(parameters,false);
   else if (r<base+13*step) 
-    return FunctionDivide::stubnew(parameters);
+    return FunctionDivide::stubnew(parameters,false);
   else if (r<base+14*step) 
-    return FunctionCross::stubnew(parameters);
+    return FunctionCross::stubnew(parameters,false);
   else if (r<base+15*step) 
-    return FunctionGeometricInversion::stubnew(parameters);
+    return FunctionGeometricInversion::stubnew(parameters,false);
   else if (r<base+16*step) 
-    return FunctionMax::stubnew(parameters);
+    return FunctionMax::stubnew(parameters,false);
   else if (r<base+17*step) 
-    return FunctionMin::stubnew(parameters);
+    return FunctionMin::stubnew(parameters,false);
   else if (r<base+18*step) 
-    return FunctionModulus::stubnew(parameters);
+    return FunctionModulus::stubnew(parameters,false);
   else if (r<base+19*step) 
-    return FunctionExp::stubnew(parameters);
+    return FunctionExp::stubnew(parameters,false);
   else if (r<base+20*step) 
-    return FunctionComposeTriple::stubnew(parameters);
+    return FunctionComposeTriple::stubnew(parameters,false);
   else if (r<base+21*step) 
-    return FunctionReflect::stubnew(parameters);
+    return FunctionReflect::stubnew(parameters,false);
   else if (r<base+22*step) 
-    return FunctionKaleidoscope::stubnew(parameters);
+    return FunctionKaleidoscope::stubnew(parameters,false);
   else if (r<base+23*step) 
-    return FunctionWindmill::stubnew(parameters);
+    return FunctionKaleidoscopeTwist::stubnew(parameters,false);
   else if (r<base+24*step) 
-    return FunctionMagnitude::stubnew(parameters);
+    return FunctionWindmill::stubnew(parameters,false);
   else if (r<base+25*step) 
-    return FunctionMagnitudes::stubnew(parameters);
+    return FunctionWindmillTwist::stubnew(parameters,false);
   else if (r<base+26*step) 
-    return FunctionChooseSphere::stubnew(parameters);
+    return FunctionMagnitude::stubnew(parameters,false);
   else if (r<base+27*step) 
-    return FunctionChooseRect::stubnew(parameters);
+    return FunctionMagnitudes::stubnew(parameters,false);
   else if (r<base+28*step) 
-    return FunctionChooseFrom2InCubeMesh::stubnew(parameters);
+    return FunctionChooseSphere::stubnew(parameters,false);
   else if (r<base+29*step) 
-    return FunctionChooseFrom3InCubeMesh::stubnew(parameters);
+    return FunctionChooseRect::stubnew(parameters,false);
   else if (r<base+30*step) 
-    return FunctionChooseFrom2InSquareGrid::stubnew(parameters);
+    return FunctionChooseFrom2InCubeMesh::stubnew(parameters,false);
   else if (r<base+31*step) 
-    return FunctionChooseFrom3InSquareGrid::stubnew(parameters);
+    return FunctionChooseFrom3InCubeMesh::stubnew(parameters,false);
   else if (r<base+32*step) 
-    return FunctionChooseFrom2InTriangleGrid::stubnew(parameters);
+    return FunctionChooseFrom2InSquareGrid::stubnew(parameters,false);
   else if (r<base+33*step) 
-    return FunctionChooseFrom3InTriangleGrid::stubnew(parameters);
+    return FunctionChooseFrom3InSquareGrid::stubnew(parameters,false);
   else if (r<base+34*step) 
-    return FunctionChooseFrom3InDiamondGrid::stubnew(parameters);
+    return FunctionChooseFrom2InTriangleGrid::stubnew(parameters,false);
   else if (r<base+35*step) 
-    return FunctionChooseFrom3InHexagonGrid::stubnew(parameters);
+    return FunctionChooseFrom3InTriangleGrid::stubnew(parameters,false);
   else if (r<base+36*step) 
-    return FunctionChooseFrom2InBorderedHexagonGrid::stubnew(parameters);
+    return FunctionChooseFrom3InDiamondGrid::stubnew(parameters,false);
   else if (r<base+37*step) 
-    return FunctionOrthoSphereShaded::stubnew(parameters);
+    return FunctionChooseFrom3InHexagonGrid::stubnew(parameters,false);
   else if (r<base+38*step) 
-    return FunctionOrthoSphereShadedBumpMapped::stubnew(parameters);
+    return FunctionChooseFrom2InBorderedHexagonGrid::stubnew(parameters,false);
   else if (r<base+39*step) 
-    return FunctionOrthoSphereReflect::stubnew(parameters);
+    return FunctionOrthoSphereShaded::stubnew(parameters,false);
   else if (r<base+40*step) 
-    return FunctionOrthoSphereReflectBumpMapped::stubnew(parameters);
-  else if (r<base+41*step)
-    return FunctionTransformGeneralised::stubnew(parameters);
-  else if (r<base+42*step)
-    return FunctionPreTransform::stubnew(parameters);
+    return FunctionOrthoSphereShadedBumpMapped::stubnew(parameters,false);
+  else if (r<base+41*step) 
+    return FunctionOrthoSphereReflect::stubnew(parameters,false);
+  else if (r<base+42*step) 
+    return FunctionOrthoSphereReflectBumpMapped::stubnew(parameters,false);
   else if (r<base+43*step)
-    return FunctionPreTransformGeneralised::stubnew(parameters);
+    return FunctionTransformGeneralised::stubnew(parameters,false);
   else if (r<base+44*step)
-    return FunctionPostTransform::stubnew(parameters);
+    return FunctionPreTransform::stubnew(parameters,false);
   else if (r<base+45*step)
-    return FunctionPostTransformGeneralised::stubnew(parameters);
+    return FunctionPreTransformGeneralised::stubnew(parameters,false);
   else if (r<base+46*step)
-    return FunctionFilter2D::stubnew(parameters);
+    return FunctionPostTransform::stubnew(parameters,false);
   else if (r<base+47*step)
-    return FunctionFilter3D::stubnew(parameters);
+    return FunctionPostTransformGeneralised::stubnew(parameters,false);
   else if (r<base+48*step)
-    return FunctionShadow::stubnew(parameters);
+    return FunctionFilter2D::stubnew(parameters,false);
   else if (r<base+49*step)
-    return FunctionShadowGeneralised::stubnew(parameters);
+    return FunctionFilter3D::stubnew(parameters,false);
   else if (r<base+50*step)
-    return FunctionCone::stubnew(parameters);
+    return FunctionShadow::stubnew(parameters,false);
   else if (r<base+51*step)
-    return FunctionExpCone::stubnew(parameters);
+    return FunctionShadowGeneralised::stubnew(parameters,false);
   else if (r<base+52*step)
-    return FunctionSeparateZ::stubnew(parameters);
+    return FunctionCone::stubnew(parameters,false);
   else if (r<base+53*step)
-    return FunctionNoiseOneChannel::stubnew(parameters);
+    return FunctionExpCone::stubnew(parameters,false);
   else if (r<base+54*step)
-    return FunctionNoiseThreeChannel::stubnew(parameters);
+    return FunctionSeparateZ::stubnew(parameters,false);
   else if (r<base+55*step)
-    return FunctionMultiscaleNoiseOneChannel::stubnew(parameters);
+    return FunctionNoiseOneChannel::stubnew(parameters,false);
   else if (r<base+56*step)
-    return FunctionMultiscaleNoiseThreeChannel::stubnew(parameters);
+    return FunctionNoiseThreeChannel::stubnew(parameters,false);
   else if (r<base+57*step)
-    return FunctionIterate::stubnew(parameters);
+    return FunctionMultiscaleNoiseOneChannel::stubnew(parameters,false);
   else if (r<base+58*step)
-    return FunctionAverageSamples::stubnew(parameters);
+    return FunctionMultiscaleNoiseThreeChannel::stubnew(parameters,false);
   else if (r<base+59*step)
-    return FunctionStreak::stubnew(parameters);
+    return FunctionIterate::stubnew(parameters,false);
   else if (r<base+60*step)
-    return FunctionConvolveSamples::stubnew(parameters);
+    return FunctionAverageSamples::stubnew(parameters,false);
   else if (r<base+61*step)
-    return FunctionAccumulateOctaves::stubnew(parameters);
+    return FunctionStreak::stubnew(parameters,false);
   else if (r<base+62*step)
-    return FunctionMandelbrotChoose::stubnew(parameters);
+    return FunctionConvolveSamples::stubnew(parameters,false);
   else if (r<base+63*step)
-    return FunctionMandelbrotContour::stubnew(parameters);
+    return FunctionAccumulateOctaves::stubnew(parameters,false);
   else if (r<base+64*step)
-    return FunctionJuliaChoose::stubnew(parameters);
-  else //if (r<base+65*step)
-    return FunctionJuliaContour::stubnew(parameters);
+    return FunctionMandelbrotChoose::stubnew(parameters,false);
+  else if (r<base+65*step)
+    return FunctionMandelbrotContour::stubnew(parameters,false);
+  else if (r<base+66*step)
+    return FunctionJuliaChoose::stubnew(parameters,false);
+  else //if (r<base+67*step)
+    return FunctionJuliaContour::stubnew(parameters,false);
 }
 
 /*! If a specific function's registration (ie meta info) is provided then that will be used as the wrapped function type.
@@ -236,25 +240,25 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
 	const float which=parameters.r01();
 	if (which<0.4f)
 	  {
-	    args_toplevel.push_back(FunctionTransformGeneralised::stubnew(parameters));
+	    args_toplevel.push_back(FunctionTransformGeneralised::stubnew(parameters,false));
 	  }
 	else if (which<0.8f)
 	  {
-	    args_toplevel.push_back(FunctionTransform::stubnew(parameters));
+	    args_toplevel.push_back(FunctionTransform::stubnew(parameters,false));
 	  }
 	else if (which<0.9f)
 	  {
-	    args_toplevel.push_back(FunctionTransformQuadratic::stubnew(parameters));
+	    args_toplevel.push_back(FunctionTransformQuadratic::stubnew(parameters,false));
 	  }
 	else
 	  {
-	    args_toplevel.push_back(FunctionIdentity::stubnew(parameters));
+	    args_toplevel.push_back(FunctionIdentity::stubnew(parameters,false));
 	  }
       }
 
       if (specific_fn)
 	{
-	  args_toplevel.push_back((*(specific_fn->stubnew_fn()))(parameters));
+	  args_toplevel.push_back((*(specific_fn->stubnew_fn()))(parameters,true));
 	}
       else
 	{
@@ -267,19 +271,19 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
 
 	if (which<0.4f)
 	  {
-	    args_toplevel.push_back(FunctionTransformGeneralised::stubnew(parameters));
+	    args_toplevel.push_back(FunctionTransformGeneralised::stubnew(parameters,false));
 	  }
 	else if (which<0.8f)
 	  {
-	    args_toplevel.push_back(FunctionTransform::stubnew(parameters));
+	    args_toplevel.push_back(FunctionTransform::stubnew(parameters,false));
 	  }
 	else if (which<0.9f)
 	  {
-	    args_toplevel.push_back(FunctionTransformQuadratic::stubnew(parameters));
+	    args_toplevel.push_back(FunctionTransformQuadratic::stubnew(parameters,false));
 	  }
 	else
 	  {
-	    args_toplevel.push_back(FunctionIdentity::stubnew(parameters));
+	    args_toplevel.push_back(FunctionIdentity::stubnew(parameters,false));
 	  }	
       }
 
@@ -303,11 +307,11 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
 
 /*! This returns a vector of random bits of stub, used for initialiing nodes with children. 
  */
-const std::vector<FunctionNode*> FunctionNode::stubargs(const MutationParameters& parameters,uint n)
+const std::vector<FunctionNode*> FunctionNode::stubargs(const MutationParameters& parameters,uint n,bool exciting)
 {
   std::vector<FunctionNode*> ret;
   for (uint i=0;i<n;i++)
-    ret.push_back(stub(parameters,false));
+    ret.push_back(stub(parameters,exciting));
   return ret;
 }
 

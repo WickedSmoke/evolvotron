@@ -601,7 +601,7 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
   else if (test_function_unwrapped())
     {
       FunctionNodeStubNewFnPtr rootfn=FunctionRegistry::get()->lookup(test_function())->stubnew_fn();
-      root=(*rootfn)(mutation_parameters());
+      root=(*rootfn)(mutation_parameters(),true);
     }
   else
     {

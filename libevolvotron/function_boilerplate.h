@@ -62,13 +62,13 @@ template <typename F,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class Functi
     {}
 
   //! Factory method to create a stub node for this type
-  static FunctionNode*const stubnew(const MutationParameters& mutation_parameters)
+  static FunctionNode*const stubnew(const MutationParameters& mutation_parameters,bool exciting)
     {
       //! \todo Needs attention.  Will need to create then assign.
       return new F
 	(
 	 stubparams(mutation_parameters,PARAMETERS),
-	 stubargs(mutation_parameters,ARGUMENTS),
+	 stubargs(mutation_parameters,ARGUMENTS,exciting),
 	 (ITERATIVE ? stubiterations(mutation_parameters) : 0)
 	 );
     }
