@@ -235,6 +235,9 @@ DEBUGGING/POWER-USER OPTIONS
 	NB For functions without leaf nodes or parameters (e.g FunctionSphericalToCartesian) this doesn't
 	leave any scope for variation or future mutation.
         Example: evolvotron -X FunctionKaleidoscope
+
+Note that you can also specify iterative & fractal function types as an argument to -x/-X,
+even though they are disabled by default in the mutation parameters.
 	 
 MOUSE CONTROL
 ============= 
@@ -482,7 +485,12 @@ This release also builds two other executables:
 
 FUTURE DEVELOPMENTS
 ===================
-Please check the TODO file before you send me email!
+Check the TODO file first before you send me suggestions!
+
+Please don't ask me to port evolvotron to Windows.
+You are of course free to do so yourself, but please reed
+  http://www.fefe.de/nowindows/ 
+first.
 
 BUILDING CODE DOCUMENTATION
 ===========================
@@ -505,4 +513,19 @@ for feedback, suggestions and patches.
 years ago who first got me interested in this kind of thing.
 
 ...to www.di.fm, www.somafm.com and Trance4Ever for music to code to.
+
+WHY ?
+=====
+I have always admired those who have the skill to wield a pen or paintbrush
+and fill a page or canvas with some striking image from their imagination.
+Unfortunately I lack the patience to learn such skills, and probably the
+necessary manual dexterity and imagination too.  Evolvotron, and its
+predecessors developed on and off over a decade since I first came across 
+the idea, are an attempt to compensate for this using the skills I do have 
+i.e some mathematical sensibility and the ability to write working code
+(well, sometimes).  If you like an image it produces, then as far as
+I'm concerned that's as satisfying a result as if I'd drawn it myself
+in ink or paint.
+
+Tim
 

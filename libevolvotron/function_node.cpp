@@ -61,16 +61,16 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
   const float base=0.7;
 
-  uint steps=69;
+  uint steps=71;
 
   if (!parameters.allow_fractal_nodes())
     {
-      steps=minimum(steps,65u);     // Currently 4 fractal types
+      steps=minimum(steps,67u);     // Currently 4 fractal types
     }
 
   if (!parameters.allow_iterative_nodes())
     {
-      steps=minimum(steps,58u);     // Currently 7 non-fractal iterative types (including multiscale noise - not strictly iterative but expensive)
+      steps=minimum(steps,58u);     // Currently 9 non-fractal iterative types (including multiscale noise - not strictly iterative but expensive)
     }
 
   const float step=(1.0-base)/steps;
@@ -215,16 +215,20 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   else if (r<base+63*step)
     return FunctionStreak::stubnew(parameters,false);
   else if (r<base+64*step)
-    return FunctionConvolveSamples::stubnew(parameters,false);
+    return FunctionAverageRing::stubnew(parameters,false);
   else if (r<base+65*step)
-    return FunctionAccumulateOctaves::stubnew(parameters,false);
+    return FunctionFilterRing::stubnew(parameters,false);
   else if (r<base+66*step)
-    return FunctionMandelbrotChoose::stubnew(parameters,false);
+    return FunctionConvolveSamples::stubnew(parameters,false);
   else if (r<base+67*step)
-    return FunctionMandelbrotContour::stubnew(parameters,false);
+    return FunctionAccumulateOctaves::stubnew(parameters,false);
   else if (r<base+68*step)
+    return FunctionMandelbrotChoose::stubnew(parameters,false);
+  else if (r<base+69*step)
+    return FunctionMandelbrotContour::stubnew(parameters,false);
+  else if (r<base+70*step)
     return FunctionJuliaChoose::stubnew(parameters,false);
-  else //if (r<base+69*step)
+  else //if (r<base+71*step)
     return FunctionJuliaContour::stubnew(parameters,false);
 }
 

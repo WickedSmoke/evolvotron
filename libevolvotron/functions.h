@@ -1947,6 +1947,64 @@ FUNCTION_END(FunctionStreak)
 
 //------------------------------------------------------------------------------------------
 
+//! Average of samples around a ring
+FUNCTION_BEGIN(FunctionAverageRing,1,1,true)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      if (iterations()==1) return arg(0)(p);
+
+      const float da=2.0f*M_PI/iterations();
+      XYZ ret(0.0f,0.0f,0.0f);
+      for (uint i=0;i<iterations();i++)
+	{
+	  const float a=i*da;
+	  const XYZ delta(param(0)*cos(a),param(0)*sin(a),0.0f);
+	  ret+=arg(0)(p+delta);
+	}
+      return ret/iterations();
+    }
+  
+  //! Is constant if sampled leaf function is.
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionAverageRing)
+
+//------------------------------------------------------------------------------------------
+
+//! Like FunctionAverageRing but subtract off the centre value
+FUNCTION_BEGIN(FunctionFilterRing,1,1,true)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      if (iterations()==1) return XYZ(0.0f,0.0f,0.0f);
+
+      const float da=2.0f*M_PI/iterations();
+      XYZ ret(0.0f,0.0f,0.0f);
+      for (uint i=0;i<iterations();i++)
+	{
+	  const float a=i*da;
+	  const XYZ delta(param(0)*cos(a),param(0)*sin(a),0.0f);
+	  ret+=arg(0)(p+delta);
+	}
+      return ret/iterations()-arg(0)(p);
+    }
+  
+  //! Is constant if sampled leaf function is.
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionFilterRing)
+
+//------------------------------------------------------------------------------------------
+
 //! Function similar to FunctionAverageSamples but doing convolution
 FUNCTION_BEGIN(FunctionConvolveSamples,3,2,true)
 
@@ -1977,6 +2035,7 @@ FUNCTION_BEGIN(FunctionConvolveSamples,3,2,true)
 
       for (uint i=0;i<iterations();i++)
 	{
+	  //! \todo Hmmm.. this is cross product, not inner product
 	  ret+=(arg(0)(p+pd)*arg(1)(pd));
 	  pd+=delta;
 	}
