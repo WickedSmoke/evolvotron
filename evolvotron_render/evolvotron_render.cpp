@@ -79,19 +79,12 @@ int main(int argc,char* argv[])
 	  {
 	    // xy co-ords vary over -1.0 to 1.0.  In the one frame case z will be 0
 	    const XYZ p(
-			-1.0+2.0*(col+0.5)/width,
-			1.0-2.0*(row+0.5)/height,
-			(
-			 imagefn->sinusoidal_z()
-			 ?
-			 cos(M_PI*(frame+0.5f)/frames)
-			 :
-			 -1.0f+2.0f*(frame+0.5f)/frames
-			 )
+			imagefn->sampling_coordinate(col,row,frame,width,height,frames)
 			);
+	    
 	    uint c[3];
 	    imagefn->get_rgb(p,c);
-	
+	    
 	    image_data.push_back((c[0]<<16)|(c[1]<<8)|(c[2]));
 	  }
 

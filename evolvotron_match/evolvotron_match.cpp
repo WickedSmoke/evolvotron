@@ -189,7 +189,7 @@ int main(int argc,char* argv[])
 	{
 	  do 
 	    {
-	      new_imagefn=std::auto_ptr<const MutatableImage>(new MutatableImage(mutation_parameters,true));
+	      new_imagefn=std::auto_ptr<const MutatableImage>(new MutatableImage(mutation_parameters,true,true,false));
 	    }
 	  while (new_imagefn->is_constant());
 	}

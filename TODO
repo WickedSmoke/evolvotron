@@ -22,6 +22,8 @@ Animation
 
 Conventional
 ------------
+- linz and -spheremap need rationalising before we add more projections
+- Ability to change linz and spheremap attributes on properties menu.
 - Heat/Cool etc buttons in status bar not very interesting.
   Replace with autocool controls, or have them actually fire off
   a respawn from the last spawned image; would get more of an idea

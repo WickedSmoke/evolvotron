@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qmessagebox.h>
 #include <qtooltip.h>
 
+#include "args.h"
 #include "evolvotron_main.h"
 #include "xyz.h"
 #include "function_node.h"
@@ -409,9 +410,9 @@ void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImage
        FunctionNode::stubparams(mutation_parameters(),12),
        args,
        0
-       )
-      ,
-      image->sinusoidal_z()
+       ),
+      image->sinusoidal_z(),
+      image->spheremap()
       )
      );
 }
@@ -446,7 +447,7 @@ void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisp
     }
   
   history().replacing(display);
-  display->image(new MutatableImage(new_root,image->sinusoidal_z()));
+  display->image(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
 }
 
 void EvolvotronMain::restore(MutatableImageDisplay* display,MutatableImage* image)
@@ -729,10 +730,10 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
     {
       root=FunctionNode::initial(mutation_parameters(),FunctionRegistry::get()->lookup(test_function()));
     }
-	
+
   history().replacing(display);
-  //! \todo sinz should be obtained from mutation parameters
-  display->image(new MutatableImage(root,true));
+  //! \todo sinz and spheremap should be obtained from mutation parameters
+  display->image(new MutatableImage(root,!Args::global().option("-linz"),Args::global().option("-spheremap")));
 }
 
 void EvolvotronMain::undo()

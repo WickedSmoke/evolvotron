@@ -44,12 +44,20 @@ class Args
   //! The stringstream after the selected option.
   std::istringstream* _after;
 
+  static Args* _global;
+
  public:
   //! Construct from usual arg vector
   Args(int argc,char* argv[]);
 
   //! Destructor.
   ~Args();
+
+  static Args& global()
+    {
+      assert(_global!=0);
+      return *_global;
+    }
 
   //! Return true if option is present, and set up in anticipation of subsequent after()
   bool option(const std::string& opt,int n=0);

@@ -75,9 +75,7 @@ int main(int argc,char* argv[])
 	}
       while (fn->is_constant());
 
-
-      //! \todo Should obtain sinusoidalness (2nd arg) from command line option.
-      imagefn_out=new MutatableImage(fn,true);
+      imagefn_out=new MutatableImage(fn,!args.option("-linz"),args.option("-spheremap"));
     }
   else
     {

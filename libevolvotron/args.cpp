@@ -24,12 +24,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "args.h"
 #include <iostream>
 
+Args* Args::_global=0;
+
 Args::Args(int argc,char* argv[])
   :_argc(argc)
   ,_after(0)
 {
   for (int i=0;i<argc;i++)
     _argv.push_back(std::string(argv[i]));
+  _global=this;
 }
 
 Args::~Args()

@@ -464,6 +464,8 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	      
 		  transform.basis_x(XYZ(1.0f/scale.x(),          0.0f,0.0f));
 		  transform.basis_y(XYZ(          0.0f,1.0f/scale.y(),0.0f));
+
+		  std::clog << "[Anisotropic scale]";
 		}
 	    }
 	  // Shift button alone is isotropic zoom
@@ -487,6 +489,8 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 		  const float scale=radius/last_radius;
 		  transform.basis_x(XYZ(1.0f/scale,          0.0f,0.0f));
 		  transform.basis_y(XYZ(      0.0f,1.0f/scale,0.0f));
+
+		  std::clog << "[Isotropic scale]";
 		}
 	    }
 	}
@@ -503,6 +507,8 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	      
 	      transform.basis_x(XYZ(1.0f, -dy,0.0f));
 	      transform.basis_y(XYZ(  dx,1.0f,0.0f));
+	      
+	      std::clog << "[Shear]";
 	    }
 	  // Control button only is rotate
 	  else
@@ -526,6 +532,8 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 
 	      transform.basis_x(XYZ( cr,sr,0.0f));
 	      transform.basis_y(XYZ(-sr,cr,0.0f));
+
+	      std::clog << "[Rotate]";
 	    }
 	}
       // Default (no interesting modifier keys detected) is panning around
@@ -537,6 +545,8 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 			0.0f
 			);
 	  transform.translate(translate);
+	  
+	  std::clog << "[Pan]";
 	}
 
       FunctionNode* new_root;
@@ -568,7 +578,7 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	}
 
       // Install new image (triggers recompute).
-      image(new MutatableImage(new_root,image()->sinusoidal_z()));
+      image(new MutatableImage(new_root,image()->sinusoidal_z(),image()->spheremap()));
 
       // Finally, record position of this event as last event
       _mid_button_adjust_last_pos=event->pos();

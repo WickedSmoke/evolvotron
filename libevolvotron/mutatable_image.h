@@ -46,12 +46,16 @@ class MutatableImage
   //! Whether to sweep z sinusoidally (vs linearly)
   bool _sinusoidal_z;
 
+  //! Whether xyz should be interpreted as long/lat/radius
+  bool _spheremap;
+
  public:
   
   //! Take ownership of the image tree with the specified root node.
-  MutatableImage(FunctionNode* r,bool sinz)
+  MutatableImage(FunctionNode* r,bool sinz,bool sm)
     :_root_holder(0)
     ,_sinusoidal_z(sinz)
+    ,_spheremap(sm)
     {
       assert(r!=0);
       std::vector<float> pv;
@@ -61,9 +65,10 @@ class MutatableImage
     }
 
   //! Create a new random image tree.
-  MutatableImage(const MutationParameters& parameters,bool exciting=false)
+  MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm)
     :_root_holder(0)
     ,_sinusoidal_z(true)
+    ,_spheremap(sm)
     {      
       std::vector<float> pv;
       std::vector<FunctionNode*> av;
@@ -77,6 +82,11 @@ class MutatableImage
     {
       delete _root_holder;
     }
+
+  //! Returns the sampling co-ordinate given a pixel position
+  /*! This depends on things like sinusoidal_z and spheremap
+   */
+  const XYZ sampling_coordinate(uint x,uint y,uint z,uint sx,uint sy,uint sz) const;
 
   //! Accessor.
   const FunctionNode*const root() const
@@ -98,10 +108,16 @@ class MutatableImage
       return _sinusoidal_z;
     }
 
+  //! Accessor.
+  const bool spheremap() const
+    {
+      return _spheremap;
+    }
+
   //! Clone this image.
   MutatableImage*const deepclone() const
     {
-      return new MutatableImage(root()->deepclone(),sinusoidal_z()); 
+      return new MutatableImage(root()->deepclone(),sinusoidal_z(),spheremap()); 
     }
 
   //! Return a mutated version of this image

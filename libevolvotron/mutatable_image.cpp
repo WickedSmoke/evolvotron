@@ -31,18 +31,56 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_null.h"
 #include "mutatable_image_display_big.h"
 
+const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint sy,uint sz) const
+{
+  if (spheremap())
+    {
+      const float longitude=-M_PI+2.0*M_PI*(x+0.5f)/sx;
+      const float latitude=0.5*M_PI-M_PI*(y+0.5f)/sy;
+      const float r=(
+		     sinusoidal_z()
+		     ?
+		     0.5f+cos(M_PI*(z+0.5f)/sz)
+		     :
+		     0.5f+(z+0.5f)/sz
+		     );
+		     
+      return XYZ
+	(
+	 r*sin(longitude)*cos(latitude),
+	 r*cos(longitude)*cos(latitude),
+	 r*sin(latitude)
+	 );
+    }
+  else
+    {
+      return XYZ
+	(
+	 -1.0f+2.0f*(x+0.5f)/sx,
+	  1.0f-2.0f*(y+0.5f)/sy,
+	 (
+	  sinusoidal_z()
+	  ?
+	  cos(M_PI*(z+0.5f)/sz)
+	  :
+	  -1.0f+2.0f*(z+0.5f)/sz
+	  )
+	 );
+    }
+}
+
 MutatableImage*const MutatableImage::mutated(const MutationParameters& p) const
 {
   FunctionNode*const c=_root_holder->deepclone();  
   c->mutate(p);
-  return new MutatableImage(c->argptr(0),sinusoidal_z());
+  return new MutatableImage(c->argptr(0),sinusoidal_z(),spheremap());
 }
 
 MutatableImage*const MutatableImage::simplified() const
 {
   FunctionNode*const c=_root_holder->deepclone();  
   c->simplify_constants();
-  return new MutatableImage(c->argptr(0),sinusoidal_z());  
+  return new MutatableImage(c->argptr(0),sinusoidal_z(),spheremap());  
 }
 
 void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
@@ -84,6 +122,9 @@ std::ostream& MutatableImage::save_function(std::ostream& out) const
     << " zsweep=\""
     << (_sinusoidal_z ? "sinusoidal" : "linear")
     << "\""
+    << " projection=\""
+    << (_spheremap ? "spheremap" : "planar")
+    << "\""
     << ">\n";
   
   root()->save_function(out,1);
@@ -106,6 +147,7 @@ protected:
   FunctionNodeInfo** _root;
 
   bool* _ret_sinusoidal_z;
+  bool* _ret_spheremap;
 
   std::stack<FunctionNodeInfo*> _stack;
 
@@ -117,9 +159,10 @@ protected:
 
 public:
 
-  LoadHandler(FunctionNodeInfo** root,bool* sinz)
+  LoadHandler(FunctionNodeInfo** root,bool* sinz,bool* smap)
     :_root(root)
      ,_ret_sinusoidal_z(sinz)
+     ,_ret_spheremap(smap)
      ,_expect_top_level_element(true)
      ,_expect_characters(false)
      ,_expect_characters_type(false)
@@ -181,6 +224,7 @@ public:
 		    _report+=tmp.latin1();
 		  }
 	      }
+
 	    if ((idx=atts.index("zsweep"))==-1)
 	      {
 		_report+="Warning: zsweep attribute not found\nDefaulting to sinusoidal\n";
@@ -201,6 +245,28 @@ public:
 		    return false;
 		  }
 	      }
+
+	    if ((idx=atts.index("projection"))==-1)
+	      {
+		_report+="Warning: projection attribute not found\nDefaulting to planar\n";
+		*_ret_spheremap=false;
+	      }
+	    else
+	      {
+		const QString projection=atts.value(idx);
+		if (projection==QString("spheremap"))
+		  *_ret_spheremap=true;
+		else if (projection==QString("planar"))
+		  *_ret_spheremap=false;
+		else
+		  {
+		    QString tmp;
+		    tmp="Error: projection attribute expected \"spheremap\" or \"planar\", but got \""+projection+"\"\n";
+		    _report+=tmp.latin1();
+		    return false;
+		  }
+	      }
+
 	  }
 	else
 	  {
@@ -362,7 +428,8 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
   FunctionNodeInfo* info=0;
 
   bool sinusoidal_z;
-  LoadHandler load_handler(&info,&sinusoidal_z);
+  bool spheremap;
+  LoadHandler load_handler(&info,&sinusoidal_z,&spheremap);
 
   QXmlSimpleReader xml_reader;
   xml_reader.setContentHandler(&load_handler);
@@ -379,7 +446,7 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
       
       if (root)
 	{
-	  return new MutatableImage(root,sinusoidal_z);
+	  return new MutatableImage(root,sinusoidal_z,spheremap);
 	}
       else
 	{

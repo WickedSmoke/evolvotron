@@ -75,6 +75,12 @@ ANIMATION OPTIONS
   -r <framerate>
 	Rate at which frames are displayed (integer).  (Defaults to 8).
 
+ -linz
+        Vary z linearly with time rather than sinusoidally.
+        Sinusoidal variation generally looks better when animations are "bounced"
+        forwards and backwards, but this option is useful when generating slices to
+        use as volumetric textures.
+
 POWER-USER & DEBUG OPTIONS
 --------------------------
   -v 
@@ -101,6 +107,12 @@ POWER-USER & DEBUG OPTIONS
         Example (highly recommended): 
         $ evolvotron -X FunctionKaleidoscope 
 
+ -spheremap
+        Images are produced by sampling the underlying 3D function on the
+        latitude-longitude grid of a sphere.  The resulting images should be
+        usable as spheremaps/spherical environment maps.  Animations vary
+        the radius of the sphere.
+       
 Note that you can also specify iterative & fractal function
 types as an argument to -x/-X, even when they are disabled 
 (as they are by default) in the mutation parameters.
@@ -422,13 +434,22 @@ This release also builds two other executables:
    Use the -v option to monitor the progress of a long animation run.
    [NB This app does not use multiple compute threads].
 
- $ evolvotron_mutate [-g | < <file_in.xml>] > <file_out.xml>
+ $ evolvotron_mutate [-g [-linz] [-spheremap] | < <file_in.xml>] > <file_out.xml>
    With the -g (generate, genesis?) option, creates a new random
    evolvotron function and writes its XML description to standard out.
    Without the -g option, reads an XML function description from
    standard input, mutates it (using the same algorithm and parameters
    as evolvotron in its default state) and writes the new function's XML
    representation to the standard output.
+
+ $ evolvotron_match [-v] image[.ppm | .png]
+   Experiment in replacing a human operator with a simple scoring function
+   (minimise sum-of-squares of pixel value differences between evolvotron
+   image and image specified on command line).  Outputs f??????.png whenever
+   it finds a better match.  Terminates after 10000000 iterations and writes
+   match.png.  However, all it seems to do is converge with the average colour
+   of the target image.
+
 
 EXAMPLES
 --------

@@ -82,17 +82,13 @@ void MutatableImageComputer::run()
 		{
 		  // xyz co-ords vary over -1.0 to 1.0
 		  // In the one frame case z will be 0
-		  const XYZ p(
-			      -1.0f+2.0f*(task()->current_col()+0.5f)/width,
-			       1.0f-2.0f*(task()->current_row()+0.5f)/height,
+		  const XYZ p(task()->image()->sampling_coordinate
 			      (
-			       task()->image()->sinusoidal_z()
-			       ?
-			       cos(M_PI*((task()->current_frame()+0.5f)/frames))
-			       :
-			       -1.0f+2.0f*(task()->current_frame()+0.5f)/frames
+			       task()->current_col(),task()->current_row(),task()->current_frame(),
+			       width,height,frames
 			       )
 			      );
+
 		  
 		  uint c[3];
 		  task()->image()->get_rgb(p,c);

@@ -17,6 +17,8 @@ From release 0.2.3:
  - Eliminate template-tastic Tuple and Matrix classes.
    Fix XYZ and Transform to not require them.
  - evolvotron_mutate - -g option more likely to generate insteresting functions
+ - -linz and -spheremap options where appropriate
+ - evolvotron_match utility.
 
 From release 0.2.2:
  - Version to 0.2.3
