@@ -52,8 +52,8 @@ contains(CONFIG_OPTS, p3 ){
 
 contains(CONFIG_OPTS, xp ){
   QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
-  QMAKE_CXXFLAGS_RELEASE += -march=athalon-xp -mfpmath=sse -msse
-  BUILD_INFO+= Athalon-XP
+  QMAKE_CXXFLAGS_RELEASE += -march=athlon-xp -mfpmath=sse -msse
+  BUILD_INFO+= Athlon-XP
 }
 
 ##################
