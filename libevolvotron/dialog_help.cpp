@@ -38,7 +38,7 @@ static const char*const helptext=
 "    Ctrl-M - Toggle menu hiding"
 "  </li>"
 "  <li>"
-"    Esc - Returns to normal mode from full-screen/menu-hidden mode.  Closes full-screen \"Big\" windows"
+"    Esc - Returns to normal mode from full-screen/menu-hidden mode."
 "  </li>"
 #endif
 "  <li>"
