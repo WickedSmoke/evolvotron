@@ -1,0 +1,12 @@
+
+---
+
+spheremap.sh is a script to animate a spheremap applied to a rotating sphere.
+The scene description is in spheremap.pov.
+It assumes the existence of a file called spheremap.png, which you
+should create by saving an (enlarged, probably) image from evolvotron
+running in -spheremap mode.
+
+---
+
+

@@ -1,7 +1,7 @@
 For next release
 ----------------
 - Finish shuffling stuff between dialogs.
-- Per-function weighting.
+- Per-function probability weighting.
 
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
@@ -24,6 +24,7 @@ Conventional
 ------------
 - linz and -spheremap need rationalising before we add more projections
 - Ability to change linz and spheremap attributes on properties menu.
+- Supplement spheremaps with... what ?  Cubemaps ?  Volume output ?
 - Heat/Cool etc buttons in status bar not very interesting.
   Replace with autocool controls, or have them actually fire off
   a respawn from the last spawned image; would get more of an idea
