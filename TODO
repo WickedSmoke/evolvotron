@@ -1,5 +1,7 @@
-- Middle click and drag should drive pan of current image.
-  Alt/ctrl modifiers to drive rotate & zoom too ?
+- Shift middle mouse drag should be safer
+  (compute zoom using radial motion only)
+- Use shift-alt for unsafe zoom
+- Use ctrl for rotate
 - Maybe add "view" menu: like warp but just applying to current image
   (would need explicit control over amounts: maybe above approach better ?).
 - Last method used should point to an object encapsulating the behaviour
