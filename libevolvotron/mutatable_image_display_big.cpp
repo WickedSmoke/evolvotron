@@ -46,6 +46,7 @@ MutatableImageDisplayBig::~MutatableImageDisplayBig()
  */
 void MutatableImageDisplayBig::keyPressEvent(QKeyEvent* e)
 {
+#ifdef FULLSCREEN
   if (e->key()==Qt::Key_Escape)
     {
       if (main()->isFullScreen())
@@ -65,6 +66,7 @@ void MutatableImageDisplayBig::keyPressEvent(QKeyEvent* e)
 	showFullScreen();
     }
   else
+#endif
     {
       // Perhaps it's for someone else
       e->ignore();

@@ -9,7 +9,17 @@ CONFIG+= qt thread release
 # For a system-wide install use the next line (and remember to "su" for the "make install" stage)
 # INSTALLPATH = /usr/local/bin
 # For a personal install use something like the next line
+
 INSTALLPATH = /home/$(USER)/bin
+
+##################
+# Full screen support selected ?
+
+contains(CONFIG_OPTS, fs ){
+  QMAKE_CXXFLAGS_RELEASE += -DFULLSCREEN
+  QMAKE_CXXFLAGS_DEBUG   += -DFULLSCREEN
+  BUILD_INFO+= Fullscreen
+}
 
 ##################
 # Improved optimisation options from qmake defaults.
@@ -18,6 +28,7 @@ INSTALLPATH = /home/$(USER)/bin
 # Use the next two lines for slight improvement
 # Now leaving these ON for general distribution as they DO have SOME effect 
 # (or at least they have in the past... see the README), and should be portable.
+
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3 -fomit-frame-pointer -funroll-loops -ffast-math 
 
@@ -27,19 +38,22 @@ QMAKE_CXXFLAGS_RELEASE += -O3 -fomit-frame-pointer -funroll-loops -ffast-math
 # (On a different setup you may need to change what's subtracted out of the flags.)
 # NB -march=X implies -mcpu=X... no need to specify both the same
 
-contains(CPU, p4 ){ 
+contains(CONFIG_OPTS, p4 ){ 
   QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
   QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
+  BUILD_INFO+= Pentium4
 }
 
-contains(CPU, p3 ){
+contains(CONFIG_OPTS, p3 ){
   QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
   QMAKE_CXXFLAGS_RELEASE += -march=pentium3 -mfpmath=sse -msse
+  BUILD_INFO+= Pentium3  
 }
 
-contains(CPU, xp ){
+contains(CONFIG_OPTS, xp ){
   QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
   QMAKE_CXXFLAGS_RELEASE += -march=athalon-xp -mfpmath=sse -msse
+  BUILD_INFO+= Athalon-XP
 }
 
 ##################
@@ -47,23 +61,24 @@ contains(CPU, xp ){
 # The next line seems to generate nicer assembler (with better SSE register usage) from some templated code.
 # WARNING: gcc grows HUGE (>500MB!!!) and it takes AGES (30mins!!!) with this option.
 # Of curiosity value for the hardcore only.
-#QMAKE_CXXFLAGS_RELEASE += -finline-limit=4000
+
+# QMAKE_CXXFLAGS_RELEASE += -finline-limit=4000
 
 #######################################
 # Version numbering.  This is ENTIRELY controlled by what is echoed by the VERSION script
-#
+
 VERSION_NUMBER = $${system(../VERSION)}
 QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_VERSION="$$VERSION_NUMBER"'
 QMAKE_CXXFLAGS_DEBUG   += '-DEVOLVOTRON_VERSION="$$VERSION_NUMBER"'
-QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_BUILD="$$VERSION_NUMBER (release build)"'
-QMAKE_CXXFLAGS_DEBUG   += '-DEVOLVOTRON_BUILD="$$VERSION_NUMBER (debug build)"'
+QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_BUILD="$$VERSION_NUMBER (Build options: $$BUILD_INFO Release)"'
+QMAKE_CXXFLAGS_DEBUG   += '-DEVOLVOTRON_BUILD="$$VERSION_NUMBER (Build options: $$BUILD_INFO Debug)"'
 
 # qmake's library code can use this too (but only for shared libraries which we don't use)
 VERSION=$$VERSION_NUMBER
 
 #######################################
 # Disable assertions in release version
-#
+
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 QMAKE_CFLAGS_RELEASE += -DNDEBUG
 
@@ -79,7 +94,7 @@ QMAKE_CXXFLAGS_DEBUG += -DQT_NO_ASCII_CAST -pthread
 
 ######################################
 # Hide those crufty moc_ files away
-#
+
 MOC_DIR = moc
 
 ##################

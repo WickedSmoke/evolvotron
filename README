@@ -118,6 +118,30 @@ If you can fix it, the patches would be even better!
 
 BUILD OPTIONS
 =============
+A few things are available through the configure script.
+
+Usage:
+  ./configure [p4|p3|xp] [fs]
+
+(Any command line arguments given to ./BUILD are passed through to configure,
+so you can do e.g "./BUILD fs p4").
+
+If you rerun configure or build with a different option to the last time
+you almost certainly need to do a "make distclean" to clean up old
+code and Makefiles. 
+
+FUNCTIONALITY
+-------------
+Specify 'fs' on the ./configure commandline to enable
+fullscreen support (which is off by default).  I don't 
+know which version of Qt this appeared with, but it works 
+on RH9 and fails to build on RH8.
+
+If you select fullscreen support but your version of Qt is too
+old, the build will fail.
+
+PERFORMANCE
+-----------
 There are already some generally effective overrides for 
 Qt's fairly conservative (at least on RedHat) compile options 
 in the fracplanet.pro file (where QMAKE_CXXFLAGS_RELEASE is
@@ -129,19 +153,24 @@ is to use the configuration option:
   ./configure <cpu>
 where <cpu> is p3,p4 or xp as appropriate e.g ./configure p4
 and rebuild from clean (again, "make distclean" is a good idea).
-Note that the ./BUILD script doesn't support this option; you have 
-to use configure and make. 
+
+If you attempt to run the resulting executable on incompatible
+hardware, it will probably crash horribly.
 
 So you can judge for yourself whether this is worth bothering with
 here's the times for a 2.4GHz P4 to run a 2048x2048 evolvotron_render
 (gcc 3.2 compiled) on a benchmark image function:
-  Qt defaults (-O2):                                        30.6s
-   -O2 -> -O3:                                              28.6s
-   add -fomit-frame-pointer                                 28.2s
-   add -funroll-loops                                       26.8s
-   add -ffast-math                                          26.5s
-   add arch/cpu -> -march=pentium4 -mfpmath=sse -msse2      23.6s
-   add -finline-limit=4000                                  19.4s
+  Qt defaults 
+    -march=i386 -mcpu=i686 -O2                               30.6s
+  With evolvotron's overrides (now applied by default):
+    -O2 -> -O3:                                              28.6s
+    add -fomit-frame-pointer                                 28.2s
+    add -funroll-loops                                       26.8s
+    add -ffast-math                                          26.5s
+  With 'p4' configure option:
+    arch/cpu -> -march=pentium4 -mfpmath=sse -msse2          23.6s
+  With modification to common.pro:
+    add -finline-limit=4000                                  19.4s
 (but that last one involves a 32m build time (!!!), cf ~2m for the others)
 [NB This was done a while ago; things have probably changed a bit,
 especially after some major changes to the function code around version 0.2.0]
@@ -206,9 +235,8 @@ For the optional animation mode, you will need both.
 messing with the compile flags: see the BUILD OPTIONS section above).
 
 On starting the application, a grid of images is displayed.
-(For some reason the default size is quite small: you'll 
-probably want to resize/fullscreen the window to be larger.
-On the other hand, small is faster).
+(Resize or maximise the application if you like, but the more
+pixels have to be calculated, the slower it will be.)
 
 Simply repeat the following until bored:
  - Click (singleclick) on an image you like to 
@@ -246,6 +274,7 @@ USER OPTIONS
 	Sets number of compute threads (defaults to 2)
 
   -F
+	[NB Only available with fullscreen build option; ignored otherwise]
 	Start in "fullscreen" mode (NB for Qt on X11 this means 
 	a screen-filling borderless/undecorated window is used; 
 	it's not simply maximising the window, and it's not the 
@@ -258,7 +287,8 @@ USER OPTIONS
 	Fullscreen mode can be toggled within the application using ctrl-f.  
 	The Esc key will also exit it.
 
-  -M
+  -M	
+	[NB Only available with fullscreen build option; ignored otherwise]
 	Start with menu and status bar hidden.  Nice with -F.
 	Hiding can be toggled within the application using ctrl-m.
 	The Esc key will also bring them back.
@@ -399,7 +429,9 @@ KEYBOARD CONTROL
 
 MAIN WINDOW
 -----------
-Ctrl-f toggles full-screen mode (on X11, Qt does this by asking the
+
+Ctrl-f [NB only available with fullscreen build option] toggles 
+full-screen mode (on X11, Qt does this by asking the
 window manager for a screen-filling undecorated window, and the
 documentation contains some dire warnings about problems with broken
 window managers).  See also "-F" command line option.
@@ -407,11 +439,13 @@ Fullscreen mode propagates to "Big" image display windows.
 NB The application may completely disappear from the screen for 
 a brief interval while switching mode.
 
-Ctrl-m toggles status and menu-bar hiding, which can be nice 
+Ctrl-m [NB only available with fullscreen build option]
+toggles status and menu-bar hiding, which can be nice 
 when in full-screen or window-maximised mode.  See also "-M" 
 command line option.
 
-Esc kills full-screen and/or menu-hiding, putting the application
+Esc [NB only available with fullscreen build option] kills 
+full-screen and/or menu-hiding, putting the application
 into its normal default state. 
 
 Ctrl-r does a restart (for convenience when the menu bar
@@ -424,11 +458,12 @@ Ctrl-z does an undo.
 The image display windows created by selecting "Big" from a
 context menu also have a couple of keyboard operations:
 
-Ctrl-f toggles full-screen mode.  When returning to normal mode,
-if the main app window was fullscreen then it will also drop back 
-to normal mode.
+Ctrl-f [NB only available with fullscreen build option] toggles 
+full-screen mode.  When returning to normal mode, if the main app 
+window was fullscreen then it will also drop back to normal mode.
 
-Esc completely closes a fullscreen-mode window.
+Esc [NB only available with fullscreen build option]
+completely closes a fullscreen-mode "big" window.
 
 GUI ELEMENTS
 ============

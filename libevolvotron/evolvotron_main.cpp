@@ -593,6 +593,7 @@ void EvolvotronMain::tick()
 
 void EvolvotronMain::keyPressEvent(QKeyEvent* e)
 {
+#ifdef FULLSCREEN
   if (e->key()==Qt::Key_Escape)
     {
       // Esc key used to back out of menu hide and full screen mode
@@ -615,27 +616,29 @@ void EvolvotronMain::keyPressEvent(QKeyEvent* e)
 	menuBar()->show();
       else if (menuBar()->isShown())
 	menuBar()->hide();
-
+      
       if (statusBar()->isHidden())
 	statusBar()->show();
       else if (statusBar()->isShown())
 	statusBar()->hide();
     }
-  else if (e->key()==Qt::Key_R && !(e->state()^Qt::ControlButton))
-    {
-      //Ctrl-R does a reset mainly because that's most useful in full-screen mode
-      reset_warm();
-    }
-  else if (e->key()==Qt::Key_Z && !(e->state()^Qt::ControlButton))
-    {
-      //Ctrl-Z does an undo
-      undo();
-    }
   else
-    {
-      // Perhaps it's for someone else
-      e->ignore();
-    }
+#endif // FULLSCREEN
+    if (e->key()==Qt::Key_R && !(e->state()^Qt::ControlButton))
+      {
+	//Ctrl-R does a reset mainly because that's most useful in full-screen mode
+	reset_warm();
+      }
+    else if (e->key()==Qt::Key_Z && !(e->state()^Qt::ControlButton))
+      {
+	//Ctrl-Z does an undo
+	undo();
+      }
+    else
+      {
+	// Perhaps it's for someone else
+	e->ignore();
+      }
 }
 
 /*! Set up an initial random image in the specified display. 
