@@ -37,14 +37,17 @@ extern "C"
 #include <qmainwindow.h>
 #include <qgrid.h>
 #include <qtimer.h>
+#include <qpushbutton.h>
 
 #include "useful.h"
-#include "dialog_about.h"
 
 #include "mutatable_image.h"
 #include "mutatable_image_display.h"
 #include "mutatable_image_computer_farm.h"
 #include "mutation_parameters.h"
+
+#include "dialog_about.h"
+#include "dialog_mutation_parameters.h"
 
 //! Top level GUI component for evolvotron application
 class EvolvotronMain : public QMainWindow
@@ -54,8 +57,11 @@ class EvolvotronMain : public QMainWindow
     
  protected:
 
-  //! The dialog widget.
+  //! The "About" dialog widget.
   DialogAbout* _dialog_about;
+
+  //! The dialog for adjusting MutationParameters.
+  DialogMutationParameters* _dialog_mutation_parameters;
 
   //! The menubar.
   QMenuBar* _menubar;
@@ -63,11 +69,22 @@ class EvolvotronMain : public QMainWindow
   //! The file menu.
   QPopupMenu* _popupmenu_file;
 
+  //! The mutate menu.
+  QPopupMenu* _popupmenu_mutate;
+
   //! The help menu.
   QPopupMenu* _popupmenu_help;
 
   //! Somewhere to report what's going on
   QStatusBar* _statusbar;
+
+  //@{
+  //! Button for quick adjustment of MutationParameters
+  QPushButton* _button_cool;
+  QPushButton* _button_heat;
+  QPushButton* _button_shield;
+  QPushButton* _button_irradiate;
+  //@}
 
   //! Number of tasks statusbar is reporting as active
   uint _statusbar_tasks;
@@ -137,6 +154,27 @@ class EvolvotronMain : public QMainWindow
  public slots:
    //! Signalled by menu item.
   void reset();
+
+  void heat()
+    {
+      _mutation_parameters.modify(1.0f,0.0f);
+      _dialog_mutation_parameters->parameters_updated();
+    }
+  void cool()
+    {
+      _mutation_parameters.modify(-1.0f,0.0f);
+      _dialog_mutation_parameters->parameters_updated();
+    }
+  void irradiate()
+    {
+      _mutation_parameters.modify(0.0f,1.0f);
+      _dialog_mutation_parameters->parameters_updated();
+    }
+  void shield()
+    {
+      _mutation_parameters.modify(0.0f,-1.0f);
+      _dialog_mutation_parameters->parameters_updated();
+    }
 };
 
 #endif

@@ -7,6 +7,7 @@ CONFIG+= qt thread release
 HEADERS += \
         args.h \
 	dialog_about.h \
+	dialog_mutation_parameters.h \
 	license.h \
 	mutatable_image.h \
 	mutatable_image_computer.h \
@@ -22,6 +23,7 @@ HEADERS += \
 SOURCES += \
         args.cpp \
 	dialog_about.cpp \
+	dialog_mutation_parameters.cpp \
 	license.cpp \
 	mutatable_image.cpp \
 	mutatable_image_computer.cpp \

@@ -48,11 +48,12 @@ USAGE
 You will need a fast machine, or patience.
 
 Command line options:
-  -geometry <rows>x<cols> : usual X option to set on-screen size
+  -geometry <width>x<height> : usual Qt/X option to set on-screen size in pixels
   -g <rows> <cols> : sets number of image display cells (defaults 8 by 6)
   -t <threads> : sets number of compute threads (defaults to 2)
 
-On starting the app, a grid of images is displayed.  (You'll probably want to resize the window to be larger).
+On starting the app, a grid of images is displayed.
+(For some reason the default is very small: you'll probably want to resize the window to be larger).
 
 Repeat the following until bored:
  - Click (singleclick) on an image you like to 

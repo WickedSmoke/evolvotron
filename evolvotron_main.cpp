@@ -33,21 +33,30 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_threads)
   :QMainWindow(parent,0,Qt::WType_TopLevel|Qt::WDestructiveClose)
    ,_statusbar_tasks(0)
-   ,_mutation_parameters(time(0),0.5,0.05,0.05)
+   ,_mutation_parameters(time(0))
 {
+  setMinimumSize(640,480);
+
   _dialog_about=new DialogAbout(this);
+
+  _dialog_mutation_parameters=new DialogMutationParameters(this,&_mutation_parameters);
 
   _menubar=new QMenuBar(this);
 
   _popupmenu_file=new QPopupMenu;
   _popupmenu_file->insertItem("&Restart",this,SLOT(reset()));
   _popupmenu_file->insertItem("&Quit",qApp,SLOT(quit()));
+  _menubar->insertItem("&File",_popupmenu_file);
+
+  _popupmenu_mutate=new QPopupMenu;
+  _popupmenu_mutate->insertItem("&Parameters...",_dialog_mutation_parameters,SLOT(show()));
+  _menubar->insertItem("&Mutate",_popupmenu_mutate);
+
+  _menubar->insertSeparator();
 
   _popupmenu_help=new QPopupMenu;
   _popupmenu_help->insertItem("&About",_dialog_about,SLOT(show()));
 
-  _menubar->insertItem("&File",_popupmenu_file);
-  _menubar->insertSeparator();
   _menubar->insertItem("&Help",_popupmenu_help);
 
   _grid=new QGrid(grid_size.width(),this);
@@ -56,6 +65,22 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
   _statusbar->setSizeGripEnabled(false);
   _statusbar->message("Ready");
 
+  //! \todo These might work better as QToolButton
+  _button_cool=new QPushButton("&Cool",_statusbar);
+  _button_heat=new QPushButton("&Heat",_statusbar);
+  _button_shield=new QPushButton("&Shield",_statusbar);
+  _button_irradiate=new QPushButton("&Irradiate",_statusbar);
+
+  connect(_button_cool,     SIGNAL(clicked()),this,SLOT(cool()));
+  connect(_button_heat,     SIGNAL(clicked()),this,SLOT(heat()));
+  connect(_button_shield,   SIGNAL(clicked()),this,SLOT(shield()));
+  connect(_button_irradiate,SIGNAL(clicked()),this,SLOT(irradiate()));
+
+  _statusbar->addWidget(_button_cool,0,true);
+  _statusbar->addWidget(_button_heat,0,true);
+  _statusbar->addWidget(_button_shield,0,true);
+  _statusbar->addWidget(_button_irradiate,0,true);
+  
   // We need to make sure the display grid gets all the space it can
   setCentralWidget(_grid);
 
@@ -264,4 +289,6 @@ void EvolvotronMain::reset()
       
       (*it)->image(new MutatableImageNodeConcatenateTriple(args_toplevel));
     }
+
+  _mutation_parameters.reset();
 }
