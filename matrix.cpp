@@ -39,7 +39,7 @@ void testmatrix_extract_compiletime(Matrix<2,2,float>& m_out,const Matrix<3,3,fl
 
 float testmatrix_across(const Matrix<3,3,float>& m_in)
 {
-  return MatrixHelperSumCofactorDeterminantProducts<2,3,3>::execute(m_in);
+  return MatrixHelperSumCofactorDeterminantProducts<2,3,3,float>::execute(m_in);
 }
 
 void testmatrix_inverse(Matrix<3,3,float>& m_out,const Matrix<3,3,float>& m_in)

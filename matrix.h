@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "tuple.h"
 
 // Fwd declaration of helper class.
-template <uint FC,uint R,uint C> class MatrixHelperSumCofactorDeterminantProducts;
+template <uint FC,uint R,uint C,class T> class MatrixHelperSumCofactorDeterminantProducts;
 
 
 //! Common base for general and specialised cases.
@@ -176,7 +176,7 @@ template <uint R,uint C,class T> class Matrix : public MatrixBase<R,C,T>
       return ret;
       */
 
-      return MatrixHelperSumCofactorDeterminantProducts<C-1,R,C>::execute(*this);
+      return MatrixHelperSumCofactorDeterminantProducts<C-1,R,C,T>::execute(*this);
     }
 
   Matrix<R,C,T> inverted() const
@@ -341,33 +341,33 @@ template <class T> class Matrix<2,2,T> : public MatrixBase<2,2,T>
     }
 };
 
-template <uint FC,uint R,uint C> class MatrixHelperSumCofactorDeterminantProducts
+template <uint FC,uint R,uint C,class T> class MatrixHelperSumCofactorDeterminantProducts
 {
  public:
-  static float execute(const Matrix<R,C,float>& m)
+  static T execute(const Matrix<R,C,T>& m)
     {
-      Matrix<R-1,C-1,float> minor_matrix;
+      Matrix<R-1,C-1,T> minor_matrix;
 
       // Would prefer to use
       //m.extract_minor<0,FC>(minor_matrix);
       // but compiler doesn't seem to like it (problem with partial specialisation?)
-      TupleHelperDoubleCopyEliminate<R-2,0,FC,R-1,C-1,float>::execute(minor_matrix,m);
+      TupleHelperDoubleCopyEliminate<R-2,0,FC,R-1,C-1,T>::execute(minor_matrix,m);
 
       return 
 	m[0][FC]*((FC&1) ? -1.0f : 1.0f)*minor_matrix.determinant()
 	+
-	MatrixHelperSumCofactorDeterminantProducts<FC-1,R,C>::execute(m);
+	MatrixHelperSumCofactorDeterminantProducts<FC-1,R,C,T>::execute(m);
 	;
     }
 };
 
-template <uint R,uint C> class MatrixHelperSumCofactorDeterminantProducts<0,R,C>
+template <uint R,uint C,class T> class MatrixHelperSumCofactorDeterminantProducts<0,R,C,T>
 {
  public:
   static float execute(const Matrix<R,C,float>& m)
     {
-      Matrix<R-1,C-1,float> minor_matrix;
-      TupleHelperDoubleCopyEliminate<R-2,0,0,R-1,C-1,float>::execute(minor_matrix,m);
+      Matrix<R-1,C-1,T> minor_matrix;
+      TupleHelperDoubleCopyEliminate<R-2,0,0,R-1,C-1,T>::execute(minor_matrix,m);
       return m[0][0]*minor_matrix.determinant();
     }
 };
