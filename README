@@ -360,15 +360,24 @@ This release also installs two other executables:
    [NB This app does not use multiplt compute threads].
 
  - evolvotron_mutate
-   Usage: evolvotron_mutate < <file.xml> > <file.xml>
-   Reads an XML function description from it's standard input, mutates it
-   (using the same algorithm as evolvotron in its default state)
-   and writes the new function's XML representation to the standard output.
+   Usage: evolvotron_mutate [-n | < <file.xml>] > <file.xml>
+   With the -n (new) option, creates a new random evolvotron function
+   and writes its XML description to standard out.
+   Without the -n option, reads an XML function description from
+   standard input, mutates it (using the same algorithm and parameters
+   as evolvotron in its default state) and writes the new function's XML
+   representation to the standard output.
+
+For example:
+  evolvotron_mutate -n | evolvotron_render /tmp.xxx.ppm ; display /tmp/xxx.ppm
+  evolvotron_mutate -n | evolvotron_mutate | evolvotron_render /tmp.xxx.ppm ; display /tmp/xxx.ppm
 
 These were added to enable the possibility of:
- - setting up an evolvotron web server.
+ - setting up an evolvotron web server, or other alternative
+   frameworks to the main evolvotron app.
  - producing animations by repeatedly manipulating some
    aspect of a function and re-rendering it.
+
 
 FUTURE DEVELOPMENTS
 ===================

@@ -83,5 +83,6 @@ imply it will be done sooner or later than other items!
 - Avoid misleading moire patterns by jittering samples
 - No low-res images option for when using remotely via X11 over slow link
   (they take longer to display than compute).
-
+- evolvotron_mutate should provide more control
+  (heat/cool/irradiate/shield options, recolour/warp options).
 
