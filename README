@@ -54,9 +54,12 @@ or just have both done for you by doing
 
   ./BUILD
 
+[Note that BUILD also adds $QTDIR/bin to the path while it runs the commands,
+and is probably the easiest way to build if your PATH doesn't include a directory
+containing qmake.]
+
 Make will recurse into and build the libevolvotron directory
 (which is 99% of the work) and some additional subdirectories with executables.
-
 Among other things, this will give you an "evolvotron" executable which you
 can run immediately with
   ./evolvotron/evolvotron
@@ -64,6 +67,15 @@ and/or copy where you like (see INSTALL section).
 
 BUILD PROBLEMS
 ==============
+
+Short story:
+
+1. Check you have your QTDIR environment variable defined correctly.
+2. Check your PATH will find qmake (i.e do "which qmake") 
+   (adding $QTDIR/bin to your path will fix this on most distros).
+
+Long story:
+
 Check you have your QTDIR environment defined, and possibly also your
 QMAKESPEC too.  The former should point to your Qt installation.  The latter
 will be something like "linux-g++" if needed; check the Qt docs for other
@@ -77,13 +89,13 @@ The author develops on
 and sometimes also tests on on RedHat 7.3 (gcc 2.96, qt 3.0.5).
 (So the closer your system is to these, the less likely you are to have problems).
 
-99% of build failures are simply because the necessary Qt build tools aren't in your path
+Most build failures are simply because the necessary Qt build tools aren't in your path:
   which qmake
   which moc
 should both find something.  RedHat makes things easy by putting these binaries in
-/usr/bin, but other distros leave them in $QTDIR or even stranger places
-e.g a Gentoo user reports having to add BOTH "/usr/qt/3/bin/" AND 
-"$QTDIR/bin" to their path.
+/usr/bin, but many distros leave them in $QTDIR/bin.
+You should either add this to your path or use the BUILD script 
+(which sets it for the commands it runs).
 
 A Debian (3.0r1) user reports Debian's Qt package not including qmake.
 They eventually got hold of a version from somewhere (Trolltech?).

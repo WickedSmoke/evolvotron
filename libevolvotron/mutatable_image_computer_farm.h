@@ -33,6 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "mutatable_image_computer.h"
 #include "mutatable_image_computer_task.h"
+
 class MutatableImageDisplay;
 
 //! Class encapsulating some compute threads and queues of tasks to be done and tasks completed.
@@ -77,7 +78,14 @@ class MutatableImageComputerFarm
   /*! We reverse the compute priority so that highest resolution images get displayed first.
       Lower resolution ones arriving later should be discarded by the displays.
       This mainly makes a difference for animation where enlarging multiple low resolution 
-      images to screen res takes a lot of time.
+      images to screen res takes a lot of time.  May help low-bandwidth X11 connections
+      by minimising redraws too.
+      \todo Problem with this is that one display can run way ahead of the others.
+      Need to be able to query for the highest resolution available for a given display,
+      so maybe change to a map (by target display) of priority queues.  But some displays
+      will be orphaned so still need a general queue.  Dynamically recompute priority
+      based on display's current level, which is basically recomputing this every time
+      we take something out ?
    */
   std::multiset<MutatableImageComputerTask*,CompareTaskPriorityHiResFirst> _done;
 

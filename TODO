@@ -17,9 +17,11 @@ Animation
 
 Conventional
 ------------
+- Change display priority to be display-by-display with round-robin dispatch to displays
+- Clean up evolvotron_admin/evolvotron_gallery
 - Add "Properties" to image, brought up by right-click.
   Careful... what happens if spawn over the image ?  Avoid issue by making it modal ?
-- Get rid of heat/cool etc buttons cluttering up status bar and just have autocool tick, and reheat button ?
+- Get rid of heat/cool etc buttons cluttering up status bar and just have (new) autocool tick, and reheat button ?
 - Check qmake can be found by configure.
   Check $(QTDIR)/bin first... RH seem to be unusual in copying it to /usr/bin
 - evolvotron_render default output (or with filename "-") should be to stdout.
@@ -36,19 +38,18 @@ Conventional
   - Substitute a node for a different type, retaining it's settings (expand/cull as necessary)
   - Nodes near top level should have more chance of mutation ?
 - evolvotron_mutate standalone exe should provide more control
-  (heat/cool/irradiate/shield options, recolour/warp options).
+  (heat/cool/irradiate/shield options, recolour/warp options, animation options).
 - Combining/breeding image pairs.
   Use drag-and-drop
   Either:
     Create a new top level node with 2 or more args and add the parents to it.
     Create a new random stub and insert the parents at random points.
     Insert one image at a random point into the other.
-    Concatenate (function compose) the 2 images.
-- Option to compute volumes in Z direction and oscillate z co-ordinate with time.
+    Concatenate (function compose) the 2 images (probably not v. interesting)
+  Need to prune too to keep size under control.
 - Get rid of silly xyz and matrix dependence on general tuples and templates.
   (Can be optimised, but only with heavyweight compile options.)
 - Profile & optimise.
-  Not too happy with FunctionNodeUsing<F> - evaluate overhead of function wrapper for F::evaluate
 - Spawn recoloured could be linear, quadratic (or generalised?) versions.
 - Locked attribute should be an image property, not a display property.
   (Would play nicer with Undo)
