@@ -15,5 +15,6 @@
 - Compute farms on multiple remote machines.
 - Tasks should be a tile of an image.
 - Menu options to add/remove rows/columns from display grid
+- Proper progress bar based on number of pixels to be computed
 
 

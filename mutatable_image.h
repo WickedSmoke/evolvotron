@@ -266,6 +266,26 @@ class MutatableImageNodeMultiply : public MutatableImageNode
   virtual MutatableImageNode*const deepclone() const;
 };
 
+//! This node implements componentwise divide
+class MutatableImageNodeDivide : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodeDivide(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeDivide();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
 //! This node implements cross-product
 class MutatableImageNodeCross : public MutatableImageNode
 {
@@ -380,6 +400,25 @@ class MutatableImageNodeReflect : public MutatableImageNode
 
   //! Destructor.
   virtual ~MutatableImageNodeReflect();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! This node implements magnitudes of 3 arguments 
+class MutatableImageNodeMagnitudes : public MutatableImageNode
+{
+ private:
+
+ protected:
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodeMagnitudes(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeMagnitudes();
 
   //! Return a clone.
   virtual MutatableImageNode*const deepclone() const;

@@ -37,7 +37,9 @@ Args::Args(int argc,char* argv[])
 }
 
 Args::~Args()
-{}
+{
+  delete _after;
+}
 
 bool Args::option(const std::string& opt)
 {
