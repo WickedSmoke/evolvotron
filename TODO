@@ -1,4 +1,5 @@
 - "Unlock all" on edit menu
+- Undo needs to restore _last_spawned too
 - "Move all locked to start" on edit menu
   (or move them to a "safe area", or save them in reloadable form).
 - Restart should honour lock (2 kinds of restart ?  Dialog choice ?)

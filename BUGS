@@ -1,0 +1,9 @@
+Known bugs:
+
+  - Recolour behaves strangely sometimes
+    (e.g spawns all-black images or subtly warped images)
+    Suspect buggy deepclone or similar.
+
+  - Segv once observed on attempting a resize immediately on app startup.
+    Never suceeded in reproducing this.
+
