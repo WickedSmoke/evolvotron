@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qdatetime.h>
 #include <qmessagebox.h>
 #include <qtooltip.h>
+#include <qregexp.h>
 
 #include "args.h"
 #include "evolvotron_main.h"
@@ -263,7 +264,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
        )
     {
       QString label((*it)->name());
-      label.replace("Function","");  // Attempt to make menu take up less space
+      label.replace(QRegExp("^Function"),"");  // Attempt to make menu take up less space
 
       SignalExpanderRestartWith*const xw=new SignalExpanderRestartWith(this,*it);
       _popupmenu_restart_with_wrapped->insertItem(label,xw,SLOT(restart_with()));

@@ -417,7 +417,7 @@ FUNCTION_BEGIN(FunctionDivergenceOfMagnitude,0,1,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float epsilon=1e-4;
+      const float epsilon=1e-2;
       
       const XYZ v0(arg(0)(p));
       const XYZ vx(arg(0)(p+XYZ(epsilon,0.0f,0.0f)));
