@@ -54,16 +54,16 @@ FunctionNode* FunctionNode::stub(const MutationParameters& parameters,bool excit
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
   const float base=0.7;
 
-  uint steps=31;
+  uint steps=34;
 
   if (!parameters.allow_fractal_nodes())
     {
-      steps=minimum(steps,27u);
+      steps=minimum(steps,30u);
     }
 
   if (!parameters.allow_iterative_nodes())
     {
-      steps=minimum(steps,25u);
+      steps=minimum(steps,28u);
     }
 
   const float step=(1.0-base)/steps;
@@ -128,20 +128,26 @@ FunctionNode* FunctionNode::stub(const MutationParameters& parameters,bool excit
   else if (r<base+23*step) 
     return new FunctionNodeChooseRect(stubparams(parameters,0),stubargs(parameters,4));
   else if (r<base+24*step)
-    return new FunctionNodePostTransform(stubparams(parameters,0),stubargs(parameters,5));
+    return new FunctionNodeUsing<FunctionTransformGeneralised>(stubparams(parameters,0),stubargs(parameters,4));
   else if (r<base+25*step)
-    return new FunctionNodePreTransform(stubparams(parameters,0),stubargs(parameters,5));
+    return new FunctionNodeUsing<FunctionPreTransform>(stubparams(parameters,12),stubargs(parameters,1));
   else if (r<base+26*step)
-    return new FunctionNodeIterativeMap(stubparams(parameters,0),stubargs(parameters,1),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeUsing<FunctionPreTransformGeneralised>(stubparams(parameters,0),stubargs(parameters,5));
   else if (r<base+27*step)
-    return new FunctionNodeIterativeMapAccumulator(stubparams(parameters,0),stubargs(parameters,2),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeUsing<FunctionPostTransform>(stubparams(parameters,12),stubargs(parameters,1));
   else if (r<base+28*step)
-    return new FunctionNodeIterativeMandelbrotChoose(stubparams(parameters,0),stubargs(parameters,2),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeUsing<FunctionPostTransformGeneralised>(stubparams(parameters,0),stubargs(parameters,5));
   else if (r<base+29*step)
-    return new FunctionNodeIterativeMandelbrotContour(stubparams(parameters,0),stubargs(parameters,0),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeIterativeMap(stubparams(parameters,0),stubargs(parameters,1),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
   else if (r<base+30*step)
+    return new FunctionNodeIterativeMapAccumulator(stubparams(parameters,0),stubargs(parameters,2),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+  else if (r<base+31*step)
+    return new FunctionNodeIterativeMandelbrotChoose(stubparams(parameters,0),stubargs(parameters,2),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+  else if (r<base+32*step)
+    return new FunctionNodeIterativeMandelbrotContour(stubparams(parameters,0),stubargs(parameters,0),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+  else if (r<base+33*step)
     return new FunctionNodeIterativeJuliaChoose(stubparams(parameters,0),stubargs(parameters,3),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
-  else //if (r<base+31*step)
+  else //if (r<base+34*step)
     return new FunctionNodeIterativeJuliaContour(stubparams(parameters,0),stubargs(parameters,1),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
 }
 
@@ -1026,83 +1032,6 @@ FunctionNodeChooseRect::~FunctionNodeChooseRect()
 FunctionNode*const FunctionNodeChooseRect::deepclone() const
 {
   return new FunctionNodeChooseRect(cloneparams(),cloneargs());
-}
-
-/*******************************************/
-
-/*! Transforms the co-ordinate BEFORE passing it through the function argument.
- */
-const XYZ FunctionNodePreTransform::evaluate(const XYZ& p) const
-{
-  const XYZ offset (arg(0)(p));
-  const XYZ basis_x(arg(1)(p));
-  const XYZ basis_y(arg(2)(p));
-  const XYZ basis_z(arg(3)(p));
-
-  const XYZ pt(
-	       offset
-	       +basis_x*p.x()
-	       +basis_y*p.y()
-	       +basis_z*p.z()
-	       );
-
-  return arg(4)(pt);
-}
-
-const bool FunctionNodePreTransform::is_constant() const
-{
-  return arg(4).is_constant();
-}
-
-FunctionNodePreTransform::FunctionNodePreTransform(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert (args().size()==5);
-}
-
-FunctionNodePreTransform::~FunctionNodePreTransform()
-{}
-
-FunctionNode*const FunctionNodePreTransform::deepclone() const
-{
-  return new FunctionNodePreTransform(cloneparams(),cloneargs());
-}
-
-/*******************************************/
-
-/*! Transforms the co-ordinate AFTER passing it through the function argument.
- */
-const XYZ FunctionNodePostTransform::evaluate(const XYZ& p) const
-{
-  const XYZ offset (arg(0)(p));
-  const XYZ basis_x(arg(1)(p));
-  const XYZ basis_y(arg(2)(p));
-  const XYZ basis_z(arg(3)(p));
-
-  const XYZ pt(arg(4)(p));
-
-  return offset+basis_x*pt.x()+basis_y*pt.y()+basis_z*pt.z();
-}
-
-const bool FunctionNodePostTransform::is_constant() const
-{
-  return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant() && arg(3).is_constant() && arg(4).is_constant());
-}
-
-FunctionNodePostTransform::FunctionNodePostTransform(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==5);
-}
-
-FunctionNodePostTransform::~FunctionNodePostTransform()
-{}
-
-FunctionNode*const FunctionNodePostTransform::deepclone() const
-{
-  return new FunctionNodePostTransform(cloneparams(),cloneargs());
 }
 
 /*******************************************/

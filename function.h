@@ -105,6 +105,34 @@ class FunctionTransform
   //! Is definitely not constant.
   static const bool is_constant(const FunctionNode& our);
 };
+//------------------------------------------------------------------------------------------
+
+//! Function class returning position transfomed by a 12-component linear transform.
+class FunctionTransformGeneralised
+{
+ public:
+
+  //! 0 parameters
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! 4 leaf arguments providing transform components.
+  static const uint arguments()
+    {
+      return 4;
+    }
+
+  //! Return the transformed position argument.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p);
+
+  //! Is almost certainly not constant.
+  static const bool is_constant(const FunctionNode& our);
+};
+
+
+//------------------------------------------------------------------------------------------
 
 //! Function class returning leaf node evaluated at position transfomed by a 12-component linear transform.
 class FunctionPreTransform
@@ -130,5 +158,88 @@ class FunctionPreTransform
   static const bool is_constant(const FunctionNode& our);
 };
 
+//------------------------------------------------------------------------------------------
+
+//! Function class returning leaf node evaluated at position transfomed by a 12-component linear transform.
+/*! Unlike FunctionPreTransform, the basis vectors for the transform are not fixed but determined from leaf functions
+ */
+class FunctionPreTransformGeneralised
+{
+ public:
+
+  //! 0 parameters
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! 5 leaf arguments
+  static const uint arguments()
+    {
+      return 5;
+    }
+
+  //! Return the evaluation of arg(0) at the transformed position argument.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p);
+
+  //! Has the same const-ness as arg(0)
+  static const bool is_constant(const FunctionNode& our);
+};
+
+//------------------------------------------------------------------------------------------
+
+//! Function class returning leaf node evaluated at given position; result is then transfomed by a 12-component linear transform.
+class FunctionPostTransform
+{
+ public:
+
+  //! 12 parameters
+  static const uint parameters()
+    {
+      return 12;
+    }
+
+  //! Single leaf arguments
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Return the evaluation of arg(0) at the transformed position argument.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p);
+
+  //! Has the same const-ness as arg(0)
+  static const bool is_constant(const FunctionNode& our);
+};
+
+//------------------------------------------------------------------------------------------
+
+//! Function class returning leaf node evaluated at given position; result is then transfomed by a 12-component linear transform.
+/*! Unlike FunctionPostTransform, the basis vectors for the transform are not fixed but determined from leaf functions
+ */
+class FunctionPostTransformGeneralised
+{
+ public:
+
+  //! 0 parameters
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! 1 function leaf argument, and 4 for the transform.
+  static const uint arguments()
+    {
+      return 5;
+    }
+
+  //! Return the evaluation of arg(0) at the transformed position argument.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p);
+
+  //! Only constant if all the leaf functions are constant.
+  static const bool is_constant(const FunctionNode& our);
+};
+
+//------------------------------------------------------------------------------------------
 
 #endif

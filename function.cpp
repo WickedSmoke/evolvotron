@@ -76,6 +76,21 @@ const bool FunctionTransform::is_constant(const FunctionNode&)
 
 //------------------------------------------------------------------------------------------
 
+REGISTER(FunctionTransformGeneralised);
+
+const XYZ FunctionTransformGeneralised::evaluate(const FunctionNode& our,const XYZ& p)
+{
+  const Transform transform(our.arg(0)(p),our.arg(1)(p),our.arg(2)(p),our.arg(3)(p));
+  return transform.transformed(p);
+}
+
+const bool FunctionTransformGeneralised::is_constant(const FunctionNode&)
+{
+  return false;
+}
+
+//------------------------------------------------------------------------------------------
+
 REGISTER(FunctionPreTransform);
 
 const XYZ FunctionPreTransform::evaluate(const FunctionNode& our,const XYZ& p)
@@ -87,6 +102,56 @@ const XYZ FunctionPreTransform::evaluate(const FunctionNode& our,const XYZ& p)
 const bool FunctionPreTransform::is_constant(const FunctionNode& our)
 {
   return our.arg(0).is_constant();
+}
+//------------------------------------------------------------------------------------------
+
+REGISTER(FunctionPreTransformGeneralised);
+
+const XYZ FunctionPreTransformGeneralised::evaluate(const FunctionNode& our,const XYZ& p)
+{
+  const Transform transform(our.arg(1)(p),our.arg(2)(p),our.arg(3)(p),our.arg(4)(p));
+  return our.arg(0)(transform.transformed(p));
+}
+
+const bool FunctionPreTransformGeneralised::is_constant(const FunctionNode& our)
+{
+  return our.arg(0).is_constant();
+}
+
+//------------------------------------------------------------------------------------------
+
+REGISTER(FunctionPostTransform);
+
+const XYZ FunctionPostTransform::evaluate(const FunctionNode& our,const XYZ& p)
+{
+  const Transform transform(our.params());
+  return transform.transformed(our.arg(0)(p));
+}
+
+const bool FunctionPostTransform::is_constant(const FunctionNode& our)
+{
+  return our.arg(0).is_constant();
+}
+
+//------------------------------------------------------------------------------------------
+
+REGISTER(FunctionPostTransformGeneralised);
+
+const XYZ FunctionPostTransformGeneralised::evaluate(const FunctionNode& our,const XYZ& p)
+{
+  const Transform transform(our.arg(1)(p),our.arg(2)(p),our.arg(3)(p),our.arg(4)(p));
+  return transform.transformed(our.arg(0)(p));
+}
+
+const bool FunctionPostTransformGeneralised::is_constant(const FunctionNode& our)
+{
+  return (
+	  our.arg(0).is_constant()
+	  && our.arg(1).is_constant()
+	  && our.arg(2).is_constant()
+	  && our.arg(3).is_constant()
+	  && our.arg(4).is_constant()
+	  );
 }
 
 //------------------------------------------------------------------------------------------

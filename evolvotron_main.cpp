@@ -347,7 +347,7 @@ void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImage
   args.push_back(image->root()->deepclone());
   
   history().replacing(display);
-  display->image(new MutatableImage(new FunctionNodePostTransform(params,args)));
+  display->image(new MutatableImage(new FunctionNodeUsing<FunctionPostTransform>(params,args)));
 }
 
 void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisplay* display)
@@ -362,7 +362,7 @@ void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisp
       new_root=image->root()->deepclone();
 
       FunctionNodeUsing<FunctionPreTransform>*const new_root_as_transform=new_root->is_a_FunctionNodeUsingFunctionPreTransform();
-      assert(new_root_as_transfrom!=0);
+      assert(new_root_as_transform!=0);
 
       // Have to access params() through this to avoid protected scope of non-const version creating an error.
       const FunctionNodeUsing<FunctionPreTransform>*const const_new_root_as_transform=new_root_as_transform;
@@ -563,6 +563,8 @@ void EvolvotronMain::tick()
   the second function as being the "actual" image (we use an "exciting" stub to avoid boring constants or identities),
   and the final function as being a colour-space transform.
   Basically the idea is to give lots of opportunities for stuff to happen.
+
+  \todo Why using boring constant nodes here when could be inserting interesting stubs instead ?
  */
 void EvolvotronMain::reset(MutatableImageDisplay* display)
 {
@@ -580,8 +582,7 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
       args_in.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
       args_in.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
       args_in.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
-      args_in.push_back(new FunctionNodeUsing<FunctionIdentity>(FunctionNode::stubparams(mutation_parameters(),0),FunctionNode::stubargs(mutation_parameters(),0)));
-      args_toplevel.push_back(new FunctionNodePostTransform(params_in,args_in)); // Seems to be a big problem here
+      args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_in,args_in));
   
       args_toplevel.push_back(FunctionNode::stub(mutation_parameters(),true));
 
@@ -591,8 +592,7 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
       args_out.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
       args_out.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
       args_out.push_back(new FunctionNodeUsing<FunctionConstant>(FunctionNode::stubparams(mutation_parameters(),3),FunctionNode::stubargs(mutation_parameters(),0)));
-      args_out.push_back(new FunctionNodeUsing<FunctionIdentity>(FunctionNode::stubparams(mutation_parameters(),0),FunctionNode::stubargs(mutation_parameters(),0)));
-      args_toplevel.push_back(new FunctionNodePostTransform(params_out,args_out));
+      args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_out,args_out));
 
       root=new FunctionNodeConcatenateTriple(params_toplevel,args_toplevel);
 

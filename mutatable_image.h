@@ -88,11 +88,18 @@ class MutatableImage
       return (*root())(p);
     }
 
+  //! Return whether image value is independent of position.
   const bool is_constant() const
     {
       return root()->is_constant();
     }
 
+  const bool ok() const
+    {
+      return root()->ok();
+    }
+
+  
 };
 
 #endif

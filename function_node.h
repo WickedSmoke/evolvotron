@@ -841,52 +841,6 @@ class FunctionNodeChooseRect : public FunctionNode
 };
 
 
-//! This node implements something like a 3D transform.
-class FunctionNodePreTransform : public FunctionNode
-{
- private:
-
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Query whether node value is independent of position argument.
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  FunctionNodePreTransform(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
-
-  //! Destructor.
-  virtual ~FunctionNodePreTransform();
-
-  //! Return a clone.
-  virtual FunctionNode*const deepclone() const;
-};
-
-//! This node implements something like a 3D transform.
-class FunctionNodePostTransform : public FunctionNode
-{
- private:
-
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Query whether node value is independent of position argument.
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  FunctionNodePostTransform(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
-
-  //! Destructor.
-  virtual ~FunctionNodePostTransform();
-
-  //! Return a clone.
-  virtual FunctionNode*const deepclone() const;
-};
-
 //! Base class for iterative node types.
 /*! evaluate, is_constant and deepclone methods remain virtual.
  */
