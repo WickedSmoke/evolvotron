@@ -38,32 +38,13 @@ class MutatableImageNode
 {
  private:
 
-  //! The parameters (ie constant values) for this node.
-  std::vector<float> _params;
-  
   //! The arguments (ie child nodes) for this node.
   std::vector<MutatableImageNode*> _args;
-  
+
+  //! The parameters (ie constant values) for this node.
+  std::vector<float> _params;
+    
  protected:
-
-  //! Accessor.
-  std::vector<float>& params()
-    {
-      return _params;
-    }
-
-  //! Accessor.
-  const std::vector<float>& params() const
-    {
-      return _params;
-    }
-
-  //! Convenience accessor. 
-  const float param(uint n) const
-    {
-      assert(n<params().size());
-      return params()[n];
-    }
 
   //! Accessor.
   std::vector<MutatableImageNode*>& args()
@@ -84,11 +65,30 @@ class MutatableImageNode
       return *(args()[n]);
     }
 
-  //! This returns a copy of the node's parameters
-  const std::vector<float> cloneparams() const;
+  //! Accessor.
+  std::vector<float>& params()
+    {
+      return _params;
+    }
+
+  //! Accessor.
+  const std::vector<float>& params() const
+    {
+      return _params;
+    }
+
+  //! Convenience accessor. 
+  const float param(uint n) const
+    {
+      assert(n<params().size());
+      return params()[n];
+    }
 
   //! This returns a deep-cloned copy of the node's children.
   const std::vector<MutatableImageNode*> cloneargs() const;
+
+  //! This returns a copy of the node's parameters
+  const std::vector<float> cloneparams() const;
 
   //! This what distinguishes different types of node.
   virtual const XYZ evaluate(const XYZ& p) const

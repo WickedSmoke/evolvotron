@@ -28,14 +28,17 @@ MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*con
    ,_image(img)
    ,_size(s)
    ,_level(lev)
-   ,_image_data(s.width()*s.height())
    ,_pixel(0)
-{}
+   ,_image_data(s.width()*s.height())
+{
+  assert(_image->ok());
+}
 
 /*! Destructor currently deletes its image because it owns its deepcloned copy.
   However, see todo comments in MutatableImageDisplay::image about reference counting plan for this. 
  */
 MutatableImageComputerTask::~MutatableImageComputerTask()
 {
+  assert(_image->ok());
   delete _image;
 }

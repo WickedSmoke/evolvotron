@@ -61,7 +61,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
    ,_menu_big(0)
 {
   _offscreen_buffer=new QPixmap();
-
+  
   // We DO want background drawn for fixed size because window could be bigger than image (not entirely satisfactory however: flickers)
   if (!fixed_size)
     {
@@ -133,6 +133,8 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
  */
 MutatableImageDisplay::~MutatableImageDisplay()
 {
+  assert(_image->ok());
+
   // During app shutdown EvolvotronMain might have already been destroyed so only call it if it's there.
   // Don't use main() because it asserts non-null.
   if (_main)
@@ -140,6 +142,7 @@ MutatableImageDisplay::~MutatableImageDisplay()
       main()->farm()->abort_for(this);
       main()->goodbye(this);
     }
+
   delete _image;
   delete _offscreen_buffer;
   delete _offscreen_image;
@@ -179,10 +182,10 @@ void MutatableImageDisplay::image(MutatableImageNode* i)
 		to avoid having to deepclone.
 		On the other hand this seems to work very robustly for now and isn't a killer.
 		*/
-	      const MutatableImageNode*const task_copy=_image->deepclone();
-	      assert(task_copy->ok());
+	      const MutatableImageNode*const task_image=_image->deepclone();
+	      assert(task_image->ok());
 
-	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_copy,image_size()/s,level);
+	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_image,image_size()/s,level);
 
 	      main()->farm()->push_todo(task);
 	    }
@@ -212,7 +215,8 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
 	 QImage::LittleEndian  // Seems to be right for hi[-/R/G/B]lo packing
 	 );
   
-      //! \todo Pick a scaling mode: smooth or not (or put it under GUI control).  Curiously, although smoothscale seems to be noticeably slower but doesn't look any better.
+      //! \todo Pick a scaling mode: smooth or not (or put it under GUI control). 
+      // Curiously, although smoothscale seems to be noticeably slower, it doesn't look any better.
       _offscreen_buffer->convertFromImage(_offscreen_image->scale(image_size()));
 		  
       //! Note the resolution we've displayed so out-of-order low resolution images are dropped
@@ -223,7 +227,7 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
       repaint();
     }
 
-  // This will also delete the tasks deepcloned image
+  // This will also delete the task's deepcloned image
   delete task;
 }
 

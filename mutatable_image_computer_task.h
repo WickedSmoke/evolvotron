@@ -62,14 +62,14 @@ class MutatableImageComputerTask
    */
   const uint _level;
 
+  //! Count of pixels computed, so tasks can be restarted after defer.
+  uint _pixel;
+
   //! The image data generated.
   /*! It might have been nice to use a QImage, but every access would probably have to be qApp mutex protected.
     (Mustn't use Qt library except from main application thread).
    */
   std::vector<uint> _image_data;
-
-  //! Count of pixels computed, so tasks can be restarted after defer.
-  uint _pixel;
 
  public:
   //! Constructor.

@@ -1,5 +1,7 @@
 Known bugs:
 
+  - Some instability, most likely to appear when using middle-button drag
+
   - Undo doesn't always work how you'd expect
     (e.g undoing a single-image respawn undoes too much).
 

@@ -26,11 +26,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image.h"
 #include "matrix.h"
 
-const std::vector<float> MutatableImageNode::cloneparams() const
-{
-  return params();
-}
-
 const std::vector<MutatableImageNode*> MutatableImageNode::cloneargs() const
 {
   std::vector<MutatableImageNode*> ret;
@@ -39,6 +34,11 @@ const std::vector<MutatableImageNode*> MutatableImageNode::cloneargs() const
       ret.push_back((*it)->deepclone());
     }
   return ret;
+}
+
+const std::vector<float> MutatableImageNode::cloneparams() const
+{
+  return params();
 }
 
 /*! This returns a random bit of image tree.
@@ -143,14 +143,6 @@ MutatableImageNode* MutatableImageNode::stub(const MutationParameters& parameter
     return new MutatableImageNodeIterativeJuliaContour(stubparams(parameters,0),stubargs(parameters,1),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
 }
 
-const std::vector<float> MutatableImageNode::stubparams(const MutationParameters& parameters,uint n)
-{
-  std::vector<float> ret;
-  for (uint i=0;i<n;i++)
-    ret.push_back(M_SQRT2*(-1.0f+2.0f*parameters.r01()));
-  return ret;
-}
-
 /*! This returns a vector of random bits of stub, used for initialiing nodes with children. 
  */
 const std::vector<MutatableImageNode*> MutatableImageNode::stubargs(const MutationParameters& parameters,uint n)
@@ -161,10 +153,17 @@ const std::vector<MutatableImageNode*> MutatableImageNode::stubargs(const Mutati
   return ret;
 }
 
+const std::vector<float> MutatableImageNode::stubparams(const MutationParameters& parameters,uint n)
+{
+  std::vector<float> ret;
+  for (uint i=0;i<n;i++)
+    ret.push_back(M_SQRT2*(-1.0f+2.0f*parameters.r01()));
+  return ret;
+}
 
 MutatableImageNode::MutatableImageNode(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :_params(p)
-  ,_args(a)
+  :_args(a)
+  ,_params(p)
 {
   assert(ok());
 }
@@ -173,6 +172,7 @@ MutatableImageNode::MutatableImageNode(const std::vector<float>& p,const std::ve
  */
 MutatableImageNode::~MutatableImageNode()
 {
+  assert(ok());
   for (std::vector<MutatableImageNode*>::iterator it=args().begin();it!=args().end();it++)
     delete (*it);
 }
@@ -224,8 +224,8 @@ void MutatableImageNode::mutate(const MutationParameters& parameters)
       if (parameters.r01()<parameters.probability_insert())
 	{
 	  std::vector<float> p;
-
 	  std::vector<MutatableImageNode*> a;
+
 	  a.push_back((*it));
 	  a.push_back(stub(parameters));
 
@@ -330,7 +330,10 @@ const bool MutatableImageNodePositionTransformed::is_constant() const
 
 MutatableImageNodePositionTransformed::MutatableImageNodePositionTransformed(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
 :MutatableImageNode(p,a)
-{}
+{
+  assert(params().size()==12);
+  assert(args().size()==0);
+}
 
 MutatableImageNodePositionTransformed::~MutatableImageNodePositionTransformed()
 {}
@@ -407,7 +410,10 @@ const bool MutatableImageNodePositionTransformedQuadratic::is_constant() const
 
 MutatableImageNodePositionTransformedQuadratic::MutatableImageNodePositionTransformedQuadratic(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
 :MutatableImageNode(p,a)
-{}
+{
+  assert(params().size()==30);
+  assert(args().size()==0);
+}
 
 MutatableImageNodePositionTransformedQuadratic::~MutatableImageNodePositionTransformedQuadratic()
 {}
@@ -438,7 +444,10 @@ const bool MutatableImageNodeXYZToSpherical::is_constant() const
 
 MutatableImageNodeXYZToSpherical::MutatableImageNodeXYZToSpherical(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
   :MutatableImageNode(p,a)
-{}
+{
+  assert(params().size()==0);
+  assert(args().size()==0);
+}
 
 MutatableImageNodeXYZToSpherical::~MutatableImageNodeXYZToSpherical()
 {}
@@ -470,7 +479,10 @@ const bool MutatableImageNodeSphericalToXYZ::is_constant() const
 
 MutatableImageNodeSphericalToXYZ::MutatableImageNodeSphericalToXYZ(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
   :MutatableImageNode(p,a)
-{}
+{
+  assert(params().size()==0);
+  assert(args().size()==0);
+}
 
 MutatableImageNodeSphericalToXYZ::~MutatableImageNodeSphericalToXYZ()
 {}
