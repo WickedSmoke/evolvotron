@@ -23,7 +23,7 @@
 #include "function_registry.h"
 
 //! Return the registration for the function named (returns 0 if unknown)
-const FunctionRegistration*const FunctionRegistry::operator()(const std::string& f) const
+const FunctionRegistration*const FunctionRegistry::lookup(const std::string& f) const
 {
   std::map<std::string,const FunctionRegistration*>::const_iterator it=_registry.find(f);
   if (it==_registry.end())
@@ -32,22 +32,11 @@ const FunctionRegistration*const FunctionRegistry::operator()(const std::string&
     return (*it).second;
 }
 
-/*! If there are any entries queued up, register them now.
-  This is to avoid any headaches with std::string during static initialisation.
-*/
-FunctionRegistry& FunctionRegistry::get()
+FunctionRegistry*const FunctionRegistry::get()
 {
-  if (!_instance)
-    _instance=new FunctionRegistry();
-  
-  while (!_preregister.empty())
-    {
-      FunctionRegistration* r=_preregister.front();
-      _instance->_registry[r->name()]=r;
-      _preregister.pop_front();
-    }
-  
-  return *_instance;
+  //! Can't declare this as a static class member because of C++ static initializer fiasco.
+  static FunctionRegistry _instance;
+  return &_instance;
 }
 
 std::ostream& FunctionRegistry::status(std::ostream& out) const
@@ -67,21 +56,6 @@ FunctionRegistration*const FunctionRegistry::reg(const char* n,FunctionRegistrat
   return r;
 }
 
-const FunctionRegistration*const FunctionRegistry::pre_reg(const char* n,FunctionRegistration* r)
-{
-  if (_instance)
-    {
-      get().reg(n,r);
-    }
-  else
-    {
-      r->name(n);
-      _preregister.push_back(r);
-    }
-  return r;
-}
 
-FunctionRegistry* FunctionRegistry::_instance=0;
 
-std::deque<FunctionRegistration*> FunctionRegistry::_preregister;
 

@@ -31,41 +31,29 @@
 #include "function_registration.h"
 
 //! Macro to force instantiation of static registration members, and register them with Registry.
-#define REGISTER(F) static const FunctionRegistration* force_ ## F = FunctionRegistry::pre_reg(#F,&FunctionNodeUsing<F>::_registration)
+#define REGISTER(F) static const FunctionRegistration*const force_ ## F = FunctionRegistry::get()->reg(#F,FunctionNodeUsing<F>::get_registration())
 
 //! Class acting as a dictionary from function name to registration info.
-/*! Singleton pattern.  Instance is obtained using get() method.
+/*! Singleton pattern.  Instance is obtained using get() method (NB workround for static initializer fiasco)
  */
 class FunctionRegistry
 {
  public:
-  //! Return the registration for the function named (returns 0 if unknown)
-  const FunctionRegistration*const operator()(const std::string& f) const;
-  
   //! Return the singleton instance of the FunctionRegistry
-  static FunctionRegistry& get();
+  static FunctionRegistry*const get();
 
+  //! Return the registration for the function named (returns 0 if unknown)
+  const FunctionRegistration*const lookup(const std::string& f) const;
+  
   //! Dump list of registered functions
   std::ostream& status(std::ostream& out) const;
 
   //! Probably not used as everything should be pre_registered by static initialisers
   FunctionRegistration*const reg(const char* n,FunctionRegistration* r);
 
-  //! Register the function type (but change it's name first because the default one is probably obtained from typeid and seems to be slightly mangled).
-  static const FunctionRegistration*const pre_reg(const char* n,FunctionRegistration* r);
-
  protected:
   //! Dictionary from names to Registration objects
   std::map<std::string,const FunctionRegistration*> _registry;
-
-  //! Singleton instance, created on first call to static FunctionRegistry::get() method
-  static FunctionRegistry* _instance;
-
-  //! Queue of registrations awaiting registration on creation of the singleton instance.
-  /*! This exists because we want to use std::string in the registration std::map,
-    but std::string seems to have real problems when used dusing static initialisation.
-  */
-  static std::deque<FunctionRegistration*> _preregister;
 };
 
 #endif

@@ -287,7 +287,7 @@ FunctionNode::FunctionNode(const std::vector<float>& p,const std::vector<Functio
  */
 FunctionNode*const FunctionNode::create(const FunctionNodeInfo* info,std::string& report)
 {
-  const FunctionRegistration*const reg=FunctionRegistry::get()(info->type());
+  const FunctionRegistration*const reg=FunctionRegistry::get()->lookup(info->type());
   if (reg)
     {
       return (*(reg->create_fn()))(info,report);

@@ -35,8 +35,8 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
  public:
   typedef FunctionNode Superclass;
   
-  //! Registration member encapsulates class meta-information needed to 
-  static FunctionRegistration _registration;
+  //! Registration member returns a pointer to class meta-information.
+  static FunctionRegistration*const get_registration();
   
  protected:
   
@@ -162,7 +162,7 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
   virtual std::ostream& save_function(std::ostream& out,uint indent) const
     {
       out << Margin(indent) << "<f>\n";
-      out << Margin(indent+1) << "<type>" << _registration.name() << "</type>\n";
+      out << Margin(indent+1) << "<type>" << get_registration()->name() << "</type>\n";
       Superclass::save_function(out,indent+1);
       out << Margin(indent) << "</f>\n";
       return out;
@@ -204,16 +204,21 @@ template <> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsi
   - it has some strange numbers attached (with gcc 3.2 anyway) although we overwrite them later anyway.
   - the strings returned from it seem to bomb if you try and do anything with them during static initialisation.
   So we use the no-name registration and the programmer-friendly name gets filled in by the REGISTER macro later.
+  We could declare r as a static class member instead, but the static initializer fiasco strikes again.
  */
-template <typename F> FunctionRegistration FunctionNodeUsing<F>::_registration
-(
- /*typeid(F).name(),*/
- &FunctionNodeUsing<F>::stubnew,
- &FunctionNodeUsing<F>::create,
- F::parameters(),
- F::arguments(),
- F::iterative()
- );
+template <typename F> FunctionRegistration*const FunctionNodeUsing<F>::get_registration()
+{
+  static FunctionRegistration r
+    (
+     /*typeid(F).name(),*/
+     &FunctionNodeUsing<F>::stubnew,
+     &FunctionNodeUsing<F>::create,
+     F::parameters(),
+     F::arguments(),
+     F::iterative()
+     );
+  return &r;
+}
 
 #endif
 

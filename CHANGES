@@ -1,8 +1,11 @@
 [Most recent at top]
 
 From release 0.1.1:
- - Bump version to 0.1.2-devel
+ - Bump version to 0.1.2.  This is purely a bug-fix release.
  - Gentoo compile bug fix (Karl Robillard)
+ - Disable implicit QString conversion (use explicit latin1() method).
+ - Workround "C++ static initialize fiasco" by moving problem static members
+   into instance-get methods.
  
 From release 0.1.0:
  - Bump version to 0.1.1

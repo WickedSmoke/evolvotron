@@ -81,7 +81,7 @@ int main(int argc,char* argv[])
     << threads 
     << " compute threads\n";
 
-  FunctionRegistry::get().status(std::clog);
+  FunctionRegistry::get()->status(std::clog);
 
   if (threads<1)
     {

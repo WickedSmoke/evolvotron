@@ -11,7 +11,7 @@ CONFIG+= qt thread release
 #QMAKE_CXXFLAGS_RELEASE -= -O2
 #QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer 
 #
-# Use the next two lines IF you have the right processor (P4)
+# Use the next two lines ONLY IF you have the right processor (P4)
 #QMAKE_CXXFLAGS_RELEASE -= -march=i386
 #QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
 #
