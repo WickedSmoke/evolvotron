@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qscrollview.h>
 #include <qmessagebox.h>
 #include <qfiledialog.h>
+#include <qpngio.h>
 
 #include "mutatable_image_display.h"
 #include "mutatable_image_display_big.h"
@@ -636,7 +637,7 @@ void MutatableImageDisplay::menupick_save_image()
     }
   else
     {
-      QString save_filename=QFileDialog::getSaveFileName(".","Images (*.ppm *.png)",this,"Save image","Save image to a PPM or PNG file");
+      QString save_filename=QFileDialog::getSaveFileName(".","Images (*.ppm *.png *.mng)",this,"Save image","Save image to a PPM, PNG or MNG file");
       if (!save_filename.isEmpty())
 	{
 	  const char* save_format="PPM";
@@ -647,6 +648,10 @@ void MutatableImageDisplay::menupick_save_image()
 	  else if (save_filename.upper().endsWith(".PNG"))
 	    {
 	      save_format="PNG";
+	    }
+	  else if (save_filename.upper().endsWith(".MNG"))
+	    {
+	      save_format="MNG";
 	    }
 	  else
 	    {
@@ -660,32 +665,73 @@ void MutatableImageDisplay::menupick_save_image()
 	  
 	  if (!save_filename.isEmpty())
 	    {
-	      for (uint f=0;f<_offscreen_image.size();f++)
+	      QFile* mng_file=0;
+	      if (save_format=="MNG")
 		{
-		  QString actual_save_filename(save_filename);
-	     
-		  if (_offscreen_image.size()>1)
+		  mng_file=new QFile(save_filename);
+		  if (!mng_file->open(IO_WriteOnly|IO_Truncate))
 		    {
-		      QString frame_component;
-		      frame_component.sprintf(".f%06d",f);
-		      int insert_point=save_filename.findRev(QString("."));
-		      if (insert_point==-1)
-			{
-			  actual_save_filename.append(frame_component);
-			}
-		      else
-			{
-			  actual_save_filename.insert(insert_point,frame_component);
-			}
-		    
+		      QMessageBox::critical(this,"Evolvotron","Failed to open file "+save_filename);
 		    }
-
-		  if (!_offscreen_image[f]->save(actual_save_filename.local8Bit(),save_format))
+		  else 
 		    {
-		      QMessageBox::critical(this,"Evolvotron","Failed to write file "+actual_save_filename);
-		      if (f<_offscreen_image.size()-1)
-			QMessageBox::critical(this,"Evolvotron","Not attempting to save remaining images in animation");
-		      break;
+		      QPNGImagePacker packer(mng_file,32,0);
+		      for (uint f=0;f<_offscreen_image.size();f++)
+			{
+			  if (!packer.packImage(*(_offscreen_image[f])))
+			    {
+			      QMessageBox::critical(this,"Evolvotron","Failed while writing file "+save_filename+"\nFile will be removed");
+			      mng_file->close();
+			      if (!mng_file->remove())
+				{
+				  QMessageBox::critical(this,"Evolvotron","Failed to remove file "+save_filename);
+				}
+			      break;
+			    }
+			  std::clog << "Appended frame " << f << " to " << save_filename.local8Bit() << "\n";
+			}
+		      mng_file->close();
+		      if (mng_file->status()!=IO_Ok)
+			{
+			  QMessageBox::critical(this,"Evolvotron","Failed while closing file "+save_filename+"\nFile will be removed");
+			  if (!mng_file->remove())
+			    {
+			      QMessageBox::critical(this,"Evolvotron","Failed to remove file "+save_filename);
+			    }
+			}
+		      delete mng_file;
+		    }
+		}
+	      else
+		{
+
+		  for (uint f=0;f<_offscreen_image.size();f++)
+		    {
+		      QString actual_save_filename(save_filename);
+		      
+		      if (_offscreen_image.size()>1)
+			{
+			  QString frame_component;
+			  frame_component.sprintf(".f%06d",f);
+			  int insert_point=save_filename.findRev(QString("."));
+			  if (insert_point==-1)
+			    {
+			      actual_save_filename.append(frame_component);
+			    }
+			  else
+			    {
+			      actual_save_filename.insert(insert_point,frame_component);
+			    }
+			  
+			}
+		      
+		      if (!_offscreen_image[f]->save(actual_save_filename.local8Bit(),save_format))
+			{
+			  QMessageBox::critical(this,"Evolvotron","Failed to write file "+actual_save_filename);
+			  if (f<_offscreen_image.size()-1)
+			    QMessageBox::critical(this,"Evolvotron","Not attempting to save remaining images in animation");
+			  break;
+			}
 		    }
 		}
 	    }
