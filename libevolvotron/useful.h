@@ -49,7 +49,7 @@ typedef unsigned char uchar;
 typedef double real;
 
 //! Used when some small sampling step is required (e.g gradient operators).
-static const real epsilon=1e-3;
+static const real epsilon=1e-6;
 static const real epsilon2=2.0*epsilon;
 static const real inv_epsilon=1.0/epsilon;
 static const real inv_epsilon2=1.0/epsilon2;
