@@ -6,7 +6,7 @@ CONFIG+= qt thread release
 
 ##################
 # Improved optimisation options from qmake defaults.
-# The README contains some timings showing the (small) effect of changing these.
+# The README contains some timings showing the (fairly small) effect of changing these.
 # 
 # Use the next two lines for slight improvement
 # Now leaving these ON for general distribution as they DO have SOME effect and should be portable.
@@ -18,8 +18,8 @@ QMAKE_CXXFLAGS_RELEASE += -O3 -fomit-frame-pointer -funroll-loops -ffast-math
 # NB -march=X implies -mcpu=X... no need to specify both the same
 #
 # Use the next two lines ONLY IF you have the right processor (P4)
-QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
-QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
+#QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
+#QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
 #
 # Here's the same thing (UNTESTED) for P3 
 #QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
