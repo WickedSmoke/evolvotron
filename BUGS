@@ -1,8 +1,12 @@
 Known bugs:
 
+- When using -spheremap mode, middle mouse-button adjustments don't work
+  as expected (this is because they're not compensated for the projection).
+  Live with it.
+
 - Have yet to find a tool which can display anything other than the
-  first frame of a Qt-generated MNG format.  (But it might be the
-  tools which are buggy).
+  first frame of a Qt-generated MNG format.  (Apparently Qt's mng
+  has little to do with the multi-frame png format).
 
 - Very rarely image calculations appear to arrive seriously out-of-order.
   May be a more of a problem on slower hardware ? 

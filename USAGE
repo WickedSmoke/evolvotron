@@ -111,7 +111,8 @@ POWER-USER & DEBUG OPTIONS
         Images are produced by sampling the underlying 3D function on the
         latitude-longitude grid of a sphere.  The resulting images should be
         usable as spheremaps/spherical environment maps.  Animations vary
-        the radius of the sphere.
+        the radius of the sphere.  Note that when in spheremap mode,
+        middle mouse button adjustments don't behave like you'd expect.
        
 Note that you can also specify iterative & fractal function
 types as an argument to -x/-X, even when they are disabled 
