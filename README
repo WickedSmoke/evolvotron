@@ -1,7 +1,7 @@
 INTRODUCTION
 ============
 Evolvotron is interactive "generative art" software to evolve
-images/textures/patterns through  an iterative process of random
+images/textures/patterns through an iterative process of random
 mutation and user-selection driven evolution.  If you like lava-lamps,
 and still think the Mandelbrot set is cool, this could be the software
 for you.
@@ -54,11 +54,11 @@ or just have both done for you by doing
 
   ./BUILD
 
-Anyway, this will recurse into and build the libevolvotron directory
-(which is 99% of the work) and some additional subdirectories for the executables.
+Make will recurse into and build the libevolvotron directory
+(which is 99% of the work) and some additional subdirectories with executables.
 
 Among other things, this will give you an "evolvotron" executable which you
-can now run immediately with
+can run immediately with
   ./evolvotron/evolvotron
 and/or copy where you like (see INSTALL section).
 
@@ -115,6 +115,9 @@ common.pro.  This is set to ~/bin by default (which will give you a "personal
 install" of evolvotron assuming you have such a directory and it's in your path).
 If you change INSTALLPATH to /usr/local/bin then you'll need to "su" before
 the make install.
+
+NB If you change a ".pro" file, you'll need to ./configure again to make changes
+take effect.
 
 INSTALL PROBLEMS
 ================
@@ -339,8 +342,8 @@ Please check the TODO file before you send me email!
 
 BUILDING CODE DOCUMENTATION
 ===========================
-If you have doxygen (and graphviz NB!!!) and want to build
-the source code documentation too, execute 
+If you have doxygen (and graphviz too) and want to build
+the source code documentation, execute 
   ./mkdoc
 at the top level.  The code documentation then appears in ./doc/html/
 
