@@ -150,8 +150,6 @@ Right clicking on an image gets you a few more options:
    full resolution image has been generated; if you try to save too 
    early a dialog box will be displayed telling you to try again later.
   
- Note that the save won't be allowed 
-
  - "Save function" to store the function to an XML file.
 
  - "Load function" to load a stored function from an XML file.
@@ -162,6 +160,14 @@ Right clicking on an image gets you a few more options:
    files saved from old versions, or producing the same image
    from a loaded function.  Attempting to load functions from later
    versions into earlier versions is even less likely to succeed.
+
+ - "Simplify" prunes the function tree of redundant branches where
+   possible (the same action can be applied to all images from
+   the main "Edit" menu).  This doesn't change the appearance of
+   the image, but may make it recompute faster.
+
+ - "Properties" brings up a dialog box containing some information
+   about the image (e.g the number of function nodes it contains).
 
 MIDDLE MOUSE BUTTON
 -------------------
@@ -253,10 +259,13 @@ MAIN MENU BAR
   The difference between restart and reset is that reset 
   sets the mutation parameters back the their default values.
 - Edit menu:
-  Undo lets you undo previous full-grid spawns and middle-button
+  "Undo" lets you undo previous full-grid spawns and middle-button
   adjustments.  There is a large but limited number of levels of
   undo (note that locking is overriden, and that locking/unlocking 
-  a display is not currently recorded in the undo history)
+  a display is not currently recorded in the undo history).
+  "Simplify" is of curiosity value only: it prunes redundant
+  branches from images; this may help them recompute faster
+  but at the cost of there being less mutatable material.
 - Settings menu:
   "Mutation parameters" brings up a dialog to modify the amount
   of change spawned images are subject to.  
@@ -361,11 +370,11 @@ The probability (per function node) of these mutations is controlled
 from spinboxes on the dialog (expressed as chances-in-a-million), 
 as is the size of perturbations to constants.
 
-It is useful to think of the constant perturbations as being a thermal effect
-(hence the "heat" and "cool" buttons), while structural alterations are
-more drastic and are caused by high energy gamma rays or something
-(hence "irradiate" and "shield" buttons to adjust the probability of
-structual mutations). 
+It is useful to think of the perturbations to constant parameters as
+being a thermal effect (hence the "heat" and "cool" buttons), while 
+structural alterations are more drastic and are caused by high energy
+gamma rays or something (hence "irradiate" and "shield" buttons to
+adjust the probability of structual mutations). 
 
 So why would you want to change the mutation parameters from the initial
 defaults ?  Basically, if you're getting too much variation in spawned images 

@@ -338,6 +338,9 @@ class EvolvotronMain : public QMainWindow
   //! Signalled by menu item.  Forwards to History object.
   void undo();
 
+  //! Signalled by menu item.  Simplifies all functions.
+  void simplify_constants();
+
  public slots:
 
   //! Signalled by menu item.

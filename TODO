@@ -18,11 +18,11 @@ Animation
 
 Conventional
 ------------
+- Display properties dialog should have small copy of image
 - "Evolvotron corpus"; publish mode & viewer app to see other users' creations
-  How ?  PHP+SQL somewhere ? IRC ? RSS ? 
-- More detail under GUI Elements section of docs
+   How ?  PHP+SQL somewhere ? IRC ? RSS ? Jabber conference!
 - Proper dependency and generation by qmake of libevolvotron/usage_text.h
-- Rationalise configure options: fs/nofs doc/nodoc
+- Rationalise configure options: fs/nofs (doc/nodoc?)
 - -h & --help option.  Print version and functions supported.
 - man pages ?  Knock off something simple.
 - Window ordering (and whether fullscreen) should be an input to

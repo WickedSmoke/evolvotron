@@ -242,6 +242,8 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _popupmenu_edit=new QPopupMenu;
   _popupmenu_edit_undo_id=_popupmenu_edit->insertItem("&Undo",this,SLOT(undo()));
   _popupmenu_edit->setItemEnabled(_popupmenu_edit_undo_id,false);
+  _popupmenu_edit->insertSeparator();
+  _popupmenu_edit->insertItem("&Simplify all functions",this,SLOT(simplify_constants()));
   _menubar->insertItem("&Edit",_popupmenu_edit);
   
   _popupmenu_settings=new QPopupMenu;
@@ -468,7 +470,7 @@ void EvolvotronMain::respawn(MutatableImageDisplay* display)
     }
   else
     {
-      history().begin_action(" respawn");
+      history().begin_action("respawn");
       
       if (last_spawned_image()==0)
 	{
@@ -731,6 +733,20 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
 void EvolvotronMain::undo()
 {
   history().undo();
+}
+
+void EvolvotronMain::simplify_constants()
+{
+  history().begin_action("simplify all");
+  uint nodes_eliminated=0;
+  for (std::vector<MutatableImageDisplay*>::iterator it=_displays.begin();it!=_displays.end();it++)
+    {
+      nodes_eliminated+=(*it)->simplify_constants(false);
+    }
+  history().end_action();
+  std::stringstream msg;
+  msg << "Eliminated " << nodes_eliminated << " redundant function nodes\n";
+  QMessageBox::information(this,"Evolvotron",msg.str().c_str(),QMessageBox::Ok);
 }
 
 /*! Reset each image in the grid, and the mutation parameters.

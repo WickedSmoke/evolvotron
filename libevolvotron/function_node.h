@@ -74,6 +74,9 @@ class FunctionNode
   virtual const XYZ evaluate(const XYZ& p) const
     =0;
 
+  //! Obtain some statistics about the image function
+  void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,float& proportion_constant) const;
+
  public:
 
   //! Returns true if the function is independent of it's position argument.
@@ -177,6 +180,9 @@ class FunctionNode
   //! Return an clone of this image node and all its children.
   virtual FunctionNode*const deepclone() const
     =0;
+
+  //! Prune any is_constant() nodes and replace them with an actual constant node
+  virtual void simplify_constants();
 
   //! Return a deepcloned copy of the node's arguments
   virtual const std::vector<FunctionNode*> deepclone_args() const;

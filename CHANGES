@@ -2,7 +2,9 @@
 
 From release 0.2.3:
  - Version to 0.2.4-devel
- - Add .mng image file output format
+ - Add not-very-useful .qt-mng image file output format
+ - Add function stats to Properties dialog
+ - Add function simplification (more useful for debugging than anything)
 
 From release 0.2.2:
  - Version to 0.2.3

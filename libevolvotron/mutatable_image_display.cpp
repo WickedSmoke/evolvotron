@@ -140,7 +140,8 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
     }
 
   _menu->insertSeparator();
-  _menu->insertItem("&Properties...",_properties,SLOT(exec()));
+  _menu->insertItem("Simplif&y function",this,SLOT(menupick_simplify()));
+  _menu->insertItem("&Properties...",this,SLOT(menupick_properties()));
 
   main()->hello(this);
 
@@ -189,6 +190,40 @@ MutatableImageDisplay::~MutatableImageDisplay()
     }
 
   std::clog << "A MutatableImageDisplay was deleted\n";
+}
+
+const uint MutatableImageDisplay::simplify_constants(bool single_action)
+{
+  if (single_action) main()->history().begin_action("simplify");
+
+  uint old_nodes;
+  uint old_parameters;
+  uint old_depth;
+  uint old_width;
+  float old_const;
+  _image->get_stats(old_nodes,old_parameters,old_depth,old_width,old_const);
+
+  main()->history().replacing(this);
+  image(_image->simplified());
+
+  uint new_nodes;
+  uint new_parameters;
+  uint new_depth;
+  uint new_width;
+  float new_const;
+  _image->get_stats(new_nodes,new_parameters,new_depth,new_width,new_const);
+
+  const uint nodes_eliminated=old_nodes-new_nodes;
+
+  if (single_action) main()->history().end_action();
+
+  if (single_action)
+    {
+      std::stringstream msg;
+      msg << "Eliminated " << nodes_eliminated << " redundant function nodes\n";
+      QMessageBox::information(this,"Evolvotron",msg.str().c_str(),QMessageBox::Ok);
+    }
+  return nodes_eliminated;
 }
 
 void MutatableImageDisplay::frame_advance()
@@ -627,6 +662,12 @@ void MutatableImageDisplay::menupick_lock()
   lock(!_locked);
 }
 
+void MutatableImageDisplay::menupick_simplify()
+{
+  simplify_constants(true);
+}
+ 
+
 /*! Saves image (unless the image is not full resolution yet, in which case an informative dialog is generated.
  */
 void MutatableImageDisplay::menupick_save_image()
@@ -839,6 +880,27 @@ void MutatableImageDisplay::menupick_big_2048x2048()
 void MutatableImageDisplay::menupick_big_4096x4096()
 {
   spawn_big(true,QSize(4096,4096));
+}
+
+void MutatableImageDisplay::menupick_properties()
+{
+  uint total_nodes;
+  uint total_parameters;
+  uint depth;
+  uint width;
+  float proportion_constant;
+
+  image()->get_stats(total_nodes,total_parameters,depth,width,proportion_constant);
+
+  std::stringstream msg;
+  msg << "Function nodes  \t" << total_nodes << "\n";
+  msg << "Parameters      \t" << total_parameters << "\n";
+  msg << "Maximum depth   \t" << depth << "\n";
+  msg << "Width           \t" << width << "\n";
+  msg << "Constant        \t" << 100.0f*proportion_constant << "%\n";
+
+  _properties->set_message(msg.str());
+  _properties->exec();
 }
 
 /*! Create an image display with no parent: becomes a top level window 

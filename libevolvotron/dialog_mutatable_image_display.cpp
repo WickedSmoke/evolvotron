@@ -26,7 +26,7 @@ DialogMutatableImageDisplay::DialogMutatableImageDisplay(QWidget* parent)
   :QDialog(parent,0,TRUE)
 {
   setCaption("Image Properties");
-  setMinimumSize(128,128);
+  setMinimumSize(256,128);
 
   _vbox=new QVBox(this);
 
@@ -42,9 +42,6 @@ DialogMutatableImageDisplay::DialogMutatableImageDisplay(QWidget* parent)
 	  _ok,SIGNAL(clicked()),
 	  this,SLOT(hide())
 	  );
-
-  // Shrink to fit contents
-  adjustSize();
 }
 
 void DialogMutatableImageDisplay::resizeEvent(QResizeEvent*)
@@ -55,8 +52,9 @@ void DialogMutatableImageDisplay::resizeEvent(QResizeEvent*)
 void DialogMutatableImageDisplay::set_message(const std::string& m)
 {
   _message->setText(QString(m.c_str()));
-  
-  // Might need more space for message
+  _message->adjustSize();
+
   adjustSize();
+  updateGeometry();
 }
 

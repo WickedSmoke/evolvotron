@@ -49,6 +49,59 @@ const std::vector<float> FunctionNode::cloneparams() const
   return params();
 }
 
+//! Obtain some statistics about the image function
+void FunctionNode::get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,float& proportion_constant) const
+{
+  uint total_sub_nodes=0;
+  uint total_sub_parameters=0;
+  uint max_sub_depth=0;
+  uint total_sub_width=0;
+  float sub_constants=0.0f;
+
+  // Traverse child nodes.  Need to reconstruct the actual numbers from the proportions
+  for (std::vector<FunctionNode*>::const_iterator it=args().begin();it!=args().end();it++)
+    {
+      uint sub_nodes;
+      uint sub_parameters;
+      uint sub_depth;
+      uint sub_width;
+      float sub_proportion_constant;
+
+      (*it)->get_stats(sub_nodes,sub_parameters,sub_depth,sub_width,sub_proportion_constant);
+
+      total_sub_nodes+=sub_nodes;
+      total_sub_parameters+=sub_parameters;
+      if (sub_depth>max_sub_depth) max_sub_depth=sub_depth;
+      total_sub_width+=sub_width;
+      sub_constants+=sub_nodes*sub_proportion_constant;
+    }
+
+  // And add our own details
+  total_nodes=1+total_sub_nodes;  
+
+  total_parameters=params().size()+total_sub_parameters;
+
+  depth=1+max_sub_depth;
+
+  if (total_sub_width==0)
+    {
+      width=1;
+    }
+  else 
+    {
+      width=total_sub_width;
+    }
+
+  if (is_constant())
+    {
+      proportion_constant=1.0f;
+    }
+  else
+    {
+      proportion_constant=sub_constants/(1+total_sub_nodes);
+    }
+}
+
 /*! This returns a random bit of image tree.
   It needs to be capable of generating any sort of node we have.
   \warning Too much probability of highly branching nodes could result in infinite sized stubs.
@@ -512,6 +565,27 @@ void FunctionNode::mutate(const MutationParameters& parameters)
     }
 }
 
+void FunctionNode::simplify_constants() 
+{
+  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
+    {
+      if ((*it)->is_constant())
+	{
+	  const XYZ v((*(*it))(XYZ(0.0f,0.0f,0.0f)));
+	  std::vector<float> vp;
+	  vp.push_back(v.x());
+	  vp.push_back(v.y());
+	  vp.push_back(v.z());
+	  std::vector<FunctionNode*> va; 
+	  delete (*it);
+	  (*it)=new FunctionConstant(vp,va,0);
+	}
+      else
+	{
+	  (*it)->simplify_constants();
+	}
+    }
+}
 
 const std::vector<FunctionNode*> FunctionNode::deepclone_args() const
 {

@@ -182,6 +182,11 @@ class MutatableImageDisplay : public QWidget
   //! Handler for mouse events.
   virtual void mouseMoveEvent(QMouseEvent* event);
 
+  public slots:
+
+  //! Simplify the held image, return the number of nodes eliminated
+  const uint simplify_constants(bool single);
+
   protected slots:
 
   //! Called by timer
@@ -222,6 +227,9 @@ class MutatableImageDisplay : public QWidget
 
   //! Called from context menu.
   void menupick_lock();
+
+  //! Trivial wrapper for simplify_constants
+  void menupick_simplify();
 
   //! Called from context menu.
   void menupick_save_image();
@@ -264,6 +272,9 @@ class MutatableImageDisplay : public QWidget
 
   //! Called from "Big" submenu of context menu.
   void menupick_big_4096x4096();
+
+  //! Called from "Properties" on context menu
+  void menupick_properties();
 
  protected:
   //! Common code for big slots.

@@ -107,6 +107,9 @@ class MutatableImage
   //! Return a mutated version of this image
   MutatableImage*const mutated(const MutationParameters& p) const;
 
+  //! Return a simplified version of this image
+  MutatableImage*const simplified() const;
+
   //! Evaluate the image at specified coordinate.
   const XYZ operator()(const XYZ& p) const
     {
@@ -127,6 +130,9 @@ class MutatableImage
 
   //! Read a new function tree from the given stream.
   static MutatableImage*const load_function(std::istream& in,std::string& report);
+
+  //! Obtain some statistics about the image function
+  void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,float& proportion_constant) const;
 
   //! Check the function tree is ok.
   const bool ok() const

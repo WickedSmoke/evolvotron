@@ -38,6 +38,13 @@ MutatableImage*const MutatableImage::mutated(const MutationParameters& p) const
   return new MutatableImage(c->argptr(0),sinusoidal_z());
 }
 
+MutatableImage*const MutatableImage::simplified() const
+{
+  FunctionNode*const c=_root_holder->deepclone();  
+  c->simplify_constants();
+  return new MutatableImage(c->argptr(0),sinusoidal_z());  
+}
+
 void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
 {
   // Actually calculate a pixel value from the image.
@@ -60,6 +67,11 @@ void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
   c[0]=(uint)floorf(v.x());
   c[1]=(uint)floorf(v.y());
   c[2]=(uint)floorf(v.z());
+}
+
+void MutatableImage::get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,float& proportion_constant) const
+{
+  root()->get_stats(total_nodes,total_parameters,depth,width,proportion_constant);
 }
 
 std::ostream& MutatableImage::save_function(std::ostream& out) const
