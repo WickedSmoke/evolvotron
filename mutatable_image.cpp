@@ -45,41 +45,45 @@ MutatableImageNode* MutatableImageNode::stub(Random01& r01)
 
   //! \todo: Should be a mutation parameter which is ratio between Position nodes and warped position nodes.
 
-  if (r<0.4)
+  const float base=0.7;
+  const uint steps=16;
+  const float step=(1.0-base)/steps;
+
+  if (r<0.5*base)
     return new MutatableImageNodeConstant(RandomXYZInSphere(r01,1.0));
-  else if (r<0.8)
+  else if (r<base)
     return new MutatableImageNodePosition();
-  else if (r<0.81) 
+  else if (r<base+step) 
     return new MutatableImageNodeSin(stubvector(r01,1));
-  else if (r<0.82) 
+  else if (r<base+2*step) 
     return new MutatableImageNodeCos(stubvector(r01,1));
-  else if (r<0.83) 
+  else if (r<base+3*step) 
     return new MutatableImageNodeGrad(stubvector(r01,1));
-  else if (r<0.84) 
+  else if (r<base+4*step) 
     return new MutatableImageNodeConcatenatePair(stubvector(r01,2));
-  else if (r<0.85) 
+  else if (r<base+5*step) 
     return new MutatableImageNodeAdd(stubvector(r01,2));
-  else if (r<0.86) 
+  else if (r<base+6*step) 
     return new MutatableImageNodeMultiply(stubvector(r01,2));
-  else if (r<0.87) 
+  else if (r<base+7*step) 
     return new MutatableImageNodeDivide(stubvector(r01,2));
-  else if (r<0.88) 
+  else if (r<base+8*step) 
     return new MutatableImageNodeCross(stubvector(r01,2));
-  else if (r<0.89) 
+  else if (r<base+9*step) 
     return new MutatableImageNodeMax(stubvector(r01,2));
-  else if (r<0.90) 
+  else if (r<base+10*step) 
     return new MutatableImageNodeMin(stubvector(r01,2));
-  else if (r<0.91) 
+  else if (r<base+11*step) 
     return new MutatableImageNodeMod(stubvector(r01,2));
-  else if (r<0.92) 
+  else if (r<base+12*step) 
     return new MutatableImageNodeConcatenateTriple(stubvector(r01,3));
-  else if (r<0.93) 
+  else if (r<base+13*step) 
     return new MutatableImageNodeReflect(stubvector(r01,3));
-  else if (r<0.94) 
+  else if (r<base+14*step) 
     return new MutatableImageNodeMagnitudes(stubvector(r01,3));
-  else if (r<0.95) 
+  else if (r<base+15*step) 
     return new MutatableImageNodeChooseSphere(stubvector(r01,4));
-  else if (r<0.975)
+  else if (r<base+15.5*step)
     return new MutatableImageNodePostTransform(stubvector(r01,5));
   else 
     return new MutatableImageNodePreTransform(stubvector(r01,5));

@@ -1,6 +1,8 @@
 - Save whole grid as a single image (from File menu).
 - More functions 
 - Undo/Revert on Mutate menu (to recover from sloppy clicking)
+- Option to reduce/elimintate position (identity) nodes to avoid blatantly centred images.
+  (Introduce an atomic transform type).
 - Context menu option to bring up info about an image
   (in particular number of nodes and max depth)
 - Use hourglass cursor over displays which haven't got final high resolution yet ?
