@@ -631,6 +631,8 @@ void MutatableImageDisplay::menupick_lock()
  */
 void MutatableImageDisplay::menupick_save_image()
 {
+  std::clog << "Save requested...\n";
+
   if (_current_display_level!=0)
     {
       QMessageBox::information(this,"Evolvotron","The selected image has not yet been generated at maximum resolution.\nPlease try again later.");
@@ -676,6 +678,7 @@ void MutatableImageDisplay::menupick_save_image()
 		  else 
 		    {
 		      QPNGImagePacker packer(mng_file,32,0);
+		      
 		      for (uint f=0;f<_offscreen_image.size();f++)
 			{
 			  if (!packer.packImage(*(_offscreen_image[f])))
@@ -690,6 +693,7 @@ void MutatableImageDisplay::menupick_save_image()
 			    }
 			  std::clog << "Appended frame " << f << " to " << save_filename.local8Bit() << "\n";
 			}
+
 		      mng_file->close();
 		      if (mng_file->status()!=IO_Ok)
 			{
@@ -704,7 +708,6 @@ void MutatableImageDisplay::menupick_save_image()
 		}
 	      else
 		{
-
 		  for (uint f=0;f<_offscreen_image.size();f++)
 		    {
 		      QString actual_save_filename(save_filename);
@@ -722,14 +725,15 @@ void MutatableImageDisplay::menupick_save_image()
 			    {
 			      actual_save_filename.insert(insert_point,frame_component);
 			    }
-			  
 			}
 		      
 		      if (!_offscreen_image[f]->save(actual_save_filename.local8Bit(),save_format))
 			{
 			  QMessageBox::critical(this,"Evolvotron","Failed to write file "+actual_save_filename);
 			  if (f<_offscreen_image.size()-1)
-			    QMessageBox::critical(this,"Evolvotron","Not attempting to save remaining images in animation");
+			    {
+			      QMessageBox::critical(this,"Evolvotron","Not attempting to save remaining images in animation");
+			    }
 			  break;
 			}
 		    }
@@ -737,6 +741,7 @@ void MutatableImageDisplay::menupick_save_image()
 	    }
 	}
     }
+  std::clog << "...save done\n";
 }
 
 void MutatableImageDisplay::menupick_save_function()

@@ -3,8 +3,7 @@ imply it will be done sooner or later than other items!
 
 Animation
 ---------
-- Use PNGImagePacker class to build MNGs.
-  Probably needs to be a build option as this seems to be a recent thing.
+- Why aren't Qt-generated MNG's displayable ?
 - More warp types (rotate time into space etc)
 - More control over animation (frames & framerate) from edit/options menu
   (or on a display by display basis ?  Then "big" images could have
