@@ -68,6 +68,19 @@ void MutationParameters::reset()
   _probability_iterations_change_jump=0.02;
 }
 
+void MutationParameters::general_cool(float f)
+{
+  _magnitude*=f;
+
+  _probability_glitch*=f;
+  _probability_shuffle*=f;
+  _probability_insert*=f;
+  _probability_substitute*=f;
+
+  _probability_iterations_change_step*=f;
+  _probability_iterations_change_jump*=f;
+}
+
 /*! This returns a random bit of image tree.
   It needs to be capable of generating any sort of node we have.
   \warning Too much probability of highly branching nodes could result in infinite sized stubs.

@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <memory>
@@ -151,40 +152,72 @@ int main(int argc,char* argv[])
       exit(1);
     }
 
-  QImage target_image(argv[1]);
+  QImage target_image(args.last(1).c_str());
   if (target_image.isNull())
     {
       std::cerr << "Couldn't load target image\n";
       exit(1);
     }
 
-  double best_score=1e30;
+  const uint fresh=10;
+  const uint reset=100;
+  const float cooling=0.9;
+  const uint iterations=10000000;
+
+  std::clog << "Cumulative cooling effect is " << pow(cooling,reset) << " over cycle\n";
+  
+  double best_score=0.0;
   std::auto_ptr<const QImageWithData> best_image;
   std::auto_ptr<const MutatableImage> best_imagefn;
-
-  for (int i=0;i<100;i++)
+  
+  for (uint i=0,output_frame=0;i<iterations;i++)
     {
-      std::auto_ptr<const MutatableImage> imagefn;
-      do 
+      if (i%reset==0)
 	{
-	  imagefn=std::auto_ptr<const MutatableImage>(new MutatableImage(mutation_parameters,true));
+	  mutation_parameters.reset();
+	  mutation_parameters.allow_iterative_nodes(true);
+	  mutation_parameters.allow_fractal_nodes(true);
 	}
-      while (imagefn->is_constant());
+      else
+	{
+	  mutation_parameters.general_cool(cooling);
+	}
 
-      std::auto_ptr<const QImageWithData> image
-	=std::auto_ptr<const QImageWithData>(render_image(imagefn.get(),target_image.width(),target_image.height()));
+      std::auto_ptr<const MutatableImage> new_imagefn;
 
-      const double score=compare_images(image->image(),&target_image);
+      if (best_imagefn.get()==0 || i%fresh==0)
+	{
+	  do 
+	    {
+	      new_imagefn=std::auto_ptr<const MutatableImage>(new MutatableImage(mutation_parameters,true));
+	    }
+	  while (new_imagefn->is_constant());
+	}
+      else
+	{
+	  new_imagefn=std::auto_ptr<const MutatableImage>(best_imagefn->mutated(mutation_parameters));
+	}
 
-      if (score<best_score)
+      
+      std::auto_ptr<const QImageWithData> new_image
+	=std::auto_ptr<const QImageWithData>(render_image(new_imagefn.get(),target_image.width(),target_image.height()));
+
+      const double score=compare_images(new_image->image(),&target_image);
+
+      if (best_image.get()==0 || score<best_score)
 	{
 	  best_score=score;
-	  best_image=image;
-	  best_imagefn=imagefn;
-	  std::cerr << "* ";
+	  best_image=new_image;
+	  best_imagefn=new_imagefn;
+	  std::stringstream filename;
+	  filename << "f" << std::setw(6) << std::setfill('0') << output_frame++ << ".png";
+	  best_image->image()->save(filename.str().c_str(),"PNG");
+	  std::clog << "[" << best_score << "]";
 	}
-
-      std::cerr << score << "\n";
+      else
+	{
+	  std::clog << ".";
+	}
     }
 
   best_image->image()->save("match.png","PNG");

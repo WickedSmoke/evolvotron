@@ -100,6 +100,9 @@ class MutationParameters
   //! Reset to initial values.
   void reset();
 
+  //! Multiply most parameters by the given factor
+  void general_cool(float f);
+
   //! Returns a reference to the random number generator.
   /*! Need this for e.g RandomXYZInSphere constructor.
    */
