@@ -21,10 +21,9 @@ echo
 echo "Your gcc version is (unless qmake is set up to use a different one):"
 gcc --version
 
-echo "Configure options available: [p4|p3|xp] [fs]"
-    
 CONFIG_OPTS="$@"
-echo "Running qmake with CONFIG_OPTS=$CONFIG_OPTS"
+
+echo "Running qmake..."
 
 qmake "CONFIG_OPTS=$CONFIG_OPTS" main.pro 
 
