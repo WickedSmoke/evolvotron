@@ -22,8 +22,8 @@
 
 #include "function_registry.h"
 
-uint NiftyCounter<FunctionRegistry>::_count=0;
-FunctionRegistry* Singleton<FunctionRegistry>::_singleton_instance=0;
+template <> uint NiftyCounter<FunctionRegistry>::_count=0;
+template <> FunctionRegistry* Singleton<FunctionRegistry>::_singleton_instance=0;
 
 FunctionRegistry::FunctionRegistry()
 {

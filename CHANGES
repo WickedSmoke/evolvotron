@@ -1,5 +1,10 @@
 [Most recent at top]
 
+From release 0.3.0:
+ - Version to 0.3.1
+ - Fix for gcc 3.4
+ - ./configure made (slightly) more robust
+
 From release 0.2.3:
  - Version to 0.3.0
  - Get rid of troublesome system call to ../VERSION 
