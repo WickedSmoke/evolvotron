@@ -290,53 +290,6 @@ template <typename F> Registration FunctionNodeUsing<F>::registration(typeid(F).
 
 //----------------------------------------------------------------------------------------
 
-
-//! This node implements XYZ to spherical co-ords
-class FunctionNodeXYZToSpherical : public FunctionNode
-{
- private:
-
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Query whether node value is independent of position argument.
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  FunctionNodeXYZToSpherical(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
-
-  //! Destructor.
-  virtual ~FunctionNodeXYZToSpherical();
-
-  //! Return a clone.
-  virtual FunctionNode*const deepclone() const;
-};
-
-//! This node implements spherical to XYZ co-ords
-class FunctionNodeSphericalToXYZ : public FunctionNode
-{
- private:
-
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Query whether node value is independent of position argument.
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  FunctionNodeSphericalToXYZ(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
-
-  //! Destructor.
-  virtual ~FunctionNodeSphericalToXYZ();
-
-  //! Return a clone.
-  virtual FunctionNode*const deepclone() const;
-};
-
 //! This node evaluates a child function in spherical co-ordinates
 class FunctionNodeSphericalize : public FunctionNode
 {

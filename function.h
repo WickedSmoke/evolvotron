@@ -268,4 +268,57 @@ class FunctionTransformQuadratic
 
 //------------------------------------------------------------------------------------------
 
+//! Transforms cartesian coordinates to spherical
+class FunctionCartesianToSpherical
+{
+ public:
+
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No leaf arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p);
+
+  //! Not constant.
+  static const bool is_constant(const FunctionNode& our);
+};
+
+//------------------------------------------------------------------------------------------
+
+//! Transforms spherical coordinates to cartesian 
+class FunctionSphericalToCartesian
+{
+ public:
+
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No leaf arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p);
+
+  //! Not constant.
+  static const bool is_constant(const FunctionNode& our);
+};
+
+//------------------------------------------------------------------------------------------
+
+
 #endif

@@ -82,9 +82,9 @@ FunctionNode* FunctionNode::stub(const MutationParameters& parameters,bool excit
   else if (r<base)
     return new FunctionNodeUsing<FunctionConstant>(stubparams(parameters,3),stubargs(parameters,0));
   else if (r<base+1*step)
-    return new FunctionNodeXYZToSpherical(stubparams(parameters,0),stubargs(parameters,0));
+    return new FunctionNodeUsing<FunctionCartesianToSpherical>(stubparams(parameters,0),stubargs(parameters,0));
   else if (r<base+2*step) 
-    return new FunctionNodeSphericalToXYZ(stubparams(parameters,0),stubargs(parameters,0));
+    return new FunctionNodeUsing<FunctionSphericalToCartesian>(stubparams(parameters,0),stubargs(parameters,0));
   else if (r<base+3*step) 
     return new FunctionNodeSphericalize(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+4*step) 
@@ -265,74 +265,6 @@ const bool FunctionNode::ok() const
 }
 
 static Registry registry;
-
-/*******************************************/
-
-const XYZ FunctionNodeXYZToSpherical::evaluate(const XYZ& p) const
-{
-  const float r=p.magnitude();
-
-  // Angles are normalised over their possible range.
-  const float theta=atan2(p.y(),p.x())*(1.0f/M_PI);
-  const float phi=(r== 0.0f ? 0.0f : asin(p.z()/r)*(1.0f/(0.5f*M_PI)));
-
-  return XYZ(r,theta,phi);
-}
-
-const bool FunctionNodeXYZToSpherical::is_constant() const
-{
-  return false;
-}
-
-FunctionNodeXYZToSpherical::FunctionNodeXYZToSpherical(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==0);
-}
-
-FunctionNodeXYZToSpherical::~FunctionNodeXYZToSpherical()
-{}
-
-FunctionNode*const FunctionNodeXYZToSpherical::deepclone() const
-{
-  return new FunctionNodeXYZToSpherical(cloneparams(),cloneargs());
-}
-
-/*******************************************/
-
-const XYZ FunctionNodeSphericalToXYZ::evaluate(const XYZ& p) const
-{
-  const float r=p.x();
-  const float theta=M_PI*p.y();
-  const float phi=0.5*M_PI*p.z();
-
-  const float x=r*cos(theta)*sin(phi);
-  const float y=r*sin(theta)*sin(phi);
-  const float z=r*cos(phi);
-
-  return XYZ(x,y,z);
-}
-
-const bool FunctionNodeSphericalToXYZ::is_constant() const
-{
-  return false;
-}
-
-FunctionNodeSphericalToXYZ::FunctionNodeSphericalToXYZ(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==0);
-}
-
-FunctionNodeSphericalToXYZ::~FunctionNodeSphericalToXYZ()
-{}
-
-FunctionNode*const FunctionNodeSphericalToXYZ::deepclone() const
-{
-  return new FunctionNodeSphericalToXYZ(cloneparams(),cloneargs());
-}
 
 /*******************************************/
 

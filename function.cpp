@@ -184,3 +184,46 @@ const bool FunctionTransformQuadratic::is_constant(const FunctionNode&)
 }
 
 //------------------------------------------------------------------------------------------
+
+REGISTER(FunctionCartesianToSpherical);
+
+const XYZ FunctionCartesianToSpherical::evaluate(const FunctionNode& our,const XYZ& p)
+{
+  const float r=p.magnitude();
+  
+  // Angles are normalised (-1 to +1) over their usual possible range.
+  const float theta=atan2(p.y(),p.x())*(1.0f/M_PI);
+  const float phi=(r== 0.0f ? 0.0f : asin(p.z()/r)*(1.0f/(0.5f*M_PI)));
+  
+  return XYZ(r,theta,phi);
+}
+
+const bool FunctionCartesianToSpherical::is_constant(const FunctionNode&)
+{
+  return false;
+}
+
+//------------------------------------------------------------------------------------------
+
+REGISTER(FunctionSphericalToCartesian);
+
+const XYZ FunctionSphericalToCartesian::evaluate(const FunctionNode& our,const XYZ& p)
+{
+  const float r=p.x();
+  const float theta=M_PI*p.y();
+  const float phi=0.5*M_PI*p.z();
+
+  const float x=r*cos(theta)*sin(phi);
+  const float y=r*sin(theta)*sin(phi);
+  const float z=r*cos(phi);
+
+  return XYZ(x,y,z);
+}
+
+const bool FunctionSphericalToCartesian::is_constant(const FunctionNode&)
+{
+  return false;
+}
+
+//------------------------------------------------------------------------------------------
+
