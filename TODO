@@ -1,7 +1,9 @@
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
+- Bump mapped versions of shaded/reflecting spheres
 - Replace FunctionNode::stub() with FunctionRegistry based code
+- Better random number generator needed ?
 - More functions (reflection from environment, Perlin noise).
 - More iterative functions
 - evolvotron_mutate should provide more control

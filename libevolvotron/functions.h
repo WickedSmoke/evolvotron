@@ -1757,19 +1757,19 @@ REGISTER(FunctionChooseFrom2InBorderedHexagonGrid);
 
 //------------------------------------------------------------------------------------------
 
-//! Rays intersecting a sphere
+//! Rays intersecting a textured unit sphere
 /*! arg(0) is background
-    arg(1) sampled using a normalised vector defines an environment for reflected rays
-  param(0) is radius of an origin centred sphere.
+    arg(1) is 3D texture for sphere
+  param(0,1,2) is light source direction
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-class FunctionOrthoSphereReflect : public Function
+class FunctionOrthoSphereShaded : public Function
 {
  public:
-  //! One parameter.
+  //! Three parameters.
   static const uint parameters()
     {
-      return 1;
+      return 3;
     }
 
   //! Two argument.
@@ -1781,15 +1781,65 @@ class FunctionOrthoSphereReflect : public Function
   //! Evaluate function.
   static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
     {
-      const float r=fabsf(our.param(0));
-      const float r2=r*r;
-
       const float pr2=p.x()*p.x()+p.y()+p.y();
-      if (pr2<r2)
+      if (pr2<1.0f)
 	{
-	  const float z=-sqrt(r2-pr2);
+	  const float z=-sqrt(1.0f-pr2);
+	  const XYZ n(p.x(),p.y(),z);
+
+	  const XYZ l(XYZ(our.param(1),our.param(2),our.param(3)).normalised());
+
+	  float i=l%n;
+	  if (i<0.0f) i=0.0f;
+	  return i*our.arg(1)(n);
+	}
+      else
+	{
+	  return our.arg(0)(p);
+	}
+    }
+  
+  //! Can't be constant unless args are constant and equal (unlikely).
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionOrthoSphereShaded);
+
+//------------------------------------------------------------------------------------------
+
+//! Rays reflecting off a unit sphere
+/*! arg(0) is background
+    arg(1) sampled using a normalised vector defines an environment for reflected rays
+  p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
+*/
+class FunctionOrthoSphereReflect : public Function
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two argument.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const float pr2=p.x()*p.x()+p.y()+p.y();
+      if (pr2<1.0f)
+	{
+	  const float z=-sqrt(1.0f-pr2);
+
+	  // This is on surface of unit radius sphere - no need to normalise
 	  XYZ n(p.x(),p.y(),z);
-	  n.normalise();
 
 	  // The ray _towards_ the viewer is (0 0 -1)
 	  // The reflected ray is n-(v-n) = 2n-v
@@ -1802,7 +1852,7 @@ class FunctionOrthoSphereReflect : public Function
 	}
     }
   
-  //! Can't be constant unless args are constant and equal.
+  //! Can't be constant unless args are constant and equal (unlikely).
   static const bool is_constant(const FunctionNode& our)
     {
       return false;
@@ -1810,64 +1860,6 @@ class FunctionOrthoSphereReflect : public Function
 };
 
 REGISTER(FunctionOrthoSphereReflect);
-
-//------------------------------------------------------------------------------------------
-
-//! Rays intersecting a sphere
-/*! arg(0) is background
-    arg(1) is 3D texture for sphere
-  param(0) is radius of an origin centred sphere.
-  param(1,2,3) is light source direction
-  p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
-*/
-class FunctionOrthoSphereShaded : public Function
-{
- public:
-  //! Four parameter.
-  static const uint parameters()
-    {
-      return 4;
-    }
-
-  //! Two argument.
-  static const uint arguments()
-    {
-      return 2;
-    }
-
-  //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
-    {
-      const float r=fabsf(our.param(0));
-      const float r2=r*r;
-
-      const float pr2=p.x()*p.x()+p.y()+p.y();
-      if (pr2<r2)
-	{
-	  const float z=-sqrt(r2-pr2);
-	  const XYZ s(p.x(),p.y(),z);
-	  const XYZ n(s.normalised());
-
-	  const XYZ l(XYZ(our.param(1),our.param(2),our.param(3)).normalised());
-
-	  float i=l%n;
-	  if (i<0.0f) i=0.0f;
-	  return i*our.arg(1)(s);
-	}
-      else
-	{
-	  return our.arg(0)(p);
-	}
-    }
-  
-  //! Can't be constant unless args are constant and equal.
-  static const bool is_constant(const FunctionNode& our)
-    {
-      return false;
-    }
-};
-
-REGISTER(FunctionOrthoSphereShaded);
 
 //------------------------------------------------------------------------------------------
 

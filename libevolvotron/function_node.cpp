@@ -159,9 +159,9 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   else if (r<base+34*step) 
     return FunctionNodeUsing<FunctionChooseFrom2InBorderedHexagonGrid>::stubnew(parameters);
   else if (r<base+35*step) 
-    return FunctionNodeUsing<FunctionOrthoSphereReflect>::stubnew(parameters);
-  else if (r<base+36*step) 
     return FunctionNodeUsing<FunctionOrthoSphereShaded>::stubnew(parameters);
+  else if (r<base+36*step) 
+    return FunctionNodeUsing<FunctionOrthoSphereReflect>::stubnew(parameters);
   else if (r<base+37*step)
     return FunctionNodeUsing<FunctionTransformGeneralised>::stubnew(parameters);
   else if (r<base+38*step)
