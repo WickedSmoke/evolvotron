@@ -448,14 +448,19 @@ are enabled, then iterative functions are enabled too.
 
 OTHER EXECUTABLES
 =================
-This release also installs two other executables:
+This release also builds two other executables:
 
  - evolvotron_render
-   Usage: evolvotron_render [-s <width> <height>] [<file.ppm>|<file.png>] < <file.xml>
+   Usage: evolvotron_render [-v] [-s <width> <height>] [-f <frames>] [<file.ppm>|<file.png>] < <file.xml>
    Reads a XML function description from it's standard input and renders it to the
    file specified (suffix determines type, defaults to ppm if not recognised) at the
-   specified resolution (defaults to 512x512).
-   [NB This app does not use multiplt compute threads].
+   specified resolution.  Image size is specified by -s option and defaults to 512x512.
+   The -f option generates multi-frame animations.  .fnnnnnn is inserted/appended to
+   the specified filename in the same way as animations saved from evolvotron.
+   (You can use this on functions which weren't evolved in animation mode, but there's
+   no guarantee they have any interesting time/z variation).
+   Use the -v option to monitor the progress of a long animation run.
+   [NB This app does not use multiple compute threads].
 
  - evolvotron_mutate
    Usage: evolvotron_mutate [-g | < <file.xml>] > <file.xml>
@@ -466,15 +471,13 @@ This release also installs two other executables:
    as evolvotron in its default state) and writes the new function's XML
    representation to the standard output.
 
-For example:
-  evolvotron_mutate -g | evolvotron_render /tmp/xxx.ppm ; display /tmp/xxx.ppm
-  evolvotron_mutate -g | evolvotron_mutate | evolvotron_render /tmp/xxx.ppm ; display /tmp/xxx.ppm
+ Examples:
+  Evolving and mutating on the command line:
+    evolvotron_mutate -g | tee fn.xml | evolvotron_render /tmp/xxx.ppm ; display /tmp/xxx.ppm
+    cat fn.xml | evolvotron_mutate | evolvotron_render /tmp/xxx.ppm ; display /tmp/xxx.ppm
 
-These were added to enable the possibility of:
- - setting up an evolvotron web server, or other alternative
-   frameworks to the main evolvotron app.
- - producing animations by repeatedly manipulating some
-   aspect of a function and re-rendering it.
+  Animating a function ani.xml produced from evolvotron in animation mode:
+    cat ani.xml | evolvotron_render -f 100 -v -s 256 256 ani.ppm ; animate ani.f??????.ppm
 
 FUTURE DEVELOPMENTS
 ===================

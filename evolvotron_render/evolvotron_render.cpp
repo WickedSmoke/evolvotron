@@ -61,64 +61,95 @@ int main(int argc,char* argv[])
   
   if (args.option("-s",2)) args.after() >> width >> height;
 
-  std::vector<uint> image_data;
-  image_data.reserve(width*height);
+  uint frames=1;
+  if (args.option("-f",1)) args.after() >> frames;
+  if (frames<1)
+    {
+      std::cerr << "Must specify at least 1 frame (option: -f <frames>)\n";
+      exit(1);
+    }
+
+  for (uint frame=0;frame<frames;frame++)
+    {
+      std::vector<uint> image_data;
+      image_data.reserve(width*height);
   
-  for (int row=0;row<height;row++)
-    for (int col=0;col<width;col++)
-      {
-	// xy co-ords vary over -1.0 to 1.0
-	const XYZ p(
-		    -1.0+2.0*(col+0.5)/width,
-		    1.0-2.0*(row+0.5)/height,
-		    0.0
-		    );
-	uint c[3];
-	imagefn->get_rgb(p,c);
+      for (int row=0;row<height;row++)
+	for (int col=0;col<width;col++)
+	  {
+	    // xy co-ords vary over -1.0 to 1.0.  In the one frame case z will be 0
+	    const XYZ p(
+			-1.0+2.0*(col+0.5)/width,
+			1.0-2.0*(row+0.5)/height,
+			-1.0f+2.0f*(frame+0.5f)/frames
+			);
+	    uint c[3];
+	    imagefn->get_rgb(p,c);
 	
-	image_data.push_back((c[0]<<16)|(c[1]<<8)|(c[2]));
-      }
+	    image_data.push_back((c[0]<<16)|(c[1]<<8)|(c[2]));
+	  }
 
-  {
-    //! \todo If filename is "-", write PPM to stdout (QImage save only supports write-to-a-filenames though)
-    QString save_filename(QString::fromLocal8Bit(args.last(1).c_str()));
+      {
+	//! \todo If filename is "-", write PPM to stdout (QImage save only supports write-to-a-filenames though)
+	QString save_filename(QString::fromLocal8Bit(args.last(1).c_str()));
 
-    const char* save_format="PPM";
-    if (save_filename.upper().endsWith(".PPM"))
-      {
-	save_format="PPM";
-      }
-    else if (save_filename.upper().endsWith(".PNG"))
-      {
-	save_format="PNG";
-      }
-    else
-      {
-	std::cerr 
-	  << "evolvotron_render: Warning: Unrecognised file suffix.  File will be written in "
-	  << save_format
-	  << " format.\n";
-      }
+	const char* save_format="PPM";
+	if (save_filename.upper().endsWith(".PPM"))
+	  {
+	    save_format="PPM";
+	  }
+	else if (save_filename.upper().endsWith(".PNG"))
+	  {
+	    save_format="PNG";
+	  }
+	else
+	  {
+	    std::cerr 
+	      << "evolvotron_render: Warning: Unrecognised file suffix.  File will be written in "
+	      << save_format
+	      << " format.\n";
+	  }
+
+	if (frames>1)
+	  {
+	    QString frame_component;
+	    frame_component.sprintf(".f%06d",frame);
+	    int insert_point=save_filename.findRev(QString("."));
+	    if (insert_point==-1)
+	      {
+		save_filename.append(frame_component);
+	      }
+	    else
+	      {
+		save_filename.insert(insert_point,frame_component);
+	      }
+	  }
     
-    QImage image(
-		 (uchar*)&(image_data[0]),
-		 width,
-		 height,
-		 32,
-		 0,
-		 0,
-		 QImage::LittleEndian
-		 );
+	QImage image(
+		     (uchar*)&(image_data[0]),
+		     width,
+		     height,
+		     32,
+		     0,
+		     0,
+		     QImage::LittleEndian
+		     );
 
-    if (!image.save(save_filename,save_format))
-      {
-	std::cerr 
-	  << "evolvotron_render: Error: Couldn't save file "
+	if (!image.save(save_filename,save_format))
+	  {
+	    std::cerr 
+	      << "evolvotron_render: Error: Couldn't save file "
+	      << save_filename.local8Bit()
+	      << "\n";
+	    exit(1);
+	  }
+
+	std::clog
+	  << "Wrote file " 
 	  << save_filename.local8Bit()
 	  << "\n";
-	exit(1);
       }
-  }
-
+    }
+  
   exit(0);
 }

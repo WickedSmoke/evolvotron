@@ -6,6 +6,7 @@ From release 0.2.0:
    (saves time enlarging low res images unnecessarily)
  - x and -X command line options to specify specifc top level function types.
  - FunctionKaleidoscope and FunctionWindmill added
+ - Added -f <frames> option to evolvotron_render
 
 From release 0.1.4:
  - Bump version to 0.2.0 
