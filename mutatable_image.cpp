@@ -104,7 +104,7 @@ public:
   {
     const std::string element(localName);
 
-    std::clog << "StartElement : " /*<< element*/ << "\n";
+    //std::clog << "StartElement : " /*<< element*/ << "\n";
 
     if (_expect_characters)
       {
@@ -116,7 +116,7 @@ public:
       {
 	if (element=="evolvotron-image-function")
 	  {
-	    std::clog << "Element: evolvotron-image-function\n";
+	    //std::clog << "Element: evolvotron-image-function\n";
 	    _expect_top_level_element=false;
 	    //! \todo Check version number attribute
 	  }
@@ -130,7 +130,7 @@ public:
       {
 	if (element=="f")
 	  {
-	    std::clog << "Element: f\n";
+	    //std::clog << "Element: f\n";
 	    FunctionNodeInfo*const f=new FunctionNodeInfo;
 	    if (_stack.empty())
 	      {
@@ -152,19 +152,19 @@ public:
 	  }
 	else if (element=="type")
 	  {
-	    std::clog << "Element: type\n";
+	    //std::clog << "Element: type\n";
 	    _expect_characters=true;
 	    _expect_characters_type=true;
 	  }
 	else if (element=="i")
 	  {
-	    std::clog << "Element: i\n";
+	    //std::clog << "Element: i\n";
 	    _expect_characters=true;
 	    _expect_characters_iterations=true;
 	  }
 	else if (element=="p")
 	  {
-	    std::clog << "Element: p\n";
+	    //std::clog << "Element: p\n";
 	    _expect_characters=true;
 	    _expect_characters_parameter=true;
 	  }
@@ -217,7 +217,7 @@ public:
 	  }
       }
 
-    std::clog << "Non-blank expected character data\n";
+    //std::clog << "Non-blank expected character data\n";
 
     if (_expect_characters_type)
       {
