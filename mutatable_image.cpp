@@ -43,6 +43,8 @@ MutatableImageNode* MutatableImageNode::stub(Random01& r01)
 {
   const float r=r01();
 
+  //! \todo: Should be a mutation parameter which is ratio between Position nodes and warped position nodes.
+
   if (r<0.4)
     return new MutatableImageNodeConstant(RandomXYZInSphere(r01,1.0));
   else if (r<0.8)
@@ -62,14 +64,18 @@ MutatableImageNode* MutatableImageNode::stub(Random01& r01)
   else if (r<0.87) 
     return new MutatableImageNodeCross(stubvector(r01,2));
   else if (r<0.88) 
-    return new MutatableImageNodeMod(stubvector(r01,2));
+    return new MutatableImageNodeMax(stubvector(r01,2));
   else if (r<0.89) 
-    return new MutatableImageNodeConcatenateTriple(stubvector(r01,3));
+    return new MutatableImageNodeMin(stubvector(r01,2));
   else if (r<0.90) 
-    return new MutatableImageNodeReflect(stubvector(r01,3));
+    return new MutatableImageNodeMod(stubvector(r01,2));
   else if (r<0.91) 
+    return new MutatableImageNodeConcatenateTriple(stubvector(r01,3));
+  else if (r<0.92) 
+    return new MutatableImageNodeReflect(stubvector(r01,3));
+  else if (r<0.93) 
     return new MutatableImageNodeChoose(stubvector(r01,4));
-  else if (r<0.955)
+  else if (r<0.965)
     return new MutatableImageNodePostTransform(stubvector(r01,5));
   else 
     return new MutatableImageNodePreTransform(stubvector(r01,5));
@@ -92,7 +98,6 @@ MutatableImageNode::MutatableImageNode()
 MutatableImageNode::MutatableImageNode(const std::vector<MutatableImageNode*>& a)
 :_args(a)
 {}
-
 
 /*! Deletes all arguments.  No one else should be referencing except the root node of an image.
  */
@@ -339,6 +344,52 @@ MutatableImageNodeCross::~MutatableImageNodeCross()
 MutatableImageNode*const MutatableImageNodeCross::deepclone() const
 {
   return new MutatableImageNodeCross(cloneargs());
+}
+
+/*******************************************/
+
+const XYZ MutatableImageNodeMax::evaluate(const XYZ& p) const
+{
+  const XYZ v0(arg(0)(p));
+  const XYZ v1(arg(1)(p));
+  return XYZ(maximum(v0.x,v1.x),maximum(v0.y,v1.y),maximum(v0.z,v1.z));
+}
+
+MutatableImageNodeMax::MutatableImageNodeMax(const std::vector<MutatableImageNode*>& a)
+  :MutatableImageNode(a)
+{
+  assert(args().size()==2);
+}
+
+MutatableImageNodeMax::~MutatableImageNodeMax()
+{}
+
+MutatableImageNode*const MutatableImageNodeMax::deepclone() const
+{
+  return new MutatableImageNodeMax(cloneargs());
+}
+
+/*******************************************/
+
+const XYZ MutatableImageNodeMin::evaluate(const XYZ& p) const
+{
+  const XYZ v0(arg(0)(p));
+  const XYZ v1(arg(1)(p));
+  return XYZ(minimum(v0.x,v1.x),minimum(v0.y,v1.y),minimum(v0.z,v1.z));
+}
+
+MutatableImageNodeMin::MutatableImageNodeMin(const std::vector<MutatableImageNode*>& a)
+  :MutatableImageNode(a)
+{
+  assert(args().size()==2);
+}
+
+MutatableImageNodeMin::~MutatableImageNodeMin()
+{}
+
+MutatableImageNode*const MutatableImageNodeMin::deepclone() const
+{
+  return new MutatableImageNodeMin(cloneargs());
 }
 
 /*******************************************/

@@ -1,6 +1,7 @@
-- Save
 - Save whole grid as a single image (from File menu).
 - More functions 
+- Undo on File menu (for inaccurate clicking)
+- Context menu option to regenerate a particular cell (means keeping a copy of the spawning image)
 - Control grid size and number of threads from command line options.
 - Control over mutation parameters (dialog box)
 - Quick access "Hotter"/"Colder" control of mutation parameters

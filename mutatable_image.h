@@ -286,6 +286,46 @@ class MutatableImageNodeCross : public MutatableImageNode
   virtual MutatableImageNode*const deepclone() const;
 };
 
+//! This node implements maximum
+class MutatableImageNodeMax : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodeMax(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeMax();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! This node implements minimum
+class MutatableImageNodeMin : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodeMin(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeMin();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
 //! This node implements modulus
 class MutatableImageNodeMod : public MutatableImageNode
 {
