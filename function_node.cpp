@@ -88,45 +88,45 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   else if (r<base+3*step) 
     return new FunctionNodeUsing<FunctionEvaluateInSpherical>(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+4*step) 
-    return new FunctionNodeRotate(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeUsing<FunctionRotate>(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+5*step) 
-    return new FunctionNodeSin(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeUsing<FunctionSin>(stubparams(parameters,0),stubargs(parameters,0));
   else if (r<base+6*step) 
-    return new FunctionNodeCos(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeUsing<FunctionCos>(stubparams(parameters,0),stubargs(parameters,0));
   else if (r<base+7*step) 
-    return new FunctionNodeSpiralLinear(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeUsing<FunctionSpiralLinear>(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+8*step) 
-    return new FunctionNodeSpiralLogarithmic(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeUsing<FunctionSpiralLogarithmic>(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+9*step) 
-    return new FunctionNodeGrad(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeUsing<FunctionGradient>(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+10*step) 
-    return new FunctionNodeConcatenatePair(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeUsing<FunctionComposePair>(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+11*step) 
-    return new FunctionNodeAdd(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeUsing<FunctionAdd>(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+12*step) 
-    return new FunctionNodeMultiply(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeUsing<FunctionMultiply>(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+13*step) 
-    return new FunctionNodeDivide(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeUsing<FunctionDivide>(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+14*step) 
-    return new FunctionNodeCross(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeUsing<FunctionCross>(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+15*step) 
-    return new FunctionNodeGeometricInversion(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeUsing<FunctionGeometricInversion>(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+16*step) 
-    return new FunctionNodeMax(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeUsing<FunctionMax>(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+17*step) 
-    return new FunctionNodeMin(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeUsing<FunctionMin>(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+18*step) 
-    return new FunctionNodeMod(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeUsing<FunctionMod>(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+19*step) 
-    return new FunctionNodeConcatenateTriple(stubparams(parameters,0),stubargs(parameters,3));
+    return new FunctionNodeUsing<FunctionComposeTriple>(stubparams(parameters,0),stubargs(parameters,3));
   else if (r<base+20*step) 
-    return new FunctionNodeReflect(stubparams(parameters,0),stubargs(parameters,3));
+    return new FunctionNodeUsing<FunctionReflect>(stubparams(parameters,0),stubargs(parameters,3));
   else if (r<base+21*step) 
-    return new FunctionNodeMagnitudes(stubparams(parameters,0),stubargs(parameters,3));
+    return new FunctionNodeUsing<FunctionMagnitudes>(stubparams(parameters,0),stubargs(parameters,3));
   else if (r<base+22*step) 
-    return new FunctionNodeChooseSphere(stubparams(parameters,0),stubargs(parameters,4));
+    return new FunctionNodeUsing<FunctionChooseSphere>(stubparams(parameters,0),stubargs(parameters,4));
   else if (r<base+23*step) 
-    return new FunctionNodeChooseRect(stubparams(parameters,0),stubargs(parameters,4));
+    return new FunctionNodeUsing<FunctionChooseRect>(stubparams(parameters,0),stubargs(parameters,4));
   else if (r<base+24*step)
     return new FunctionNodeUsing<FunctionTransformGeneralised>(stubparams(parameters,0),stubargs(parameters,4));
   else if (r<base+25*step)
@@ -161,26 +161,42 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
       std::vector<float> params_toplevel;
       std::vector<FunctionNode*> args_toplevel;
       
-      std::vector<float> params_in;
-      std::vector<FunctionNode*> args_in;
-      args_in.push_back(FunctionNode::stub(parameters));
-      args_in.push_back(FunctionNode::stub(parameters));
-      args_in.push_back(FunctionNode::stub(parameters));
-      args_in.push_back(FunctionNode::stub(parameters));
-      args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_in,args_in));
+      // 50/50 general transform vs more restricted 12-parameter version
+      if (parameters.r01()<0.5f)
+	{
+	  std::vector<float> params_in;
+	  std::vector<FunctionNode*> args_in;
+	  args_in.push_back(FunctionNode::stub(parameters));
+	  args_in.push_back(FunctionNode::stub(parameters));
+	  args_in.push_back(FunctionNode::stub(parameters));
+	  args_in.push_back(FunctionNode::stub(parameters));
+	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_in,args_in));
+	}
+      else
+	{
+	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransform>(stubparams(parameters,12),stubargs(parameters,0)));
+	}
       
       // This one is crucial: we REALLY want something interesting to happen within here.
       args_toplevel.push_back(FunctionNode::stub(parameters,true));
       
-      std::vector<float> params_out;
-      std::vector<FunctionNode*> args_out;
-      args_out.push_back(FunctionNode::stub(parameters));
-      args_out.push_back(FunctionNode::stub(parameters));
-      args_out.push_back(FunctionNode::stub(parameters));
-      args_out.push_back(FunctionNode::stub(parameters));
-      args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_out,args_out));
-      
-      root=new FunctionNodeConcatenateTriple(params_toplevel,args_toplevel);
+      // 50/50 general transform vs more restricted 12-parameter version
+      if (parameters.r01()<0.5f)
+	{
+	  std::vector<float> params_out;
+	  std::vector<FunctionNode*> args_out;
+	  args_out.push_back(FunctionNode::stub(parameters));
+	  args_out.push_back(FunctionNode::stub(parameters));
+	  args_out.push_back(FunctionNode::stub(parameters));
+	  args_out.push_back(FunctionNode::stub(parameters));
+	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_out,args_out));
+	}
+      else
+	{
+	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransform>(stubparams(parameters,12),stubargs(parameters,0)));
+	}
+	
+      root=new FunctionNodeUsing<FunctionComposeTriple>(params_toplevel,args_toplevel);
       
       assert(root->ok());
       
@@ -285,7 +301,7 @@ void FunctionNode::mutate(const MutationParameters& parameters)
 	  a.push_back((*it));
 	  a.push_back(stub(parameters));
 
-	  (*it)=new FunctionNodeConcatenatePair(p,a);
+	  (*it)=new FunctionNodeUsing<FunctionComposePair>(p,a);
 	}
     }
 }
@@ -313,621 +329,26 @@ const bool FunctionNode::ok() const
 
 static Registry registry;
 
-/*******************************************/
-
-const XYZ FunctionNodeRotate::evaluate(const XYZ& p) const
-{
-  const XYZ a(arg(0)(p)*M_PI);
-  
-  Matrix33RotateX rx(a.x());
-  Matrix33RotateY ry(a.y());
-  Matrix33RotateZ rz(a.z());
-
-  return XYZ((rx*ry*rz)*p);
-}
-
-const bool FunctionNodeRotate::is_constant() const
-{
-  return arg(0).is_constant();
-}
-
-FunctionNodeRotate::FunctionNodeRotate(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==1);
-}
-
-FunctionNodeRotate::~FunctionNodeRotate()
-{}
-
-FunctionNode*const FunctionNodeRotate::deepclone() const
-{
-  return new FunctionNodeRotate(cloneparams(),cloneargs());
-}
-
 
 /*******************************************/
-
-const XYZ FunctionNodeSin::evaluate(const XYZ& p) const
-{
-  const XYZ v(arg(0)(p));
-  return XYZ(sin(v.x()),sin(v.y()),sin(v.z()));
-}
-
-const bool FunctionNodeSin::is_constant() const
-{
-  return arg(0).is_constant();
-}
-
-FunctionNodeSin::FunctionNodeSin(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==1);
-}
-
-FunctionNodeSin::~FunctionNodeSin()
-{}
-
-FunctionNode*const FunctionNodeSin::deepclone() const
-{
-  return new FunctionNodeSin(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeCos::evaluate(const XYZ& p) const
-{
-  const XYZ v(arg(0)(p));
-  return XYZ(cos(v.x()),cos(v.y()),cos(v.z()));
-}
-
-const bool FunctionNodeCos::is_constant() const
-{
-  return arg(0).is_constant();
-}
-
-FunctionNodeCos::FunctionNodeCos(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==1);
-}
-
-FunctionNodeCos::~FunctionNodeCos()
-{}
-
-FunctionNode*const FunctionNodeCos::deepclone() const
-{
-  return new FunctionNodeCos(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeSpiralLinear::evaluate(const XYZ& p) const
-{
-  const float r=p.magnitude();
-  float theta=atan2(p.y(),p.x());
-  if (theta<0.0f) theta+=2.0f*M_PI;
-  const float winding=floor(r-theta/(2.0*M_PI));
-
-  const float x=2.0f*winding+theta/M_PI;
-  const float y=2.0f*r-x;
-
-  return arg(0)(XYZ(x,y,p.z()));
-}
-
-const bool FunctionNodeSpiralLinear::is_constant() const
-{
-  return (arg(0).is_constant());
-}
-
-FunctionNodeSpiralLinear::FunctionNodeSpiralLinear(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==1);
-}
-
-FunctionNodeSpiralLinear::~FunctionNodeSpiralLinear()
-{}
-
-FunctionNode*const FunctionNodeSpiralLinear::deepclone() const
-{
-  return new FunctionNodeSpiralLinear(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeSpiralLogarithmic::evaluate(const XYZ& p) const
-{
-  const float r=p.magnitude();
-  float theta=atan2(p.y(),p.x());
-  if (theta<0.0f) theta+=2.0f*M_PI;
-  const float lnr=log(r);
-  const float winding=floor(lnr-theta/(2.0*M_PI));
-
-  const float x=2.0f*winding+theta/M_PI;
-  const float y=2.0f*lnr-x;
-
-  return arg(0)(XYZ(x,y,p.z()));
-}
-
-const bool FunctionNodeSpiralLogarithmic::is_constant() const
-{
-  return (arg(0).is_constant());
-}
-
-FunctionNodeSpiralLogarithmic::FunctionNodeSpiralLogarithmic(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==1);
-}
-
-FunctionNodeSpiralLogarithmic::~FunctionNodeSpiralLogarithmic()
-{}
-
-FunctionNode*const FunctionNodeSpiralLogarithmic::deepclone() const
-{
-  return new FunctionNodeSpiralLogarithmic(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeGrad::evaluate(const XYZ& p) const
-{
-  const float epsilon=1e-6;
-  const XYZ vepsilon(epsilon,epsilon,epsilon);
-
-  const XYZ v0(arg(0)(p-vepsilon));
-  const XYZ v1(arg(0)(p+vepsilon));
-  return (v1-v0)/(2.0*epsilon);
-}
-
-const bool FunctionNodeGrad::is_constant() const
-{
-  return arg(0).is_constant();
-}
-
-FunctionNodeGrad::FunctionNodeGrad(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==1);
-}
-
-FunctionNodeGrad::~FunctionNodeGrad()
-{}
-
-FunctionNode*const FunctionNodeGrad::deepclone() const
-{
-  return new FunctionNodeGrad(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeConcatenatePair::evaluate(const XYZ& p) const
-{
-  return arg(1)(arg(0)(p));
-}
-
-const bool FunctionNodeConcatenatePair::is_constant() const
-{
-  return (arg(0).is_constant() || arg(1).is_constant());
-}
-
-FunctionNodeConcatenatePair::FunctionNodeConcatenatePair(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==2);
-}
-
-FunctionNodeConcatenatePair::~FunctionNodeConcatenatePair()
-{}
-
-FunctionNode*const FunctionNodeConcatenatePair::deepclone() const
-{
-  return new FunctionNodeConcatenatePair(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeAdd::evaluate(const XYZ& p) const
-{
-  return arg(0)(p)+arg(1)(p);
-}
-
-const bool FunctionNodeAdd::is_constant() const
-{
-  return (arg(0).is_constant() && arg(1).is_constant());
-}
-
-FunctionNodeAdd::FunctionNodeAdd(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==2);
-}
-
-FunctionNodeAdd::~FunctionNodeAdd()
-{}
-
-FunctionNode*const FunctionNodeAdd::deepclone() const
-{
-  return new FunctionNodeAdd(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeMultiply::evaluate(const XYZ& p) const
-{
-  return arg(0)(p)*arg(1)(p);
-}
-
-const bool FunctionNodeMultiply::is_constant() const
-{
-  return (arg(0).is_constant() && arg(1).is_constant());
-}
-
-FunctionNodeMultiply::FunctionNodeMultiply(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==2);
-}
-
-FunctionNodeMultiply::~FunctionNodeMultiply()
-{}
-
-FunctionNode*const FunctionNodeMultiply::deepclone() const
-{
-  return new FunctionNodeMultiply(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeDivide::evaluate(const XYZ& p) const
-{
-  const XYZ v0(arg(0)(p));
-  const XYZ v1(arg(1)(p));
-
-  return XYZ(
-	     (v1.x()==0.0 ? 0.0 : v0.x()/v1.x()),
-	     (v1.y()==0.0 ? 0.0 : v0.y()/v1.y()),
-	     (v1.z()==0.0 ? 0.0 : v0.z()/v1.z())
-	     );
-}
-
-const bool FunctionNodeDivide::is_constant() const
-{
-  return (arg(0).is_constant() && arg(1).is_constant());
-}
-
-FunctionNodeDivide::FunctionNodeDivide(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==2);
-}
-
-FunctionNodeDivide::~FunctionNodeDivide()
-{}
-
-FunctionNode*const FunctionNodeDivide::deepclone() const
-{
-  return new FunctionNodeDivide(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeCross::evaluate(const XYZ& p) const
-{
-  return arg(0)(p)*arg(1)(p);
-}
-
-const bool FunctionNodeCross::is_constant() const
-{
-  return (arg(0).is_constant() && arg(1).is_constant());
-}
-
-FunctionNodeCross::FunctionNodeCross(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==2);
-}
-
-FunctionNodeCross::~FunctionNodeCross()
-{}
-
-FunctionNode*const FunctionNodeCross::deepclone() const
-{
-  return new FunctionNodeCross(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeGeometricInversion::evaluate(const XYZ& p) const
-{
-  const XYZ origin(arg(0)(p));
-  const float radius2(arg(1)(p).magnitude2());
-
-  const XYZ pr(p-origin);
-  const float prm(pr.magnitude());
-  const float prmi(1.0f/prm);
-  const XYZ prn(pr*prmi);
-
-  return origin+prn*radius2*prmi;
-}
-
-const bool FunctionNodeGeometricInversion::is_constant() const
-{
-  return false;
-}
-
-FunctionNodeGeometricInversion::FunctionNodeGeometricInversion(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==2);
-}
-
-FunctionNodeGeometricInversion::~FunctionNodeGeometricInversion()
-{}
-
-FunctionNode*const FunctionNodeGeometricInversion::deepclone() const
-{
-  return new FunctionNodeGeometricInversion(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeMax::evaluate(const XYZ& p) const
-{
-  const XYZ v0(arg(0)(p));
-  const XYZ v1(arg(1)(p));
-  return XYZ(maximum(v0.x(),v1.x()),maximum(v0.y(),v1.y()),maximum(v0.z(),v1.z()));
-}
-
-const bool FunctionNodeMax::is_constant() const
-{
-  return (arg(0).is_constant() && arg(1).is_constant());
-}
-
-FunctionNodeMax::FunctionNodeMax(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==2);
-}
-
-FunctionNodeMax::~FunctionNodeMax()
-{}
-
-FunctionNode*const FunctionNodeMax::deepclone() const
-{
-  return new FunctionNodeMax(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeMin::evaluate(const XYZ& p) const
-{
-  const XYZ v0(arg(0)(p));
-  const XYZ v1(arg(1)(p));
-  return XYZ(minimum(v0.x(),v1.x()),minimum(v0.y(),v1.y()),minimum(v0.z(),v1.z()));
-}
-
-const bool FunctionNodeMin::is_constant() const
-{
-  return (arg(0).is_constant() && arg(1).is_constant());
-}
-
-FunctionNodeMin::FunctionNodeMin(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==2);
-}
-
-FunctionNodeMin::~FunctionNodeMin()
-{}
-
-FunctionNode*const FunctionNodeMin::deepclone() const
-{
-  return new FunctionNodeMin(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeMod::evaluate(const XYZ& p) const
-{
-  const XYZ a(arg(0)(p));
-  const XYZ b(arg(1)(p));
-  
-  return XYZ(fmod(a.x(),b.x()),fmod(a.y(),b.y()),fmod(a.z(),b.z()));
-}
-
-const bool FunctionNodeMod::is_constant() const
-{
-  return (arg(0).is_constant() && arg(1).is_constant());
-}
-
-FunctionNodeMod::FunctionNodeMod(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==2);
-}
-
-FunctionNodeMod::~FunctionNodeMod()
-{}
-
-FunctionNode*const FunctionNodeMod::deepclone() const
-{
-  return new FunctionNodeMod(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeConcatenateTriple::evaluate(const XYZ& p) const
-{
-  return arg(2)(arg(1)(arg(0)(p)));
-}
-
-const bool FunctionNodeConcatenateTriple::is_constant() const
-{
-  return (arg(0).is_constant() || arg(1).is_constant() || arg(2).is_constant());
-}
-
-FunctionNodeConcatenateTriple::FunctionNodeConcatenateTriple(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==3);
-}
-
-FunctionNodeConcatenateTriple::~FunctionNodeConcatenateTriple()
-{}
-
-FunctionNode*const FunctionNodeConcatenateTriple::deepclone() const
-{
-  return new FunctionNodeConcatenateTriple(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeReflect::evaluate(const XYZ& p) const
-{
-  const XYZ pt_in_plane(arg(0)(p));
-  const XYZ normal(arg(1)(p).normalised());
-  
-  XYZ pos(arg(2)(p));
-
-  const float distance_from_plane=(pos-pt_in_plane)%normal;
-  
-  // If pos is on the wrong side of the plane, reflect it over
-  if (distance_from_plane<0.0)
-    {
-      pos-=(2.0*distance_from_plane)*normal;
-    }
-
-  return pos;
-}
-
-const bool FunctionNodeReflect::is_constant() const
-{
-  return arg(2).is_constant();
-}
-
-FunctionNodeReflect::FunctionNodeReflect(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==3);
-}
-
-FunctionNodeReflect::~FunctionNodeReflect()
-{}
-
-FunctionNode*const FunctionNodeReflect::deepclone() const
-{
-  return new FunctionNodeReflect(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeMagnitudes::evaluate(const XYZ& p) const
-{
-  return XYZ(arg(0)(p).magnitude(),arg(1)(p).magnitude(),arg(2)(p).magnitude());
-}
-
-const bool FunctionNodeMagnitudes::is_constant() const
-{
-  return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant());
-}
-
-FunctionNodeMagnitudes::FunctionNodeMagnitudes(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==3);
-}
-
-FunctionNodeMagnitudes::~FunctionNodeMagnitudes()
-{}
-
-FunctionNode*const FunctionNodeMagnitudes::deepclone() const
-{
-  return new FunctionNodeMagnitudes(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeChooseSphere::evaluate(const XYZ& p) const
-{
-  if ((arg(0)(p)).magnitude2()<(arg(1)(p)).magnitude2())
-    return arg(2)(p);
-  else
-    return arg(3)(p);
-}
-
-const bool FunctionNodeChooseSphere::is_constant() const
-{
-  return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant() && arg(3).is_constant());
-}
-
-FunctionNodeChooseSphere::FunctionNodeChooseSphere(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==4);
-}
-
-FunctionNodeChooseSphere::~FunctionNodeChooseSphere()
-{}
-
-FunctionNode*const FunctionNodeChooseSphere::deepclone() const
-{
-  return new FunctionNodeChooseSphere(cloneparams(),cloneargs());
-}
-
 /*******************************************/
-
-const XYZ FunctionNodeChooseRect::evaluate(const XYZ& p) const
-{
-  const XYZ p0(arg(0)(p));
-  const XYZ p1(arg(1)(p));
-
-  if (p1.origin_centred_rect_contains(p0))
-    return arg(2)(p);
-  else
-    return arg(3)(p);
-}
-
-const bool FunctionNodeChooseRect::is_constant() const
-{
-  return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant() && arg(3).is_constant());
-}
-
-FunctionNodeChooseRect::FunctionNodeChooseRect(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==4);
-}
-
-FunctionNodeChooseRect::~FunctionNodeChooseRect()
-{}
-
-FunctionNode*const FunctionNodeChooseRect::deepclone() const
-{
-  return new FunctionNodeChooseRect(cloneparams(),cloneargs());
-}
-
 /*******************************************/
 
 FunctionNodeIterative::FunctionNodeIterative(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)

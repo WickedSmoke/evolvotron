@@ -4,7 +4,7 @@ imply it will be done sooner or later than other items!
 - Load/save to XML file.
 - More functions (reflection from environment, Perlin noise).
 - More iterative functions (e.g average along a segment between two co-ordinates).
-- Get rid of xyz and matrix dependence on general tuples and templates.
+- Get rid of silly xyz and matrix dependence on general tuples and templates.
   Can be optimised, but only with heavyweight compile options.
 - Spawn recoloured could be linear, quadratic, or generalised versions.
 - Compute volumes in Z direction.

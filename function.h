@@ -60,7 +60,7 @@ class FunctionConstant
     }
 
   //! Returns the constant value
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  static const XYZ evaluate(const FunctionNode& our,const XYZ&)
     {
       return XYZ(our.param(0),our.param(1),our.param(2));
     }
@@ -94,7 +94,7 @@ class FunctionIdentity
     }
 
   //! Simply return the position argument.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
     {
       return p;
     }
@@ -170,7 +170,7 @@ class FunctionTransformGeneralised
   }
 
   //! Is almost certainly not constant.
-  static const bool is_constant(const FunctionNode& our)
+  static const bool is_constant(const FunctionNode&)
   {
     return false;
   }
@@ -312,7 +312,7 @@ class FunctionTransformQuadratic
     }
 
   //! Unlikely to ever be constant (requires all parameters zero).
-  static const bool is_constant(const FunctionNode& our)
+  static const bool is_constant(const FunctionNode&)
     {
       return false;
     }
@@ -340,7 +340,7 @@ class FunctionCartesianToSpherical
     }
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
   {
     const float r=p.magnitude();
     
@@ -381,7 +381,7 @@ class FunctionSphericalToCartesian
     }
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
   {
     const float r=p.x();
     const float theta=M_PI*p.y();
@@ -395,7 +395,7 @@ class FunctionSphericalToCartesian
   }
 
   //! Not constant.
-  static const bool is_constant(const FunctionNode& our)
+  static const bool is_constant(const FunctionNode&)
   {
     return false;
   }
@@ -450,6 +450,741 @@ class FunctionEvaluateInSpherical
 };
 
 REGISTER(FunctionEvaluateInSpherical);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionRotate
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! 1 leaf argument supplying rotation angles
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const XYZ a(our.arg(0)(p)*M_PI);
+  
+      Matrix33RotateX rx(a.x());
+      Matrix33RotateY ry(a.y());
+      Matrix33RotateZ rz(a.z());
+      
+      return XYZ((rx*ry*rz)*p);
+    }
+  
+  //! Is constant if leaf node is.
+  static const bool is_constant(const FunctionNode& our)
+  {
+    return our.arg(0).is_constant();
+  }
+
+};
+
+REGISTER(FunctionRotate);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionSin
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+    {
+      return XYZ(sin(p.x()),sin(p.y()),sin(p.z()));
+    }
+  
+  //! Isn't constant
+  static const bool is_constant(const FunctionNode&)
+  {
+    return false;
+  }
+
+};
+
+REGISTER(FunctionSin);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionCos
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+    {
+      return XYZ(cos(p.x()),cos(p.y()),cos(p.z()));
+    }
+  
+  //! Isn't constant
+  static const bool is_constant(const FunctionNode&)
+  {
+    return false;
+  }
+};
+
+REGISTER(FunctionCos);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionSpiralLinear
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! One argument.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const float r=p.magnitude();
+      float theta=atan2(p.y(),p.x());
+      if (theta<0.0f) theta+=2.0f*M_PI;
+      const float winding=floor(r-theta/(2.0*M_PI));
+      
+      const float x=2.0f*winding+theta/M_PI;
+      const float y=2.0f*r-x;
+      
+      return our.arg(0)(XYZ(x,y,p.z()));
+    }
+  
+  //! Is constant if the function being spiral-ed is.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+
+};
+
+REGISTER(FunctionSpiralLinear);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionSpiralLogarithmic
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! One argument.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const float r=p.magnitude();
+      float theta=atan2(p.y(),p.x());
+      if (theta<0.0f) theta+=2.0f*M_PI;
+      const float lnr=log(r);
+      const float winding=floor(lnr-theta/(2.0*M_PI));
+      
+      const float x=2.0f*winding+theta/M_PI;
+      const float y=2.0f*lnr-x;
+      
+      return our.arg(0)(XYZ(x,y,p.z()));
+    }
+  
+  //! Is constant if the function being spiral-ed is.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionSpiralLogarithmic);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionGradient
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! One argument.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const float epsilon=1e-6;
+      const XYZ vepsilon(epsilon,epsilon,epsilon);
+      
+      const XYZ v0(our.arg(0)(p-vepsilon));
+      const XYZ v1(our.arg(0)(p+vepsilon));
+      return (v1-v0)/(2.0*epsilon);
+    }
+  
+  //! Is constant if the function being gradient-ed is.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionGradient);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionComposePair
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      return our.arg(1)(our.arg(0)(p));
+    }
+  
+  //! Is constant if either function is.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return (our.arg(0).is_constant() || our.arg(1).is_constant());
+    }
+};
+
+REGISTER(FunctionComposePair);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionComposeTriple
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Three arguments.
+  static const uint arguments()
+    {
+      return 3;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      return our.arg(2)(our.arg(1)(our.arg(0)(p)));
+    }
+  
+  //! Is constant if any function is.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return (our.arg(0).is_constant() || our.arg(1).is_constant() || our.arg(2).is_constant());
+    }
+};
+
+REGISTER(FunctionComposeTriple);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionAdd
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      return our.arg(0)(p)+our.arg(1)(p);
+    }
+  
+  //! Is constant if both leaf functions are.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+    }
+};
+
+REGISTER(FunctionAdd);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionMultiply
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const XYZ v0(our.arg(0)(p));
+      const XYZ v1(our.arg(1)(p));
+      return XYZ(v0.x()*v1.x(),v0.y()*v1.y(),v0.z()*v1.z());
+    }
+  
+  //! Is constant if both leaf functions are.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+    }
+};
+
+REGISTER(FunctionMultiply);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionDivide
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const XYZ v0(our.arg(0)(p));
+      const XYZ v1(our.arg(1)(p));
+
+      return XYZ(
+		 (v1.x()==0.0 ? 0.0 : v0.x()/v1.x()),
+		 (v1.y()==0.0 ? 0.0 : v0.y()/v1.y()),
+		 (v1.z()==0.0 ? 0.0 : v0.z()/v1.z())
+		 );
+
+    }
+  
+  //! Is constant if both leaf functions are.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+    }
+};
+
+REGISTER(FunctionDivide);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionCross
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const XYZ v0(our.arg(0)(p));
+      const XYZ v1(our.arg(1)(p));
+      return v0*v1;
+    }
+  
+  //! Is constant if both leaf functions are.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+    }
+};
+
+REGISTER(FunctionCross);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionMax
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const XYZ v0(our.arg(0)(p));
+      const XYZ v1(our.arg(1)(p));
+      return XYZ(
+		 std::max(v0.x(),v1.x()),
+		 std::max(v0.y(),v1.y()),
+		 std::max(v0.z(),v1.z())
+		 );
+    }
+  
+  //! Is constant if both leaf functions are.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+    }
+};
+
+REGISTER(FunctionMax);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionMin
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const XYZ v0(our.arg(0)(p));
+      const XYZ v1(our.arg(1)(p));
+      return XYZ(
+		 std::min(v0.x(),v1.x()),
+		 std::min(v0.y(),v1.y()),
+		 std::min(v0.z(),v1.z())
+		 );
+    }
+  
+  //! Is constant if both leaf functions are.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+    }
+};
+
+REGISTER(FunctionMin);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionMod
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const XYZ v0(our.arg(0)(p));
+      const XYZ v1(our.arg(1)(p));
+      return XYZ(
+		 fmod(v0.x(),fabs(v1.x())),
+		 fmod(v0.y(),fabs(v1.y())),
+		 fmod(v0.z(),fabs(v1.z()))
+		 );
+    }
+  
+  //! Is constant if both leaf functions are.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+    }
+};
+
+REGISTER(FunctionMod);
+
+//------------------------------------------------------------------------------------------
+
+//! Invert the leaf function using a radius-one origin centred sphere.
+class FunctionGeometricInversion
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const float radius2=p.magnitude2();
+      const XYZ ip(p/radius2);
+
+      return our.arg(0)(ip);
+    }
+  
+  //! Is constant if leaf function is.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionGeometricInversion);
+
+//------------------------------------------------------------------------------------------
+
+//! Implements reflection of sampling point about a plane
+class FunctionReflect
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 3;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const XYZ pt_in_plane(our.arg(0)(p));
+      const XYZ normal(our.arg(1)(p).normalised());
+      
+      XYZ pos(our.arg(2)(p));
+      
+      const float distance_from_plane=(pos-pt_in_plane)%normal;
+      
+      // If pos is on the wrong side of the plane, reflect it over
+      if (distance_from_plane<0.0)
+	{
+	  pos-=(2.0*distance_from_plane)*normal;
+	}
+      
+      return pos;
+    }
+  
+  //! Is constant if sampled function is
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(2).is_constant();
+    }
+};
+
+REGISTER(FunctionReflect);
+
+//------------------------------------------------------------------------------------------
+
+//! Function returns a value comprising the magnitude of three leaf functions.
+class FunctionMagnitudes
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 3;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      return XYZ(
+		 our.arg(0)(p).magnitude(),
+		 our.arg(1)(p).magnitude(),
+		 our.arg(2)(p).magnitude()
+		 );
+    }
+  
+  //! Is constant if all leaf functions are
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return (our.arg(0).is_constant() && our.arg(1).is_constant() && our.arg(2).is_constant());
+    }
+};
+
+REGISTER(FunctionMagnitudes);
+
+//------------------------------------------------------------------------------------------
+
+//! Function implements selection between 2 functions based on the relative magnitudes of 2 other functions
+class FunctionChooseSphere
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 4;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      if ((our.arg(0)(p)).magnitude2()<(our.arg(1)(p)).magnitude2())
+	return our.arg(2)(p);
+      else
+	return our.arg(3)(p);
+    }
+  
+  //! Is constant if all leaf functions are
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return (our.arg(0).is_constant() && our.arg(1).is_constant() && our.arg(2).is_constant() && our.arg(3).is_constant());
+    }
+};
+
+REGISTER(FunctionChooseSphere);
+
+//------------------------------------------------------------------------------------------
+
+//! Function implements selection between 2 functions based on whether a rectangle contains a point
+class FunctionChooseRect
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 4;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const XYZ p0(our.arg(0)(p));
+      const XYZ p1(our.arg(1)(p));
+      
+      if (p1.origin_centred_rect_contains(p0))
+	return our.arg(2)(p);
+      else
+	return our.arg(3)(p);
+    }
+  
+  //! Is constant if all leaf functions are
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return (our.arg(0).is_constant() && our.arg(1).is_constant() && our.arg(2).is_constant() && our.arg(3).is_constant());
+    }
+};
+
+REGISTER(FunctionChooseRect);
 
 //------------------------------------------------------------------------------------------
 
