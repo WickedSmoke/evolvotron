@@ -18,8 +18,10 @@
 
 /*! \file
   \brief Interfaces and implementation for specific (non-base) Function classes
-  NB There is no class heirarchy here as all virtualisation and boilerplate services are supplied when the functions are plugged into the FunctionNode template.
-  \warning This file should ONLY be included in function_node.cpp, which instantiate everything.
+  NB There is no proper class heirarchy here as all virtualisation and boilerplate
+  services are supplied when the functions are plugged into the FunctionNode template
+  (rather than being inherited).
+  \warning This file should ONLY be included in function_node.cpp, which instantiates everything.
   The two functions allowed to escape "into the wild" are FunctionPreTransform and FunctionPostTransform 
   which have their own header file.
 */
@@ -32,8 +34,8 @@
 
 #include "useful.h"
 
-//! Sane modulus function always returning a number in the range 0-y
-inline float modulus(float x,float y)
+//! Sane modulus function always returning a number in the range [0,y)
+inline float modulusf(float x,float y)
 {
   if (y<0) y=-y;
   float r=fmod(x,y);
@@ -41,7 +43,8 @@ inline float modulus(float x,float y)
   return r;
 }
 
-inline uint modulus(int x,int y)
+//! Sane modulus function always returning a number in the range [0,y-1]
+inline uint modulusi(int x,int y)
 {
   if (y<0) y=-y;
   int r=x%y;
@@ -991,9 +994,9 @@ class FunctionModulus : public Function
       const XYZ v0(our.arg(0)(p));
       const XYZ v1(our.arg(1)(p));
       return XYZ(
-		 modulus(v0.x(),fabs(v1.x())),
-		 modulus(v0.y(),fabs(v1.y())),
-		 modulus(v0.z(),fabs(v1.z()))
+		 modulusf(v0.x(),fabs(v1.x())),
+		 modulusf(v0.y(),fabs(v1.y())),
+		 modulusf(v0.z(),fabs(v1.z()))
 		 );
     }
   
@@ -1331,7 +1334,7 @@ class FunctionChooseFrom3InCubeMesh : public Function
       const int y=static_cast<int>(floorf(p.y()));
       const int z=static_cast<int>(floorf(p.z()));
 
-      return our.arg(modulus(x+y+z,3))(p);
+      return our.arg(modulusi(x+y+z,3))(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
@@ -1406,7 +1409,7 @@ class FunctionChooseFrom3InSquareGrid : public Function
       const int x=static_cast<int>(floorf(p.x()));
       const int y=static_cast<int>(floorf(p.y()));
 
-      return our.arg(modulus(x+y,3))(p);
+      return our.arg(modulusi(x+y,3))(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
@@ -1493,7 +1496,7 @@ class FunctionChooseFrom3InTriangleGrid : public Function
       const int b=static_cast<int>(floorf(p%d1));
       const int c=static_cast<int>(floorf(p%d2));
 
-      return our.arg(modulus(a+b+c,3))(p);
+      return our.arg(modulusi(a+b+c,3))(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
@@ -1636,7 +1639,7 @@ class FunctionChooseFrom3InHexagonGrid : public Function
       int hy;
       nearest_hex(p.x(),p.y(),hx,hy);
       const uint which=hy+((hx&1)? 2 : 0);
-      return our.arg(modulus(which,3))(p);
+      return our.arg(modulusi(which,3))(p);
     }
     
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
@@ -1721,7 +1724,7 @@ class FunctionChooseFrom2InBorderedHexagonGrid : public Function
       bool in_border=false;
 
       // Hex centres are separated by 1.0 so limit border size
-      const float b=modulus(our.param(0),0.5f);
+      const float b=modulusf(our.param(0),0.5f);
 
       // Step along grid co-ordinates in various directions.  If there's a nearer point, we're in the border.
       for (uint a=0;a<6;a++)

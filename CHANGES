@@ -1,5 +1,9 @@
 [Most recent at top]
 
+From release 0.1.1:
+ - Bump version to 0.1.2-devel
+ - Gentoo compile bug fix (Karl Robillard)
+ 
 From release 0.1.0:
  - Bump version to 0.1.1
  - Grid size now defaults to 7x5
