@@ -2,7 +2,6 @@ For next release
 ----------------
 - Finish shuffling stuff between dialogs.
 - Per-function weighting.
-- Autocool.
 
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
@@ -23,11 +22,15 @@ Animation
 
 Conventional
 ------------
+- Heat/Cool etc buttons in status bar not very interesting.
+  Replace with autocool controls, or have them actually fire off
+  a respawn from the last spawned image; would get more of an idea
+  of how much effect there is then.
 - MutationParameters should be held by EvolvotronMain with pointers passed
   to dialogs.
 - Display properties dialog should have small copy of image
 - "Evolvotron corpus"; publish mode & viewer app to see other users' creations
-   How ?  PHP+SQL somewhere ? IRC ? RSS ? Jabber conference!
+   How ?  Jabber conference!  (It's all XML).
 - Proper dependency and generation by qmake of libevolvotron/usage_text.h
 - Rationalise configure options: fs/nofs (doc/nodoc?)
 - -h & --help option.  Print version and functions supported.
