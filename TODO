@@ -17,10 +17,15 @@ Animation
 
 Conventional
 ------------
+- Give some sort of control over pixel aspect ratio.  
+  A nice circular image in a square display on the screen is 
+  squished when rendered to a rectangular image.
+  Best solution probably to offer cropped modes e.g "640x480 from 640x640".
+  Alternative solution would be 4:3 mode for the whole app where the evaluation
+  range is changed.  Harder to explain though.
 - Add "Properties" to image, brought up by right-click.
   Careful... what happens if spawn over the image ?  
   Avoid issue by making it modal ?
-- Full-screen mode. (Get back to GUI via Esc key ?)
 - [Local] Clean up evolvotron_admin/evolvotron_gallery
 - Get rid of heat/cool etc buttons cluttering up status bar and just have (new) autocool tick, and reheat button ?
 - Check qmake can be found by configure.

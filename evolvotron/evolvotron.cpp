@@ -54,9 +54,9 @@ int main(int argc,char* argv[])
 
   Args args(argc,argv);
 
-  // Used to use 6x8 but as images get more detailed they need to be bigger
+  // A 4:3 ratio would nice to get square images on most screens, but isn't many images
+  uint cols=6;
   uint rows=5;
-  uint cols=7;
   uint threads=2;
 
   uint frames=1;

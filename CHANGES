@@ -4,6 +4,8 @@ From release 0.2.1:
  - Version to 0.2.2
  - CPU type an option to ./configure (p3,p4,xp supported)
  - Fullscreen & menu-hiding modes (from keyboard or command-line)
+ - Fullscreen mode for "Big" image displays
+ - Change default grid to 6x5 (would sooner have fat than thin images)
 
 From release 0.2.0:
  - Bump version to 0.2.1

@@ -40,6 +40,37 @@ MutatableImageDisplayBig::MutatableImageDisplayBig(QWidget* parent,EvolvotronMai
 MutatableImageDisplayBig::~MutatableImageDisplayBig()
 {}
 
+/*! There's not much point in dropping back to normal mode (from fullscreen) if the main
+  app is fullscreen because we'll just be hidden, so close instead under such circumstances.
+  (However, on ctrl-f we put both into normal mode).
+ */
+void MutatableImageDisplayBig::keyPressEvent(QKeyEvent* e)
+{
+  if (e->key()==Qt::Key_Escape)
+    {
+      if (main()->isFullScreen())
+	close();
+      else
+	showNormal();  
+    }
+  else if (e->key()==Qt::Key_F && !(e->state()^Qt::ControlButton))
+    {
+      if (isFullScreen())
+	{
+	  if (main()->isFullScreen())
+	    main()->showNormal();
+	  showNormal();
+	}
+      else 
+	showFullScreen();
+    }
+  else
+    {
+      // Perhaps it's for someone else
+      e->ignore();
+    }
+}
+
 void MutatableImageDisplayBig::resizeEvent(QResizeEvent*)
 {
   _held->resize(size());

@@ -67,8 +67,11 @@ class MutatableImageDisplayBig : public QWidget
     }
 
  protected:
-  virtual void resizeEvent(QResizeEvent*);
+  //! Handle key-presses
+  void keyPressEvent(QKeyEvent* e);
 
+  //! Need to propagate resizes to held widget
+  virtual void resizeEvent(QResizeEvent*);
 };
 
 #endif

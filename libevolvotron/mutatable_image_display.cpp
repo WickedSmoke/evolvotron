@@ -185,6 +185,8 @@ MutatableImageDisplay::~MutatableImageDisplay()
     {
       delete _offscreen_image[f];
     }
+
+  std::clog << "A MutatableImageDisplay was deleted\n";
 }
 
 void MutatableImageDisplay::frame_advance()
@@ -808,8 +810,8 @@ void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
 
   top_level_widget->show();
 
-  //Try this:
-  //if (main()->isFullScreen()) top_level_widget->showFullScreen();
+  //Propagate full screen mode 
+  if (main()->isFullScreen()) top_level_widget->showFullScreen();
 
   // Fire up image calculation
   display->image(_image->deepclone());
