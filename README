@@ -117,12 +117,32 @@ the ones I test on.  A COMPLETE record of a failed build would be
 appreciated (including the initial display of the gcc version).
 If you can fix it, the patches would be even better!
 
-[Other (non-x86) platforms: 
+BUILDING ON OTHER PLATFORMS
+===========================
+
 Linc Davis reports:
   "I built it on a Mac with Qt installed via Fink (if you know what that is.)
   All I had to do is add '$(QTDIR)/include/qt' to the include path and then
   run make."
-]
+
+Paolo Greppi built it on OSX like this:
+ - get qt for osx http://www.trolltech.com/download/qt/mac.html
+ - configure qt with -thread to compile threading support
+   (takes a lot of time)
+ - remember to:
+        sudo ln -sf /usr/local/qt/lib/libqt-mt.3.dylib /usr/lib
+ - and add this to .tcshrc in your home directory:
+        setenv QTDIR /usr/local/qt
+        setenv PATH $QTDIR/bin:$PATH
+        setenv DYLD_LIBRARY_PATH $QTDIR/lib
+
+ - modify the Makefile in evolvotron adding -lqt-mt at the end of LIBS
+ - cd libevolvotron
+   mv mutatable_image_computer_farm.c mutatable_image_computer_farm.cpp
+   mv mutatable_image_computer_task.c mutatable_image_computer_task.cpp
+ - make ... while compiling, it keeps saying
+   c++: unrecognized option `-pthread'
+
 
 INSTALL
 =======
@@ -437,6 +457,8 @@ THANKS
   Dmitry Kirsanov
   Jonathan Melhuish
   Karl Robillard
+  Linc Davis
+  Paolo Greppi  
 for feedback, suggestions and patches.
 
 ...to the participants in a SIGGRAPH conference panel many

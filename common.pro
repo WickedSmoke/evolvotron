@@ -18,8 +18,8 @@ QMAKE_CXXFLAGS_RELEASE += -O3 -fomit-frame-pointer -funroll-loops -ffast-math
 # NB -march=X implies -mcpu=X... no need to specify both the same
 #
 # Use the next two lines ONLY IF you have the right processor (P4)
-#QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
-#QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
+MAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
+MAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
 #
 # Here's the same thing for P3 
 #QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
