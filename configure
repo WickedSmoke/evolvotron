@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # QMAKESPEC is possibly also required on some systems
 # See Qt/qmake docs for your system and Evolvotron README if you have any problems.
@@ -26,10 +26,11 @@ if ! test -s libevolvotron/usage_text.h ; then echo "\"Full online documentation
 echo "...built documentation"
 
 CONFIG_OPTS="$@"
+VERSION_NUMBER=`./VERSION`
 
 echo
-echo "Running qmake..."
+echo "Running qmake with CONFIG_OPTS=$CONFIG_OPTS VERSION_NUMBER=$VERSION_NUMBER..."
 
-qmake "CONFIG_OPTS=$CONFIG_OPTS" main.pro 
+qmake "CONFIG_OPTS=$CONFIG_OPTS" "VERSION_NUMBER=$VERSION_NUMBER" main.pro 
 
 echo "...configuration completed - ready to do 'make' now"

@@ -65,9 +65,8 @@ contains(CONFIG_OPTS, xp ){
 # QMAKE_CXXFLAGS_RELEASE += -finline-limit=4000
 
 #######################################
-# Version numbering.  This is ENTIRELY controlled by what is echoed by the VERSION script
+# Version numbering.  VERSION_NUMBER should have been set on the qmake command line (see .configure script)
 
-VERSION_NUMBER = $${system(../VERSION)}
 QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_VERSION="$$VERSION_NUMBER"'
 QMAKE_CXXFLAGS_DEBUG   += '-DEVOLVOTRON_VERSION="$$VERSION_NUMBER"'
 QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_BUILD="$$VERSION_NUMBER (Build options: $$BUILD_INFO Release)"'
