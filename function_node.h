@@ -33,9 +33,6 @@
 
 #include "mutation_parameters.h"
 
-// Actually we probably only need a few specific functions used outside mutatable_image.cpp: FunctionPreTransform mainly
-#include "function.h"
-
 class FunctionPreTransform;
 template <typename F> class FunctionNodeUsing;
 

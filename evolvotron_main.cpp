@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /*! \file
   \brief Implementation of class EvolvotronMain.
+  \todo Eliminate need to include function.h (and instantiate lots of stuff) by moving more into function_node.h/.cpp
 */
 
 #include <time.h>

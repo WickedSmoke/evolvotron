@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "evolvotron_main.h"
 #include "mutatable_image_computer_task.h"
 #include "transform_factory.h"
-
+#include "function_pre_transform.h"
 /*! The constructor is passed:
     - the owning widget (probably either a QGrid or null if top-level),
     - the EvolvotronMain providing spawn and farm services, 
