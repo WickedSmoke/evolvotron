@@ -8,12 +8,12 @@ CONFIG+= qt thread release
 # (There is a nice summary of gcc optimisation options at http://freshmeat.net/articles/view/730/ )
 # 
 # Use the next two lines to generally improve things
-QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer 
+#QMAKE_CXXFLAGS_RELEASE -= -O2
+#QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer 
 #
 # Use the next two lines IF you have the right processor (P4)
-QMAKE_CXXFLAGS_RELEASE -= -march=i386
-QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
+#QMAKE_CXXFLAGS_RELEASE -= -march=i386
+#QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
 #
 # Use the next line for a "super-release" final build only.
 # It takes AGES and gcc grows HUGE (~100MB), so not too good for development.
