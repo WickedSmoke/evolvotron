@@ -35,14 +35,14 @@ const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint 
 {
   if (spheremap())
     {
-      const float longitude=-M_PI+2.0*M_PI*(x+0.5f)/sx;
-      const float latitude=0.5*M_PI-M_PI*(y+0.5f)/sy;
-      const float r=(
+      const real longitude=-M_PI+2.0*M_PI*(x+0.5)/sx;
+      const real latitude=0.5*M_PI-M_PI*(y+0.5)/sy;
+      const real r=(
 		     sinusoidal_z()
 		     ?
-		     0.5f+cos(M_PI*(z+0.5f)/sz)
+		     0.5+cos(M_PI*(z+0.5)/sz)
 		     :
-		     0.5f+(z+0.5f)/sz
+		     0.5+(z+0.5)/sz
 		     );
 		     
       return XYZ
@@ -56,14 +56,14 @@ const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint 
     {
       return XYZ
 	(
-	 -1.0f+2.0f*(x+0.5f)/sx,
-	  1.0f-2.0f*(y+0.5f)/sy,
+	 -1.0+2.0*(x+0.5)/sx,
+	  1.0-2.0*(y+0.5)/sy,
 	 (
 	  sinusoidal_z()
 	  ?
-	  cos(M_PI*(z+0.5f)/sz)
+	  cos(M_PI*(z+0.5)/sz)
 	  :
-	  -1.0f+2.0f*(z+0.5f)/sz
+	  -1.0+2.0*(z+0.5)/sz
 	  )
 	 );
     }
@@ -98,16 +98,16 @@ void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
   XYZ v(127.5*(pv+XYZ(1.0,1.0,1.0)));
 
   // Clamp out of range values just in case
-  v.x(clamped(v.x(),0.0f,255.0f));
-  v.y(clamped(v.y(),0.0f,255.0f));
-  v.z(clamped(v.z(),0.0f,255.0f));
+  v.x(clamped(v.x(),0.0,255.0));
+  v.y(clamped(v.y(),0.0,255.0));
+  v.z(clamped(v.z(),0.0,255.0));
 
   c[0]=(uint)floorf(v.x());
   c[1]=(uint)floorf(v.y());
   c[2]=(uint)floorf(v.z());
 }
 
-void MutatableImage::get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,float& proportion_constant) const
+void MutatableImage::get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const
 {
   root()->get_stats(total_nodes,total_parameters,depth,width,proportion_constant);
 }
@@ -392,7 +392,7 @@ public:
 	if (!ok)
 	  {
           QString tmp;
-          tmp = "Error: Couldn't parse \""+s+"\" as a float\n";
+          tmp = "Error: Couldn't parse \""+s+"\" as a real\n";
 	    _report+=tmp.latin1();
 	    return false;
 	  }

@@ -25,32 +25,32 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 const Transform TransformFactoryRandomWarpXY::operator()(Random01& r01) const
 {
     // Gives a scale between 0.5 and 2, average 1.
-  const float r=pow(2.0f,2.0f*r01()-1.0f);
+  const real r=pow(2.0,2.0*r01()-1.0);
 
   // Random rotation  
-  const float a=(2.0f*M_PI)*r01();
+  const real a=(2.0*M_PI)*r01();
 
-  const XYZ basis_x( r*cos(a), r*sin(a),0.0f);
-  const XYZ basis_y(-r*sin(a), r*cos(a),0.0f);
-  const XYZ basis_z(0.0f,0.0f,1.0f);
+  const XYZ basis_x( r*cos(a), r*sin(a),0.0);
+  const XYZ basis_y(-r*sin(a), r*cos(a),0.0);
+  const XYZ basis_z(0.0,0.0,1.0);
 
   // Random translation
-  const float tx=2.0f*r01()-1.0f;
-  const float ty=2.0f*r01()-1.0f;
-  const XYZ translate(tx,ty,0.0f);
+  const real tx=2.0*r01()-1.0;
+  const real ty=2.0*r01()-1.0;
+  const XYZ translate(tx,ty,0.0);
 
   return Transform(translate,basis_x,basis_y,basis_z);
 }
 
 const Transform TransformFactoryRandomScaleXY::operator()(Random01& rng) const
 {
-  const XYZ translate(0.0f,0.0f,0.0f);
+  const XYZ translate(0.0,0.0,0.0);
 
-  const float p=rng();
-  const float s=pow(2.0f,_lopow2+p*(_hipow2-_lopow2));
-  const XYZ basis_x(   s,0.0f,0.0f);
-  const XYZ basis_y(0.0f,   s,0.0f);
-  const XYZ basis_z(0.0f,0.0f,1.0f);
+  const real p=rng();
+  const real s=pow(2.0,_lopow2+p*(_hipow2-_lopow2));
+  const XYZ basis_x(   s,0.0,0.0);
+  const XYZ basis_y(0.0,   s,0.0);
+  const XYZ basis_z(0.0,0.0,1.0);
 
   return Transform(translate,basis_x,basis_y,basis_z);
 }
@@ -58,14 +58,14 @@ const Transform TransformFactoryRandomScaleXY::operator()(Random01& rng) const
 const Transform TransformFactoryRandomRotateZ::operator()(Random01& r01) const
 {
   // Random rotation  
-  const float a=(2.0f*M_PI)*r01();
-  const float ca=cos(a);
-  const float sa=sin(a);
+  const real a=(2.0*M_PI)*r01();
+  const real ca=cos(a);
+  const real sa=sin(a);
 
-  const XYZ basis_x(  ca,  sa,0.0f);
-  const XYZ basis_y( -sa,  ca,0.0f);
-  const XYZ basis_z(0.0f,0.0f,1.0f);
-  const XYZ translate(0.0f,0.0f,0.0f);
+  const XYZ basis_x(  ca,  sa,0.0);
+  const XYZ basis_y( -sa,  ca,0.0);
+  const XYZ basis_z(0.0,0.0,1.0);
+  const XYZ translate(0.0,0.0,0.0);
 
   return Transform(translate,basis_x,basis_y,basis_z);
 }
@@ -73,9 +73,9 @@ const Transform TransformFactoryRandomRotateZ::operator()(Random01& r01) const
 const Transform TransformFactoryRandomTranslateXYZ::operator()(Random01& r01) const
 {
   const XYZ translate(_origin+RandomXYZInBox(r01,_range));
-  const XYZ basis_x(1.0f,0.0f,0.0f);
-  const XYZ basis_y(0.0f,1.0f,0.0f);
-  const XYZ basis_z(1.0f,0.0f,1.0f);
+  const XYZ basis_x(1.0,0.0,0.0);
+  const XYZ basis_y(0.0,1.0,0.0);
+  const XYZ basis_z(1.0,0.0,1.0);
 
   return Transform(translate,basis_x,basis_y,basis_z);
 }

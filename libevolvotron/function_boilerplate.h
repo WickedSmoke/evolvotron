@@ -56,7 +56,7 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class
   //! Constructor
   /*! \warning Careful to pass an appropriate initial iteration count for iterative functions.
    */
-  FunctionBoilerplate(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter)
+  FunctionBoilerplate(const std::vector<real>& p,const std::vector<FunctionNode*>& a,uint iter)
     :FunctionNode(p,a,iter)
     {
       assert(params().size()==PARAMETERS);
@@ -151,7 +151,7 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE>
 #define FUNCTION_BEGIN(FN,NP,NA,IT,CL) \
    class FN : public FunctionBoilerplate<FN,NP,NA,IT> \
    {public: \
-     FN(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter) \
+     FN(const std::vector<real>& p,const std::vector<FunctionNode*>& a,uint iter) \
        :FunctionBoilerplate<FN,NP,NA,IT>(p,a,iter) {} \
      virtual ~FN() {} \
      static const uint type_classification() {return CL;} \

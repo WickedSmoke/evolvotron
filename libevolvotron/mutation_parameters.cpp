@@ -62,9 +62,9 @@ void MutationParameters::reset()
        it++
        )
     {
-      float initial_weight=1.0f;
-      if ((*it)->classification() & FnIterative) initial_weight=1.0f/1024.0f;  // Ouch iterative functions are expensive
-      if ((*it)->classification() & FnFractal) initial_weight=1.0f/1024.0f;  // Yuk fractals are ugly
+      real initial_weight=1.0;
+      if ((*it)->classification() & FnIterative) initial_weight=1.0/1024.0;  // Ouch iterative functions are expensive
+      if ((*it)->classification() & FnFractal) initial_weight=1.0/1024.0;  // Yuk fractals are ugly
       _function_weighting.insert(std::make_pair(*it,initial_weight));
     }
 
@@ -73,7 +73,7 @@ void MutationParameters::reset()
   emit changed();
 }
 
-void MutationParameters::general_cool(float f)
+void MutationParameters::general_cool(real f)
 {
   _magnitude*=f;
 
@@ -97,15 +97,15 @@ FunctionNode*const MutationParameters::random_function_stub(bool exciting) const
 {
   // Base mutations are Constant or Identity types.  
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
-  const float base=proportion_basic();
+  const real base=proportion_basic();
 
-  const float r=(exciting ? base+(1.0f-base)*r01() : r01());
+  const real r=(exciting ? base+(1.0-base)*r01() : r01());
 
-  if (r<(1.0f-proportion_constant())*identity_supression()*base)
+  if (r<(1.0-proportion_constant())*identity_supression()*base)
     {
       return FunctionTransform::stubnew(*this,false);
     }
-  else if (r<(1.0f-proportion_constant())*base)
+  else if (r<(1.0-proportion_constant())*base)
     {
       return FunctionIdentity::stubnew(*this,false);
     }
@@ -127,11 +127,11 @@ FunctionNode*const MutationParameters::random_function() const
 
 const FunctionRegistration*const MutationParameters::random_weighted_function_registration() const
 {  
-  const float r=r01();
+  const real r=r01();
   
-  const std::map<float,const FunctionRegistration*>::const_iterator it=_function_pick.lower_bound(r);
+  const std::map<real,const FunctionRegistration*>::const_iterator it=_function_pick.lower_bound(r);
 
-  // Just in case last key isn't quite 1.0f
+  // Just in case last key isn't quite 1.0
   if (it!=_function_pick.end())
     {
       return (*it).second;
@@ -142,12 +142,12 @@ const FunctionRegistration*const MutationParameters::random_weighted_function_re
     }
 }
 
-const float MutationParameters::random_function_branching_ratio() const
+const real MutationParameters::random_function_branching_ratio() const
 {
-  float weighted_args=0.0f;
+  real weighted_args=0.0;
 
   for (
-       std::map<const FunctionRegistration*,float>::const_iterator it=_function_weighting.begin();
+       std::map<const FunctionRegistration*,real>::const_iterator it=_function_weighting.begin();
        it!=_function_weighting.end();
        it++
        )
@@ -157,7 +157,7 @@ const float MutationParameters::random_function_branching_ratio() const
   return weighted_args/_function_weighting_total;
 }
 
-void MutationParameters::change_function_weighting(const FunctionRegistration* fn,float w)
+void MutationParameters::change_function_weighting(const FunctionRegistration* fn,real w)
 {
   _function_weighting[fn]=w;
   recalculate_function_stuff();
@@ -167,14 +167,14 @@ void MutationParameters::change_function_weighting(const FunctionRegistration* f
 void MutationParameters::randomize_function_weightings_for_classifications(uint classification_mask)
 {
   for (
-       std::map<const FunctionRegistration*,float>::iterator it=_function_weighting.begin();
+       std::map<const FunctionRegistration*,real>::iterator it=_function_weighting.begin();
        it!=_function_weighting.end();
        it++
        )
     {
       if (classification_mask==0 || classification_mask==static_cast<uint>(-1) || ((*it).first->classification() & classification_mask))
 	{
-	  const int i=static_cast<int>(floor(11.0f*r01()));
+	  const int i=static_cast<int>(floor(11.0*r01()));
 	  (*it).second=pow(2,-i);
 	}
     }
@@ -185,27 +185,27 @@ void MutationParameters::randomize_function_weightings_for_classifications(uint 
 }
 
 
-const float MutationParameters::get_weighting(const FunctionRegistration* fn)
+const real MutationParameters::get_weighting(const FunctionRegistration* fn)
 {
-  std::map<const FunctionRegistration*,float>::const_iterator it=_function_weighting.find(fn);
+  std::map<const FunctionRegistration*,real>::const_iterator it=_function_weighting.find(fn);
   assert(it!=_function_weighting.end());
   return (*it).second;
 }
 
 void MutationParameters::recalculate_function_stuff()
 {
-  _function_weighting_total=0.0f;
+  _function_weighting_total=0.0;
   for (
-       std::map<const FunctionRegistration*,float>::const_iterator it=_function_weighting.begin();
+       std::map<const FunctionRegistration*,real>::const_iterator it=_function_weighting.begin();
        it!=_function_weighting.end();
        it++
        )
     _function_weighting_total+=(*it).second;
 
-  float normalised=0.0f;
+  real normalised=0.0;
   _function_pick.clear();
   for (
-       std::map<const FunctionRegistration*,float>::const_iterator it=_function_weighting.begin();
+       std::map<const FunctionRegistration*,real>::const_iterator it=_function_weighting.begin();
        it!=_function_weighting.end();
        it++
        )

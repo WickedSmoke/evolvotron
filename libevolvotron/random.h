@@ -40,7 +40,7 @@ public:
     {}
   
   //! Return a random number.
-  /*! \warning Returns double instead of float because suspect NegExp can return Inf otherwise.
+  /*! \warning Returns double instead of real because suspect NegExp can return Inf otherwise.
    */
   virtual const double operator()()
     =0;

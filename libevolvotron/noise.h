@@ -34,7 +34,7 @@ public:
   Noise(uint seed);
 
   //! Return noise value at a point.
-  const float operator()(const XYZ& p) const;
+  const real operator()(const XYZ& p) const;
 
 protected:
   //! Number of table entries.
@@ -43,7 +43,7 @@ protected:
   int _p[N+N+2];
   XYZ _g[N+N+2];
   
-  //void setup(const XYZ&,int,int&,int&,float&,float&);
+  //void setup(const XYZ&,int,int&,int&,real&,real&);
 };
 
 #endif

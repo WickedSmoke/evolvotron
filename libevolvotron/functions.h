@@ -34,11 +34,11 @@
 #include "function_boilerplate.h"
 
 //! Sane modulus function always returning a number in the range [0,y)
-inline float modulusf(float x,float y)
+inline real modulusf(real x,real y)
 {
-  if (y<0.0f) y=-y;
-  float r=fmod(x,y);
-  if (r<0.0f) r+=y;
+  if (y<0.0) y=-y;
+  real r=fmod(x,y);
+  if (r<0.0) r+=y;
   return r;
 }
 
@@ -53,12 +53,12 @@ inline uint modulusi(int x,int y)
 }
 
 //! Triangle function: like modulus, but ramps down instead of discontinuity at y
-inline float trianglef(float x,float y)
+inline real trianglef(real x,real y)
 {
-  if (y<0.0f) y=-y;
-  if (x<0.0f) x=-x;
-  float r=fmod(x,2.0f*y);
-  if (r>y) r=2.0f*y-r;
+  if (y<0.0) y=-y;
+  if (x<0.0) x=-x;
+  real r=fmod(x,2.0*y);
+  if (r>y) r=2.0*y-r;
   return r;
 }
 
@@ -190,11 +190,11 @@ FUNCTION_BEGIN(FunctionCartesianToSpherical,0,0,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
   {
-    const float r=p.magnitude();
+    const real r=p.magnitude();
     
     // Angles are normalised (-1 to +1) over their usual possible range.
-    const float theta=atan2(p.y(),p.x())*(1.0f/M_PI);
-    const float phi=(r== 0.0f ? 0.0f : asin(p.z()/r)*(1.0f/(0.5f*M_PI)));
+    const real theta=atan2(p.y(),p.x())*(1.0/M_PI);
+    const real phi=(r== 0.0 ? 0.0 : asin(p.z()/r)*(1.0/(0.5*M_PI)));
   
     return XYZ(r,theta,phi);
   }
@@ -215,13 +215,13 @@ FUNCTION_BEGIN(FunctionSphericalToCartesian,0,0,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
   {
-    const float r=p.x();
-    const float theta=M_PI*p.y();
-    const float phi=0.5*M_PI*p.z();
+    const real r=p.x();
+    const real theta=M_PI*p.y();
+    const real phi=0.5*M_PI*p.z();
     
-    const float x=r*cos(theta)*sin(phi);
-    const float y=r*sin(theta)*sin(phi);
-    const float z=r*cos(phi);
+    const real x=r*cos(theta)*sin(phi);
+    const real y=r*sin(theta)*sin(phi);
+    const real z=r*cos(phi);
     
     return XYZ(x,y,z);
   }
@@ -242,19 +242,19 @@ FUNCTION_BEGIN(FunctionEvaluateInSpherical,0,1,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float in_r=p.magnitude();
-      const float in_theta=atan2(p.y(),p.x())*(1.0f/M_PI);
-      const float in_phi=(in_r== 0.0f ? 0.0f : asin(p.z()/in_r)*(1.0f/(0.5f*M_PI)));
+      const real in_r=p.magnitude();
+      const real in_theta=atan2(p.y(),p.x())*(1.0/M_PI);
+      const real in_phi=(in_r== 0.0 ? 0.0 : asin(p.z()/in_r)*(1.0/(0.5*M_PI)));
       
       const XYZ v(arg(0)(XYZ(in_r,in_theta,in_phi)));
       
-      const float out_r=v.x();
-      const float out_theta=M_PI*v.y();
-      const float out_phi=0.5*M_PI*v.z();
+      const real out_r=v.x();
+      const real out_theta=M_PI*v.y();
+      const real out_phi=0.5*M_PI*v.z();
       
-      const float x=out_r*cos(out_theta)*sin(out_phi);
-      const float y=out_r*sin(out_theta)*sin(out_phi);
-      const float z=out_r*cos(out_phi);
+      const real x=out_r*cos(out_theta)*sin(out_phi);
+      const real y=out_r*sin(out_theta)*sin(out_phi);
+      const real z=out_r*cos(out_phi);
       
       return XYZ(x,y,z);
     }
@@ -334,13 +334,13 @@ FUNCTION_BEGIN(FunctionSpiralLinear,0,1,false,FnStructure)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float r=p.magnitude();
-      float theta=atan2(p.y(),p.x());
-      if (theta<0.0f) theta+=2.0f*M_PI;
-      const float winding=floorf(r-theta/(2.0*M_PI));
+      const real r=p.magnitude();
+      real theta=atan2(p.y(),p.x());
+      if (theta<0.0) theta+=2.0*M_PI;
+      const real winding=floorf(r-theta/(2.0*M_PI));
       
-      const float x=2.0f*winding+theta/M_PI;
-      const float y=2.0f*r-x;
+      const real x=2.0*winding+theta/M_PI;
+      const real y=2.0*r-x;
       
       return arg(0)(XYZ(x,y,p.z()));
     }
@@ -360,14 +360,14 @@ FUNCTION_BEGIN(FunctionSpiralLogarithmic,0,1,false,FnStructure)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float r=p.magnitude();
-      float theta=atan2(p.y(),p.x());
-      if (theta<0.0f) theta+=2.0f*M_PI;
-      const float lnr=log(r);
-      const float winding=floorf(lnr-theta/(2.0*M_PI));
+      const real r=p.magnitude();
+      real theta=atan2(p.y(),p.x());
+      if (theta<0.0) theta+=2.0*M_PI;
+      const real lnr=log(r);
+      const real winding=floorf(lnr-theta/(2.0*M_PI));
       
-      const float x=2.0f*winding+theta/M_PI;
-      const float y=2.0f*lnr-x;
+      const real x=2.0*winding+theta/M_PI;
+      const real y=2.0*lnr-x;
       
       return arg(0)(XYZ(x,y,p.z()));
     }
@@ -387,19 +387,23 @@ FUNCTION_BEGIN(FunctionGradientOfMagnitude,0,1,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float epsilon=1e-4;
-      
-      const XYZ v0(arg(0)(p));
-      const XYZ vx(arg(0)(p+XYZ(epsilon,0.0f,0.0f)));
-      const XYZ vy(arg(0)(p+XYZ(0.0f,epsilon,0.0f)));
-      const XYZ vz(arg(0)(p+XYZ(0.0f,0.0f,epsilon)));
+      const XYZ vx0(arg(0)(p-XYZ(epsilon,0.0,0.0)));
+      const XYZ vy0(arg(0)(p-XYZ(0.0,epsilon,0.0)));
+      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,epsilon)));
 
-      const float m0=v0.magnitude();
-      const float mx=vx.magnitude();
-      const float my=vy.magnitude();
-      const float mz=vz.magnitude();
+      const XYZ vx1(arg(0)(p+XYZ(epsilon,0.0,0.0)));
+      const XYZ vy1(arg(0)(p+XYZ(0.0,epsilon,0.0)));
+      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,epsilon)));
 
-      return XYZ(mx-m0,my-m0,mz-m0)/epsilon;
+      const real mx0=vx0.magnitude();
+      const real my0=vy0.magnitude();
+      const real mz0=vz0.magnitude();
+
+      const real mx1=vx1.magnitude();
+      const real my1=vy1.magnitude();
+      const real mz1=vz1.magnitude();
+
+      return XYZ(mx1-mx0,my1-my0,mz1-mz0)*inv_epsilon2;
     }
   
   //! Is constant if the function being gradient-ed is.
@@ -417,18 +421,23 @@ FUNCTION_BEGIN(FunctionDivergenceOfMagnitude,0,1,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float epsilon=1e-2;
-      
-      const XYZ v0(arg(0)(p));
-      const XYZ vx(arg(0)(p+XYZ(epsilon,0.0f,0.0f)));
-      const XYZ vy(arg(0)(p+XYZ(0.0f,epsilon,0.0f)));
-      const XYZ vz(arg(0)(p+XYZ(0.0f,0.0f,epsilon)));
+      const XYZ vx0(arg(0)(p-XYZ(epsilon,0.0,0.0)));
+      const XYZ vy0(arg(0)(p-XYZ(0.0,epsilon,0.0)));
+      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,epsilon)));
 
-      const float m0=v0.magnitude();
-      const float mx=vx.magnitude();
-      const float my=vy.magnitude();
-      const float mz=vz.magnitude();
-      const float d=(mx+my+mz-3.0f*m0)/epsilon;
+      const XYZ vx1(arg(0)(p+XYZ(epsilon,0.0,0.0)));
+      const XYZ vy1(arg(0)(p+XYZ(0.0,epsilon,0.0)));
+      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,epsilon)));
+
+      const real mx0=vx0.magnitude();
+      const real my0=vy0.magnitude();
+      const real mz0=vz0.magnitude();
+
+      const real mx1=vx1.magnitude();
+      const real my1=vy1.magnitude();
+      const real mz1=vz1.magnitude();
+
+      const real d=(mx1-mx0+my1-my0+mz1-mz0)*inv_epsilon2;
 
       return XYZ(d,d,d);
     }
@@ -447,14 +456,16 @@ FUNCTION_BEGIN(FunctionDivergence,0,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const float epsilon=1e-4;
-      
-      const XYZ v0(arg(0)(p));
-      const XYZ vx(arg(0)(p+XYZ(epsilon,0.0f,0.0f)));
-      const XYZ vy(arg(0)(p+XYZ(0.0f,epsilon,0.0f)));
-      const XYZ vz(arg(0)(p+XYZ(0.0f,0.0f,epsilon)));
-      return (vx+vy+vz-3.0f*v0)/epsilon;
+    {      
+      const XYZ vx0(arg(0)(p-XYZ(epsilon,0.0,0.0)));
+      const XYZ vy0(arg(0)(p-XYZ(0.0,epsilon,0.0)));
+      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,epsilon)));
+
+      const XYZ vx1(arg(0)(p+XYZ(epsilon,0.0,0.0)));
+      const XYZ vy1(arg(0)(p+XYZ(0.0,epsilon,0.0)));
+      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,epsilon)));
+
+      return (vx1-vx0+vy1-vy0+vz1-vz0)*inv_epsilon2;
     }
   
   //! Is constant if the function being gradient-ed is.
@@ -472,25 +483,26 @@ FUNCTION_BEGIN(FunctionCurl,0,1,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float epsilon=1e-4;
-      
-      const XYZ v0(arg(0)(p));
-      const XYZ vx(arg(0)(p+XYZ(epsilon,0.0f,0.0f)));
-      const XYZ vy(arg(0)(p+XYZ(0.0f,epsilon,0.0f)));
-      const XYZ vz(arg(0)(p+XYZ(0.0f,0.0f,epsilon)));
+      const XYZ vx0(arg(0)(p-XYZ(epsilon,0.0,0.0)));
+      const XYZ vy0(arg(0)(p-XYZ(0.0,epsilon,0.0)));
+      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,epsilon)));
 
-      const XYZ d_dx((vx-v0)/epsilon);
-      const XYZ d_dy((vy-v0)/epsilon);
-      const XYZ d_dz((vz-v0)/epsilon);
+      const XYZ vx1(arg(0)(p+XYZ(epsilon,0.0,0.0)));
+      const XYZ vy1(arg(0)(p+XYZ(0.0,epsilon,0.0)));
+      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,epsilon)));
 
-      const float dzdy=d_dy.z();
-      const float dydz=d_dz.y();
+      const XYZ d_dx((vx1-vx0)*inv_epsilon2);
+      const XYZ d_dy((vy1-vy0)*inv_epsilon2);
+      const XYZ d_dz((vz1-vz0)*inv_epsilon2);
 
-      const float dxdz=d_dz.x();
-      const float dzdx=d_dx.z();
+      const real dzdy=d_dy.z();
+      const real dydz=d_dz.y();
 
-      const float dydx=d_dx.y();
-      const float dxdy=d_dy.x();
+      const real dxdz=d_dz.x();
+      const real dzdx=d_dx.z();
+
+      const real dydx=d_dx.y();
+      const real dxdy=d_dy.x();
 
       return XYZ
 	(
@@ -730,7 +742,7 @@ FUNCTION_BEGIN(FunctionGeometricInversion,0,1,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float radius2=p.magnitude2();
+      const real radius2=p.magnitude2();
       const XYZ ip(p/radius2);
 
       return arg(0)(ip);
@@ -757,7 +769,7 @@ FUNCTION_BEGIN(FunctionReflect,0,3,false,0)
       
       XYZ pos(arg(2)(p));
       
-      const float distance_from_plane=(pos-pt_in_plane)%normal;
+      const real distance_from_plane=(pos-pt_in_plane)%normal;
       
       // If pos is on the wrong side of the plane, reflect it over
       // Check: normal (0,0,1), pos (0,0,-1) => distance -1, pos-=(2*-1)*(0,0,1) => pos-=(0,0,-2)
@@ -785,12 +797,12 @@ FUNCTION_BEGIN(FunctionKaleidoscope,1,1,false,FnStructure)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint n=2+static_cast<uint>(floor(8.0f*fabs(param(0))));
+      const uint n=2+static_cast<uint>(floor(8.0*fabs(param(0))));
 
-      const float a=atan2(p.x(),p.y());
-      const float r=sqrt(p.x()*p.x()+p.y()*p.y());
+      const real a=atan2(p.x(),p.y());
+      const real r=sqrt(p.x()*p.x()+p.y()*p.y());
       
-      const float sa=trianglef(a,M_PI/n);
+      const real sa=trianglef(a,M_PI/n);
 
       const XYZ s(r*sin(sa),r*cos(sa),p.z());
       return arg(0)(s);
@@ -814,14 +826,14 @@ FUNCTION_BEGIN(FunctionKaleidoscopeZRotate,2,1,false,FnStructure)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint n=2+static_cast<uint>(floor(8.0f*fabs(param(0))));
+      const uint n=2+static_cast<uint>(floor(8.0*fabs(param(0))));
 
-      const float a=atan2(p.x(),p.y());
-      const float r=sqrt(p.x()*p.x()+p.y()*p.y());
+      const real a=atan2(p.x(),p.y());
+      const real r=sqrt(p.x()*p.x()+p.y()*p.y());
       
-      const float sa=trianglef(a,M_PI/n)+param(1)*p.z();
+      const real sa=trianglef(a,M_PI/n)+param(1)*p.z();
 
-      const XYZ s(r*sin(sa),r*cos(sa),0.0f);
+      const XYZ s(r*sin(sa),r*cos(sa),0.0);
       return arg(0)(s);
     }
   
@@ -841,12 +853,12 @@ FUNCTION_BEGIN(FunctionKaleidoscopeTwist,2,1,false,FnStructure)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint n=2+static_cast<uint>(floor(8.0f*fabs(param(0))));
+      const uint n=2+static_cast<uint>(floor(8.0*fabs(param(0))));
 
-      const float a=atan2(p.x(),p.y());
-      const float r=sqrt(p.x()*p.x()+p.y()*p.y());
+      const real a=atan2(p.x(),p.y());
+      const real r=sqrt(p.x()*p.x()+p.y()*p.y());
       
-      const float sa=trianglef(a-r*param(1),M_PI/n);
+      const real sa=trianglef(a-r*param(1),M_PI/n);
 
       const XYZ s(r*sin(sa),r*cos(sa),p.z());
       return arg(0)(s);
@@ -868,12 +880,12 @@ FUNCTION_BEGIN(FunctionWindmill,1,1,false,FnStructure)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint n=1+static_cast<uint>(floor(8.0f*fabs(param(0))));
+      const uint n=1+static_cast<uint>(floor(8.0*fabs(param(0))));
 
-      const float a=atan2(p.x(),p.y());
-      const float r=sqrt(p.x()*p.x()+p.y()*p.y());
+      const real a=atan2(p.x(),p.y());
+      const real r=sqrt(p.x()*p.x()+p.y()*p.y());
       
-      const float sa=modulusf(a,M_PI/n);
+      const real sa=modulusf(a,M_PI/n);
 
       const XYZ s(r*sin(sa),r*cos(sa),p.z());
       return arg(0)(s);
@@ -897,14 +909,14 @@ FUNCTION_BEGIN(FunctionWindmillZRotate,2,1,false,FnStructure)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint n=1+static_cast<uint>(floor(8.0f*fabs(param(0))));
+      const uint n=1+static_cast<uint>(floor(8.0*fabs(param(0))));
 
-      const float a=atan2(p.x(),p.y());
-      const float r=sqrt(p.x()*p.x()+p.y()*p.y());
+      const real a=atan2(p.x(),p.y());
+      const real r=sqrt(p.x()*p.x()+p.y()*p.y());
       
-      const float sa=modulusf(a,M_PI/n)+param(1)*p.z();
+      const real sa=modulusf(a,M_PI/n)+param(1)*p.z();
 
-      const XYZ s(r*sin(sa),r*cos(sa),0.0f);
+      const XYZ s(r*sin(sa),r*cos(sa),0.0);
       return arg(0)(s);
     }
   
@@ -925,12 +937,12 @@ FUNCTION_BEGIN(FunctionWindmillTwist,2,1,false,FnStructure)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint n=1+static_cast<uint>(floor(8.0f*fabs(param(0))));
+      const uint n=1+static_cast<uint>(floor(8.0*fabs(param(0))));
 
-      const float a=atan2(p.x(),p.y());
-      const float r=sqrt(p.x()*p.x()+p.y()*p.y());
+      const real a=atan2(p.x(),p.y());
+      const real r=sqrt(p.x()*p.x()+p.y()*p.y());
       
-      const float sa=modulusf(a-r*param(1),M_PI/n);
+      const real sa=modulusf(a-r*param(1),M_PI/n);
 
       const XYZ s(r*sin(sa),r*cos(sa),p.z());
       return arg(0)(s);
@@ -975,7 +987,7 @@ FUNCTION_BEGIN(FunctionMagnitude,0,0,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float m=p.magnitude();
+      const real m=p.magnitude();
       return XYZ(m,m,m);
     }
   
@@ -1138,9 +1150,9 @@ FUNCTION_BEGIN(FunctionChooseFrom2InTriangleGrid,0,2,false,FnStructure)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      static const XYZ d0(1.0f         ,0.0f         ,0.0f);
-      static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0f);
-      static const XYZ d2(cos(2*M_PI/3),sin(2*M_PI/3),0.0f);
+      static const XYZ d0(1.0         ,0.0         ,0.0);
+      static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0);
+      static const XYZ d2(cos(2*M_PI/3),sin(2*M_PI/3),0.0);
       
       const int a=static_cast<int>(floorf(p%d0));
       const int b=static_cast<int>(floorf(p%d1));
@@ -1170,9 +1182,9 @@ FUNCTION_BEGIN(FunctionChooseFrom3InTriangleGrid,0,3,false,FnStructure)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      static const XYZ d0(1.0f         ,0.0f         ,0.0f);
-      static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0f);
-      static const XYZ d2(cos(2*M_PI/3),sin(2*M_PI/3),0.0f);
+      static const XYZ d0(1.0         ,0.0         ,0.0);
+      static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0);
+      static const XYZ d2(cos(2*M_PI/3),sin(2*M_PI/3),0.0);
       
       const int a=static_cast<int>(floorf(p%d0));
       const int b=static_cast<int>(floorf(p%d1));
@@ -1200,24 +1212,24 @@ FUNCTION_BEGIN(FunctionChooseFrom3InDiamondGrid,0,3,false,FnStructure)
   virtual const XYZ evaluate(const XYZ& p) const
     {
       // Basis vectors for hex grid
-      static const XYZ d0(1.0f         ,0.0f         ,0.0f);
-      static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0f);
-      static const XYZ d2(cos(2*M_PI/3),sin(2*M_PI/3),0.0f);
+      static const XYZ d0(1.0         ,0.0         ,0.0);
+      static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0);
+      static const XYZ d2(cos(2*M_PI/3),sin(2*M_PI/3),0.0);
       
       // Dot with basis
-      const float p0=p%d0;
-      const float p1=p%d1;
-      const float p2=p%d2;
+      const real p0=p%d0;
+      const real p1=p%d1;
+      const real p2=p%d2;
 
       // Find nearest on-grid point
-      const int i0=(int)floorf(p0+0.5f);
-      const int i1=(int)floorf(p1+0.5f);
-      const int i2=(int)floorf(p2+0.5f);
+      const int i0=(int)floorf(p0+0.5);
+      const int i1=(int)floorf(p1+0.5);
+      const int i2=(int)floorf(p2+0.5);
 
       // Measure distance
-      const float m0=fabsf(p0-i0);
-      const float m1=fabsf(p1-i1);
-      const float m2=fabsf(p2-i2);
+      const real m0=fabsf(p0-i0);
+      const real m1=fabsf(p1-i1);
+      const real m2=fabsf(p2-i2);
 
       // Closest one decides which function
       if (m0<=m1 && m0<=m2)
@@ -1244,25 +1256,25 @@ FUNCTION_BEGIN(FunctionChooseFrom3InHexagonGrid,0,3,false,FnStructure)
   //! Co-ordinates of hexagon with given hex-grid coords
   static const XYZ hex(int x,int y)
     {
-      const float k=sqrt(3.0f)/2.0f;
+      const real k=sqrt(3.0)/2.0;
       return XYZ(
 		 x*k,
-		 y+((x&1) ? 0.5f : 0.0f),
-		 0.0f
+		 y+((x&1) ? 0.5 : 0.0),
+		 0.0
 		 );
     }
 
   //! Finds hex-grid coordinates of hex containing cartesian px,py
-  static void nearest_hex(float px,float py,int &hx,int& hy)
+  static void nearest_hex(real px,real py,int &hx,int& hy)
     {
       // Initial guess at which hex we're in:
-      const float k=sqrt(3.0f)/2.0f;
+      const real k=sqrt(3.0)/2.0;
 
       const int nx=(int)rintf(px/k);
       const int ny=(int)(
 			 (nx&1) 
 			 ? 
-			 rintf(py-0.5f) 
+			 rintf(py-0.5) 
 			 : 
 			 rintf(py)
 			 );
@@ -1270,13 +1282,13 @@ FUNCTION_BEGIN(FunctionChooseFrom3InHexagonGrid,0,3,false,FnStructure)
       hx=nx;
       hy=ny;
       const XYZ ph=hex(nx,ny);
-      float m2b=(XYZ(px,py,0.0f)-ph).magnitude2();
+      real m2b=(XYZ(px,py,0.0)-ph).magnitude2();
       
       for (int dy=-1;dy<=1;dy++)
 	for (int dx=-1;dx<=1;dx++)
 	  if (!(dy==0 && dx==0))
 	    {
-	      const float m2=(XYZ(px,py,0.0f)-hex(nx+dx,ny+dy)).magnitude2();
+	      const real m2=(XYZ(px,py,0.0)-hex(nx+dx,ny+dy)).magnitude2();
 	      if (m2<m2b)
 		{
 		  hx=nx+dx;
@@ -1312,25 +1324,25 @@ FUNCTION_BEGIN(FunctionChooseFrom2InBorderedHexagonGrid,1,2,false,FnStructure)
   //! Co-ordinates of hexagon with given hex-grid coords
   static const XYZ hex(int x,int y)
     {
-      const float k=sqrt(3.0f)/2.0f;
+      const real k=sqrt(3.0)/2.0;
       return XYZ(
 		 x*k,
-		 y+((x&1) ? 0.5f : 0.0f),
-		 0.0f
+		 y+((x&1) ? 0.5 : 0.0),
+		 0.0
 		 );
     }
 
   //! Finds hex-grid coordinates of hex containing cartesian px,py
-  static void nearest_hex(float px,float py,int &hx,int& hy)
+  static void nearest_hex(real px,real py,int &hx,int& hy)
     {
       // Initial guess at which hex we're in:
-      const float k=sqrt(3.0f)/2.0f;
+      const real k=sqrt(3.0)/2.0;
 
       const int nx=(int)rintf(px/k);
       const int ny=(int)(
 			 (nx&1) 
 			 ? 
-			 rintf(py-0.5f) 
+			 rintf(py-0.5) 
 			 : 
 			 rintf(py)
 			 );
@@ -1338,13 +1350,13 @@ FUNCTION_BEGIN(FunctionChooseFrom2InBorderedHexagonGrid,1,2,false,FnStructure)
       hx=nx;
       hy=ny;
       const XYZ ph=hex(nx,ny);
-      float m2b=(XYZ(px,py,0.0f)-ph).magnitude2();
+      real m2b=(XYZ(px,py,0.0)-ph).magnitude2();
       
       for (int dy=-1;dy<=1;dy++)
 	for (int dx=-1;dx<=1;dx++)
 	  if (!(dy==0 && dx==0))
 	    {
-	      const float m2=(XYZ(px,py,0.0f)-hex(nx+dx,ny+dy)).magnitude2();
+	      const real m2=(XYZ(px,py,0.0)-hex(nx+dx,ny+dy)).magnitude2();
 	      if (m2<m2b)
 		{
 		  hx=nx+dx;
@@ -1364,13 +1376,13 @@ FUNCTION_BEGIN(FunctionChooseFrom2InBorderedHexagonGrid,1,2,false,FnStructure)
       bool in_border=false;
 
       // Hex centres are separated by 1.0 so limit border size
-      const float b=modulusf(param(0),0.5f);
+      const real b=modulusf(param(0),0.5);
 
       // Step along grid co-ordinates in various directions.  If there's a nearer point, we're in the border.
       for (uint a=0;a<6;a++)
 	{
-	  const float dx=b*sin(a*M_PI/3.0f);
-	  const float dy=b*cos(a*M_PI/3.0f);
+	  const real dx=b*sin(a*M_PI/3.0);
+	  const real dy=b*cos(a*M_PI/3.0);
 	  
 	  int ax;
 	  int ay;
@@ -1407,16 +1419,16 @@ FUNCTION_BEGIN(FunctionOrthoSphereShaded,3,2,false,FnRender)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float pr2=p.x()*p.x()+p.y()*p.y();
-      if (pr2<1.0f)
+      const real pr2=p.x()*p.x()+p.y()*p.y();
+      if (pr2<1.0)
 	{
-	  const float z=-sqrt(1.0f-pr2);
+	  const real z=-sqrt(1.0-pr2);
 	  const XYZ n(p.x(),p.y(),z);
 
 	  const XYZ lu(param(0),param(1),param(2));
 	  const XYZ l(lu.normalised());
 
-	  const float i=0.5*(1.0+l%n); // In range 0-1
+	  const real i=0.5*(1.0+l%n); // In range 0-1
 	  return i*arg(1)(n);
 	}
       else
@@ -1447,32 +1459,30 @@ FUNCTION_BEGIN(FunctionOrthoSphereShadedBumpMapped,3,3,false,FnRender)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float pr2=p.x()*p.x()+p.y()*p.y();
-      if (pr2<1.0f)
+      const real pr2=p.x()*p.x()+p.y()*p.y();
+      if (pr2<1.0)
 	{
-	  const float z=-sqrt(1.0f-pr2);
+	  const real z=-sqrt(1.0-pr2);
 	  const XYZ n(p.x(),p.y(),z);
 
 	  // Tangent vectors
-	  const XYZ east((XYZ(0.0f,1.0f,0.0f)*n).normalised());
+	  const XYZ east((XYZ(0.0,1.0,0.0)*n).normalised());
 	  const XYZ north(n*east);
 
-	  const float epsilon=1e-4;
+	  const real e0=(arg(2)(n-epsilon*east)).magnitude2();
+	  const real e1=(arg(2)(n+epsilon*east)).magnitude2();
+	  const real n0=(arg(2)(n-epsilon*north)).magnitude2();
+	  const real n1=(arg(2)(n+epsilon*north)).magnitude2();
 
-	  const float e0=(arg(2)(n-epsilon*east)).magnitude2();
-	  const float e1=(arg(2)(n+epsilon*east)).magnitude2();
-	  const float n0=(arg(2)(n-epsilon*north)).magnitude2();
-	  const float n1=(arg(2)(n+epsilon*north)).magnitude2();
-
-	  const float de=(e1-e0)/(2.0f*epsilon);
-	  const float dn=(n1-n0)/(2.0f*epsilon);
+	  const real de=(e1-e0)*inv_epsilon2;
+	  const real dn=(n1-n0)*inv_epsilon2;
 
 	  const XYZ perturbed_n((n-east*de-north*dn).normalised());
 
 	  const XYZ lu(param(0),param(1),param(2));
 	  const XYZ l(lu.normalised());
 
-	  const float i=0.5*(1.0+l%perturbed_n); // In range 0-1
+	  const real i=0.5*(1.0+l%perturbed_n); // In range 0-1
 	  return i*arg(1)(n);
 	}
       else
@@ -1502,19 +1512,19 @@ FUNCTION_BEGIN(FunctionOrthoSphereReflect,0,2,false,FnRender)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float pr2=p.x()*p.x()+p.y()*p.y();
-      if (pr2<1.0f)
+      const real pr2=p.x()*p.x()+p.y()*p.y();
+      if (pr2<1.0)
 	{
-	  const float z=-sqrt(1.0f-pr2);
+	  const real z=-sqrt(1.0-pr2);
 
 	  // This is on surface of unit radius sphere - no need to normalise
 	  XYZ n(p.x(),p.y(),z);
 
 	  // The ray _towards_ the viewer v is (0 0 -1)
-	  const XYZ v(0.0f,0.0f,-1.0f);
+	  const XYZ v(0.0,0.0,-1.0);
 
 	  // The reflected ray is (2n.v)n-v
-	  const XYZ reflected((2.0f*(n%v))*n-v);
+	  const XYZ reflected((2.0*(n%v))*n-v);
 
 	  return arg(1)(reflected);
 	}
@@ -1545,35 +1555,33 @@ FUNCTION_BEGIN(FunctionOrthoSphereReflectBumpMapped,0,3,false,FnRender)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float pr2=p.x()*p.x()+p.y()*p.y();
-      if (pr2<1.0f)
+      const real pr2=p.x()*p.x()+p.y()*p.y();
+      if (pr2<1.0)
 	{
-	  const float z=-sqrt(1.0f-pr2);
+	  const real z=-sqrt(1.0-pr2);
 
 	  // This is on surface of unit radius sphere - no need to normalise
 	  XYZ n(p.x(),p.y(),z);
 
 	  // Tangent vectors
-	  const XYZ east((XYZ(0.0f,1.0f,0.0f)*n).normalised());
+	  const XYZ east((XYZ(0.0,1.0,0.0)*n).normalised());
 	  const XYZ north(n*east);
 
-	  const float epsilon=1e-4;
+	  const real e0=(arg(2)(n-epsilon*east)).magnitude2();
+	  const real e1=(arg(2)(n+epsilon*east)).magnitude2();
+	  const real n0=(arg(2)(n-epsilon*north)).magnitude2();
+	  const real n1=(arg(2)(n+epsilon*north)).magnitude2();
 
-	  const float e0=(arg(2)(n-epsilon*east)).magnitude2();
-	  const float e1=(arg(2)(n+epsilon*east)).magnitude2();
-	  const float n0=(arg(2)(n-epsilon*north)).magnitude2();
-	  const float n1=(arg(2)(n+epsilon*north)).magnitude2();
-
-	  const float de=(e1-e0)/(2.0f*epsilon);
-	  const float dn=(n1-n0)/(2.0f*epsilon);
+	  const real de=(e1-e0)*inv_epsilon2;
+	  const real dn=(n1-n0)*inv_epsilon2;
 
 	  const XYZ perturbed_n((n-east*de-north*dn).normalised());
 
 	  // The ray _towards_ the viewer is (0 0 -1)
-	  const XYZ v(0.0f,0.0f,-1.0f);
+	  const XYZ v(0.0,0.0,-1.0);
 
 	  // The reflected ray is (2n.v)n-v
-	  const XYZ reflected((2.0f*(perturbed_n%v))*perturbed_n-v);
+	  const XYZ reflected((2.0*(perturbed_n%v))*perturbed_n-v);
 
 	  return arg(1)(reflected);
 	}
@@ -1601,11 +1609,11 @@ FUNCTION_BEGIN(FunctionFilter2D,2,1,false,0)
       return
 	arg(0)(p)
 	-(
-	  arg(0)(p+XYZ(param(0),0.0f,0.0f))
-	  +arg(0)(p+XYZ(-param(0),0.0f,0.0f))
-	  +arg(0)(p+XYZ(0.0f,param(1),0.0f))
-	  +arg(0)(p+XYZ(0.0f,-param(1),0.0f))
-	  )/4.0f;
+	  arg(0)(p+XYZ(param(0),0.0,0.0))
+	  +arg(0)(p+XYZ(-param(0),0.0,0.0))
+	  +arg(0)(p+XYZ(0.0,param(1),0.0))
+	  +arg(0)(p+XYZ(0.0,-param(1),0.0))
+	  )/4.0;
     }
   
   //! Is constant if arg is
@@ -1626,13 +1634,13 @@ FUNCTION_BEGIN(FunctionFilter3D,3,1,false,0)
       return
 	arg(0)(p)
 	-(
-	  arg(0)(p+XYZ(param(0),0.0f,0.0f))
-	  +arg(0)(p+XYZ(-param(0),0.0f,0.0f))
-	  +arg(0)(p+XYZ(0.0f,param(1),0.0f))
-	  +arg(0)(p+XYZ(0.0f,-param(1),0.0f))
-	  +arg(0)(p+XYZ(0.0f,0.0f,param(2)))
-	  +arg(0)(p+XYZ(0.0f,0.0f,-param(2)))
-	  )/6.0f;
+	  arg(0)(p+XYZ(param(0),0.0,0.0))
+	  +arg(0)(p+XYZ(-param(0),0.0,0.0))
+	  +arg(0)(p+XYZ(0.0,param(1),0.0))
+	  +arg(0)(p+XYZ(0.0,-param(1),0.0))
+	  +arg(0)(p+XYZ(0.0,0.0,param(2)))
+	  +arg(0)(p+XYZ(0.0,0.0,-param(2)))
+	  )/6.0;
     }
   
   //! Is constant if arg is
@@ -1711,7 +1719,7 @@ FUNCTION_BEGIN(FunctionExpCone,0,0,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float k=exp(p.z());
+      const real k=exp(p.z());
       return XYZ(p.x()*k,p.y()*k,p.z());
     }
   
@@ -1733,7 +1741,7 @@ FUNCTION_BEGIN(FunctionSeparateZ,3,2,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ v=arg(0)(XYZ(p.x(),p.y(),0.0f));
+      const XYZ v=arg(0)(XYZ(p.x(),p.y(),0.0));
       return arg(1)(v+p.z()*XYZ(param(0),param(1),param(2)));
     }
   
@@ -1758,7 +1766,7 @@ FUNCTION_BEGIN(FunctionNoiseOneChannel,0,0,false,0)
   virtual const XYZ evaluate(const XYZ& p) const
     {
       // Crank up the frequency a bit otherwise don't see much variation in base case
-      const float v=_noise(2.0f*p);
+      const real v=_noise(2.0*p);
       return XYZ(v,v,v);
     }
   
@@ -1784,16 +1792,16 @@ FUNCTION_BEGIN(FunctionMultiscaleNoiseOneChannel,0,0,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      float t=0.0f;
-      float tm=0.0f;
+      real t=0.0;
+      real tm=0.0;
       for (uint i=0;i<8;i++)
 	{
-	  const float k=(1<<i);
-	  const float ik=1.0f/k;
+	  const real k=(1<<i);
+	  const real ik=1.0/k;
 	  t+=ik*_noise(k*p);
 	  tm+=ik;
 	}
-      const float v=t/tm;
+      const real v=t/tm;
       return XYZ(v,v,v);
     }
   
@@ -1844,12 +1852,12 @@ FUNCTION_BEGIN(FunctionMultiscaleNoiseThreeChannel,0,0,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      XYZ t(0.0f,0.0f,0.0f);
-      float tm=0.0f;
+      XYZ t(0.0,0.0,0.0);
+      real tm=0.0;
       for (uint i=0;i<8;i++)
 	{
-	  const float k=(1<<i);
-	  const float ik=1.0f/k;
+	  const real k=(1<<i);
+	  const real ik=1.0/k;
 	  const XYZ kp(k*p);
 	  t+=ik*XYZ(_noise0(kp),_noise1(kp),_noise2(kp));
 	  tm+=ik;
@@ -1911,7 +1919,7 @@ FUNCTION_BEGIN(FunctionAverageSamples,3,1,true,FnIterative)
 	{
 	  p0=p;
 	  p1=p;
-	  delta=XYZ(0.0f,0.0f,0.0f);
+	  delta=XYZ(0.0,0.0,0.0);
 	}
       else
 	{
@@ -1921,7 +1929,7 @@ FUNCTION_BEGIN(FunctionAverageSamples,3,1,true,FnIterative)
 	  delta=(p1-p0)/(iterations()-1);
 	}
 
-      XYZ ret(0.0f,0.0f,0.0f);
+      XYZ ret(0.0,0.0,0.0);
       XYZ ps=p0;
 
       for (uint i=0;i<iterations();i++)
@@ -1959,7 +1967,7 @@ FUNCTION_BEGIN(FunctionStreak,3,1,true,FnIterative)
 	{
 	  p0=p;
 	  p1=p;
-	  delta=XYZ(0.0f,0.0f,0.0f);
+	  delta=XYZ(0.0,0.0,0.0);
 	}
       else
 	{
@@ -1968,13 +1976,13 @@ FUNCTION_BEGIN(FunctionStreak,3,1,true,FnIterative)
 	  delta=(p1-p0)/(iterations()-1);
 	}
 
-      XYZ ret(0.0f,0.0f,0.0f);
+      XYZ ret(0.0,0.0,0.0);
       XYZ ps=p0;
-      float w=0.0f;
+      real w=0.0;
 
       for (uint i=0;i<iterations();i++)
 	{
-	  const float k=1.0f-static_cast<float>(i)/iterations();
+	  const real k=1.0-static_cast<real>(i)/iterations();
 	  ret+=k*arg(0)(ps);
 	  w+=k;
 	  ps+=delta;
@@ -2001,12 +2009,12 @@ FUNCTION_BEGIN(FunctionAverageRing,1,1,true,FnIterative)
     {
       if (iterations()==1) return arg(0)(p);
 
-      const float da=2.0f*M_PI/iterations();
-      XYZ ret(0.0f,0.0f,0.0f);
+      const real da=2.0*M_PI/iterations();
+      XYZ ret(0.0,0.0,0.0);
       for (uint i=0;i<iterations();i++)
 	{
-	  const float a=i*da;
-	  const XYZ delta(param(0)*cos(a),param(0)*sin(a),0.0f);
+	  const real a=i*da;
+	  const XYZ delta(param(0)*cos(a),param(0)*sin(a),0.0);
 	  ret+=arg(0)(p+delta);
 	}
       return ret/iterations();
@@ -2028,14 +2036,14 @@ FUNCTION_BEGIN(FunctionFilterRing,1,1,true,FnIterative)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      if (iterations()==1) return XYZ(0.0f,0.0f,0.0f);
+      if (iterations()==1) return XYZ(0.0,0.0,0.0);
 
-      const float da=2.0f*M_PI/iterations();
-      XYZ ret(0.0f,0.0f,0.0f);
+      const real da=2.0*M_PI/iterations();
+      XYZ ret(0.0,0.0,0.0);
       for (uint i=0;i<iterations();i++)
 	{
-	  const float a=i*da;
-	  const XYZ delta(param(0)*cos(a),param(0)*sin(a),0.0f);
+	  const real a=i*da;
+	  const XYZ delta(param(0)*cos(a),param(0)*sin(a),0.0);
 	  ret+=arg(0)(p+delta);
 	}
       return ret/iterations()-arg(0)(p);
@@ -2067,7 +2075,7 @@ FUNCTION_BEGIN(FunctionConvolveSamples,3,2,true,FnIterative)
 	{
 	  p0=p;
 	  p1=p;
-	  delta=XYZ(0.0f,0.0f,0.0f);
+	  delta=XYZ(0.0,0.0,0.0);
 	}
       else
 	{
@@ -2076,8 +2084,8 @@ FUNCTION_BEGIN(FunctionConvolveSamples,3,2,true,FnIterative)
 	  delta=(p1-p0)/(iterations()-1);
 	}
 
-      XYZ ret(0.0f,0.0f,0.0f);
-      XYZ pd(0.0f,0.0f,0.0f);
+      XYZ ret(0.0,0.0,0.0);
+      XYZ pd(0.0,0.0,0.0);
 
       for (uint i=0;i<iterations();i++)
 	{
@@ -2105,12 +2113,12 @@ FUNCTION_BEGIN(FunctionAccumulateOctaves,0,1,true,FnIterative)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      XYZ ret(0.0f,0.0f,0.0f);
-      float k=0.0f;
+      XYZ ret(0.0,0.0,0.0);
+      real k=0.0;
       for (uint i=0;i<iterations();i++)
 	{
-	  const float scale=(1<<i);
-	  const float iscale=1.0f/scale;
+	  const real scale=(1<<i);
+	  const real iscale=1.0/scale;
 	  ret+=iscale*(arg(0)(scale*p));
 	  k+=iscale;
 	}
@@ -2132,21 +2140,21 @@ FUNCTION_END(FunctionAccumulateOctaves)
 //! Mandelbrot iterator for fractal functions.
 /*! Returns i in 0 to iterations inclusive.  i==iterations implies "in" set.
  */
-inline const uint brot(const float z0r,const float z0i,const float cr,const float ci,const uint iterations)
+inline const uint brot(const real z0r,const real z0i,const real cr,const real ci,const uint iterations)
 {
-  float zr=z0r;
-  float zi=z0i;
+  real zr=z0r;
+  real zi=z0i;
   uint i;
   for (i=0;i<iterations;i++)
     {
-      const float zr2=zr*zr;
-      const float zi2=zi*zi;
+      const real zr2=zr*zr;
+      const real zi2=zi*zi;
       
-      if (zr2+zi2>4.0f)
+      if (zr2+zi2>4.0)
 	break;
       
-      const float nzr=zr2-zi2+cr;
-      const float nzi=2.0f*zr*zi+ci;
+      const real nzr=zr2-zi2+cr;
+      const real nzi=2.0*zr*zi+ci;
 
       zr=nzr;
       zi=nzi;
@@ -2163,7 +2171,7 @@ FUNCTION_BEGIN(FunctionMandelbrotChoose,0,2,true,FnIterative|FnFractal)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return (brot(0.0f,0.0f,p.x(),p.y(),iterations())==iterations() ? arg(0)(p) : arg(1)(p));
+      return (brot(0.0,0.0,p.x(),p.y(),iterations())==iterations() ? arg(0)(p) : arg(1)(p));
     }
   
   //! Can't be constant unless functions are the same.
@@ -2182,8 +2190,8 @@ FUNCTION_BEGIN(FunctionMandelbrotContour,0,0,true,FnIterative|FnFractal)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint i=brot(0.0f,0.0f,p.x(),p.y(),iterations());
-      return (i==iterations() ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/iterations()));
+      const uint i=brot(0.0,0.0,p.x(),p.y(),iterations());
+      return (i==iterations() ? XYZ::fill(-1.0) : XYZ::fill(static_cast<real>(i)/iterations()));
     }
   
   //! Not constant.
@@ -2222,7 +2230,7 @@ FUNCTION_BEGIN(FunctionJuliaContour,2,0,true,FnIterative|FnFractal)
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const uint i=brot(p.x(),p.y(),param(0),param(1),iterations());
-      return (i==iterations() ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/iterations()));
+      return (i==iterations() ? XYZ::fill(-1.0) : XYZ::fill(static_cast<real>(i)/iterations()));
     }
   
   //! Not constant.
@@ -2244,10 +2252,10 @@ FUNCTION_BEGIN(FunctionJuliabrotChoose,16,2,true,FnIterative|FnFractal)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float zr=p.x()*param( 0)+p.y()*param( 1)+p.z()*param( 2)+param( 3);
-      const float zi=p.x()*param( 4)+p.y()*param( 5)+p.z()*param( 6)+param( 7);
-      const float cr=p.x()*param( 8)+p.y()*param( 9)+p.z()*param(10)+param(11);
-      const float ci=p.x()*param(12)+p.y()*param(13)+p.z()*param(14)+param(15);
+      const real zr=p.x()*param( 0)+p.y()*param( 1)+p.z()*param( 2)+param( 3);
+      const real zi=p.x()*param( 4)+p.y()*param( 5)+p.z()*param( 6)+param( 7);
+      const real cr=p.x()*param( 8)+p.y()*param( 9)+p.z()*param(10)+param(11);
+      const real ci=p.x()*param(12)+p.y()*param(13)+p.z()*param(14)+param(15);
       return (brot(zr,zi,cr,ci,iterations())==iterations() ? arg(0)(p) : arg(1)(p));
     }
   
@@ -2270,12 +2278,12 @@ FUNCTION_BEGIN(FunctionJuliabrotContour,16,0,true,FnIterative|FnFractal)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const float zr=p.x()*param( 0)+p.y()*param( 1)+p.z()*param( 2)+param( 3);
-      const float zi=p.x()*param( 4)+p.y()*param( 5)+p.z()*param( 6)+param( 7);
-      const float cr=p.x()*param( 8)+p.y()*param( 9)+p.z()*param(10)+param(11);
-      const float ci=p.x()*param(12)+p.y()*param(13)+p.z()*param(14)+param(15);
+      const real zr=p.x()*param( 0)+p.y()*param( 1)+p.z()*param( 2)+param( 3);
+      const real zi=p.x()*param( 4)+p.y()*param( 5)+p.z()*param( 6)+param( 7);
+      const real cr=p.x()*param( 8)+p.y()*param( 9)+p.z()*param(10)+param(11);
+      const real ci=p.x()*param(12)+p.y()*param(13)+p.z()*param(14)+param(15);
       const uint i=brot(zr,zi,cr,ci,iterations());
-      return (i==iterations() ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/iterations()));
+      return (i==iterations() ? XYZ::fill(-1.0) : XYZ::fill(static_cast<real>(i)/iterations()));
     }
   
   //! Can't be constant unless functions are the same.
@@ -2304,7 +2312,7 @@ FUNCTION_BEGIN(FunctionCellular,0,1,true,FnIterative)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p)
     {
-      return XYZ(0.0f,0.0f,0.0f);
+      return XYZ(0.0,0.0,0.0);
     }
   
   //! Not constant.

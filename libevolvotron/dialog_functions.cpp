@@ -171,9 +171,9 @@ void DialogFunctions::resizeEvent(QResizeEvent* e)
 
 void DialogFunctions::setup_from_mutation_parameters()
 {
-  const float b=_mutation_parameters->random_function_branching_ratio();
-  const float s=_mutation_parameters->proportion_basic();
-  const float br=(1.0f-s)*b;
+  const real b=_mutation_parameters->random_function_branching_ratio();
+  const real s=_mutation_parameters->proportion_basic();
+  const real br=(1.0-s)*b;
 
   std::stringstream msg;
   msg 
@@ -181,17 +181,17 @@ void DialogFunctions::setup_from_mutation_parameters()
     << "Diliuting in proportion " << s << " to obtain required branching ratio.";
   _branching_ratio->setText(msg.str().c_str());
 
-  _slider_target_branching_ratio->setValue(static_cast<int>(100.0f*br+0.5f));
-  _slider_proportion_constant->setValue(static_cast<int>(0.5f+100.0f*_mutation_parameters->proportion_constant()));
-  _slider_identity_supression->setValue(static_cast<int>(0.5f+100.0f*_mutation_parameters->identity_supression()));
+  _slider_target_branching_ratio->setValue(static_cast<int>(100.0*br+0.5));
+  _slider_proportion_constant->setValue(static_cast<int>(0.5+100.0*_mutation_parameters->proportion_constant()));
+  _slider_identity_supression->setValue(static_cast<int>(0.5+100.0*_mutation_parameters->identity_supression()));
 
   for (std::map<QSlider*,const FunctionRegistration*>::const_iterator it=_slider_to_function.begin();
        it!=_slider_to_function.end();
        it++
        )
     {
-      const float w=_mutation_parameters->get_weighting((*it).second);
-      const int iw=static_cast<int>(floor(0.5f+(log(w)*(1.0/M_LN2))));
+      const real w=_mutation_parameters->get_weighting((*it).second);
+      const int iw=static_cast<int>(floor(0.5+(log(w)*(1.0/M_LN2))));
       if (iw!=(*it).first->value())
 	{
 	  (*it).first->setValue(iw);
@@ -201,10 +201,10 @@ void DialogFunctions::setup_from_mutation_parameters()
 
 void DialogFunctions::changed_target_branching_ratio(int v)
 {
-  const float target_branching_ratio=v/100.0f;
+  const real target_branching_ratio=v/100.0;
   
   // Want to solve tgt=proportion_basic*0.0+(1.0-proportion_basic)*random_function_branching_ratio
-  const float proportion_basic=1.0f-target_branching_ratio/_mutation_parameters->random_function_branching_ratio();
+  const real proportion_basic=1.0-target_branching_ratio/_mutation_parameters->random_function_branching_ratio();
 
   std::clog 
     << "Basic-node dilution proportion set to " 
@@ -220,12 +220,12 @@ void DialogFunctions::changed_target_branching_ratio(int v)
 
 void DialogFunctions::changed_proportion_constant(int v)
 {
-  _mutation_parameters->proportion_constant(v/100.0f);
+  _mutation_parameters->proportion_constant(v/100.0);
 }
 
 void DialogFunctions::changed_identity_supression(int v)
 {
-  _mutation_parameters->identity_supression(v/100.0f);
+  _mutation_parameters->identity_supression(v/100.0);
 }
 
 void DialogFunctions::changed_function_weighting(QSlider* s,int v)
@@ -239,7 +239,7 @@ void DialogFunctions::changed_function_weighting(QSlider* s,int v)
     {
       const FunctionRegistration* fn=(*it).second;
       
-      const float w=pow(2,v);
+      const real w=pow(2,v);
       std::clog << fn->name() << " weighting changed to " << w << "\n";
       _mutation_parameters->change_function_weighting(fn,w);
     }

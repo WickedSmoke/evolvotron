@@ -44,19 +44,19 @@ const std::vector<FunctionNode*> FunctionNode::cloneargs() const
   return ret;
 }
 
-const std::vector<float> FunctionNode::cloneparams() const
+const std::vector<real> FunctionNode::cloneparams() const
 {
   return params();
 }
 
 //! Obtain some statistics about the image function
-void FunctionNode::get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,float& proportion_constant) const
+void FunctionNode::get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const
 {
   uint total_sub_nodes=0;
   uint total_sub_parameters=0;
   uint max_sub_depth=0;
   uint total_sub_width=0;
-  float sub_constants=0.0f;
+  real sub_constants=0.0;
 
   // Traverse child nodes.  Need to reconstruct the actual numbers from the proportions
   for (std::vector<FunctionNode*>::const_iterator it=args().begin();it!=args().end();it++)
@@ -65,7 +65,7 @@ void FunctionNode::get_stats(uint& total_nodes,uint& total_parameters,uint& dept
       uint sub_parameters;
       uint sub_depth;
       uint sub_width;
-      float sub_proportion_constant;
+      real sub_proportion_constant;
 
       (*it)->get_stats(sub_nodes,sub_parameters,sub_depth,sub_width,sub_proportion_constant);
 
@@ -94,7 +94,7 @@ void FunctionNode::get_stats(uint& total_nodes,uint& total_parameters,uint& dept
 
   if (is_constant())
     {
-      proportion_constant=1.0f;
+      proportion_constant=1.0;
     }
   else
     {
@@ -175,11 +175,11 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
   
   do
     {
-      std::vector<float> params_toplevel;
+      std::vector<real> params_toplevel;
       std::vector<FunctionNode*> args_toplevel;
       
       {
-	const float which=parameters.r01();
+	const real which=parameters.r01();
 	if (which<0.4f)
 	  {
 	    args_toplevel.push_back(FunctionTransformGeneralised::stubnew(parameters,false));
@@ -188,7 +188,7 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
 	  {
 	    args_toplevel.push_back(FunctionTransform::stubnew(parameters,false));
 	  }
-	else if (which<0.9f)
+	else if (which<0.9)
 	  {
 	    args_toplevel.push_back(FunctionTransformQuadratic::stubnew(parameters,false));
 	  }
@@ -209,7 +209,7 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
 	}
       
       {
-	const float which=parameters.r01();
+	const real which=parameters.r01();
 
 	if (which<0.4f)
 	  {
@@ -219,7 +219,7 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
 	  {
 	    args_toplevel.push_back(FunctionTransform::stubnew(parameters,false));
 	  }
-	else if (which<0.9f)
+	else if (which<0.9)
 	  {
 	    args_toplevel.push_back(FunctionTransformQuadratic::stubnew(parameters,false));
 	  }
@@ -257,12 +257,12 @@ const std::vector<FunctionNode*> FunctionNode::stubargs(const MutationParameters
 }
 
 
-const std::vector<float> FunctionNode::stubparams(const MutationParameters& parameters,uint n)
+const std::vector<real> FunctionNode::stubparams(const MutationParameters& parameters,uint n)
 {
-  std::vector<float> ret;
+  std::vector<real> ret;
   for (uint i=0;i<n;i++)
     {
-      ret.push_back(-1.0f+2.0f*parameters.r01());
+      ret.push_back(-1.0+2.0*parameters.r01());
     }
   return ret;
 }
@@ -272,7 +272,7 @@ const uint FunctionNode::stubiterations(const MutationParameters& parameters)
   return 1+static_cast<uint>(floor(parameters.r01()*parameters.max_initial_iterations()));
 }
 
-FunctionNode::FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter)
+FunctionNode::FunctionNode(const std::vector<real>& p,const std::vector<FunctionNode*>& a,uint iter)
   :_args(a)
    ,_params(p)
    ,_iterations(iter)
@@ -325,9 +325,9 @@ void FunctionNode::mutate(const MutationParameters& parameters)
     (*it)->mutate(parameters);
   
   // Perturb any parameters we have
-  for (std::vector<float>::iterator it=params().begin();it!=params().end();it++)
+  for (std::vector<real>::iterator it=params().begin();it!=params().end();it++)
     {
-      (*it)+=parameters.magnitude()*(-1.0f+2.0f*parameters.r01());
+      (*it)+=parameters.magnitude()*(-1.0+2.0*parameters.r01());
     }
 
   // Perturb iteration count if any
@@ -381,7 +381,7 @@ void FunctionNode::mutate(const MutationParameters& parameters)
 	{
 	  // Take a copy of the nodes parameters and arguments
 	  std::vector<FunctionNode*> a((*it)->deepclone_args());
-	  std::vector<float> p((*it)->params());
+	  std::vector<real> p((*it)->params());
 	  
 	  // Replace the node with something interesting (maybe this should depend on how complex the original node was)
 	  delete (*it);
@@ -405,7 +405,7 @@ void FunctionNode::mutate(const MutationParameters& parameters)
 	  // Do we need some extra parameters ?
 	  if (p.size()<(*it)->params().size())
 	    {
-	      const std::vector<float> xp(stubparams(parameters,(*it)->params().size()-p.size()));
+	      const std::vector<real> xp(stubparams(parameters,(*it)->params().size()-p.size()));
 	      p.insert(p.end(),xp.begin(),xp.end());
 	    }
 	  // Shuffle them
@@ -434,7 +434,7 @@ void FunctionNode::mutate(const MutationParameters& parameters)
     {
       if (parameters.r01()<parameters.probability_insert())
 	{
-	  std::vector<float> p;
+	  std::vector<real> p;
 	  std::vector<FunctionNode*> a;
 
 	  a.push_back((*it));
@@ -451,8 +451,8 @@ void FunctionNode::simplify_constants()
     {
       if ((*it)->is_constant())
 	{
-	  const XYZ v((*(*it))(XYZ(0.0f,0.0f,0.0f)));
-	  std::vector<float> vp;
+	  const XYZ v((*(*it))(XYZ(0.0,0.0,0.0)));
+	  std::vector<real> vp;
 	  vp.push_back(v.x());
 	  vp.push_back(v.y());
 	  vp.push_back(v.z());
@@ -475,7 +475,7 @@ const std::vector<FunctionNode*> FunctionNode::deepclone_args() const
   return ret;
 }
 
-void FunctionNode::impose(std::vector<float>& p,std::vector<FunctionNode*>& a)
+void FunctionNode::impose(std::vector<real>& p,std::vector<FunctionNode*>& a)
 {
   for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
     delete (*it);
@@ -529,7 +529,7 @@ std::ostream& FunctionNode::save_function(std::ostream& out,uint indent) const
   if (iterations()!=0)
     out << Margin(indent) << "<i>" << iterations() << "</i>\n";
   
-  for (std::vector<float>::const_iterator it=params().begin();it!=params().end();it++)
+  for (std::vector<real>::const_iterator it=params().begin();it!=params().end();it++)
     {
       out << Margin(indent) << "<p>" << (*it) << "</p>\n";
     }

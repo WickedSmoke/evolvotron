@@ -174,27 +174,27 @@ void DialogMutationParameters::shield()
 
 void DialogMutationParameters::changed_magnitude(int v)
 {
-  _mutation_parameters->magnitude(v/static_cast<float>(_scale));
+  _mutation_parameters->magnitude(v/static_cast<real>(_scale));
 }
 
 void DialogMutationParameters::changed_glitch(int v)
 {
-  _mutation_parameters->probability_glitch(v/static_cast<float>(_scale));
+  _mutation_parameters->probability_glitch(v/static_cast<real>(_scale));
 }
 
 void DialogMutationParameters::changed_shuffle(int v)
 {
-  _mutation_parameters->probability_shuffle(v/static_cast<float>(_scale));
+  _mutation_parameters->probability_shuffle(v/static_cast<real>(_scale));
 }
 
 void DialogMutationParameters::changed_insert(int v)
 {
-  _mutation_parameters->probability_insert(v/static_cast<float>(_scale));
+  _mutation_parameters->probability_insert(v/static_cast<real>(_scale));
 }
 
 void DialogMutationParameters::changed_substitute(int v)
 {
-  _mutation_parameters->probability_substitute(v/static_cast<float>(_scale));
+  _mutation_parameters->probability_substitute(v/static_cast<real>(_scale));
 }
 
 void DialogMutationParameters::mutation_parameters_changed()

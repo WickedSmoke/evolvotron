@@ -32,34 +32,34 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 class XYZ
 {
  protected:
-  float rep[3];
+  real rep[3];
 
  public:
 
   //@{
   //! Accessor.
-  float x() const
+  real x() const
     {
       return rep[0];
     }
-  float y() const
+  real y() const
     {
       return rep[1];
     }
-  float z() const
+  real z() const
     {
       return rep[2];
     }
 
-  void x(float v)
+  void x(real v)
     {
       rep[0]=v;
     }
-  void y(float v)
+  void y(real v)
     {
       rep[1]=v;
     }
-  void z(float v)
+  void z(real v)
     {
       rep[2]=v;
     }
@@ -80,7 +80,7 @@ class XYZ
     }
   
   //! Initialise from separate components.
-  XYZ(float vx,float vy,float vz)
+  XYZ(real vx,real vy,real vz)
     {
       rep[0]=vx;
       rep[1]=vy;
@@ -108,7 +108,7 @@ class XYZ
     }
 
   //! Multiply by scalar
-  void operator*=(float k)
+  void operator*=(real k)
     {
       rep[0]*=k;
       rep[1]*=k;
@@ -118,9 +118,9 @@ class XYZ
   //! Divide by scalar.
   /*! Implemented assuming one divide and three multiplies is faster than three divides.
    */
-  void operator/=(float k)
+  void operator/=(real k)
     {
-      const float ik(1.0f/k);
+      const real ik(1.0/k);
       (*this)*=ik;
     }
 
@@ -139,13 +139,13 @@ class XYZ
     }
 
   //! Return the square of the magnitude.
-  const float magnitude2() const
+  const real magnitude2() const
     {
       return x()*x()+y()*y()+z()*z();
     }
 
   //! Return the magnitude.
-  const float magnitude() const
+  const real magnitude() const
     {
       return sqrt(magnitude2());
     }
@@ -166,7 +166,7 @@ class XYZ
   std::ostream& write(std::ostream&) const;
 
   //! Helper for common case of creating an instance filled with a common value.
-  static const XYZ fill(float v)
+  static const XYZ fill(real v)
     {
       return XYZ(v,v,v);
     }
@@ -186,7 +186,7 @@ inline const XYZ operator*(const XYZ& a,const XYZ& b)
 //! Dot product.
 /*! Perhaps a curious choice of operator but it works for me.
  */
-inline const float operator%(const XYZ& a,const XYZ& b)
+inline const real operator%(const XYZ& a,const XYZ& b)
 {
   return a.x()*b.x()+a.y()*b.y()+a.z()*b.z();
 } 
@@ -204,7 +204,7 @@ inline const XYZ operator-(const XYZ& a,const XYZ& b)
 }
 
 //! Multiplication by scalar.
-inline const XYZ operator*(float k,const XYZ& v)
+inline const XYZ operator*(real k,const XYZ& v)
 {  
   XYZ ret(v);
   ret*=k;
@@ -212,7 +212,7 @@ inline const XYZ operator*(float k,const XYZ& v)
 }
 
 //! Multiplication by scalar.
-inline const XYZ operator*(const XYZ& v,float k)
+inline const XYZ operator*(const XYZ& v,real k)
 {
   XYZ ret(v);
   ret*=k;
@@ -220,17 +220,17 @@ inline const XYZ operator*(const XYZ& v,float k)
 }
 
 //! Division by scalar.
-inline const XYZ operator/(const XYZ& v,float k)
+inline const XYZ operator/(const XYZ& v,real k)
 {
-  return v*(1.0f/k);
+  return v*(1.0/k);
 }
 
 /*! If magnitude is zero we return zero vector.
  */
 inline const XYZ XYZ::normalised() const
 {
-  const float m=magnitude();
-  return (m==0.0f ? XYZ(0.0f,0.0f,0.0f) : (*this)/m);
+  const real m=magnitude();
+  return (m==0.0 ? XYZ(0.0,0.0,0.0) : (*this)/m);
 }
 
 inline void XYZ::normalise()
@@ -267,7 +267,7 @@ class RandomXYZInSphere : public XYZ
 {
  public:
   //! Constructor.
-  RandomXYZInSphere(Random01& rng,float radius);
+  RandomXYZInSphere(Random01& rng,real radius);
 };
 
 //! Generates a random point on the surface of a unit-radius sphere
@@ -292,7 +292,7 @@ class RandomXYZInXYDisc : public XYZ
 {
  public:
   //! Constructor.
-  RandomXYZInXYDisc(Random01& rng,float radius);
+  RandomXYZInXYDisc(Random01& rng,real radius);
 };
 
 #endif

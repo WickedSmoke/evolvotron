@@ -74,9 +74,9 @@ QImageWithData*const render_image(const MutatableImage*const imagefn,int width,i
       {
 	// xy co-ords vary over -1.0 to 1.0.  In the one frame case z will be 0
 	const XYZ p(
-		    -1.0f+2.0f*(col+0.5f)/width,
-		    1.0f-2.0f*(row+0.5f)/height,
-		    0.0f
+		    -1.0+2.0*(col+0.5)/width,
+		    1.0-2.0*(row+0.5)/height,
+		    0.0
 		    );
 	uint c[3];
 	imagefn->get_rgb(p,c);
@@ -110,12 +110,12 @@ const double compare_images(const QImage* src0,const QImage* src1)
 	  const QRgb col0(src0->pixel(x,y));
 	  const QRgb col1(src1->pixel(x,y));
 
-	  const float r0=qRed(col0);
-	  const float r1=qRed(col1);
-	  const float g0=qGreen(col0);
-	  const float g1=qGreen(col1);
-	  const float b0=qBlue(col0);
-	  const float b1=qBlue(col1);
+	  const real r0=qRed(col0);
+	  const real r1=qRed(col1);
+	  const real g0=qGreen(col0);
+	  const real g1=qGreen(col1);
+	  const real b0=qBlue(col0);
+	  const real b1=qBlue(col1);
 	  t+=sqr(r0-r1)+sqr(g0-g1)+sqr(b0-b1);
 	}
     }
@@ -161,7 +161,7 @@ int main(int argc,char* argv[])
 
   const uint fresh=10;
   const uint reset=100;
-  const float cooling=0.9;
+  const real cooling=0.9;
   const uint iterations=10000000;
 
   std::clog << "Cumulative cooling effect is " << pow(cooling,reset) << " over cycle\n";

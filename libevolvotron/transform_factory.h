@@ -76,7 +76,7 @@ class TransformFactoryRandomScaleXY : public TransformFactory
 {
  public:
   //! Constructor accepts power-of-2 specifiers, so -1 & 1 would generate scalings between 0.5 and 2, half zooming in and half zooming out.
-  TransformFactoryRandomScaleXY(float lopow2,float hipow2)
+  TransformFactoryRandomScaleXY(real lopow2,real hipow2)
     :_lopow2(lopow2),_hipow2(hipow2)
     {}
 
@@ -90,10 +90,10 @@ class TransformFactoryRandomScaleXY : public TransformFactory
   virtual const Transform operator()(Random01& rng) const;
  protected:
   //! The low end of the scaling as a power of 2
-  float _lopow2;
+  real _lopow2;
 
   //! The high end of the scaling as a power of 2
-  float _hipow2;
+  real _hipow2;
 };
 
 //! Factory for creating random z-axis rotation transforms

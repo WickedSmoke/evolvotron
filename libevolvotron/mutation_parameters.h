@@ -50,50 +50,50 @@ class MutationParameters : public QObject
   mutable Random01 _r01;
 
   //! Specifies the magnitude of random changes to FunctionNodeConstant.
-  float _magnitude;
+  real _magnitude;
 
   //! Specifies the probability of a child being dropped and replaced with a new random stub.
-  float _probability_glitch;
+  real _probability_glitch;
 
   //! Specifies the probability of all child nodes being reordered.
-  float _probability_shuffle;
+  real _probability_shuffle;
 
   //! Specifies the probability of a random stub being inserted before a child.
-  float _probability_insert;
+  real _probability_insert;
 
   //! Specifies the probability of a node being replaced with an alternate type.
-  float _probability_substitute;
+  real _probability_substitute;
 
   //! Specifies the proportion of basic node types.
-  float _proportion_basic;
+  real _proportion_basic;
 
   //! Specifies the proportion of Constant nodes vs Position type nodes.
-  float _proportion_constant;
+  real _proportion_constant;
 
   //! Specifies the probability of a using a FunctionNodePositionTransformed instead of FunctionNodePosition
-  float _identity_supression;
+  real _identity_supression;
 
   //! The maximum number of iterations an iterative function node can have initially.
   uint _max_initial_iterations;
 
   //! The probability of the number of iterations changing by plus or minus 1.
-  float _probability_iterations_change_step;
+  real _probability_iterations_change_step;
   
   //! The probability of the number of iterations changing by times or divide 2.
-  float _probability_iterations_change_jump;
+  real _probability_iterations_change_jump;
 
   //! Individual weighting modifiers for each function type
   /*! Will only be applied to random functions we're asked for.
     The bulk of nodes are created by FunctionNode and are boring to keep the branching ratio down.
     \todo Implement a branching ratio query method.
    */
-  std::map<const FunctionRegistration*,float> _function_weighting;
+  std::map<const FunctionRegistration*,real> _function_weighting;
 
   //! Total of function weights, for normalisation.
-  float _function_weighting_total;
+  real _function_weighting_total;
 
   //! Map from [0,1] to a function registration, taking weights into account.
-  std::map<float,const FunctionRegistration*> _function_pick;
+  std::map<real,const FunctionRegistration*> _function_pick;
 
   void recalculate_function_stuff();
 
@@ -110,7 +110,7 @@ class MutationParameters : public QObject
   void reset();
 
   //! Multiply most parameters by the given factor
-  void general_cool(float f);
+  void general_cool(real f);
 
   //! Returns a reference to the random number generator.
   /*! Need this for e.g RandomXYZInSphere constructor.
@@ -121,90 +121,90 @@ class MutationParameters : public QObject
     }
 
   //! Return a number in the range [0,1)
-  const float r01() const
+  const real r01() const
     {
       return _r01();
     }
 
   //! Accessor.
-  const float magnitude() const
+  const real magnitude() const
     {
       return _magnitude;
     }
   //! Accessor.
-  void magnitude(float v) 
+  void magnitude(real v) 
     {
       _magnitude=v;
       emit changed();
     }
 
   //! Accessor.
-  const float probability_glitch() const
+  const real probability_glitch() const
     {
       return _probability_glitch;
     }
   //! Accessor.
-  void probability_glitch(float v)
+  void probability_glitch(real v)
     {
       _probability_glitch=v;
       emit changed();
     }
 
   //! Accessor.
-  const float probability_shuffle() const
+  const real probability_shuffle() const
     {
       return _probability_shuffle;
     }
   //! Accessor.
-  void probability_shuffle(float v)
+  void probability_shuffle(real v)
     {
       _probability_shuffle=v;
       emit changed();
     }
 
   //! Accessor.
-  const float probability_insert() const
+  const real probability_insert() const
     {
       return _probability_insert;
     }
   //! Accessor.
-  void probability_insert(float v)
+  void probability_insert(real v)
     {
       _probability_insert=v;
       emit changed();
     }
 
   //! Accessor.
-  const float probability_substitute() const
+  const real probability_substitute() const
     {
       return _probability_substitute;
     }
   //! Accessor.
-  void probability_substitute(float v)
+  void probability_substitute(real v)
     {
       _probability_substitute=v;
       emit changed();
     }
 
   //! Accessor.
-  const float proportion_constant() const
+  const real proportion_constant() const
     {
       return _proportion_constant;
     }
   //! Accessor.
-  void proportion_constant(float v)
+  void proportion_constant(real v)
     {
       _proportion_constant=v;
       emit changed();
     }
 
   //! Accessor.
-  const float identity_supression() const
+  const real identity_supression() const
     {
       return _identity_supression;
     }
   //! Accessor.
-  void identity_supression(float v)
+  void identity_supression(real v)
     {
       _identity_supression=v;
       emit changed();
@@ -223,36 +223,36 @@ class MutationParameters : public QObject
     }
 
   //! Accessor.
-  const float probability_iterations_change_step() const
+  const real probability_iterations_change_step() const
     {
       return _probability_iterations_change_step;
     }
   //! Accessor.
-  void probability_iterations_change_step(float v)
+  void probability_iterations_change_step(real v)
     {
       _probability_iterations_change_step=v;
       emit changed();
     }
 
   //! Accessor.
-  const float probability_iterations_change_jump() const
+  const real probability_iterations_change_jump() const
     {
       return _probability_iterations_change_jump;
     }
   //! Accessor.
-  void probability_iterations_change_jump(float v)
+  void probability_iterations_change_jump(real v)
     {
       _probability_iterations_change_jump=v;
       emit changed();
     }
 
   //! Accessor.
-  const float proportion_basic() const
+  const real proportion_basic() const
     {
       return _proportion_basic;
     }
   //! Accessor.
-  void proportion_basic(float p)
+  void proportion_basic(real p)
     {
       _proportion_basic=p;
       emit changed();
@@ -261,18 +261,18 @@ class MutationParameters : public QObject
   //! Calculate branching ratio for above calls
   /* Call user should be checking this and diluting with boring nodes to keep it under control
    */
-  const float random_function_branching_ratio() const;
+  const real random_function_branching_ratio() const;
 
   //! This returns a new random bit of tree.
   /*! Setting the "exciting" flag avoids the most basic node types, but only at the top level of the stub tree.
    */
   FunctionNode*const MutationParameters::random_function_stub(bool exciting) const;
     
-  void change_function_weighting(const FunctionRegistration* fn,float w);
+  void change_function_weighting(const FunctionRegistration* fn,real w);
 
   void randomize_function_weightings_for_classifications(uint classification_mask);
 
-  const float get_weighting(const FunctionRegistration* fn);
+  const real get_weighting(const FunctionRegistration* fn);
 
  protected:
 

@@ -43,7 +43,7 @@ class Transform
   Transform(const XYZ& t,const XYZ& x,const XYZ& y,const XYZ& z);
 
   //! Constructor specifying column-wise elements.
-  Transform(const std::vector<float>& v);
+  Transform(const std::vector<real>& v);
 
   //! virtual destructor in case of extension
   virtual ~Transform();
@@ -86,7 +86,7 @@ class Transform
   //@}
 
   //! Get column-wise element values as a vector
-  const std::vector<float> get_columns() const;
+  const std::vector<real> get_columns() const;
 
   //! Transform a point
   const XYZ transformed(const XYZ& p) const;
@@ -126,42 +126,42 @@ inline std::ostream& operator<<(std::ostream& out,const Transform& t)
 class TransformRotateX : public Transform
 {
  public:
-  TransformRotateX(float a)
+  TransformRotateX(real a)
     {
-      const float sa=sin(a);
-      const float ca=cos(a);
+      const real sa=sin(a);
+      const real ca=cos(a);
       
-      basis_x(XYZ(1.0f,0.0f,0.0f));
-      basis_y(XYZ(0.0f, ca , sa ));
-      basis_z(XYZ(0.0f,-sa , ca ));
+      basis_x(XYZ(1.0,0.0,0.0));
+      basis_y(XYZ(0.0, ca , sa ));
+      basis_z(XYZ(0.0,-sa , ca ));
     }
 };
 
 class TransformRotateY : public Transform
 {
  public:
-  TransformRotateY(float a)
+  TransformRotateY(real a)
     {
-      const float sa=sin(a);
-      const float ca=cos(a);
+      const real sa=sin(a);
+      const real ca=cos(a);
       
-      basis_x(XYZ( ca ,0.0f,-sa ));
-      basis_y(XYZ(0.0f,1.0f,0.0f));
-      basis_z(XYZ( sa ,0.0f, ca ));
+      basis_x(XYZ( ca ,0.0,-sa ));
+      basis_y(XYZ(0.0,1.0,0.0));
+      basis_z(XYZ( sa ,0.0, ca ));
     }
 };
 
 class TransformRotateZ : public Transform
 {
  public:
-  TransformRotateZ(float a)
+  TransformRotateZ(real a)
     {
-      const float sa=sin(a);
-      const float ca=cos(a);
+      const real sa=sin(a);
+      const real ca=cos(a);
       
-      basis_x(XYZ( ca , sa ,0.0f));
-      basis_y(XYZ(-sa , ca ,0.0f));
-      basis_z(XYZ(0.0f,0.0f,1.0f));
+      basis_x(XYZ( ca , sa ,0.0));
+      basis_y(XYZ(-sa , ca ,0.0));
+      basis_z(XYZ(0.0,0.0,1.0));
     }
 };
 

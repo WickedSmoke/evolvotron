@@ -58,13 +58,13 @@ public:
   }
 
   //! Accessor.
-  const std::vector<float>& params() const
+  const std::vector<real>& params() const
   {
     return _params;
   }
 
   //! Accessor.
-  std::vector<float>& params()
+  std::vector<real>& params()
   {
     return _params;
   }
@@ -96,7 +96,7 @@ public:
 
 protected:
   std::string _type;
-  std::vector<float> _params;
+  std::vector<real> _params;
   std::vector<FunctionNodeInfo*> _args;
   uint _iterations;
 };

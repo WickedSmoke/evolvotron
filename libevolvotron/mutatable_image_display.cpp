@@ -199,7 +199,7 @@ const uint MutatableImageDisplay::simplify_constants(bool single_action)
   uint old_parameters;
   uint old_depth;
   uint old_width;
-  float old_const;
+  real old_const;
   _image->get_stats(old_nodes,old_parameters,old_depth,old_width,old_const);
 
   main()->history().replacing(this);
@@ -209,7 +209,7 @@ const uint MutatableImageDisplay::simplify_constants(bool single_action)
   uint new_parameters;
   uint new_depth;
   uint new_width;
-  float new_const;
+  real new_const;
   _image->get_stats(new_nodes,new_parameters,new_depth,new_width,new_const);
 
   const uint nodes_eliminated=old_nodes-new_nodes;
@@ -478,13 +478,13 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 		      )
 		    {
 		      XYZ scale(
-				(event->pos().x()-image_size().width() /2) / static_cast<float>(_mid_button_adjust_last_pos.x()-image_size().width() /2),
-				(event->pos().y()-image_size().height()/2) / static_cast<float>(_mid_button_adjust_last_pos.y()-image_size().height()/2),
-				0.0f
+				(event->pos().x()-image_size().width() /2) / static_cast<real>(_mid_button_adjust_last_pos.x()-image_size().width() /2),
+				(event->pos().y()-image_size().height()/2) / static_cast<real>(_mid_button_adjust_last_pos.y()-image_size().height()/2),
+				0.0
 				);
 		      
-		      transform.basis_x(XYZ(1.0f/scale.x(),          0.0f,0.0f));
-		      transform.basis_y(XYZ(          0.0f,1.0f/scale.y(),0.0f));
+		      transform.basis_x(XYZ(1.0/scale.x(),          0.0,0.0));
+		      transform.basis_y(XYZ(          0.0,1.0/scale.y(),0.0));
 		      
 		      std::clog << "[Anisotropic scale]";
 		    }
@@ -492,24 +492,24 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	      // Shift button alone is isotropic zoom
 	      else 
 		{
-		  const float cx=image_size().width()/2.0f;
-		  const float cy=image_size().width()/2.0f;
+		  const real cx=image_size().width()/2.0;
+		  const real cy=image_size().width()/2.0;
 		  
-		  const float dx=event->pos().x()-cx;
-		  const float dy=event->pos().y()-cy;
+		  const real dx=event->pos().x()-cx;
+		  const real dy=event->pos().y()-cy;
 		  
-		  const float last_dx=_mid_button_adjust_last_pos.x()-cx;
-		  const float last_dy=_mid_button_adjust_last_pos.y()-cy;
+		  const real last_dx=_mid_button_adjust_last_pos.x()-cx;
+		  const real last_dy=_mid_button_adjust_last_pos.y()-cy;
 		  
-		  const float radius=sqrt(dx*dx+dy*dy);
-		  const float last_radius=sqrt(last_dx*last_dx+last_dy*last_dy);
+		  const real radius=sqrt(dx*dx+dy*dy);
+		  const real last_radius=sqrt(last_dx*last_dx+last_dy*last_dy);
 		  
 		  // Only scale in non-degenerate cases
-		  if (radius!=0.0f && last_radius!=0.0f)
+		  if (radius!=0.0 && last_radius!=0.0)
 		    {
-		      const float scale=radius/last_radius;
-		      transform.basis_x(XYZ(1.0f/scale,          0.0f,0.0f));
-		      transform.basis_y(XYZ(      0.0f,1.0f/scale,0.0f));
+		      const real scale=radius/last_radius;
+		      transform.basis_x(XYZ(1.0/scale,          0.0,0.0));
+		      transform.basis_y(XYZ(      0.0,1.0/scale,0.0));
 		      
 		      std::clog << "[Isotropic scale]";
 		    }
@@ -520,39 +520,39 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	      // Control-alt is shear
 	      if (event->state()&AltButton)
 		{
-		  const float cx=image_size().width()/2.0f;
-		  const float cy=image_size().width()/2.0f;
+		  const real cx=image_size().width()/2.0;
+		  const real cy=image_size().width()/2.0;
 		  
-		  const float dx=(event->pos().x()-_mid_button_adjust_last_pos.x())/cx;
-		  const float dy=(event->pos().y()-_mid_button_adjust_last_pos.y())/cy;
+		  const real dx=(event->pos().x()-_mid_button_adjust_last_pos.x())/cx;
+		  const real dy=(event->pos().y()-_mid_button_adjust_last_pos.y())/cy;
 		  
-		  transform.basis_x(XYZ(1.0f, -dy,0.0f));
-		  transform.basis_y(XYZ(  dx,1.0f,0.0f));
+		  transform.basis_x(XYZ(1.0, -dy,0.0));
+		  transform.basis_y(XYZ(  dx,1.0,0.0));
 		  
 		  std::clog << "[Shear]";
 		}
 	      // Control button only is rotate
 	      else
 		{
-		  const float cx=image_size().width()/2.0f;
-		  const float cy=image_size().width()/2.0f;
+		  const real cx=image_size().width()/2.0;
+		  const real cy=image_size().width()/2.0;
 		  
-		  const float dx=event->pos().x()-cx;
-		  const float dy=event->pos().y()-cy;
+		  const real dx=event->pos().x()-cx;
+		  const real dy=event->pos().y()-cy;
 		  
-		  const float last_dx=_mid_button_adjust_last_pos.x()-cx;
-		  const float last_dy=_mid_button_adjust_last_pos.y()-cy;
+		  const real last_dx=_mid_button_adjust_last_pos.x()-cx;
+		  const real last_dy=_mid_button_adjust_last_pos.y()-cy;
 		  
-		  const float a=atan2(dy,dx);
-		  const float last_a=atan2(last_dy,last_dx);
+		  const real a=atan2(dy,dx);
+		  const real last_a=atan2(last_dy,last_dx);
 		  
-		  const float rot=a-last_a;
+		  const real rot=a-last_a;
 		  
-		  const float sr=sin(rot);
-		  const float cr=cos(rot);
+		  const real sr=sin(rot);
+		  const real cr=cos(rot);
 		  
-		  transform.basis_x(XYZ( cr,sr,0.0f));
-		  transform.basis_y(XYZ(-sr,cr,0.0f));
+		  transform.basis_x(XYZ( cr,sr,0.0));
+		  transform.basis_y(XYZ(-sr,cr,0.0));
 	      
 		  std::clog << "[Rotate]";
 		}
@@ -561,9 +561,9 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	  else
 	    {
 	      XYZ translate(
-			    (-2.0f*pixel_delta.x())/image_size().width(),
-			    ( 2.0f*pixel_delta.y())/image_size().height(),
-			    0.0f
+			    (-2.0*pixel_delta.x())/image_size().width(),
+			    ( 2.0*pixel_delta.y())/image_size().height(),
+			    0.0
 			    );
 	      transform.translate(translate);
 	      
@@ -593,7 +593,7 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	    {
 	      // Otherwise have to create a new wrapper for the transform:
 	      
-	      std::vector<float> params=transform.get_columns();
+	      std::vector<real> params=transform.get_columns();
 	      
 	      std::vector<FunctionNode*> args;	  
 	      args.push_back(image()->root()->deepclone());
@@ -642,14 +642,14 @@ void MutatableImageDisplay::menupick_spawn_warped_random()
 
 void MutatableImageDisplay::menupick_spawn_warped_zoom_in()
 {
-  TransformFactoryRandomScaleXY transform_factory(-2.0f,0.0f);
+  TransformFactoryRandomScaleXY transform_factory(-2.0,0.0);
 
   main()->spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_zoom_out()
 {
-  TransformFactoryRandomScaleXY transform_factory(0.0f,2.0f);
+  TransformFactoryRandomScaleXY transform_factory(0.0,2.0);
 
   main()->spawn_warped(this,transform_factory);
 }
@@ -663,28 +663,28 @@ void MutatableImageDisplay::menupick_spawn_warped_rotate()
 
 void MutatableImageDisplay::menupick_spawn_warped_pan_xy()
 {
-  TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0f,0.0f,0.0f),XYZ(1.0f,1.0f,0.0f));
+  TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0,0.0,0.0),XYZ(1.0,1.0,0.0));
 
   main()->spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_pan_x()
 {
-  TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0f,0.0f,0.0f),XYZ(1.0f,0.0f,0.0f));
+  TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0,0.0,0.0),XYZ(1.0,0.0,0.0));
 
   main()->spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_pan_y()
 {
-  TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0f,0.0f,0.0f),XYZ(0.0f,1.0f,0.0f));
+  TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0,0.0,0.0),XYZ(0.0,1.0,0.0));
 
   main()->spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_pan_z()
 {
-  TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0f,0.0f,0.0f),XYZ(0.0f,0.0f,1.0f));
+  TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0,0.0,0.0),XYZ(0.0,0.0,1.0));
 
   main()->spawn_warped(this,transform_factory);
 }
@@ -923,7 +923,7 @@ void MutatableImageDisplay::menupick_properties()
   uint total_parameters;
   uint depth;
   uint width;
-  float proportion_constant;
+  real proportion_constant;
 
   image()->get_stats(total_nodes,total_parameters,depth,width,proportion_constant);
 
@@ -932,7 +932,7 @@ void MutatableImageDisplay::menupick_properties()
   msg << "Parameters      \t" << total_parameters << "\n";
   msg << "Maximum depth   \t" << depth << "\n";
   msg << "Width           \t" << width << "\n";
-  msg << "Constant        \t" << 100.0f*proportion_constant << "%\n";
+  msg << "Constant        \t" << 100.0*proportion_constant << "%\n";
 
   _properties->set_message(msg.str());
   _properties->exec();

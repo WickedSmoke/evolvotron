@@ -24,10 +24,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <iostream>
 
 Transform::Transform()
-  :_translate(0.0f,0.0f,0.0f)
-   ,_basis_x(1.0f,0.0f,0.0f)
-   ,_basis_y(0.0f,1.0f,0.0f)
-   ,_basis_z(0.0f,0.0f,1.0f)
+  :_translate(0.0,0.0,0.0)
+   ,_basis_x(1.0,0.0,0.0)
+   ,_basis_y(0.0,1.0,0.0)
+   ,_basis_z(0.0,0.0,1.0)
 {}
 
 Transform::Transform(const Transform& t)
@@ -44,7 +44,7 @@ Transform::Transform(const XYZ& t,const XYZ& x,const XYZ& y,const XYZ& z)
    ,_basis_z(z)
 {}
 
-Transform::Transform(const std::vector<float>& v)
+Transform::Transform(const std::vector<real>& v)
 {
   assert(v.size()==12);
 
@@ -57,9 +57,9 @@ Transform::Transform(const std::vector<float>& v)
 Transform::~Transform()
 {}
 
-const std::vector<float> Transform::get_columns() const
+const std::vector<real> Transform::get_columns() const
 {
-  std::vector<float> ret(12);
+  std::vector<real> ret(12);
 
   ret[ 0]=_translate.x();ret[ 1]=_translate.y();ret[ 2]=_translate.z();
   ret[ 3]=_basis_x.x()  ;ret[ 4]=_basis_x.y()  ;ret[ 5]=_basis_x.z();

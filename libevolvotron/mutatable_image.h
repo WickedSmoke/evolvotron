@@ -61,7 +61,7 @@ class MutatableImage
     ,_locked(false)
     {
       assert(r!=0);
-      std::vector<float> pv;
+      std::vector<real> pv;
       std::vector<FunctionNode*> av;
       av.push_back(r);
       _root_holder=new FunctionNull(pv,av,0);
@@ -74,7 +74,7 @@ class MutatableImage
     ,_spheremap(sm)
     ,_locked(false)
     {      
-      std::vector<float> pv;
+      std::vector<real> pv;
       std::vector<FunctionNode*> av;
       av.push_back(FunctionNode::stub(parameters,exciting));
       _root_holder=new FunctionNull(pv,av,0);
@@ -164,7 +164,7 @@ class MutatableImage
   static MutatableImage*const load_function(std::istream& in,std::string& report);
 
   //! Obtain some statistics about the image function
-  void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,float& proportion_constant) const;
+  void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const;
 
   //! Check the function tree is ok.
   const bool ok() const

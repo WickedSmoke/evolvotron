@@ -55,7 +55,7 @@ class FunctionNode
   std::vector<FunctionNode*> _args;
 
   //! The parameters (ie constant values) for this node.
-  std::vector<float> _params;
+  std::vector<real> _params;
     
   //! Number of iterations for iterative function types.  If zero, indicates non-iterative function.
   /*! \todo Perhaps someday push this out into a derived class.
@@ -68,14 +68,14 @@ class FunctionNode
   const std::vector<FunctionNode*> cloneargs() const;
 
   //! This returns a copy of the node's parameters
-  const std::vector<float> cloneparams() const;
+  const std::vector<real> cloneparams() const;
 
   //! This what distinguishes different types of node.
   virtual const XYZ evaluate(const XYZ& p) const
     =0;
 
   //! Obtain some statistics about the image function
-  void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,float& proportion_constant) const;
+  void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const;
   
   //! Check function info against given number of parameters/arguments/iterative-flag.
   /*! Return true on success, false on fail with reasons in report string.
@@ -127,7 +127,7 @@ class FunctionNode
   static FunctionNode*const initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn=0);
 
   //! This returns a vector of random parameter values.
-  static const std::vector<float> stubparams(const MutationParameters& parameters,uint n);
+  static const std::vector<real> stubparams(const MutationParameters& parameters,uint n);
 
   //! This returns a vector of new random bits of tree.
   static const std::vector<FunctionNode*> stubargs(const MutationParameters& parameters,uint n,bool exciting=false);
@@ -138,7 +138,7 @@ class FunctionNode
   //! Constructor given an array of params and args and an iteration count.
   /*! These MUST be provided; there are no alterative constructors.
    */
-  FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter);
+  FunctionNode(const std::vector<real>& p,const std::vector<FunctionNode*>& a,uint iter);
   
   //! Build a MutatableImage given a description
   static FunctionNode*const create(const FunctionNodeInfo* info,std::string& report);
@@ -147,19 +147,19 @@ class FunctionNode
   virtual ~FunctionNode();
 
   //! Accessor
-  void params(const std::vector<float>& p)
+  void params(const std::vector<real>& p)
     {
       _params=p;
     }
 
   //! Accessor.
-  const std::vector<float>& params() const
+  const std::vector<real>& params() const
     {
       return _params;
     }
 
   //! Accessor. 
-  const float param(uint n) const
+  const real param(uint n) const
     {
       assert(n<params().size());
       return params()[n];
@@ -218,7 +218,7 @@ class FunctionNode
  protected:
 
   //! Impose a new set of parameters and arguments on the node.  Existing arguments are cleaned up.
-  void impose(std::vector<float>& p,std::vector<FunctionNode*>& a);
+  void impose(std::vector<real>& p,std::vector<FunctionNode*>& a);
 
   //! Accessor (non-const).
   std::vector<FunctionNode*>& args()
@@ -227,7 +227,7 @@ class FunctionNode
     }
 
   //! Accessor (non-const).
-  std::vector<float>& params()
+  std::vector<real>& params()
     {
       return _params;
     }

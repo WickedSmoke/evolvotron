@@ -57,39 +57,39 @@ Noise::Noise(uint seed)
     }
 }
 
-inline const float value(const XYZ& q,float rx,float ry,float rz)
+inline const real value(const XYZ& q,real rx,real ry,real rz)
 {
   return rx*q.x()+ry*q.y()+rz*q.z();
 }
 
-inline const float surve(float t)
+inline const real surve(real t)
 {
-  return t*t*(3.0f-2.0f*t);
+  return t*t*(3.0-2.0*t);
 }
 
-inline const float lerp(float t,float a,float b)
+inline const real lerp(real t,real a,real b)
 {
   return a+t*(b-a);
 }
 
-const float Noise::operator()(const XYZ& p) const
+const real Noise::operator()(const XYZ& p) const
 {
   // Crank up the frequency a bit otherwise don't see much variation in base case
-  const float tx=2.0f*p.x()+10000.0f;
-  const float ty=2.0f*p.y()+10000.0f;
-  const float tz=2.0f*p.z()+10000.0f;
+  const real tx=2.0*p.x()+10000.0;
+  const real ty=2.0*p.y()+10000.0;
+  const real tz=2.0*p.z()+10000.0;
   
   const int itx=(int)tx;
   const int ity=(int)ty;
   const int itz=(int)tz;
 
-  const float rx0=tx-itx;
-  const float ry0=ty-ity;
-  const float rz0=tz-itz;
+  const real rx0=tx-itx;
+  const real ry0=ty-ity;
+  const real rz0=tz-itz;
 
-  const float rx1=rx0-1.0f;
-  const float ry1=ry0-1.0f;
-  const float rz1=rz0-1.0f;
+  const real rx1=rx0-1.0;
+  const real ry1=ry0-1.0;
+  const real rz1=rz0-1.0;
 
   const int bx0=(itx&(N-1));
   const int bx1=((bx0+1)&(N-1));
@@ -106,19 +106,19 @@ const float Noise::operator()(const XYZ& p) const
   const int b10=_p[j+by0];
   const int b11=_p[j+by1];
   
-  const float sx=surve(rx0);
+  const real sx=surve(rx0);
 
-  const float a0=lerp(sx,value(_g[b00+bz0],rx0,ry0,rz0),value(_g[b10+bz0],rx1,ry0,rz0));
-  const float b0=lerp(sx,value(_g[b01+bz0],rx0,ry1,rz0),value(_g[b11+bz0],rx1,ry1,rz0));
-  const float a1=lerp(sx,value(_g[b00+bz1],rx0,ry0,rz1),value(_g[b10+bz1],rx1,ry0,rz1));
-  const float b1=lerp(sx,value(_g[b01+bz1],rx0,ry1,rz1),value(_g[b11+bz1],rx1,ry1,rz1));
+  const real a0=lerp(sx,value(_g[b00+bz0],rx0,ry0,rz0),value(_g[b10+bz0],rx1,ry0,rz0));
+  const real b0=lerp(sx,value(_g[b01+bz0],rx0,ry1,rz0),value(_g[b11+bz0],rx1,ry1,rz0));
+  const real a1=lerp(sx,value(_g[b00+bz1],rx0,ry0,rz1),value(_g[b10+bz1],rx1,ry0,rz1));
+  const real b1=lerp(sx,value(_g[b01+bz1],rx0,ry1,rz1),value(_g[b11+bz1],rx1,ry1,rz1));
 
-  const float sy=surve(ry0);
+  const real sy=surve(ry0);
       
-  const float c=lerp(sy,a0,b0);  
-  const float d=lerp(sy,a1,b1);
+  const real c=lerp(sy,a0,b0);  
+  const real d=lerp(sy,a1,b1);
 
-  const float sz=surve(rz0);
+  const real sz=surve(rz0);
   
-  return 1.5f*lerp(sz,c,d);
+  return 1.5*lerp(sz,c,d);
 }
