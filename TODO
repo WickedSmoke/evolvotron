@@ -86,8 +86,6 @@ Conventional
   (Can be well optimised, but only with heavyweight compile options.)
 - Profile & optimise.
 - Spawn recoloured could be linear, quadratic (or generalised?) versions.
-- Locked attribute should be an image property, not a display property.
-  (Would play nicer with Undo)
 - Undo needs to save more state to work properly (e.g state for respawn)
   Make history know about "MutatableImageHolders" rather than Displays,
   and have last spawned be held in such an object too.
@@ -100,7 +98,7 @@ Conventional
 - Option (default on) to automatitcally respawn boring constant images as soon
   as they've been computed to a certain resolution.
 - Web front end to commandline tools: an evolvotron web-server.
-- Command line option for border around images... indicate locked status.
+- Command line option for border around images... use space to indicate locked status.
 - Maybe add "view" menu: like warp but just applying to current image (like drag)
   (would need explicit control over amounts: maybe drag approach better ?).
 - Last method used should point to an object encapsulating the behaviour
@@ -108,7 +106,6 @@ Conventional
   Needed for breeding behaviour (so can keep 2 last images).
 - Undo needs to restore _last_spawned too (but do above first and keep hisory of spawn methods).
 - Command line option to enable/disable fractal and iterative types.
-- Replace/augment "Lock" with a "save" or "put-aside" window (could make history/undo simpler).
 - "Unlock all" on edit menu
 - Reset & Restart: combine and bring up modal "are you sure" dialog box which can also contain check boxes for what to reset:
     mutation parameters

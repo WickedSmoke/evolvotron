@@ -76,9 +76,6 @@ class MutatableImageDisplay : public QWidget
    */
   bool _resize_in_progress;
 
-  //! Flag indicating the display is considered locked and shouldn't be loaded with a new image.
-  bool _locked;
-
   //! The resolution level currently displaying (0=1-for-1 pixels, 1=half resolution etc).
   /*! Needed to handle possible (but unlikely?) out of order task returns from multiple compute threads.
    */
@@ -138,7 +135,7 @@ class MutatableImageDisplay : public QWidget
   //! Accessor.
   const bool locked() const
     {
-      return _locked;
+      return (_image ? _image->locked() : false);
     }
 
   //! Accessor.

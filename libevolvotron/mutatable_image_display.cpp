@@ -60,7 +60,6 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
    ,_animate_reverse(false)
    ,_timer(0)
    ,_resize_in_progress(false)
-   ,_locked(false)
    ,_current_display_level(0)
    ,_image(0)
    ,_properties(0)
@@ -280,6 +279,9 @@ void MutatableImageDisplay::image(MutatableImage* i)
 
   // If we start recomputing again we need to accept any delivered images.
   _current_display_level=(uint)(-1);
+
+  // Update lock status displayed in menu
+  _menu->setItemChecked(_menu_item_number_lock,(_image ? _image->locked() : false));
   
   if (i!=0)
     {
@@ -365,9 +367,16 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
 
 void MutatableImageDisplay::lock(bool l)
 {
-  _locked=l;
+  // This might be called (with l=false) with null _image during start-up reset.
+  if (_image)
+    {
+      main()->history().begin_action(l ? "lock" : "unlock");
+      main()->history().replacing(this);
+      _image->locked(l);
+      main()->history().end_action();
+    }
 
-  _menu->setItemChecked(_menu_item_number_lock,_locked);
+  _menu->setItemChecked(_menu_item_number_lock,l);
 }
 
 void MutatableImageDisplay::paintEvent(QPaintEvent*)
@@ -437,154 +446,161 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 {
   if (event->state()&MidButton)
     {
-      const QPoint pixel_delta(event->pos()-_mid_button_adjust_last_pos);
-      
-      // Build the transform caused by the adjustment
-      Transform transform;
-
-      // Shift button (no ctrl) is various zooms
-      if (event->state()&ShiftButton && !(event->state()&ControlButton))
+      if (locked())
 	{
-	  // Alt-Shift is anisotropic
-	  if (event->state()&AltButton)
-	    {
-	      // Only scale in non-degenerate cases
-	      if (
-		  event->pos().x()!=image_size().width()/2
-		  && event->pos().y()!=image_size().height()/2
-		  && _mid_button_adjust_last_pos.x()!=image_size().width()/2
-		  && _mid_button_adjust_last_pos.y()!=image_size().height()/2
-		  )
-		{
-		  XYZ scale(
-			    (event->pos().x()-image_size().width() /2) / static_cast<float>(_mid_button_adjust_last_pos.x()-image_size().width() /2),
-			    (event->pos().y()-image_size().height()/2) / static_cast<float>(_mid_button_adjust_last_pos.y()-image_size().height()/2),
-			    0.0f
-			    );
-	      
-		  transform.basis_x(XYZ(1.0f/scale.x(),          0.0f,0.0f));
-		  transform.basis_y(XYZ(          0.0f,1.0f/scale.y(),0.0f));
-
-		  std::clog << "[Anisotropic scale]";
-		}
-	    }
-	  // Shift button alone is isotropic zoom
-	  else 
-	    {
-	      const float cx=image_size().width()/2.0f;
-	      const float cy=image_size().width()/2.0f;
-
-	      const float dx=event->pos().x()-cx;
-	      const float dy=event->pos().y()-cy;
-	      
-	      const float last_dx=_mid_button_adjust_last_pos.x()-cx;
-	      const float last_dy=_mid_button_adjust_last_pos.y()-cy;
-
-	      const float radius=sqrt(dx*dx+dy*dy);
-	      const float last_radius=sqrt(last_dx*last_dx+last_dy*last_dy);
-
-	      // Only scale in non-degenerate cases
-	      if (radius!=0.0f && last_radius!=0.0f)
-		{
-		  const float scale=radius/last_radius;
-		  transform.basis_x(XYZ(1.0f/scale,          0.0f,0.0f));
-		  transform.basis_y(XYZ(      0.0f,1.0f/scale,0.0f));
-
-		  std::clog << "[Isotropic scale]";
-		}
-	    }
+	  QMessageBox::warning(this,"Evolvotron","Cannot middle-mouse adjust a locked image.\nUnlock and try again.");
 	}
-      else if (event->state()&ControlButton)
+      else
 	{
-	  // Control-alt is shear
-	  if (event->state()&AltButton)
+	  const QPoint pixel_delta(event->pos()-_mid_button_adjust_last_pos);
+	  
+	  // Build the transform caused by the adjustment
+	  Transform transform;
+	  
+	  // Shift button (no ctrl) is various zooms
+	  if (event->state()&ShiftButton && !(event->state()&ControlButton))
 	    {
-	      const float cx=image_size().width()/2.0f;
-	      const float cy=image_size().width()/2.0f;
-
-	      const float dx=(event->pos().x()-_mid_button_adjust_last_pos.x())/cx;
-	      const float dy=(event->pos().y()-_mid_button_adjust_last_pos.y())/cy;
-	      
-	      transform.basis_x(XYZ(1.0f, -dy,0.0f));
-	      transform.basis_y(XYZ(  dx,1.0f,0.0f));
-	      
-	      std::clog << "[Shear]";
+	      // Alt-Shift is anisotropic
+	      if (event->state()&AltButton)
+		{
+		  // Only scale in non-degenerate cases
+		  if (
+		      event->pos().x()!=image_size().width()/2
+		      && event->pos().y()!=image_size().height()/2
+		      && _mid_button_adjust_last_pos.x()!=image_size().width()/2
+		      && _mid_button_adjust_last_pos.y()!=image_size().height()/2
+		      )
+		    {
+		      XYZ scale(
+				(event->pos().x()-image_size().width() /2) / static_cast<float>(_mid_button_adjust_last_pos.x()-image_size().width() /2),
+				(event->pos().y()-image_size().height()/2) / static_cast<float>(_mid_button_adjust_last_pos.y()-image_size().height()/2),
+				0.0f
+				);
+		      
+		      transform.basis_x(XYZ(1.0f/scale.x(),          0.0f,0.0f));
+		      transform.basis_y(XYZ(          0.0f,1.0f/scale.y(),0.0f));
+		      
+		      std::clog << "[Anisotropic scale]";
+		    }
+		}
+	      // Shift button alone is isotropic zoom
+	      else 
+		{
+		  const float cx=image_size().width()/2.0f;
+		  const float cy=image_size().width()/2.0f;
+		  
+		  const float dx=event->pos().x()-cx;
+		  const float dy=event->pos().y()-cy;
+		  
+		  const float last_dx=_mid_button_adjust_last_pos.x()-cx;
+		  const float last_dy=_mid_button_adjust_last_pos.y()-cy;
+		  
+		  const float radius=sqrt(dx*dx+dy*dy);
+		  const float last_radius=sqrt(last_dx*last_dx+last_dy*last_dy);
+		  
+		  // Only scale in non-degenerate cases
+		  if (radius!=0.0f && last_radius!=0.0f)
+		    {
+		      const float scale=radius/last_radius;
+		      transform.basis_x(XYZ(1.0f/scale,          0.0f,0.0f));
+		      transform.basis_y(XYZ(      0.0f,1.0f/scale,0.0f));
+		      
+		      std::clog << "[Isotropic scale]";
+		    }
+		}
 	    }
-	  // Control button only is rotate
+	  else if (event->state()&ControlButton)
+	    {
+	      // Control-alt is shear
+	      if (event->state()&AltButton)
+		{
+		  const float cx=image_size().width()/2.0f;
+		  const float cy=image_size().width()/2.0f;
+		  
+		  const float dx=(event->pos().x()-_mid_button_adjust_last_pos.x())/cx;
+		  const float dy=(event->pos().y()-_mid_button_adjust_last_pos.y())/cy;
+		  
+		  transform.basis_x(XYZ(1.0f, -dy,0.0f));
+		  transform.basis_y(XYZ(  dx,1.0f,0.0f));
+		  
+		  std::clog << "[Shear]";
+		}
+	      // Control button only is rotate
+	      else
+		{
+		  const float cx=image_size().width()/2.0f;
+		  const float cy=image_size().width()/2.0f;
+		  
+		  const float dx=event->pos().x()-cx;
+		  const float dy=event->pos().y()-cy;
+		  
+		  const float last_dx=_mid_button_adjust_last_pos.x()-cx;
+		  const float last_dy=_mid_button_adjust_last_pos.y()-cy;
+		  
+		  const float a=atan2(dy,dx);
+		  const float last_a=atan2(last_dy,last_dx);
+		  
+		  const float rot=a-last_a;
+		  
+		  const float sr=sin(rot);
+		  const float cr=cos(rot);
+		  
+		  transform.basis_x(XYZ( cr,sr,0.0f));
+		  transform.basis_y(XYZ(-sr,cr,0.0f));
+	      
+		  std::clog << "[Rotate]";
+		}
+	    }
+	  // Default (no interesting modifier keys detected) is panning around
 	  else
 	    {
-	      const float cx=image_size().width()/2.0f;
-	      const float cy=image_size().width()/2.0f;
+	      XYZ translate(
+			    (-2.0f*pixel_delta.x())/image_size().width(),
+			    ( 2.0f*pixel_delta.y())/image_size().height(),
+			    0.0f
+			    );
+	      transform.translate(translate);
 	      
-	      const float dx=event->pos().x()-cx;
-	      const float dy=event->pos().y()-cy;
-	      
-	      const float last_dx=_mid_button_adjust_last_pos.x()-cx;
-	      const float last_dy=_mid_button_adjust_last_pos.y()-cy;
-	      
-	      const float a=atan2(dy,dx);
-	      const float last_a=atan2(last_dy,last_dx);
-	  
-	      const float rot=a-last_a;
-	  
-	      const float sr=sin(rot);
-	      const float cr=cos(rot);
-
-	      transform.basis_x(XYZ( cr,sr,0.0f));
-	      transform.basis_y(XYZ(-sr,cr,0.0f));
-
-	      std::clog << "[Rotate]";
+	      std::clog << "[Pan]";
 	    }
-	}
-      // Default (no interesting modifier keys detected) is panning around
-      else
-	{
-	  XYZ translate(
-			(-2.0f*pixel_delta.x())/image_size().width(),
-			( 2.0f*pixel_delta.y())/image_size().height(),
-			0.0f
-			);
-	  transform.translate(translate);
 	  
-	  std::clog << "[Pan]";
-	}
+	  FunctionNode* new_root;
+	  if (image()->root()->is_a_FunctionPreTransform())
+	    {
+	      // If the image root is a transform wrapper then we can just concatentate transforms.
+	      new_root=image()->root()->deepclone();
+	      
+	      FunctionPreTransform*const new_root_as_transform=new_root->is_a_FunctionPreTransform();
+	      assert(new_root_as_transform!=0);
+	      
+	      // Have to access params() through this to avoid protected scope of non-const version creating an error.
+	      const FunctionPreTransform*const const_new_root_as_transform=new_root_as_transform;
+	      
+	      Transform current_transform(const_new_root_as_transform->params());
+	      //std::clog << "[Was: " << current_transform;
+	      //std::clog << ", concatenate: " << transform;
+	      current_transform.concatenate_on_right(transform);
+	      //std::clog << ", now: " << current_transform << "]";
+	      new_root_as_transform->params(current_transform.get_columns());
+	    }
+	  else
+	    {
+	      // Otherwise have to create a new wrapper for the transform:
+	      
+	      std::vector<float> params=transform.get_columns();
+	      
+	      std::vector<FunctionNode*> args;	  
+	      args.push_back(image()->root()->deepclone());
+	      
+	      new_root=new FunctionPreTransform(params,args,0);
+	    }
 
-      FunctionNode* new_root;
-      if (image()->root()->is_a_FunctionPreTransform())
-	{
-	  // If the image root is a transform wrapper then we can just concatentate transforms.
-	  new_root=image()->root()->deepclone();
+	  // Install new image (triggers recompute).
+	  image(new MutatableImage(new_root,image()->sinusoidal_z(),image()->spheremap()));
 	  
-	  FunctionPreTransform*const new_root_as_transform=new_root->is_a_FunctionPreTransform();
-	  assert(new_root_as_transform!=0);
-
-	  // Have to access params() through this to avoid protected scope of non-const version creating an error.
-	  const FunctionPreTransform*const const_new_root_as_transform=new_root_as_transform;
-
-	  Transform current_transform(const_new_root_as_transform->params());
-	  //std::clog << "[Was: " << current_transform;
-	  //std::clog << ", concatenate: " << transform;
-	  current_transform.concatenate_on_right(transform);
-	  //std::clog << ", now: " << current_transform << "]";
-	  new_root_as_transform->params(current_transform.get_columns());
+	  // Finally, record position of this event as last event
+	  _mid_button_adjust_last_pos=event->pos();
 	}
-      else
-	{
-	  // Otherwise have to create a new wrapper for the transform:
-
-	  std::vector<float> params=transform.get_columns();
-
-	  std::vector<FunctionNode*> args;	  
-	  args.push_back(image()->root()->deepclone());
-	  
-	  new_root=new FunctionPreTransform(params,args,0);
-	}
-
-      // Install new image (triggers recompute).
-      image(new MutatableImage(new_root,image()->sinusoidal_z(),image()->spheremap()));
-
-      // Finally, record position of this event as last event
-      _mid_button_adjust_last_pos=event->pos();
     }
 }
 
@@ -672,7 +688,7 @@ void MutatableImageDisplay::menupick_spawn_warped_pan_z()
  */
 void MutatableImageDisplay::menupick_lock()
 {
-  lock(!_locked);
+  lock(!_image->locked());
 }
 
 void MutatableImageDisplay::menupick_simplify()

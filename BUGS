@@ -28,9 +28,6 @@ Known bugs:
 - Undo doesn't always work how you'd expect.
   e.g respawn after undo doesn't respawn from what you'd expect.
 
-- Undo and lock don't interact well.
-  (Solution: make lock a property of images, not displays).
-
 - Moire patterns mean small images can show structures
   not actually present in larger resolution versions.
 

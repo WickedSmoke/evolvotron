@@ -1,5 +1,9 @@
 [Most recent at top]
 
+From release 0.3.1:
+ - Version to 0.3.1-devel
+ - Lock state moved to mutatable image so is stored in undo history
+
 From release 0.3.0:
  - Version to 0.3.1
  - Fix for gcc 3.4

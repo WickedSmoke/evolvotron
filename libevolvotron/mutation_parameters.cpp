@@ -188,7 +188,7 @@ void MutationParameters::randomize_function_weightings_for_classifications(uint 
 const float MutationParameters::get_weighting(const FunctionRegistration* fn)
 {
   std::map<const FunctionRegistration*,float>::const_iterator it=_function_weighting.find(fn);
-  assert(fn!=_function_weighting.end());
+  assert(it!=_function_weighting.end());
   return (*it).second;
 }
 

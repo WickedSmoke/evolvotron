@@ -123,7 +123,9 @@ void EvolvotronMain::History::replacing(MutatableImageDisplay* display)
 
   if (image!=0)
     {
-      _history.front().second.push_back(std::pair<MutatableImageDisplay*,MutatableImage*>(display,image->deepclone()));
+      MutatableImage*const saved_image=image->deepclone();  // Deepclone doesn't copy locked state
+      saved_image->locked(image->locked());
+      _history.front().second.push_back(std::pair<MutatableImageDisplay*,MutatableImage*>(display,saved_image));
     }
 }
 

@@ -49,6 +49,8 @@ class MutatableImage
   //! Whether xyz should be interpreted as long/lat/radius
   bool _spheremap;
 
+  bool _locked;
+
  public:
   
   //! Take ownership of the image tree with the specified root node.
@@ -56,6 +58,7 @@ class MutatableImage
     :_root_holder(0)
     ,_sinusoidal_z(sinz)
     ,_spheremap(sm)
+    ,_locked(false)
     {
       assert(r!=0);
       std::vector<float> pv;
@@ -69,6 +72,7 @@ class MutatableImage
     :_root_holder(0)
     ,_sinusoidal_z(true)
     ,_spheremap(sm)
+    ,_locked(false)
     {      
       std::vector<float> pv;
       std::vector<FunctionNode*> av;
@@ -112,6 +116,18 @@ class MutatableImage
   const bool spheremap() const
     {
       return _spheremap;
+    }
+
+  //! Accessor.
+  const bool locked() const
+    {
+      return _locked;
+    }
+
+  //! Accessor.
+  void locked(bool l)
+    {
+      _locked=l;
     }
 
   //! Clone this image.
