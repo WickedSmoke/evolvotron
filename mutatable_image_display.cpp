@@ -569,7 +569,7 @@ void MutatableImageDisplay::menupick_save_image()
 	  
 	  if (!save_filename.isEmpty())
 	    {
-	      if (!_offscreen_image->save(save_filename,save_format))
+	      if (!_offscreen_image->save(save_filename.latin1(),save_format.latin1()))
 		{
 		  QMessageBox::critical(this,"Evolvotron","File write failed");
 		}
@@ -583,7 +583,7 @@ void MutatableImageDisplay::menupick_save_function()
   QString save_filename=QFileDialog::getSaveFileName(".","Functions (*.xml)",this,"Save function","Save image function to an XML file");
   if (!save_filename.isEmpty())
     {
-      std::ofstream file(save_filename);
+      std::ofstream file(save_filename.latin1());
       _image->save_function(file);
       file.flush();
       if (!file)
@@ -598,7 +598,7 @@ void MutatableImageDisplay::menupick_load_function()
   QString load_filename=QFileDialog::getOpenFileName(".","Functions (*.xml)",this,"Load function","Load image function from an XML file");
   if (!load_filename.isEmpty())
     {
-      std::ifstream file(load_filename);
+      std::ifstream file(load_filename.latin1());
       std::string report;
       MutatableImage*const new_image=MutatableImage::load_function(file,report);
       if (new_image==0)

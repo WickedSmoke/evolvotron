@@ -248,7 +248,7 @@ public:
 
     if (_expect_characters_type)
       {
-	_stack.top()->type((const char*)s);
+	_stack.top()->type(s.latin1());
 	_expect_characters_type=false;
       }
     else if (_expect_characters_iterations)

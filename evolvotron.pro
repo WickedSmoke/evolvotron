@@ -99,10 +99,12 @@ QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 QMAKE_CFLAGS_RELEASE += -DNDEBUG
 
 ######################################
-# Threading option needed ?
-#
-QMAKE_CXXFLAGS_RELEASE += -pthread
-QMAKE_CXXFLAGS_DEBUG += -pthread
+# Other stuff:
+# Disable implicit cast from QString to char*
+# Threading option (not entirely clear this is needed but it doesn't seem to hurt)
+
+QMAKE_CXXFLAGS_RELEASE += -DQT_NO_ASCII_CAST -pthread
+QMAKE_CXXFLAGS_DEBUG += -DQT_NO_ASCII_CAST -pthread
 
 #######################################
 # Install targets
