@@ -48,6 +48,7 @@ class DialogAbout : public QDialog
   virtual ~DialogAbout()
     {}
 
+ protected:
   //! Vertical layout.
   QVBox* _vbox;
 

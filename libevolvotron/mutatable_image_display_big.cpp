@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "mutatable_image_display_big.h"
-#include "mutatable_image_display.h"
 #include "evolvotron_main.h"
 
 /*! The constructor is passed:
@@ -30,10 +29,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     - the EvolvotronMain providing spawn and farm services,
     - the MutatableImageDisplay to be held
  */
-MutatableImageDisplayBig::MutatableImageDisplayBig(QWidget* parent,EvolvotronMain* mn,MutatableImageDisplay* display)
-  :QWidget(parent,0)
+MutatableImageDisplayBig::MutatableImageDisplayBig(QWidget* parent,EvolvotronMain* mn)
+  :QWidget(parent,0,Qt::WDestructiveClose)
    ,_main(mn)
-   ,_display(display)
+   ,_held(0)
 {}
 
 /*! Don't think destructor needs to do anything to _display... Qt takes care of it
@@ -41,3 +40,7 @@ MutatableImageDisplayBig::MutatableImageDisplayBig(QWidget* parent,EvolvotronMai
 MutatableImageDisplayBig::~MutatableImageDisplayBig()
 {}
 
+void MutatableImageDisplayBig::resizeEvent(QResizeEvent*)
+{
+  _held->resize(size());
+}

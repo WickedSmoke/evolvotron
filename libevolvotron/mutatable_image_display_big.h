@@ -28,12 +28,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "useful.h"
 
 class EvolvotronMain;
-class MutatableImageDisplay;
 
 //! Intended to be used as a top-level widget holding a single MutatableImageDisplay
 /*! We just used to use a display or scroll view itself as a top-level widget,
   but need this to get some specific keyboard effects.
   As a MutatableImageDisplayHolder it actually has more in common with EvolvotronMain.
+  \todo class name is a bit misleading.  This is really just a slightly modified top-level holder.
  */
 class MutatableImageDisplayBig : public QWidget
 {
@@ -43,21 +43,15 @@ class MutatableImageDisplayBig : public QWidget
   //! Pointer back to the application object to access services.
   EvolvotronMain* _main;
 
-  //! The held display.
-  MutatableImageDisplay* _display;
+  //! The widget being held.  Probably be a QScrollView or MutatableImageDisplay.
+  QWidget* _held;
 
  public:
   //! Constructor.
-  MutatableImageDisplayBig(QWidget* parent,EvolvotronMain* mn,MutatableImageDisplay* display);
+  MutatableImageDisplayBig(QWidget* parent,EvolvotronMain* mn);
 
   //! Destructor.
   virtual ~MutatableImageDisplayBig();
-
-  //! Accessor.
-  MutatableImageDisplay*const display()
-    {
-      return _display;
-    }
 
   //! Accessor.
   EvolvotronMain*const main() const
@@ -65,6 +59,15 @@ class MutatableImageDisplayBig : public QWidget
       assert(_main!=0);
       return _main;
     }
+
+  //! Accessor.
+  void hold(QWidget* w)
+    {
+      _held=w;
+    }
+
+ protected:
+  virtual void resizeEvent(QResizeEvent*);
 
 };
 

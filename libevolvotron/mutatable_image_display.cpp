@@ -33,6 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qfiledialog.h>
 
 #include "mutatable_image_display.h"
+#include "mutatable_image_display_big.h"
 #include "evolvotron_main.h"
 #include "mutatable_image_computer_task.h"
 #include "transform_factory.h"
@@ -788,32 +789,28 @@ void MutatableImageDisplay::menupick_big_4096x4096()
 */
 void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
 {
-  QWidget* top_level_widget=0;
-  MutatableImageDisplay* display;
+  MutatableImageDisplayBig*const top_level_widget=new MutatableImageDisplayBig(0,main());
 
+  MutatableImageDisplay* display=0;
+  
   if (scrollable)
     {
-      QScrollView* scrollview=new QScrollView(0,0,Qt::WDestructiveClose);
-
-      top_level_widget=scrollview;
-
+      QScrollView*const scrollview=new QScrollView(top_level_widget,0,Qt::WDestructiveClose);
       display=new MutatableImageDisplay(scrollview->viewport(),main(),false,true,sz,_frames,_framerate);
       scrollview->addChild(display);
+      top_level_widget->hold(scrollview);
     }
   else
     {
-      display=new MutatableImageDisplay(0,main(),false,false,QSize(0,0),_frames,_framerate);
-      
-      top_level_widget=display;
+      display=new MutatableImageDisplay(top_level_widget,main(),false,false,QSize(0,0),_frames,_framerate);
+      top_level_widget->hold(display);
     }
-  
-  //Used to set the size explicitly here, but it seems to work better without (on some versions of Qt anyway)
-  //top_level_widget->resize(512,512);
 
   top_level_widget->show();
 
   //Try this:
   //if (main()->isFullScreen()) top_level_widget->showFullScreen();
 
+  // Fire up image calculation
   display->image(_image->deepclone());
 }
