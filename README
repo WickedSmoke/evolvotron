@@ -411,7 +411,7 @@ This release also installs two other executables:
    representation to the standard output.
 
 For example:
-  evolvotron_mutate -g | evolvotron_render /tmp.xxx.ppm ; display /tmp/xxx.ppm
+  evolvotron_mutate -g | evolvotron_render /tmp/xxx.ppm ; display /tmp/xxx.ppm
   evolvotron_mutate -g | evolvotron_mutate | evolvotron_render /tmp/xxx.ppm ; display /tmp/xxx.ppm
 
 These were added to enable the possibility of:
@@ -433,17 +433,14 @@ at the top level.  The code documentation then appears in ./doc/html/
 
 THANKS
 ======
-Thanks to
+...to
   Dmitry Kirsanov
   Jonathan Melhuish
   Karl Robillard
 for feedback, suggestions and patches.
 
-And to the participants in a SIGGRAPH conference panel many
+...to the participants in a SIGGRAPH conference panel many
 years ago who first got me interested in this kind of thing.
 
-And
-  www.di.fm
-  www.somafm.com
-for music to code to.
+...to www.di.fm, www.somafm.com and Trance4Ever for music to code to.
 

@@ -203,7 +203,7 @@ void MutatableImageDisplay::frame_advance()
 	  _animate_reverse=true;
 	}
     }
-  repaint();
+  repaint(false);
 }
 
 void MutatableImageDisplay::image(MutatableImage* i)
