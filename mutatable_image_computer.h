@@ -34,6 +34,9 @@ class MutatableImageComputerFarm;
 class MutatableImageComputerTask;
 
 //! Class to handle computing of MutatableImages in a separate thread.
+/*! A compute task starts up and fetches work from it's parent farm.
+  The parent farm thread can communicate when necessary using the public methods of the class.
+ */
 class MutatableImageComputer : public QThread
 {
  protected:
@@ -129,14 +132,6 @@ class MutatableImageComputer : public QThread
   //! The actual compute code, launched by invoking start() in the constructor
   virtual void run();
 
- public:
-
-  //! Constructor
-  MutatableImageComputer(MutatableImageComputerFarm* frm);
-
-  //! Destructor
-  ~MutatableImageComputer();
-
   //! Accessor 
   Communications& communications()
     {
@@ -160,6 +155,14 @@ class MutatableImageComputer : public QThread
       return _farm;
     }
 
+ public:
+
+  //! Constructor
+  MutatableImageComputer(MutatableImageComputerFarm* frm);
+
+  //! Destructor
+  ~MutatableImageComputer();
+
   //! Defer the current task if it's priority is less important than specified.  Returns true if deferrment occurred.
   bool defer_if_less_important_than(uint pri);
 
@@ -171,6 +174,15 @@ class MutatableImageComputer : public QThread
 
   //! This method called by external thread to kill the thread.
   void kill();
+
+  //! Returns whether the computer has a task currently
+  /*! \warning Access to _task not mutex locked.
+    \warning Only intended for debugging & status reporting.
+   */
+  bool active() const
+    {
+      return (task()!=0);
+    }
 };
 
 #endif

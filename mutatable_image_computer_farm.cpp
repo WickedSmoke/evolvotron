@@ -168,7 +168,7 @@ std::ostream& MutatableImageComputerFarm::write_info(std::ostream& out) const
 
   for (std::vector<MutatableImageComputer*>::const_iterator it=_computers.begin();it!=_computers.end();it++)
     {      
-      if ((*it)->task()!=0)
+      if ((*it)->active())
 	{
 	  active_computers++;
 	}
@@ -184,7 +184,7 @@ const uint MutatableImageComputerFarm::tasks() const
   
   for (std::vector<MutatableImageComputer*>::const_iterator it=_computers.begin();it!=_computers.end();it++)
     {      
-      if ((*it)->task()!=0)
+      if ((*it)->active())
 	{
 	  ret++;
 	}
