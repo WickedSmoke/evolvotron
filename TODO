@@ -28,9 +28,10 @@ Conventional
   of how much effect there is then.
 - MutationParameters should be held by EvolvotronMain with pointers passed
   to dialogs.
+- Different projections for evolvotron_render, maybe main app (e.g spheremaps, cubemaps, volumes).
 - Display properties dialog should have small copy of image
 - "Evolvotron corpus"; publish mode & viewer app to see other users' creations
-   How ?  Jabber conference!  (It's all XML).
+  How ?  Jabber conference!  (It's all XML).
 - Proper dependency and generation by qmake of libevolvotron/usage_text.h
 - Rationalise configure options: fs/nofs (doc/nodoc?)
 - -h & --help option.  Print version and functions supported.
@@ -150,3 +151,8 @@ Conventional
     Generalised rotations
     Square "Bhuddist mandala" versions of kaleidascope
     Concentric rings
+
+Extras
+------
+- evolvotron_match doesn't do much but converge towards general overall color of target.
+  Try matching in edge-detected space or somethin.
