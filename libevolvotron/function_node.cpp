@@ -114,20 +114,6 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
   const float base=0.7;
 
-  uint steps=71;
-
-  if (!parameters.allow_fractal_nodes())
-    {
-      steps=minimum(steps,67u);     // Currently 4 fractal types
-    }
-
-  if (!parameters.allow_iterative_nodes())
-    {
-      steps=minimum(steps,58u);     // Currently 9 non-fractal iterative types (including multiscale noise - not strictly iterative but expensive)
-    }
-
-  const float step=(1.0-base)/steps;
-
   const float r=(exciting ? base+(1.0f-base)*parameters.r01() : parameters.r01());
 
   if (r<(1.0f-parameters.proportion_constant())*parameters.identity_supression()*base)
@@ -141,156 +127,11 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
     return FunctionIdentity::stubnew(parameters,false);
   else if (r<base)
     return FunctionConstant::stubnew(parameters,false);
-  /* \todo Should just get something at random from function registry here instead 
-     else 
-     {
-       const FunctionRegistration*const fn_reg=parameters->random_function();
-       return fn_reg->stubnew_fn(parameters,false);
-     }
-   */
-
-  else if (r<base+1*step)
-    return FunctionCartesianToSpherical::stubnew(parameters,false);
-  else if (r<base+2*step) 
-    return FunctionSphericalToCartesian::stubnew(parameters,false);
-  else if (r<base+3*step) 
-    return FunctionEvaluateInSpherical::stubnew(parameters,false);
-  else if (r<base+4*step) 
-    return FunctionRotate::stubnew(parameters,false);
-  else if (r<base+5*step) 
-    return FunctionSin::stubnew(parameters,false);
-  else if (r<base+6*step) 
-    return FunctionCos::stubnew(parameters,false);
-  else if (r<base+7*step) 
-    return FunctionSpiralLinear::stubnew(parameters,false);
-  else if (r<base+8*step) 
-    return FunctionSpiralLogarithmic::stubnew(parameters,false);
-  else if (r<base+9*step) 
-    return FunctionGradient::stubnew(parameters,false);
-  else if (r<base+10*step) 
-    return FunctionComposePair::stubnew(parameters,false);
-  else if (r<base+11*step) 
-    return FunctionAdd::stubnew(parameters,false);
-  else if (r<base+12*step) 
-    return FunctionMultiply::stubnew(parameters,false);
-  else if (r<base+13*step) 
-    return FunctionDivide::stubnew(parameters,false);
-  else if (r<base+14*step) 
-    return FunctionCross::stubnew(parameters,false);
-  else if (r<base+15*step) 
-    return FunctionGeometricInversion::stubnew(parameters,false);
-  else if (r<base+16*step) 
-    return FunctionMax::stubnew(parameters,false);
-  else if (r<base+17*step) 
-    return FunctionMin::stubnew(parameters,false);
-  else if (r<base+18*step) 
-    return FunctionModulus::stubnew(parameters,false);
-  else if (r<base+19*step) 
-    return FunctionExp::stubnew(parameters,false);
-  else if (r<base+20*step) 
-    return FunctionComposeTriple::stubnew(parameters,false);
-  else if (r<base+21*step) 
-    return FunctionReflect::stubnew(parameters,false);
-  else if (r<base+22*step) 
-    return FunctionKaleidoscope::stubnew(parameters,false);
-  else if (r<base+23*step) 
-    return FunctionKaleidoscopeZRotate::stubnew(parameters,false);
-  else if (r<base+24*step) 
-    return FunctionKaleidoscopeTwist::stubnew(parameters,false);
-  else if (r<base+25*step) 
-    return FunctionWindmill::stubnew(parameters,false);
-  else if (r<base+26*step) 
-    return FunctionWindmillZRotate::stubnew(parameters,false);
-  else if (r<base+27*step) 
-    return FunctionWindmillTwist::stubnew(parameters,false);
-  else if (r<base+28*step) 
-    return FunctionMagnitude::stubnew(parameters,false);
-  else if (r<base+29*step) 
-    return FunctionMagnitudes::stubnew(parameters,false);
-  else if (r<base+30*step) 
-    return FunctionChooseSphere::stubnew(parameters,false);
-  else if (r<base+31*step) 
-    return FunctionChooseRect::stubnew(parameters,false);
-  else if (r<base+32*step) 
-    return FunctionChooseFrom2InCubeMesh::stubnew(parameters,false);
-  else if (r<base+33*step) 
-    return FunctionChooseFrom3InCubeMesh::stubnew(parameters,false);
-  else if (r<base+34*step) 
-    return FunctionChooseFrom2InSquareGrid::stubnew(parameters,false);
-  else if (r<base+35*step) 
-    return FunctionChooseFrom3InSquareGrid::stubnew(parameters,false);
-  else if (r<base+36*step) 
-    return FunctionChooseFrom2InTriangleGrid::stubnew(parameters,false);
-  else if (r<base+37*step) 
-    return FunctionChooseFrom3InTriangleGrid::stubnew(parameters,false);
-  else if (r<base+38*step) 
-    return FunctionChooseFrom3InDiamondGrid::stubnew(parameters,false);
-  else if (r<base+39*step) 
-    return FunctionChooseFrom3InHexagonGrid::stubnew(parameters,false);
-  else if (r<base+40*step) 
-    return FunctionChooseFrom2InBorderedHexagonGrid::stubnew(parameters,false);
-  else if (r<base+41*step) 
-    return FunctionOrthoSphereShaded::stubnew(parameters,false);
-  else if (r<base+42*step) 
-    return FunctionOrthoSphereShadedBumpMapped::stubnew(parameters,false);
-  else if (r<base+43*step) 
-    return FunctionOrthoSphereReflect::stubnew(parameters,false);
-  else if (r<base+44*step) 
-    return FunctionOrthoSphereReflectBumpMapped::stubnew(parameters,false);
-  else if (r<base+45*step)
-    return FunctionTransformGeneralised::stubnew(parameters,false);
-  else if (r<base+46*step)
-    return FunctionPreTransform::stubnew(parameters,false);
-  else if (r<base+47*step)
-    return FunctionPreTransformGeneralised::stubnew(parameters,false);
-  else if (r<base+48*step)
-    return FunctionPostTransform::stubnew(parameters,false);
-  else if (r<base+49*step)
-    return FunctionPostTransformGeneralised::stubnew(parameters,false);
-  else if (r<base+50*step)
-    return FunctionFilter2D::stubnew(parameters,false);
-  else if (r<base+51*step)
-    return FunctionFilter3D::stubnew(parameters,false);
-  else if (r<base+52*step)
-    return FunctionShadow::stubnew(parameters,false);
-  else if (r<base+53*step)
-    return FunctionShadowGeneralised::stubnew(parameters,false);
-  else if (r<base+54*step)
-    return FunctionCone::stubnew(parameters,false);
-  else if (r<base+55*step)
-    return FunctionExpCone::stubnew(parameters,false);
-  else if (r<base+56*step)
-    return FunctionSeparateZ::stubnew(parameters,false);
-  else if (r<base+57*step)
-    return FunctionNoiseOneChannel::stubnew(parameters,false);
-  else if (r<base+58*step)
-    return FunctionNoiseThreeChannel::stubnew(parameters,false);
-  else if (r<base+59*step)
-    return FunctionMultiscaleNoiseOneChannel::stubnew(parameters,false);
-  else if (r<base+60*step)
-    return FunctionMultiscaleNoiseThreeChannel::stubnew(parameters,false);
-  else if (r<base+61*step)
-    return FunctionIterate::stubnew(parameters,false);
-  else if (r<base+62*step)
-    return FunctionAverageSamples::stubnew(parameters,false);
-  else if (r<base+63*step)
-    return FunctionStreak::stubnew(parameters,false);
-  else if (r<base+64*step)
-    return FunctionAverageRing::stubnew(parameters,false);
-  else if (r<base+65*step)
-    return FunctionFilterRing::stubnew(parameters,false);
-  else if (r<base+66*step)
-    return FunctionConvolveSamples::stubnew(parameters,false);
-  else if (r<base+67*step)
-    return FunctionAccumulateOctaves::stubnew(parameters,false);
-  else if (r<base+68*step)
-    return FunctionMandelbrotChoose::stubnew(parameters,false);
-  else if (r<base+69*step)
-    return FunctionMandelbrotContour::stubnew(parameters,false);
-  else if (r<base+70*step)
-    return FunctionJuliaChoose::stubnew(parameters,false);
-  else //if (r<base+71*step)
-    return FunctionJuliaContour::stubnew(parameters,false);
+  else 
+    {
+      const FunctionRegistration*const fn_reg=parameters.random_function_registration();
+      return (*(fn_reg->stubnew_fn()))(parameters,false);    
+    }
 }
 
 /*! If a specific function's registration (ie meta info) is provided then that will be used as the wrapped function type.
