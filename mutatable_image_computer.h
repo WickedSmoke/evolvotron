@@ -44,13 +44,19 @@ class MutatableImageComputer : public QThread
   MutatableImageComputerTask* _task;
 
   //! Flag to indicate we should put our current task back on the todo queue and take another one.
-  bool _defer;
+  /*! volatile because used for inter-thread communication.
+   */
+  volatile bool _defer;
 
   //! Flag to indicate we should abort the current compute.
-  bool _abort;
+  /*! volatile because used for inter-thread communication.
+   */
+  volatile bool _abort;
 
   //! Flag to indicate the thread should shut down and exit.
-  bool _kill;
+  /*! volatile because used for inter-thread communication.
+   */
+  volatile bool _kill;
 
   //! The actual compute code, launched by invoking start() in the constructor
   virtual void run();
