@@ -169,6 +169,9 @@ class FunctionNode
   //! Internal self-consistency check.
   virtual const bool ok() const;
 
+  //! Save the function tree.
+  virtual std::ostream& save_function(std::ostream& out,uint indent) const;
+
  protected:
 
   //! Accessor (non-const version is protected, required internally to obtain non-const iterators).

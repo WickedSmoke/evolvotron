@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <algorithm>
 #include <iostream>
 
+#include "margin.h"
+
 #include "function_node.h"
 #include "function_node_using.h"
 
@@ -376,3 +378,25 @@ const bool FunctionNode::ok() const
   return true;
 }
 
+/*! This function only saves the parameters, iteration count if any and child nodes.
+  It is intended to be called from save_function of subclasses which will write a function node wrapper.
+  The indent number is just the level of recursion, incrementing by 1 each time.
+  Outputting multiple spaces per level is handled by the Margin class.
+ */
+std::ostream& FunctionNode::save_function(std::ostream& out,uint indent) const
+{
+  if (iterations()!=0)
+    out << Margin(indent) << "<i>" << iterations() << "</i>\n";
+  
+  for (std::vector<float>::const_iterator it=params().begin();it!=params().end();it++)
+    {
+      out << Margin(indent) << "<p>" << (*it) << "</p>\n";
+    }
+
+  for (std::vector<FunctionNode*>::const_iterator it=args().begin();it!=args().end();it++)
+    {
+      (*it)->save_function(out,indent);
+    }
+    
+  return out;
+}

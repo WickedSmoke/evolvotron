@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include <iostream>
+#include <fstream>
 
 #include <qstring.h>
 #include <qimage.h>
@@ -109,6 +110,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
   _menu_big->insertSeparator();
   _menu_big->insertItem("&256x256",this,SLOT(menupick_big_256x256()));
   _menu_big->insertItem("&512x512",this,SLOT(menupick_big_512x512()));
+  _menu_big->insertItem("&768x768",this,SLOT(menupick_big_768x768()));
   _menu_big->insertItem("&1024x1024",this,SLOT(menupick_big_1024x1024()));
   _menu_big->insertItem("&2048x2048",this,SLOT(menupick_big_2048x2048()));
   _menu_big->insertItem("&4096x4096",this,SLOT(menupick_big_4096x4096()));
@@ -120,7 +122,8 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
 
   _menu->insertItem("&Big",_menu_big);
 
-  _menu->insertItem("&Save",this,SLOT(menupick_save()));
+  _menu->insertItem("Save &image",this,SLOT(menupick_save_image()));
+  _menu->insertItem("Save &function",this,SLOT(menupick_save_function()));
 
   main()->hello(this);
 
@@ -531,7 +534,7 @@ void MutatableImageDisplay::menupick_lock()
 
 /*! Saves image (unless the image is not full resolution yet, in which case an informative dialog is generated.
  */
-void MutatableImageDisplay::menupick_save()
+void MutatableImageDisplay::menupick_save_image()
 {
   if (_current_display_level!=0)
     {
@@ -563,6 +566,21 @@ void MutatableImageDisplay::menupick_save()
 		  QMessageBox::critical(this,"Evolvotron","File write failed");
 		}
 	    }
+	}
+    }
+}
+
+void MutatableImageDisplay::menupick_save_function()
+{
+  QString save_filename=QFileDialog::getSaveFileName(".","Functions(*.xml)",this,"Save function","Save image to an xml file");
+  if (!save_filename.isEmpty())
+    {
+      std::ofstream file(save_filename);
+      _image->save_function(file);
+      file.flush();
+      if (!file)
+	{
+	  QMessageBox::critical(this,"Evolvotron","File write failed");
 	}
     }
 }
@@ -600,6 +618,11 @@ void MutatableImageDisplay::menupick_big_256x256()
 void MutatableImageDisplay::menupick_big_512x512()
 {
   spawn_big(true,QSize(512,512));
+}
+
+void MutatableImageDisplay::menupick_big_768x768()
+{
+  spawn_big(true,QSize(768,768));
 }
 
 void MutatableImageDisplay::menupick_big_1024x1024()

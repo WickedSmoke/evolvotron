@@ -23,8 +23,9 @@
 #ifndef _mutatable_image_h_
 #define _mutatable_image_h_
 
-#include "function_node.h"
+#include <iosfwd>
 
+#include "function_node.h"
 
 //! Class to hold the base FunctionNode of an image.
 /*! \todo Do reference counting on this object.
@@ -37,7 +38,7 @@ class MutatableImage
    */
   FunctionNode*const _root;
  public:
-
+  
   //! Take ownership of the image tree with the specified root node.
   MutatableImage(FunctionNode* r)
     :_root(r)
@@ -94,12 +95,14 @@ class MutatableImage
       return root()->is_constant();
     }
 
+  //! Save the function-tree to the stream
+  std::ostream& save_function(std::ostream& out) const;
+
+  //! Check the function tree is ok.
   const bool ok() const
     {
       return root()->ok();
-    }
-
-  
+    }  
 };
 
 #endif

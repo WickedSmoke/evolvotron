@@ -71,7 +71,7 @@ class MutatableImageDisplay : public QWidget
   //! Offscreen image buffer.
   QPixmap* _offscreen_buffer;
 
-  //! Offscreen image buffer in sensible image format (used for save, as pixmap is in display format).
+  //! Offscreen image buffer in sensible image format (used for save, as pixmap is in display format which might be less bits).
   QImage* _offscreen_image;
 
   //! Offscreen image data for _offscreen_image.  This must remain alive longer than the QImage.
@@ -93,20 +93,6 @@ class MutatableImageDisplay : public QWidget
   /*! This is the only menu item we need to retain this information for becuase we need it to set the lock check-mark.
    */
   uint _menu_item_number_lock;
-
-  //@{
-  //! Position of item in menu_big.
-  uint _menu_big_item_number_resizable;
-  uint _menu_big_item_number_640x480;
-  uint _menu_big_item_number_1024x768;
-  uint _menu_big_item_number_1280x960;
-  uint _menu_big_item_number_1600x1200;
-  uint _menu_big_item_number_256x256;
-  uint _menu_big_item_number_512x512;
-  uint _menu_big_item_number_1024x1024;
-  uint _menu_big_item_number_2048x2048;
-  uint _menu_big_item_number_4096x4096;
-  //@}
 
   //! Coordinate of mouse event which started mid-button adjustment
   QPoint _mid_button_adjust_start_pos;
@@ -213,7 +199,10 @@ class MutatableImageDisplay : public QWidget
   void menupick_lock();
 
   //! Called from context menu.
-  void menupick_save();
+  void menupick_save_image();
+
+  //! Called from context menu.
+  void menupick_save_function();
 
   //! Called from "Big" submenu of context menu.
   void menupick_big_resizable();
@@ -223,6 +212,9 @@ class MutatableImageDisplay : public QWidget
 
   //! Called from "Big" submenu of context menu.
   void menupick_big_512x512();
+
+  //! Called from "Big" submenu of context menu.
+  void menupick_big_768x768();
 
   //! Called from "Big" submenu of context menu.
   void menupick_big_1024x1024();

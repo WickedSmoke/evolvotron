@@ -20,4 +20,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class MutatableImage.
 */
 
+#include <iostream>
+
 #include "mutatable_image.h"
+
+std::ostream& MutatableImage::save_function(std::ostream& out) const
+{
+  out << "<evolvotron-image>\n";
+  
+  root()->save_function(out,1);
+
+  out << "</evolvotron-image>\n";
+
+  return out;
+}

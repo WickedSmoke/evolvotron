@@ -25,14 +25,16 @@
 #define _function_node_using_h_
 
 #include "function_node.h"
+#include "margin.h"
 
 //! Template class to generate boilerplate for virtual methods.
 template <typename F> class FunctionNodeUsing : public FunctionNode
 {
  public:
-
+  typedef FunctionNode Superclass;
+  
   //! Registration member encapsulates class meta-information needed to 
-  static FunctionRegistration registration;
+  static FunctionRegistration _registration;
   
  protected:
   
@@ -97,6 +99,15 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
 	 );
     }
 
+  //! Save this node.
+  virtual std::ostream& save_function(std::ostream& out,uint indent) const
+    {
+      out << Margin(indent) << "<f type=\"" << _registration.name() << "\">\n";
+      Superclass::save_function(out,indent+1);
+      out << Margin(indent) << "</f>\n";
+      return out;
+    }
+
   //! Implementation depends on template parameter
   virtual const FunctionNodeUsing<FunctionPreTransform>*const is_a_FunctionNodeUsingFunctionPreTransform() const;
 
@@ -134,7 +145,7 @@ template <> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsi
   - the strings returned from it seem to bomb if you try and do anything with them during static initialisation.
   So we use the no-name registration and it gets filled in by the REGISTER macro later.
  */
-template <typename F> FunctionRegistration FunctionNodeUsing<F>::registration
+template <typename F> FunctionRegistration FunctionNodeUsing<F>::_registration
 (
  /*typeid(F).name(),*/
  &FunctionNodeUsing::stubnew

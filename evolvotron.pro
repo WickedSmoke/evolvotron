@@ -35,6 +35,7 @@ HEADERS += \
         function_registration.h \
         function_registry.h \
 	license.h \
+        margin.h \
         matrix.h \
 	mutatable_image.h \
 	mutatable_image_computer.h \
@@ -64,6 +65,7 @@ SOURCES += \
         function_registration.cpp \
         function_registry.cpp \
 	license.cpp \
+        margin.cpp \
         matrix.cpp \
 	mutatable_image.cpp \
 	mutatable_image_computer.cpp \

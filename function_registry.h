@@ -31,7 +31,7 @@
 #include "function_registration.h"
 
 //! Macro to force instantiation of static registration members, and register them with Registry.
-#define REGISTER(F) static const FunctionRegistration* force_ ## F = FunctionRegistry::pre_reg(#F,&FunctionNodeUsing<F>::registration)
+#define REGISTER(F) static const FunctionRegistration* force_ ## F = FunctionRegistry::pre_reg(#F,&FunctionNodeUsing<F>::_registration)
 
 //! Class acting as a dictionary from function name to registration info.
 /*! Singleton pattern.  Instance is obtained using get() method.
