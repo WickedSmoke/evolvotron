@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 MutationParameters::MutationParameters(uint seed)
   :_r01(seed)
-  ,_magnitude_scalestep(1.0)
-  ,_probability_scalestep(1.0)
   ,_magnitude(0.0)
   ,_probability_glitch(0.0)
   ,_probability_shuffle(0.0)
@@ -38,19 +36,8 @@ MutationParameters::~MutationParameters()
 
 void MutationParameters::reset()
 {
-  _magnitude_scalestep=sqrt(2.0);
-  _probability_scalestep=sqrt(2.0);
-
   _magnitude=0.5;
   
-  _probability_glitch=0.02;
-  _probability_shuffle=0.02;
+  _probability_glitch=0.025;
+  _probability_shuffle=0.025;
 }
-
-void MutationParameters::modify(float m,float p)
-{
-  _magnitude*=pow(_magnitude_scalestep,m);
-  _probability_glitch*=pow(_probability_scalestep,p);
-  _probability_shuffle*=pow(_probability_scalestep,p);
-}
-

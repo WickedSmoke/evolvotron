@@ -33,13 +33,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_threads)
   :QMainWindow(parent,0,Qt::WType_TopLevel|Qt::WDestructiveClose)
    ,_statusbar_tasks(0)
-   ,_mutation_parameters(time(0))
 {
-  setMinimumSize(640,480);
+  setMinimumSize(600,400);
+
+  // Need to create this first or DialogMutationParameters will cause one to be created too.
+  _statusbar=new QStatusBar(this);
+  _statusbar->setSizeGripEnabled(false);
+  _statusbar->message("Ready");
+
+  _statusbar_tasks_label=new QLabel("Ready",_statusbar);
+  _statusbar->addWidget(_statusbar_tasks_label,0,true);
 
   _dialog_about=new DialogAbout(this);
 
-  _dialog_mutation_parameters=new DialogMutationParameters(this,&_mutation_parameters);
+  _dialog_mutation_parameters=new DialogMutationParameters(this);
 
   _menubar=new QMenuBar(this);
 
@@ -61,20 +68,16 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
 
   _grid=new QGrid(grid_size.width(),this);
 
-  _statusbar=new QStatusBar(this);
-  _statusbar->setSizeGripEnabled(false);
-  _statusbar->message("Ready");
-
   //! \todo These might work better as QToolButton
   _button_cool=new QPushButton("&Cool",_statusbar);
   _button_heat=new QPushButton("&Heat",_statusbar);
   _button_shield=new QPushButton("&Shield",_statusbar);
   _button_irradiate=new QPushButton("&Irradiate",_statusbar);
 
-  connect(_button_cool,     SIGNAL(clicked()),this,SLOT(cool()));
-  connect(_button_heat,     SIGNAL(clicked()),this,SLOT(heat()));
-  connect(_button_shield,   SIGNAL(clicked()),this,SLOT(shield()));
-  connect(_button_irradiate,SIGNAL(clicked()),this,SLOT(irradiate()));
+  connect(_button_cool,     SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(cool()));
+  connect(_button_heat,     SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(heat()));
+  connect(_button_shield,   SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(shield()));
+  connect(_button_irradiate,SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(irradiate()));
 
   _statusbar->addWidget(_button_cool,0,true);
   _statusbar->addWidget(_button_heat,0,true);
@@ -208,10 +211,10 @@ void EvolvotronMain::tick()
   if (tasks!=_statusbar_tasks)
     {
       if (tasks==0)
-	_statusbar->message("Ready");
+	_statusbar_tasks_label->setText("Ready");
       else
 	{
-	  _statusbar->message(QString("%1 tasks remaining").arg(tasks));
+	  _statusbar_tasks_label->setText(QString("%1 tasks remaining").arg(tasks));
 	}
       _statusbar_tasks=tasks;
     }
@@ -290,5 +293,5 @@ void EvolvotronMain::reset()
       (*it)->image(new MutatableImageNodeConcatenateTriple(args_toplevel));
     }
 
-  _mutation_parameters.reset();
+  _dialog_mutation_parameters->reset();
 }

@@ -33,21 +33,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 class MutationParameters
 {
-  //! Invoke update on all interested widgets.
-  /*! Called from methods of MutationParameters which change 
-   */
-  void update_interested() const;
-
   //! A random number generator.
   /*! Declared mutable so we can pass const MutationParameters& around and still do useful work with it.
    */
   mutable Random01 _r01;
-
-  //! Base amount for modifications of _magnitude
-  float _magnitude_scalestep;
-
-  //! Base amount for modifications of _probability members.
-  float _probability_scalestep;
 
   //! Specifies the magnitude of random changes to MutatableImageNodeConstant.
   float _magnitude;
@@ -70,9 +59,6 @@ class MutationParameters
   //! Reset to initial values.
   void reset();
 
-  //! Adjust magnitudes and probabilities by the specified amounts.
-  void modify(float m,float p);
-
   //! Returns a reference to the random number generator.
   /*! Need this for e.g RandomXYZInSphere constructor.
    */
@@ -92,17 +78,32 @@ class MutationParameters
     {
       return _magnitude;
     }
+  //! Accessor.
+  void magnitude(float v) 
+    {
+      _magnitude=v;
+    }
 
   //! Accessor.
   const float probability_glitch() const
     {
       return _probability_glitch;
     }
+  //! Accessor.
+  void probability_glitch(float v)
+    {
+      _probability_glitch=v;
+    }
 
   //! Accessor.
   const float probability_shuffle() const
     {
       return _probability_shuffle;
+    }
+  //! Accessor.
+  void probability_shuffle(float v)
+    {
+      _probability_shuffle=v;
     }
 };
 

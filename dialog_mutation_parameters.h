@@ -29,33 +29,55 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qlabel.h>
 #include <qspinbox.h>
 #include <qpushbutton.h>
+#include <qmainwindow.h>
+#include <qstatusbar.h>
 
 #include "useful.h"
 #include "mutation_parameters.h"
 
 
-//! Provides an "About" dialog box.
+//! Provides an "About" dialog box, manages an instance of MutationParameters.
 class DialogMutationParameters : public QDialog
 {
  private:
   Q_OBJECT
 
  protected:
-  MutationParameters*const _mutation_parameters;
-  
- public:
-  //! Constructor.
-  DialogMutationParameters(QWidget* parent,MutationParameters* p);
+  //! Scale to spinbox's integer values.
+  const int _scale;
 
-  //! Destructor.
-  virtual ~DialogMutationParameters()
-    {}
+  //! Owner of dialog (probably EvolvotronMain), used to access a statusbar.
+  QMainWindow*const _parent;
+
+  //! Instance of MutationParameters under dialog control.
+  /*! NB it's fairly important no-one else accesses this except through methods of this class, else GUI compoinents will get out of sync
+   */
+  MutationParameters _mutation_parameters;
 
   //! Vertical layout.
   QVBox* _vbox;
 
-  //! Grid for controls.
-  QGrid* _grid;
+  //! Grid for buttons;
+  QGrid* _grid_buttons;
+
+  //! Grid for parameter control spinners
+  QGrid* _grid_parameters;
+
+  //@{
+  //! Button for quick adjustment of MutationParameters
+  QPushButton* _button_reset;
+  QPushButton* _button_cool;
+  QPushButton* _button_heat;
+  QPushButton* _button_shield;
+  QPushButton* _button_irradiate;
+  //@}
+
+  //@{
+  //! Spinners for detailed control of specific parameters
+  QSpinBox* _spinbox_magnitude;
+  QSpinBox* _spinbox_glitch;
+  QSpinBox* _spinbox_shuffle;
+  //@}
 
   //! Button to close dialog.
   QPushButton* _ok;
@@ -64,7 +86,48 @@ class DialogMutationParameters : public QDialog
   virtual void resizeEvent(QResizeEvent*);
 
   //! Notification to refresh display fields from updated mutation parameters.
-  void parameters_updated();
+  void parameters_changed();
+
+  //! Reload spinboxes from _mutation_parameters.
+  void setup_from_mutation_parameters();
+
+  //! Non-const accessor NB protected to limit to internal usage.
+  MutationParameters& mutation_parameters()
+    {
+      return _mutation_parameters;
+    }
+
+ public:
+  //! Constructor.
+  DialogMutationParameters(QMainWindow* parent);
+
+  //! Destructor.
+  virtual ~DialogMutationParameters()
+    {}
+
+  //! Accessor.  NB No-one else must modify parameters or spinboxes will get out of sync.
+  const MutationParameters& mutation_parameters() const
+    {
+      return _mutation_parameters;
+    }
+
+ public slots:
+
+  //@{
+  //! Signalled by button (possibly status bar button).
+  void reset();
+  void heat();
+  void cool();
+  void irradiate();
+  void shield();
+  //@}
+
+  //@{
+  //! Signalled by spinbox.
+  void changed_magnitude(int v);
+  void changed_glitch(int v);
+  void changed_shuffle(int v);
+  //@}
 };
 
 #endif

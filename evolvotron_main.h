@@ -38,6 +38,7 @@ extern "C"
 #include <qgrid.h>
 #include <qtimer.h>
 #include <qpushbutton.h>
+#include <qlabel.h>
 
 #include "useful.h"
 
@@ -57,6 +58,15 @@ class EvolvotronMain : public QMainWindow
     
  protected:
 
+  //! Somewhere to report what's going on
+  QStatusBar* _statusbar;
+
+  //! Label for displaying number of tasks running (more permanent than StatusBar's message method).
+  QLabel* _statusbar_tasks_label;
+
+  //! Number of tasks statusbar is reporting as active
+  uint _statusbar_tasks;
+
   //! The "About" dialog widget.
   DialogAbout* _dialog_about;
 
@@ -75,9 +85,6 @@ class EvolvotronMain : public QMainWindow
   //! The help menu.
   QPopupMenu* _popupmenu_help;
 
-  //! Somewhere to report what's going on
-  QStatusBar* _statusbar;
-
   //@{
   //! Button for quick adjustment of MutationParameters
   QPushButton* _button_cool;
@@ -85,9 +92,6 @@ class EvolvotronMain : public QMainWindow
   QPushButton* _button_shield;
   QPushButton* _button_irradiate;
   //@}
-
-  //! Number of tasks statusbar is reporting as active
-  uint _statusbar_tasks;
 
   //! Grid for image display areas
   QGrid* _grid;
@@ -104,17 +108,8 @@ class EvolvotronMain : public QMainWindow
   //! Keeps track of which displays are still available for display (they might have been destroyed while an image was computing).
   std::set<MutatableImageDisplay*> _known_displays;
 
-  //! Parameters for mutating images.
-  MutationParameters _mutation_parameters;
-
   //! Keeps track of which displays are still resizing
   std::set<const MutatableImageDisplay*> _resizing;
-
-  //! Accessor.
-  const MutationParameters& mutation_parameters() const
-    {
-      return _mutation_parameters;
-    }
 
  public:
   //! Constructor.
@@ -124,6 +119,13 @@ class EvolvotronMain : public QMainWindow
   std::vector<MutatableImageDisplay*>& display()
     {
       return _display;
+    }
+
+  //! Accessor.
+  const MutationParameters& mutation_parameters() const
+    {
+      // Have to have this cheesy cast to pick up the non-protected version.
+      return ((const DialogMutationParameters*)_dialog_mutation_parameters)->mutation_parameters();
     }
 
   //! Accessor.
@@ -155,26 +157,6 @@ class EvolvotronMain : public QMainWindow
    //! Signalled by menu item.
   void reset();
 
-  void heat()
-    {
-      _mutation_parameters.modify(1.0f,0.0f);
-      _dialog_mutation_parameters->parameters_updated();
-    }
-  void cool()
-    {
-      _mutation_parameters.modify(-1.0f,0.0f);
-      _dialog_mutation_parameters->parameters_updated();
-    }
-  void irradiate()
-    {
-      _mutation_parameters.modify(0.0f,1.0f);
-      _dialog_mutation_parameters->parameters_updated();
-    }
-  void shield()
-    {
-      _mutation_parameters.modify(0.0f,-1.0f);
-      _dialog_mutation_parameters->parameters_updated();
-    }
 };
 
 #endif
