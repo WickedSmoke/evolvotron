@@ -201,6 +201,7 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
       delete _offscreen_image;
       delete _offscreen_image_data;
 
+      // Copy image data out of task
       _offscreen_image_data=new std::vector<uint>(task->image_data());
       
       _offscreen_image
@@ -223,7 +224,7 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
       _current_display_level=task->level();
 
       // Update what's on the screen.
-      //! \todo Any case for calling update() instead of repaint() ?
+      //! \todo Any case for calling update() instead of repaint() ?  Repaint maybe feels smoother.
       repaint();
     }
 

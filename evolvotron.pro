@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-# append debug or release
+# append debug or debug
 CONFIG+= qt thread debug
 
 ##################
@@ -8,7 +8,8 @@ CONFIG+= qt thread debug
 # The -mfpmath=sse -msse2 options (apparently NOT implied by -march alone) 
 # seem to be needed to generate SSE instructions on the authors setup.
 # The larger inline limit helps with template generated code.
-# There is a nice summary of gcc optimisation options at http://freshmeat.net/articles/view/730/
+# There is a nice summary of gcc optimisation options at
+# http://freshmeat.net/articles/view/730/
 #
 # Uncomment BOTH of the next two lines on a P4 system:
 #QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
@@ -115,8 +116,14 @@ realclean.commands = rm -r -f doc
 MOC_DIR = moc
 
 ##################
-# Use these options for profiling
+# OPTION: Use these options for profiling
 #
 #QMAKE_CXXFLAGS_RELEASE -= -fomit-frame-pointer
 #QMAKE_LFLAGS_RELEASE += -pg
 #QMAKE_CXXFLAGS_RELEASE += -pg
+
+###################
+# OPTION: Use this to link vs ccmalloc library
+# This isn't particularly useful though
+#
+#QMAKE_LINK=ccmalloc g++

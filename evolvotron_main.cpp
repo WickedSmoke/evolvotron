@@ -308,7 +308,7 @@ EvolvotronMain::~EvolvotronMain()
   // Shut down the compute farm
   delete _farm;
 
-  std::cerr << "...Evolvotron shutdown completed\n";  
+  std::cerr << "...completed Evolvotron shutdown\n";  
 }
 
 void EvolvotronMain::spawn_normal(const MutatableImageNode* image,MutatableImageDisplay* display)

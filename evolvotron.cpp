@@ -74,19 +74,18 @@ int main(int argc,char* argv[])
       std::cerr << "Must be at least 2 display grid cells (options: -g <cols> <rows>)\n";
       exit(1);
     }
-
+  
   // Columns, rows, threads
   EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),threads);
-
-  //main_widget->resize(800,600);
-
+  
   app.setMainWidget(main_widget);
   main_widget->show();
-
+    
   std::cerr << "Commencing main loop...\n";
 
   // NB Do this here rather than in constructor so that compute threads aren't being fired off during general GUI set-up
   main_widget->reset_cold();
-
+    
+  // NB No need to worry about deleting EvolvotronMain... QApplication seems to do it for us.
   return app.exec();
 }

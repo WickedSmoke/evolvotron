@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "mutatable_image_computer_farm.h"
+#include <algorithm>
 
 /*! Creates the specified number of threads and store pointers to them.
  */
@@ -38,23 +39,56 @@ MutatableImageComputerFarm::MutatableImageComputerFarm(uint n_threads)
  */
 MutatableImageComputerFarm::~MutatableImageComputerFarm()
 {
+  std::cerr << "Compute farm shut down begun...\n";
+
+  // Kill all the computers
   for (std::vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
     {
       delete (*it);
     }
+
+  // Clear all the tasks in queues
+  _mutex.lock();
+
+  for (std::multiset<MutatableImageComputerTask*,CompareTaskPriority>::iterator it=_todo.begin();it!=_todo.end();it++)
+    {
+      delete (*it);
+    }
+  _todo.clear();
+
+  for (std::multiset<MutatableImageComputerTask*,CompareTaskPriority>::iterator it=_done.begin();it!=_done.end();it++)
+    {
+      delete (*it);
+    }
+  _done.clear();
+
+  _mutex.unlock();
+
+  std::cerr << "...completed compute farm shut down\n";
+}
+
+//! Predicate function to test whether a task has been aborted
+static const bool predicate_aborted(const MutatableImageComputerTask*const t) 
+{
+  return t->aborted();
 }
 
 void MutatableImageComputerFarm::fasttrack_aborted()
 {
   _mutex.lock();
   
-  for (std::multiset<MutatableImageComputerTask*,CompareTaskPriority>::iterator it=_todo.begin();it!=_todo.end();it++)
+  // \todo: Inefficient starting search again each time.  Some problem with erase otherwise though, but might have been task abort mem leak.
+  std::multiset<MutatableImageComputerTask*,CompareTaskPriority>::iterator it;
+  while (
+	 (
+	  it=std::find_if(_todo.begin(),_todo.end(),predicate_aborted)
+	  )
+	 !=
+	 _todo.end()
+	 )
     {
-      if ((*it)->aborted())
-	{
-	  _done.insert(*it);
-	  _todo.erase(it);
-	}
+      _done.insert(*it);
+      _todo.erase(it);
     }
   
   _mutex.unlock();
@@ -66,7 +100,6 @@ void MutatableImageComputerFarm::push_todo(MutatableImageComputerTask* task)
   _todo.insert(task);
   
   // Check if any of the computers are executing lower priority tasks and if so defer least important one.
-  //! \todo: Need to start thinking about mutex-locking access to computer state here.
   for (std::vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
     {
       ((*it)->defer_if_less_important_than(task->priority()));

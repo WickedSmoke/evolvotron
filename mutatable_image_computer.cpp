@@ -38,6 +38,8 @@ MutatableImageComputer::~MutatableImageComputer()
 {
   kill();
   wait();
+
+  delete _task;
 }
 
 /*! Compute threads run this method untill killed (probably by the destructor being invoked by the original spawning thread.
@@ -115,16 +117,15 @@ void MutatableImageComputer::run()
 	    }
 	  else
 	    {
-	      farm()->push_done(task());
-	  
-	      // Do this at the last minute in case we were aborted while waiting for queue mutex.
 	      if (communications().abort())
 		{
 		  task()->abort();
-		  communications().abort(false);
 		}
 	      
 	      communications().defer(false);
+	      communications().abort(false);
+
+	      farm()->push_done(task());	  
 	      _task=0;
 	    }
 	}
