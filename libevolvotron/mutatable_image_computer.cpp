@@ -74,26 +74,24 @@ void MutatableImageComputer::run()
 	  // Careful, we could be given an already aborted task
 	  if (!task()->aborted())
 	    {
+	      const uint frames=task()->frames();
 	      const uint height=task()->size().height();
 	      const uint width=task()->size().width();
-	      const uint pixels=height*width;
 
-	      while (!communications().kill_or_abort_or_defer() && task()->pixel()<pixels)
+	      while (!communications().kill_or_abort_or_defer() && !task()->completed())
 		{
-		  const uint row=task()->pixel()/width;
-		  const uint col=task()->pixel()%width;
-		
-		  // xy co-ords vary over -1.0 to 1.0
+		  // xyz co-ords vary over -1.0 to 1.0
+		  // In the one frame case z will be 0
 		  const XYZ p(
-			      -1.0+2.0*(col+0.5)/width,
-			       1.0-2.0*(row+0.5)/height,
-			      0.0
+			      -1.0f+2.0f*(task()->current_col()+0.5f)/width,
+			       1.0f-2.0f*(task()->current_row()+0.5f)/height,
+			      -1.0f+2.0f*(task()->current_frame()+0.5f)/frames
 			      );
 		  
 		  uint c[3];
 		  task()->image()->get_rgb(p,c);
 
-		  task()->image_data()[task()->pixel()]=((c[0]<<16)|(c[1]<<8)|(c[2]));
+		  task()->image_data()[task()->current_pixel()]=((c[0]<<16)|(c[1]<<8)|(c[2]));
 
 		  task()->pixel_advance();
 		}

@@ -55,6 +55,21 @@ class MutatableImageDisplay : public QWidget
   //! Size of offscreen buffer
   QSize _image_size;
 
+  //! Number of frames in image
+  uint _frames;
+
+  //! Framerate for animation.
+  uint _framerate;
+
+  //! Currently displaying frame.
+  uint _current_frame;
+
+  //! Direction to play
+  bool _animate_reverse;
+
+  //! Timer for animating frames
+  QTimer* _timer;
+
   //! Flag indicating resize is in progress (between resizeEvent and subsequent paintEvent).
   /*! Used to supress unnecessary task spawning.
    */
@@ -69,15 +84,15 @@ class MutatableImageDisplay : public QWidget
   uint _current_display_level;
 
   //! Offscreen image buffer.
-  QPixmap* _offscreen_buffer;
+  std::vector<QPixmap*> _offscreen_buffer;
 
   //! Offscreen image buffer in sensible image format (used for save, as pixmap is in display format which might be less bits).
-  QImage* _offscreen_image;
+  std::vector<QImage*> _offscreen_image;
 
   //! Offscreen image data for _offscreen_image.  This must remain alive longer than the QImage.
-  std::vector<uint>* _offscreen_image_data;
+  std::vector<uint> _offscreen_image_data;
 
-  //! The image being displayed (its root node).
+  //! The image function being displayed (its root node).
   MutatableImage* _image;
 
   //! Context (right-click) menu.
@@ -102,7 +117,7 @@ class MutatableImageDisplay : public QWidget
 
  public:
   //! Constructor.
-  MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full,bool fixed_size,const QSize& image_size);
+  MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full,bool fixed_size,const QSize& image_size,uint f,uint fr);
 
   //! Destructor.
   virtual ~MutatableImageDisplay();
@@ -161,6 +176,9 @@ class MutatableImageDisplay : public QWidget
   virtual void mouseMoveEvent(QMouseEvent* event);
 
   protected slots:
+
+  //! Called by timer
+  void frame_advance();
 
   //! Called from context menu.
   void menupick_respawn();

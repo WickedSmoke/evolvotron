@@ -80,8 +80,10 @@ int main(int argc,char* argv[])
       }
 
   {
-    QString save_filename(args.last(1).c_str());
-    QString save_format("PPM");
+    //! \todo If filename is "-", write PPM to stdout (QImage save only supports write-to-a-filenames though)
+    QString save_filename(QString::fromLocal8Bit(args.last(1).c_str()));
+
+    const char* save_format="PPM";
     if (save_filename.upper().endsWith(".PPM"))
       {
 	save_format="PPM";
@@ -94,7 +96,7 @@ int main(int argc,char* argv[])
       {
 	std::cerr 
 	  << "evolvotron_render: Warning: Unrecognised file suffix.  File will be written in "
-	  << save_format.latin1()
+	  << save_format
 	  << " format.\n";
       }
     
@@ -108,11 +110,11 @@ int main(int argc,char* argv[])
 		 QImage::LittleEndian
 		 );
 
-    if (!image.save(save_filename,save_format.latin1()))
+    if (!image.save(save_filename,save_format))
       {
 	std::cerr 
 	  << "evolvotron_render: Error: Couldn't save file "
-	  << save_filename.latin1()
+	  << save_filename.local8Bit()
 	  << "\n";
 	exit(1);
       }

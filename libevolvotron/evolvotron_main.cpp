@@ -208,7 +208,7 @@ void EvolvotronMain::last_spawned_image(const MutatableImage* image,SpawnMemberF
     
 /*! Constructor sets up GUI components and fires up QTimer.
  */
-EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_threads)
+EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frames,uint framerate,uint n_threads)
   :QMainWindow(parent,0,Qt::WType_TopLevel|Qt::WDestructiveClose)
    ,_history(this)
    ,_statusbar_tasks(0)
@@ -287,10 +287,12 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
 
   _farm=new MutatableImageComputerFarm(n_threads);
 
+
+  //! \todo frames and framerate should be retained and modifiable from the GUI
   for (int r=0;r<grid_size.height();r++)
     for (int c=0;c<grid_size.width();c++)
       {
-	displays().push_back(new MutatableImageDisplay(_grid,this,true,false,QSize(0,0)));
+	displays().push_back(new MutatableImageDisplay(_grid,this,true,false,QSize(0,0),frames,framerate));
       }
 
   // Run tick() at 100Hz

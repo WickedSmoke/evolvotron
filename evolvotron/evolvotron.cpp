@@ -59,6 +59,9 @@ int main(int argc,char* argv[])
   uint cols=7;
   uint threads=2;
 
+  uint frames=1;
+  uint framerate=8;
+
   std::ofstream sink("/dev/null");
 
   if (args.option("-v")) 
@@ -67,8 +70,32 @@ int main(int argc,char* argv[])
     std::clog.rdbuf(sink.rdbuf());
 
   if (args.option("-g",2)) args.after() >> cols >> rows;
-  
+  if (cols*rows<2)
+    {
+      std::cerr << "Must be at least 2 display grid cells (options: -g <cols> <rows>)\n";
+      exit(1);
+    }
+    
   if (args.option("-t",1)) args.after() >> threads;
+  if (threads<1)
+    {
+      std::cerr << "Must specify at least one compute thread (option: -t <threads>)\n";
+      exit(1);
+    }
+
+  if (args.option("-f",1)) args.after() >> frames;
+  if (frames<1)
+    {
+      std::cerr << "Must specify at least 1 frame (option: -f <frames>)\n";
+      exit(1);
+    }
+
+  if (args.option("-r",1)) args.after() >> framerate;
+  if (framerate<1)
+    {
+      std::cerr << "Must specify framerate of at least 1 (option: -r <framerate>)\n";
+      exit(1);
+    }
 
   std::clog
     << "Evolvotron version "
@@ -81,30 +108,11 @@ int main(int argc,char* argv[])
     << threads 
     << " compute threads\n";
 
-  // Test random number generator
-  if (false)
-    {
-      Random01 r01(time(0));
-      for (uint i=0;i<20;i++)
-	std::clog << r01() << "\n";
-    }
-
+  std::clog
+    << "Functions registered:\n";
   FunctionRegistry::get()->status(std::clog);
 
-  if (threads<1)
-    {
-      std::cerr << "Must specify at least one compute thread (option: -t <threads>)\n";
-      exit(1);
-    }
-
-  if (cols*rows<2)
-    {
-      std::cerr << "Must be at least 2 display grid cells (options: -g <cols> <rows>)\n";
-      exit(1);
-    }
-  
-  // Columns, rows, threads
-  EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),threads);
+  EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),frames,framerate,threads);
   
   app.setMainWidget(main_widget);
   main_widget->show();

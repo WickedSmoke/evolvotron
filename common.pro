@@ -21,7 +21,7 @@ QMAKE_CXXFLAGS_RELEASE += -O3 -fomit-frame-pointer -funroll-loops -ffast-math
 #QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
 #QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
 #
-# Here's the same thing (UNTESTED) for P3 
+# Here's the same thing for P3 
 QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
 QMAKE_CXXFLAGS_RELEASE += -march=pentium3 -mfpmath=sse -msse
 #
@@ -30,7 +30,7 @@ QMAKE_CXXFLAGS_RELEASE += -march=pentium3 -mfpmath=sse -msse
 #QMAKE_CXXFLAGS_RELEASE += -march=athalon-xp -mfpmath=sse -msse
 #
 # The next line seems to generate nicer assembler (with better SSE register usage) from some templated code.
-# WARNING: gcc grows HUGE (>500MB) and it takes AGES (30mins) with this option.
+# WARNING: gcc grows HUGE (>500MB!!!) and it takes AGES (30mins!!!) with this option.
 # Of curiosity value for the hardcore only.
 #QMAKE_CXXFLAGS_RELEASE += -finline-limit=4000
 
@@ -61,8 +61,10 @@ QMAKE_CFLAGS_RELEASE += -DNDEBUG
 
 ######################################
 # Other stuff:
-# Disable implicit cast from QString to char*
-# Threading option (not entirely clear this is needed but it doesn't seem to hurt)
+# Disable implicit cast from QString to/from char* - we should be using .local8Bit and ::fromLocal8Bit
+# NB We don't use the corresponding -DQT_NO_CAST_ASCII because it breaks QString("...") which is used all over the place
+# This probably wouldn't be usable until all the strings were moved out of the app - see Qt I18N docs.
+# Also add gcc threading option (not entirely clear whether this is needed but it doesn't seem to hurt)
 
 QMAKE_CXXFLAGS_RELEASE += -DQT_NO_ASCII_CAST -pthread
 QMAKE_CXXFLAGS_DEBUG += -DQT_NO_ASCII_CAST -pthread

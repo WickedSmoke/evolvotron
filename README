@@ -290,13 +290,24 @@ TIPS
   you find one with real potential) by bashing on the menu
   accelerator keys Alt+F,Alt+R to repeatedly restart.
 
+ANIMATION
+=========
+As of version 0.2.0 evolvotron contains some experimental support for animation.
+NB THIS IS EVEN MORE COMPUTATIONALLY AND MEMORY INTENSIVE THAN
+CONVENTIONAL STATIC IMAGE MODE.
+Supply a -f <frames> command line option and evolvotron will generated animated
+sequences with the specified number of frames.  These will be rendered at the
+frame rate specified by the optional -r <framerate> option (default 8).
+So "evolvotron -f 24" will generate 3 second long animations.
+Animations reverse direction at each end to avoid a sudden jump.
+Sorry, saving an animation only saves the first frame currently.
+
 ADVANCED USAGE
 ==============
 Evolvotron's idea of an image is a function which converts
 XYZ co-ordinates to an RGB colour (however we can only display
-a 2D plane for now so the input Z is fixed to zero, although
-you can get some idea of what's going on parallel Z planes by
-selecting the "PanZ" option of an image's "Warp" menu item).
+a 2D plane for now so the input Z is fixed to zero, or varied 
+with time when animating).
 
 The image functions are constructed from trees of function nodes.
 (In the mathematical expression 1+(2*x) the "+" and the "*" would
@@ -407,4 +418,9 @@ for feedback, suggestions and patches.
 
 And to the participants in a SIGGRAPH conference panel many
 years ago who first got me interested in this kind of thing.
+
+And
+  www.di.fm
+  www.somafm.com
+for music to code to.
 

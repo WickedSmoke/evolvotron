@@ -46,23 +46,24 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     - and the size of the offscreen buffer (only used if fixed_size is true).
     Note that we use Qt's WDestructiveCode flag to ensure the destructor is called on close
  */
-MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full,bool fixed_size,const QSize& sz)
+MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full,bool fixed_size,const QSize& sz,uint f,uint fr)
   :QWidget(parent,0,Qt::WDestructiveClose)
    ,_main(mn)
    ,_full_functionality(full)
    ,_fixed_size(fixed_size)
    ,_image_size(sz)
+   ,_frames(f)
+   ,_framerate(fr)
+   ,_current_frame(0)
+   ,_animate_reverse(false)
+   ,_timer(0)
    ,_resize_in_progress(false)
    ,_locked(false)
    ,_current_display_level(0)
-   ,_offscreen_buffer(0)
-   ,_offscreen_image(0)
-   ,_offscreen_image_data(0)
    ,_image(0)
    ,_menu(0)
    ,_menu_big(0)
 {
-  _offscreen_buffer=new QPixmap();
   
   // We DO want background drawn for fixed size because window could be bigger than image (not entirely satisfactory however: flickers)
   if (!fixed_size)
@@ -139,6 +140,20 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
     {
       setGeometry(0,0,image_size().width(),image_size().height());
     }
+
+
+  for (uint f=0;f<_frames;f++)
+    {
+      _offscreen_buffer.push_back(new QPixmap());
+    }
+
+  _timer=new QTimer(this);
+  connect
+    (
+     _timer,SIGNAL(timeout()),
+     this,SLOT(frame_advance())
+     );
+  if (_frames>1) _timer->start(1000/_framerate);
 }
 
 /*! Destructor signs off from EvolvotronMain to prevent further attempts at completed task delivery.
@@ -156,9 +171,39 @@ MutatableImageDisplay::~MutatableImageDisplay()
     }
 
   delete _image;
-  delete _offscreen_buffer;
-  delete _offscreen_image;
-  delete _offscreen_image_data;
+  for (uint f=0;f<_offscreen_buffer.size();f++)
+    {
+      delete _offscreen_buffer[f];
+    }
+
+  for (uint f=0;f<_offscreen_image.size();f++)
+    {
+      delete _offscreen_image[f];
+    }
+}
+
+void MutatableImageDisplay::frame_advance()
+{
+  assert(!(_current_frame==0         && _animate_reverse==true));
+  assert(!(_current_frame==_frames-1 && _animate_reverse==false));
+
+  if (_animate_reverse)
+    {
+      _current_frame--;
+      if (_current_frame==0)
+	{
+	  _animate_reverse=false;
+	}
+    }
+  else
+    {
+      _current_frame++;
+      if (_current_frame==_frames-1)
+	{
+	  _animate_reverse=true;
+	}
+    }
+  repaint();
 }
 
 void MutatableImageDisplay::image(MutatableImage* i)
@@ -197,7 +242,9 @@ void MutatableImageDisplay::image(MutatableImage* i)
 	      const MutatableImage*const task_image=_image->deepclone();
 	      assert(task_image->ok());
 
-	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_image,image_size()/s,level);
+	      /*! \todo Should computed frames be constant or reduced c.f spatial resolution ?  (Do full z resolution for now)
+	       */
+	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_image,image_size()/s,_frames,level);
 
 	      main()->farm()->push_todo(task);
 	    }
@@ -210,28 +257,41 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
   // Ignore tasks which were aborted or which have somehow got out of order (not impossible with multiple compute threads).
   if (!task->aborted() && task->level()<_current_display_level)
     {
-      delete _offscreen_image;
-      delete _offscreen_image_data;
+      for (uint f=0;f<_offscreen_image.size();f++)
+	{
+	  delete _offscreen_image[f];
+	}
+      _offscreen_image.clear();
 
-      // Copy image data out of task
-      _offscreen_image_data=new std::vector<uint>(task->image_data());
+      // Copy image data out of task 
+      // (do this by swapping to avoid a copy; the task is about to be deleted anyway)
+
+      _offscreen_image_data.clear();
+      _offscreen_image_data.swap(task->image_data());
       
-      _offscreen_image
-	=new QImage
-	(
-	 (uchar*)&((*_offscreen_image_data)[0]),
-	 task->size().width(),
-	 task->size().height(),
-	 32,
-	 0,
-	 0,
-	 QImage::LittleEndian  // Seems to be right for hi[-/R/G/B]lo packing
-	 );
-  
-      //! \todo Pick a scaling mode: smooth or not (or put it under GUI control). 
-      // Curiously, although smoothscale seems to be noticeably slower, it doesn't look any better.
-      _offscreen_buffer->convertFromImage(_offscreen_image->scale(image_size()));
-		  
+      std::clog << "[" << task->frames() << "]";
+
+      for (uint f=0;f<task->frames();f++)
+	{
+	  _offscreen_image.push_back
+	    (
+	     new QImage
+	     (
+	      (uchar*)&(_offscreen_image_data[f*task->size().width()*task->size().height()]),
+	      task->size().width(),
+	      task->size().height(),
+	      32,
+	      0,
+	      0,
+	      QImage::LittleEndian  // Seems to be right for hi[-/R/G/B]lo packing
+	      )
+	     );
+	  
+	  //! \todo Pick a scaling mode: smooth or not (or put it under GUI control). 
+	  // Curiously, although smoothscale seems to be noticeably slower, it doesn't look any better.
+	  _offscreen_buffer[f]->convertFromImage(_offscreen_image.back()->scale(image_size()));
+	}
+	  
       //! Note the resolution we've displayed so out-of-order low resolution images are dropped
       _current_display_level=task->level();
 
@@ -239,7 +299,7 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
       //! \todo Any case for calling update() instead of repaint() ?  Repaint maybe feels smoother.
       repaint();
     }
-
+  
   // This will also delete the task's deepcloned image
   delete task;
 }
@@ -254,10 +314,10 @@ void MutatableImageDisplay::lock(bool l)
 void MutatableImageDisplay::paintEvent(QPaintEvent*)
 {
   // Repaint the screen from the offscreen buffer
-  // (If there hasve be resizes it will be black)
-  bitBlt(this,0,0,_offscreen_buffer);
+  // (If there have been resizes it will be black)
+  bitBlt(this,0,0,_offscreen_buffer[_current_frame]);
 
-  // If this is the first paint event after a resize we can start computing images again.
+  // If this is the first paint event after a resize we can start computing images for the new size.
   if (_resize_in_progress)
     {
       image(_image);
@@ -277,12 +337,15 @@ void MutatableImageDisplay::resizeEvent(QResizeEvent* event)
     {
       _image_size=event->size();
       
-      // Resize and reset our offscreen buffer (something to do while we wait)
-      _offscreen_buffer->resize(image_size());
-      _offscreen_buffer->fill(black);
-      
       // Abort all current tasks because they'll be the wrong size.
       main()->farm()->abort_for(this);
+      
+      // Resize and reset our offscreen buffer (something to do while we wait)
+      for (uint f=0;f<_offscreen_buffer.size();f++)
+	{
+	  _offscreen_buffer[f]->resize(image_size());
+	  _offscreen_buffer[f]->fill(black);
+	}
       
       // Flag for the next paintEvent to tell it a recompute can be started now.
       _resize_in_progress=true;
@@ -553,7 +616,7 @@ void MutatableImageDisplay::menupick_save_image()
       QString save_filename=QFileDialog::getSaveFileName(".","Images (*.ppm *.png)",this,"Save image","Save image to a PPM or PNG file");
       if (!save_filename.isEmpty())
 	{
-	  QString save_format("PPM");
+	  const char* save_format="PPM";
 	  if (save_filename.upper().endsWith(".PPM"))
 	    {
 	      save_format="PPM";
@@ -564,12 +627,18 @@ void MutatableImageDisplay::menupick_save_image()
 	    }
 	  else
 	    {
-	      QMessageBox::warning(this,"Evolvotron","Unrecognised file suffix.\nFile will be written in "+save_format+" format.");
+	      QMessageBox::warning
+		(
+		 this,
+		 "Evolvotron",
+		 QString("Unrecognised file suffix.\nFile will be written in ")+QString(save_format)+QString(" format.")
+		 );
 	    }
 	  
+	  //! \todo Need to deal with multi-frame case
 	  if (!save_filename.isEmpty())
 	    {
-	      if (!_offscreen_image->save(save_filename.latin1(),save_format.latin1()))
+	      if (!_offscreen_image[0]->save(save_filename.local8Bit(),save_format))
 		{
 		  QMessageBox::critical(this,"Evolvotron","File write failed");
 		}
@@ -583,7 +652,7 @@ void MutatableImageDisplay::menupick_save_function()
   QString save_filename=QFileDialog::getSaveFileName(".","Functions (*.xml)",this,"Save function","Save image function to an XML file");
   if (!save_filename.isEmpty())
     {
-      std::ofstream file(save_filename.latin1());
+      std::ofstream file(save_filename.local8Bit());
       _image->save_function(file);
       file.flush();
       if (!file)
@@ -598,7 +667,7 @@ void MutatableImageDisplay::menupick_load_function()
   QString load_filename=QFileDialog::getOpenFileName(".","Functions (*.xml)",this,"Load function","Load image function from an XML file");
   if (!load_filename.isEmpty())
     {
-      std::ifstream file(load_filename.latin1());
+      std::ifstream file(load_filename.local8Bit());
       std::string report;
       MutatableImage*const new_image=MutatableImage::load_function(file,report);
       if (new_image==0)
@@ -689,12 +758,12 @@ void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
 
       top_level_widget=scrollview;
 
-      display=new MutatableImageDisplay(scrollview->viewport(),main(),false,true,sz);
+      display=new MutatableImageDisplay(scrollview->viewport(),main(),false,true,sz,_frames,_framerate);
       scrollview->addChild(display);
     }
   else
     {
-      display=new MutatableImageDisplay(0,main(),false,false,QSize(0,0));
+      display=new MutatableImageDisplay(0,main(),false,false,QSize(0,0),_frames,_framerate);
       
       top_level_widget=display;
     }

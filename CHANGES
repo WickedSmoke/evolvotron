@@ -1,7 +1,10 @@
 [Most recent at top]
 
 From release 0.1.4:
- - Bump version to 0.1.5 
+ - Bump version to 0.2.0 
+ - Filenames converted to/from QString using Qt's "local8Bit" codec.
+ - -f option specifies number of frames (default 1, which is the non-animated behaviour of previous versions)
+ - -r option specifies framerate of full-resolution animation (default 8, about the minimum to look smooth) 
 
 From release 0.1.3:
  - Bump version to 0.1.4 

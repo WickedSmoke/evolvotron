@@ -14,7 +14,7 @@ fi
 
 # Should test "which qmake" here.  If not found, add $(QTDIR)/bin to path
 
-echo "You qmake version is:"
+echo "Your qmake version is:"
 qmake --version
 
 echo

@@ -22,14 +22,19 @@
 
 #include "mutatable_image_computer_task.h"
 
-MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImage* img,const QSize& s,uint lev)
+MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImage* img,const QSize& s,uint f,uint lev)
   :_aborted(false)
-   ,_display(disp)
-   ,_image(img)
-   ,_size(s)
-   ,_level(lev)
-   ,_pixel(0)
-   ,_image_data(s.width()*s.height())
+  ,_display(disp)
+  ,_image(img)
+  ,_size(s)
+  ,_frames(f)
+  ,_level(lev)
+  ,_current_pixel(0)
+  ,_current_col(0)
+  ,_current_row(0)
+  ,_current_frame(0)
+  ,_image_data(s.width()*s.height()*f)
+  ,_completed(false)
 {
   assert(_image->ok());
 }
@@ -41,4 +46,24 @@ MutatableImageComputerTask::~MutatableImageComputerTask()
 {
   assert(_image->ok());
   delete _image;
+}
+
+void MutatableImageComputerTask::pixel_advance()
+{
+  _current_pixel++;
+  _current_col++;
+  if (_current_col==size().width())
+    {
+      _current_col=0;
+      _current_row++;
+      if (_current_row==size().height())
+	{
+	  _current_row=0;
+	  _current_frame++;
+	  if (_current_frame==frames())
+	    {
+	      _completed=true;
+	    }
+	}
+    }
 }

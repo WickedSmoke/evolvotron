@@ -56,14 +56,22 @@ class MutatableImageComputerTask
   //! The size of the image to be generated.
   const QSize _size;
 
+  //! Number of animation frames to be rendered
+  const uint _frames;
+
   //! The resolution level of this image (0=1-for-1 pixels, 1=half res etc)
-  /*! This is needed because multiple compute threads could return the completed tasks out of order
+  /*! This is tracked because multiple compute threads could return the completed tasks out of order
     (Unlikely given the huge difference in the amount of compute between levels, but possible).
    */
   const uint _level;
 
-  //! Count of pixels computed, so tasks can be restarted after defer.
-  uint _pixel;
+  //@{
+  //! Track pixels computed, so tasks can be restarted after defer.
+  uint _current_pixel;
+  int _current_col;
+  int _current_row;
+  uint _current_frame;
+  //@}
 
   //! The image data generated.
   /*! It might have been nice to use a QImage, but every access would probably have to be qApp mutex protected.
@@ -71,9 +79,12 @@ class MutatableImageComputerTask
    */
   std::vector<uint> _image_data;
 
+  //! Set true by pixel_advance when it advances off the last frame.
+  bool _completed;
+
  public:
   //! Constructor.
-  MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImage* img,const QSize& s,uint lev);
+  MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImage* img,const QSize& s,uint f,uint lev);
   
   //! Destructor.
   ~MutatableImageComputerTask();
@@ -109,6 +120,12 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
+  const uint frames() const
+    {
+      return _frames;
+    }
+
+  //! Accessor.
   const uint level() const
     {
       return _level;
@@ -133,16 +150,34 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
-  const uint pixel() const
+  const uint current_col() const
     {
-      return _pixel;
+      return _current_col;
+    }
+  //! Accessor.
+  const uint current_row() const
+    {
+      return _current_row;
+    }
+  //! Accessor.
+  const uint current_frame() const
+    {
+      return _current_frame;
+    }
+  //! Accessor.
+  const uint current_pixel() const
+    {
+      return _current_pixel;
     }
 
-  //! Increment pixel count.
-  const void pixel_advance()
+  //!Accessor.
+  const bool completed() const
     {
-      _pixel++;
+      return _completed;
     }
+
+  //! Increment pixel count, set completed flag if advanced off end of last frame.
+  void pixel_advance();
 };
 
 #endif

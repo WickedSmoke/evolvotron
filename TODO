@@ -1,6 +1,18 @@
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
+Animation
+---------
+- Ability to save animated frames
+- Sync animation to xmms beat somehow ?
+- More sanity in memory allocation/ownership for tasks
+- More warp types (rotate time into space etc)
+- More control over animation (frames & framerate) from edit/options menu
+  (or on a display by display basis ?)
+- Ability to degrade temporal resolution with spatial resolution at low-res render levels
+
+Conventional
+------------
 - Check qmake can be found by configure.
   Check $(QTDIR)/bin first... RH seem to be unusual in copying it to /usr/bin
 - evolvotron_render default output (or with filename "-") should be to stdout.

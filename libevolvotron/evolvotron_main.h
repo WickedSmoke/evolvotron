@@ -221,7 +221,7 @@ class EvolvotronMain : public QMainWindow
 
  public:
   //! Constructor.
-  EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_threads);
+  EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frames,uint framerate,uint n_threads);
 
   //! Destructor.
   ~EvolvotronMain();

@@ -115,6 +115,7 @@ public:
   
   //! Called for start elements.
   /*! Don't know anything about namespaces - parameters ignored.
+    Stick with latin1() conversion because we shouldn't have put anything fancy in the file
    */
   bool startElement(const QString&,const QString& localName,const QString&,const QXmlAttributes& atts)
   {
@@ -205,7 +206,8 @@ public:
 
   //! We don't need to check this matches startElement
   /*! Don't know anything about namespaces - parameter ignored.
-   */
+    Stick with latin1() conversion because we shouldn't have put anything fancy in the file
+  */
   bool endElement(const QString&, const QString& localName, const QString&)
   {
     const std::string element(localName.latin1());
@@ -333,8 +335,8 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
     }
   else
     {
-        QString tmp;
-        tmp = "Parse error: "+load_handler.errorString()+"\n";
+      QString tmp;
+      tmp = "Parse error: "+load_handler.errorString()+"\n";
       report=tmp.latin1();
       delete info;
       return 0;

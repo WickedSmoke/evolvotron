@@ -1,5 +1,9 @@
 Known bugs:
 
+  - Resizing the evolvotron window queues up crazy numbers of tasks.
+    This didn't matter too much in 2D mode, but with animations the memory reserved
+    for the task's render target is considerably larger. 
+
   - Undo doesn't always work how you'd expect
     - better than it used to be though
 
