@@ -87,17 +87,25 @@ Short story:
 Long story:
 
 Check you have your QTDIR environment defined, and possibly also your
-QMAKESPEC too.  The former should point to your Qt installation.  The latter
-will be something like "linux-g++" if needed; check the Qt docs for other
-architectures or perhaps look in your QT installation's mkspecs directory.
+QMAKESPEC too.
+
+QTDIR should point to your Qt installation (NB you might have more than one.
+e.g on debian you probably want QTDIR=/usr/share/qt3, but there is also
+a /usr/share/qt)/
+
+QMAKESPEC, if needed, will be something like "linux-g++"; check the Qt docs
+for other architectures or perhaps look in your QT installation's mkspecs
+directory.
 (RedHat defines QTDIR for the normal user environment, and seems to work fine
-without explicitly setting QMAKESPEC.  A Mandrake user reports having to set
-both explicitly.)
+without explicitly setting QMAKESPEC.  Debian needs QTDIR setting.
+A Mandrake user reports having to set both explicitly.)
 
 Most build failures are simply because the necessary Qt build tools aren't in your path:
   which qmake
   which moc
-should both find something.  RedHat makes things easy by putting these binaries in
+should both find something.
+
+RedHat makes things easy by putting these binaries in
 /usr/bin, but many distros leave them in $QTDIR/bin.
 You should either add this to your path or use the BUILD script 
 (which sets it for the commands it runs).
@@ -105,15 +113,18 @@ You should either add this to your path or use the BUILD script
 The author develops on 
   RedHat 8 (gcc 3.2, qt 3.0.5),
   RedHat 9 (gcc 3.2.2, qt 3.1.1)
-and sometimes (not recently) also tests on on RedHat 7.3 (gcc 2.96, qt 3.0.5).
-(So the closer your system is to these, the less likely you are to have problems).
+  Debian testing
+and sometimes (not recently) also tests things on RedHat 7.3 and Debian stable.
+(So the closer your system is to these, the less likely you are to have
+problems).
 
 A Debian (3.0r1) user reports Debian's Qt package not including qmake.
-They eventually got hold of a version from somewhere (Trolltech?).
-Attempting a regular build they apparently encountered a header/library
-version incompatibility (old headers, new library) which was solved by hand
-editing the qmake-generated Makefile and adding "-I- -I. " in front of
-the other -I paths.
+(That's probably becayse they needed the various -dev and/or -dev-tools
+packages too).  They eventually got hold of a version from somewhere
+(Trolltech?). Attempting a regular build they apparently encountered
+a header/library version incompatibility (old headers, new library)
+which was solved by hand editing the qmake-generated Makefile and 
+adding "-I- -I. " in front of the other -I paths.
 
 If you have gcc/c++ problems:
 

@@ -6,6 +6,8 @@ From release 0.2.3:
  - Add not-very-useful .qt-mng image file output format
  - Add function stats to Properties dialog
  - Add function simplification (more useful for debugging than anything)
+ - Don't use True and False in doc-building python script
+   (seems to be quite new thing, not in 2.1.x ?).  Use 0 and 1 instead.
 
 From release 0.2.2:
  - Version to 0.2.3
