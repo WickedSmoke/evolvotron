@@ -82,8 +82,8 @@ class DialogFunctions : public QDialog
    */
   MutationParameters*const _mutation_parameters;
 
-  //! Vertical layout.
-  QVBox* _vbox;
+  //! Top level holder of all the dialog content.
+  QVBox* _dialog_content;
 
   //! Notification of undiluted branching ratio.
   QLabel* _branching_ratio;

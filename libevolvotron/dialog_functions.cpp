@@ -42,38 +42,15 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 
   setCaption("Functions");
 
-  _vbox=new QVBox(this);
+  _dialog_content=new QVBox(this);
 
-  _branching_ratio=new QLabel(_vbox);
-
-  QGroupBox* c0=new QGroupBox(3,Qt::Horizontal,"Required branching ratio after dilution",_vbox);
-  new QLabel("0.1",c0);
-  _slider_target_branching_ratio=new QSlider(10,90,1,50,Qt::Horizontal,c0);
-  QToolTip::add(_slider_target_branching_ratio,"The branching ratio must be diluted to <1.0 to prevent formation of infinitely large function-trees.\nWarning: setting a high value results in complex function trees taking a long time to compute.\nSetting a low value results in very simple images.");
-  new QLabel("0.9",c0);
-
-  QGroupBox* c1=new QGroupBox(3,Qt::Horizontal,"Of diluting nodes, proportion constant:",_vbox);
-  new QLabel("0.0",c1);
-  _slider_proportion_constant=new QSlider(0,100,1,50,Qt::Horizontal,c1);
-  new QLabel("1.0",c1);
-  QToolTip::add(_slider_proportion_constant,"This specifies the proportion of diluting nodes which will be constant.");
-
-  QGroupBox* c2=new QGroupBox(3,Qt::Horizontal,"Of non-constant diluting nodes, proportion transformed",_vbox);
-  new QLabel("0.0",c2);
-  _slider_identity_supression=new QSlider(0,100,1,50,Qt::Horizontal,c2);
-  QToolTip::add(_slider_identity_supression,"This specifies the proportion of non-constant diluting nodes which will be transforms (c.f identity nodes).");
-  new QLabel("1.0",c2);
-
-  QGroupBox* c3=new QGroupBox(1,Qt::Horizontal,"Specific function weightings",_vbox);
-  QTabWidget* tabs=new QTabWidget(c3);
-
+  QTabWidget* tabs=new QTabWidget(_dialog_content);
+  _ok=new QPushButton("OK",_dialog_content);
+    
   for (int c=-1;c<FnClassifications;c++)
     {
       VBoxScrollView* scrollview=new VBoxScrollView(this);
-      if (c==-1) 
-	tabs->addTab(scrollview,"All");
-      else 
-	tabs->addTab(scrollview,function_classification_name[c]);
+      tabs->addTab(scrollview,(c==-1 ? "All" : function_classification_name[c]));
 
       //! \todo Add buttons to affect all items in group
 
@@ -108,9 +85,33 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 	    }
 	}
     }
-  
-  _ok=new QPushButton("OK",_vbox);
-  
+
+  // And add another tab for all the branching-ratio/dilution controls
+  {
+    QVBox* vbox=new QVBox(this);
+    tabs->addTab(vbox,"Dilution");
+    
+    _branching_ratio=new QLabel(vbox);
+    
+    QGroupBox* c0=new QGroupBox(3,Qt::Horizontal,"Required branching ratio after dilution",vbox);
+    new QLabel("0.1",c0);
+    _slider_target_branching_ratio=new QSlider(10,90,1,50,Qt::Horizontal,c0);
+    QToolTip::add(_slider_target_branching_ratio,"The branching ratio must be diluted to <1.0 to prevent formation of infinitely large function-trees.\nWarning: setting a high value results in complex function trees taking a long time to compute.\nSetting a low value results in very simple images.");
+    new QLabel("0.9",c0);
+
+    QGroupBox* c1=new QGroupBox(3,Qt::Horizontal,"Of diluting nodes, proportion constant:",vbox);
+    new QLabel("0.0",c1);
+    _slider_proportion_constant=new QSlider(0,100,1,50,Qt::Horizontal,c1);
+    new QLabel("1.0",c1);
+    QToolTip::add(_slider_proportion_constant,"This specifies the proportion of diluting nodes which will be constant.");
+    
+    QGroupBox* c2=new QGroupBox(3,Qt::Horizontal,"Of non-constant diluting nodes, proportion transforms",vbox);
+    new QLabel("0.0",c2);
+    _slider_identity_supression=new QSlider(0,100,1,50,Qt::Horizontal,c2);
+    QToolTip::add(_slider_identity_supression,"This specifies the proportion of non-constant diluting nodes which will be transforms (c.f identity nodes).");
+    new QLabel("1.0",c2);
+  }
+
   connect(
 	  _slider_target_branching_ratio,SIGNAL(valueChanged(int)),
 	  this,SLOT(changed_target_branching_ratio(int))
@@ -145,7 +146,7 @@ DialogFunctions::~DialogFunctions()
 void DialogFunctions::resizeEvent(QResizeEvent* e)
 {
   Superclass::resizeEvent(e);
-  _vbox->resize(size());
+  _dialog_content->resize(size());
 }
 
 void DialogFunctions::setup_from_mutation_parameters()
