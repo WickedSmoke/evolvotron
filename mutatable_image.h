@@ -186,6 +186,46 @@ class MutatableImageNodeCos : public MutatableImageNode
   virtual MutatableImageNode*const deepclone() const;
 };
 
+//! This node implements XYZ to spherical co-ords
+class MutatableImageNodeXYZToSpherical : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodeXYZToSpherical(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeXYZToSpherical();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! This node implements spherical to XYZ co-ords
+class MutatableImageNodeSphericalToXYZ : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodeSphericalToXYZ(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeSphericalToXYZ();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
 //! This node implements grad
 class MutatableImageNodeGrad : public MutatableImageNode
 {

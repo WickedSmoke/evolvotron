@@ -5,14 +5,11 @@ CONFIG+= qt thread release
 
 ##################
 # Better optimisations than qmake defaults IF you have the right processor.
-# The -mfpmath=sse -msse2 options _do_ appear to generate SSE instructions on the authors setup.
+# The -mfpmath=sse -msse2 options (apparently NOT implied by -march) _do_ generate SSE instructions on the authors setup.
 # The larger inline limit helps with template generated code.
+# There is a nice summary of gcc optimisation options at http://freshmeat.net/articles/view/730/
 QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
-QMAKE_CXXFLAGS_RELEASE += -march=i686 -O3 -mfpmath=sse -msse2 -fomit-frame-pointer -ffast-math -funroll-loops -finline-limit=4000 
-
-##################
-# Other optimisation options but these don't seem to produce any improvement in the assembler code I've looked at.
-#QMAKE_CXXFLAGS_RELEASE += -fstrength-reduce -frerun-loop-opt -frerun-cse-after-loop -fexpensive-optimizations -fschedule-insns2 
+QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2 -O3 -ffast-math -funroll-loops -finline-limit=4000 
 
 # Input
 HEADERS += \
