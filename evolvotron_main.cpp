@@ -65,9 +65,11 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
   _popupmenu_file->insertItem("&Quit",qApp,SLOT(quit()));
   _menubar->insertItem("&File",_popupmenu_file);
 
-  _popupmenu_mutate=new QPopupMenu;
-  _popupmenu_mutate->insertItem("&Parameters...",_dialog_mutation_parameters,SLOT(show()));
-  _menubar->insertItem("&Mutate",_popupmenu_mutate);
+  _popupmenu_edit=new QPopupMenu;
+  _popupmenu_edit->insertItem("&Undo",this,SLOT(undo()));
+  _popupmenu_edit->insertSeparator();
+  _popupmenu_edit->insertItem("&Mutation parameters...",_dialog_mutation_parameters,SLOT(show()));
+  _menubar->insertItem("&Edit",_popupmenu_edit);
 
   _menubar->insertSeparator();
 
@@ -315,6 +317,11 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
   args_toplevel.push_back(new MutatableImageNodePostTransform(args2));
       
   display->image(new MutatableImageNodeConcatenateTriple(args_toplevel));
+}
+
+void EvolvotronMain::undo()
+{
+  // Add undo functionality.  Grey out menu item when not available.
 }
 
 /*! Reset each image in the grid, and the mutation parameters.

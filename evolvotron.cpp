@@ -79,6 +79,7 @@ int main(int argc,char* argv[])
 
   std::cerr << "Commencing main loop...\n";
 
+  // NB Do this here rather than in constructor so that compute threads aren't being fired off during general GUI set-up
   main_widget->reset();
 
   return app.exec();

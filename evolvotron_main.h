@@ -82,7 +82,7 @@ class EvolvotronMain : public QMainWindow
   QPopupMenu* _popupmenu_file;
 
   //! The mutate menu.
-  QPopupMenu* _popupmenu_mutate;
+  QPopupMenu* _popupmenu_edit;
 
   //! The help menu.
   QPopupMenu* _popupmenu_help;
@@ -193,11 +193,12 @@ class EvolvotronMain : public QMainWindow
   //! Signalled by timer.
   void tick();
 
- public slots:
-  //! Signalled by menu item.
-  void reset();
- 
+  //! Signalled by menu item. 
+  void undo();
 
+ public slots:
+  //! Signalled by menu item.  Public because called from evolvotron app wrapper.
+  void reset();
 };
 
 #endif

@@ -79,6 +79,9 @@ Right clicking on an image gets you a few more options:
    the size you see on the screen is the size you get in the file.
    Note that the save won't be allowed until the full resolution image has been generated.
 
+The Edit menu lets you undo the last full-grid spawn (limited number of levels of undo),
+and bring up a dialog to edit the mutation parameters (see advanced usage below).
+
 IMPORTANT: Initially you should select images with some sort of variation.
 It can take quite a few generations before you get something more interesting
 than a simple gradient.  If you select a uniform image, you may get stuck
@@ -104,7 +107,7 @@ from trees of function nodes acting on image co-ordinates to produce a colour.
 The properties of the tree are mutated to produce variant images.
 
 The mutation parameters are under control from the dialog accessible via the
-Mutate->Parameters... menu, and also from buttons on the status bar).
+Edit->Mutation Parameters... menu, and also from buttons on the status bar).
 
 There are two kinds of mutation: perturbations to the magnitude of constants, 
 and structural mutations which rearrage the function tree of an image.  

@@ -23,5 +23,5 @@
   (probably shouldn't be on by default; control from command line).
 - Heat/cool etc should act in proportion to current values
   (probably wanted for autocool).
-
+- Evolve other things e.g parameters of celluar automata/reaction diffusion equations/iterated function systems.
 
