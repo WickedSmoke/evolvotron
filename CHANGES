@@ -14,6 +14,7 @@ From release 0.0.1:
 
 From release 0.0.2:
  - Bump version to 0.0.3
+ - Add command line arg control of grid size and threads, don't override -geometry
 
 
 
