@@ -182,11 +182,12 @@ FUNCTIONALITY OPTIONS
 ---------------------
 Specify 'fs' on the ./configure commandline to enable
 fullscreen support (which is off by default, but is recommended).
-I don't know what minimum version of Qt you need for this, 
-but it works on RH9 and fails to build on RH8.
 
 If you select fullscreen support but your version of Qt is too
 old, the build will fail.
+
+I don't know what minimum version of Qt you need for this, 
+but it works on RH9 and fails to build on RH8.
 
 PERFORMANCE OPTIONS
 -------------------
@@ -251,6 +252,10 @@ Paolo Greppi built it on OSX like this:
 
 INSTALL
 =======
+evolvotron doesn't have a clever installer.
+The assumption is that packagers will have a better idea of where
+files should be copied to on their systems, and the tools to do it.
+
 Doing
   make install
 will attempt to install the executables in the INSTALLPATH directory defined in
@@ -259,12 +264,13 @@ install" of evolvotron assuming you have such a directory in your PATH).
 If you change INSTALLPATH to /usr/local/bin then you'll need to "su" before
 the make install.
 
-Also of possible interest is an evolvotron.html file prepared from the USAGE
-file during the configure step.  If you are packaging evolvotron you might
-have some ideas about where to put this in your distro; I don't try to guess.
+There are some man pages in ./man/man1 (not copied anywhere by make install).  
 
-NB If you change a ".pro" file, you'll need to ./configure again to make changes
-take effect.
+Also of possible interest is an evolvotron.html file prepared from the USAGE
+file during the configure step.
+
+NB If you change a ".pro" file, you'll need to ./configure again 
+to make changes take effect.
 
 INSTALL PROBLEMS
 ================

@@ -1,0 +1,52 @@
+.TH EVOLVOTRON_MUTATE 1 "25 Feb 2004" "www.timday.com" "Evolvotron"
+
+.SH NAME
+evolvotron_mutate \- Render an evolvotron function tree to an image.
+
+.SH SYNOPSIS
+
+evolvotron_mutate
+< function_in.xml
+> function_out.xml
+
+evolvotron_mutate
+\-g
+> function_out.xml
+
+
+.SH DESCRIPTION
+
+.B evolvotron_mutate 
+either mutates an existing image function (saved to an XML file), 
+or (with the \-g option) creates a new image function.
+
+The mutation parameters and function weightings are the same as used
+by
+.B evolvotron
+in its default reset state.
+
+See the evolvotron user manual (accessible from the evolvotron
+application's Help menu) for more information on image functions.
+
+.SH COMMANDLINE OPTIONS
+
+.TP 0.5i
+.B -g
+Specifies that no function should be read from standard input.
+The output function is created at random.
+
+.SH EXAMPLES
+
+evolvotron_mutate -g | tee function0.xml | evolvotron_render function0.ppm 
+
+evolvtron_mutate < function0.xml > function1.xml 
+
+.SH AUTHOR
+.B evolvotron_mutate
+was written by Tim Day (www.timday.com) and is released
+under the conditions of the GNU General Public License.
+See the file LICENSE supplied with the source code for details.
+
+.SH SEE ALSO
+
+evolvotron(1), evolvotron_render(1)
