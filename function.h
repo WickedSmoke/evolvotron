@@ -320,5 +320,30 @@ class FunctionSphericalToCartesian
 
 //------------------------------------------------------------------------------------------
 
+// Converts the position argument to spherical coords, pass these through the leaf node, and convert the result back to cartesian.
+class FunctionEvaluateInSpherical
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! 1 leaf argument.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p);
+
+  //! Is constant if leaf node is.
+  static const bool is_constant(const FunctionNode& our);
+
+};
+
+//------------------------------------------------------------------------------------------
 
 #endif

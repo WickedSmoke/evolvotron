@@ -290,29 +290,6 @@ template <typename F> Registration FunctionNodeUsing<F>::registration(typeid(F).
 
 //----------------------------------------------------------------------------------------
 
-//! This node evaluates a child function in spherical co-ordinates
-class FunctionNodeSphericalize : public FunctionNode
-{
- private:
-
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Query whether node value is independent of position argument.
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  FunctionNodeSphericalize(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
-
-  //! Destructor.
-  virtual ~FunctionNodeSphericalize();
-
-  //! Return a clone.
-  virtual FunctionNode*const deepclone() const;
-};
-
 //! This node applies rotation matrices to it's argument
 class FunctionNodeRotate : public FunctionNode
 {

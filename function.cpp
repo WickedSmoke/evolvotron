@@ -187,7 +187,7 @@ const bool FunctionTransformQuadratic::is_constant(const FunctionNode&)
 
 REGISTER(FunctionCartesianToSpherical);
 
-const XYZ FunctionCartesianToSpherical::evaluate(const FunctionNode& our,const XYZ& p)
+const XYZ FunctionCartesianToSpherical::evaluate(const FunctionNode&,const XYZ& p)
 {
   const float r=p.magnitude();
   
@@ -207,7 +207,7 @@ const bool FunctionCartesianToSpherical::is_constant(const FunctionNode&)
 
 REGISTER(FunctionSphericalToCartesian);
 
-const XYZ FunctionSphericalToCartesian::evaluate(const FunctionNode& our,const XYZ& p)
+const XYZ FunctionSphericalToCartesian::evaluate(const FunctionNode&,const XYZ& p)
 {
   const float r=p.x();
   const float theta=M_PI*p.y();
@@ -226,4 +226,31 @@ const bool FunctionSphericalToCartesian::is_constant(const FunctionNode&)
 }
 
 //------------------------------------------------------------------------------------------
+
+REGISTER(FunctionEvaluateInSpherical);
+
+const XYZ FunctionEvaluateInSpherical::evaluate(const FunctionNode& our,const XYZ& p)
+{
+  const float in_r=p.magnitude();
+  const float in_theta=atan2(p.y(),p.x())*(1.0f/M_PI);
+  const float in_phi=(in_r== 0.0f ? 0.0f : asin(p.z()/in_r)*(1.0f/(0.5f*M_PI)));
+
+  const XYZ v(our.arg(0)(XYZ(in_r,in_theta,in_phi)));
+
+  const float out_r=v.x();
+  const float out_theta=M_PI*v.y();
+  const float out_phi=0.5*M_PI*v.z();
+
+  const float x=out_r*cos(out_theta)*sin(out_phi);
+  const float y=out_r*sin(out_theta)*sin(out_phi);
+  const float z=out_r*cos(out_phi);
+
+  return XYZ(x,y,z);
+}
+
+const bool FunctionEvaluateInSpherical::is_constant(const FunctionNode& our)
+{
+  return our.arg(0).is_constant();
+}
+
 

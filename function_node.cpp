@@ -86,7 +86,7 @@ FunctionNode* FunctionNode::stub(const MutationParameters& parameters,bool excit
   else if (r<base+2*step) 
     return new FunctionNodeUsing<FunctionSphericalToCartesian>(stubparams(parameters,0),stubargs(parameters,0));
   else if (r<base+3*step) 
-    return new FunctionNodeSphericalize(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeUsing<FunctionEvaluateInSpherical>(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+4*step) 
     return new FunctionNodeRotate(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+5*step) 
@@ -265,48 +265,6 @@ const bool FunctionNode::ok() const
 }
 
 static Registry registry;
-
-/*******************************************/
-
-const XYZ FunctionNodeSphericalize::evaluate(const XYZ& p) const
-{
-  const float in_r=p.magnitude();
-  const float in_theta=atan2(p.y(),p.x())*(1.0f/M_PI);
-  const float in_phi=(in_r== 0.0f ? 0.0f : asin(p.z()/in_r)*(1.0f/(0.5f*M_PI)));
-
-  const XYZ v(arg(0)(XYZ(in_r,in_theta,in_phi)));
-
-  const float out_r=v.x();
-  const float out_theta=M_PI*v.y();
-  const float out_phi=0.5*M_PI*v.z();
-
-  const float x=out_r*cos(out_theta)*sin(out_phi);
-  const float y=out_r*sin(out_theta)*sin(out_phi);
-  const float z=out_r*cos(out_phi);
-
-  return XYZ(x,y,z);
-}
-
-const bool FunctionNodeSphericalize::is_constant() const
-{
-  return arg(0).is_constant();
-}
-
-
-FunctionNodeSphericalize::FunctionNodeSphericalize(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-  :FunctionNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==1);
-}
-
-FunctionNodeSphericalize::~FunctionNodeSphericalize()
-{}
-
-FunctionNode*const FunctionNodeSphericalize::deepclone() const
-{
-  return new FunctionNodeSphericalize(cloneparams(),cloneargs());
-}
 
 /*******************************************/
 
