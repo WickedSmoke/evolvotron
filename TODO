@@ -1,6 +1,8 @@
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
+- Add check for QTDIR definition in configure
+  (lots of people have it undefined it seems).
 - Load/save to XML file.
 - Locked attribute should be an image property, not a display property.
   (Would play nicer with Undo)

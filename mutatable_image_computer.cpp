@@ -30,9 +30,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 MutatableImageComputer::MutatableImageComputer(MutatableImageComputerFarm* frm)
   :_farm(frm)
   ,_task(0)
-  ,_defer(false)
-  ,_abort(false)
-  ,_kill(false)
 {
   start();
 }
@@ -48,7 +45,7 @@ MutatableImageComputer::~MutatableImageComputer()
 void MutatableImageComputer::run()
 {
   // Run until something sets the kill flag 
-  while(!_kill)
+  while(!communications().kill())
     {
       // If we don't have a task try and get one
       if (task()==0)
@@ -72,9 +69,9 @@ void MutatableImageComputer::run()
 
 	      while (task()->pixel()<pixels)
 		{
-		  if (_kill) exit();
-		  if (_abort) break;
-		  if (_defer) break;
+		  if (communications().kill()) exit();
+		  if (communications().abort()) break;
+		  if (communications().defer()) break;
 		  
 		  const uint r=task()->pixel()/width;
 		  const uint c=task()->pixel()%width;
@@ -109,11 +106,11 @@ void MutatableImageComputer::run()
 		}
 	    }
 	  
-	  if (_defer && !_abort)
+	  if (communications().defer() && !communications().abort())
 	    {
 	      // \todo Optimisation: Add a progress tracker to Task class so deferred tasks can continue from where they left off.
 	      farm()->push_todo(task());
-	      _defer=false;
+	      communications().defer(false);
 	      _task=0;
 	    }
 	  else
@@ -121,13 +118,13 @@ void MutatableImageComputer::run()
 	      farm()->push_done(task());
 	  
 	      // Do this at the last minute in case we were aborted while waiting for queue mutex.
-	      if (_abort)
+	      if (communications().abort())
 		{
 		  task()->abort();
-		  _abort=false;
+		  communications().abort(false);
 		}
 	      
-	      _defer=false;
+	      communications().defer(false);
 	      _task=0;
 	    }
 	}
@@ -140,7 +137,7 @@ bool MutatableImageComputer::defer_if_less_important_than(uint pri)
   const MutatableImageComputerTask*const task_tmp=_task;
   if (task_tmp && task_tmp->priority()>pri)
     {
-      _defer=true;
+      communications().defer(true);
       return true;
     }
   else
@@ -151,18 +148,18 @@ bool MutatableImageComputer::defer_if_less_important_than(uint pri)
 
 void MutatableImageComputer::abort()
 {
-  _abort=true;
+  communications().abort(true);
 }
 
 void MutatableImageComputer::abort_for(const MutatableImageDisplay* disp)
 {
   if (task()!=0 && task()->display()==disp)
     {
-      _abort=true;
+      communications().abort(true);
     }
 }
 
 void MutatableImageComputer::kill()
 {
-  _kill=true;
+  communications().kill(true);
 }

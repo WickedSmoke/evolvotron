@@ -43,21 +43,89 @@ class MutatableImageComputer : public QThread
   //! The current task.
   MutatableImageComputerTask* _task;
 
-  //! Flag to indicate we should put our current task back on the todo queue and take another one.
-  /*! volatile because used for inter-thread communication.
-   */
-  volatile bool _defer;
+  //! Class encapsulating mutex-protected flags used for communicating between farm and worker
+  class Communications
+    {
+    protected:
+      //! Mutex protecting access to members (mutable to enable const-ness of accessors).
+      mutable QMutex _mutex;
+      
+      //! Flag to indicate we should put our current task back on the todo queue and take another one.
+      /*! volatile because used for inter-thread communication.
+       */
+      volatile bool _defer;
+      
+      //! Flag to indicate we should abort the current compute.
+      /*! volatile because used for inter-thread communication.
+       */
+      volatile bool _abort;
+      
+      //! Flag to indicate the thread should shut down and exit.
+      /*! volatile because used for inter-thread communication.
+       */
+      volatile bool _kill;
 
-  //! Flag to indicate we should abort the current compute.
-  /*! volatile because used for inter-thread communication.
-   */
-  volatile bool _abort;
+    public:
+      //! Constructor.
+      /*! Mutex is recursive to allow nesting.
+       */
+      Communications()
+	:_mutex(true)
+	,_defer(false)
+	,_abort(false)
+	,_kill(false)
+	{}
 
-  //! Flag to indicate the thread should shut down and exit.
-  /*! volatile because used for inter-thread communication.
-   */
-  volatile bool _kill;
+      //! Mutex-protected accessor.
+      void defer(bool v)
+	{
+	  _mutex.lock();
+	  _defer=v;
+	  _mutex.unlock();
+	}
+      //! Mutex-protected accessor.
+      const bool defer() const
+	{
+	  _mutex.lock();
+	  const bool ret=_defer;
+	  _mutex.unlock();
+	  return ret;
+	}
+      //! Mutex-protected accessor.
+      void abort(bool v)
+	{
+	  _mutex.lock();
+	  _abort=v;
+	  _mutex.unlock();	  
+	}
+      //! Mutex-protected accessor.
+      const bool abort() const
+	{
+	  _mutex.lock();
+	  const bool ret=_abort;
+	  _mutex.unlock();
+	  return ret;
+	}
+      //! Mutex-protected accessor.
+      void kill(bool v)
+	{
+	  _mutex.lock();
+	  _kill=v;
+	  _mutex.unlock();
+	}
+      //! Mutex-protected accessor.
+      const bool kill() const
+	{
+	  _mutex.lock();
+	  const bool ret=_kill;
+	  _mutex.unlock();
+	  return ret;
+	}
+    };
 
+  // Instance of communications
+  Communications _communications;
+  
   //! The actual compute code, launched by invoking start() in the constructor
   virtual void run();
 
@@ -69,6 +137,17 @@ class MutatableImageComputer : public QThread
   //! Destructor
   ~MutatableImageComputer();
 
+  //! Accessor 
+  Communications& communications()
+    {
+      return _communications;
+    }
+  //! Accessor 
+  const Communications& communications() const
+    {
+      return _communications;
+    }
+  
   //! Accessor.
   MutatableImageComputerTask*const task() const
     {
