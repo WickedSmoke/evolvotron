@@ -240,10 +240,28 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _popupmenu_edit=new QPopupMenu;
   _popupmenu_edit_undo_id=_popupmenu_edit->insertItem("&Undo",this,SLOT(undo()));
   _popupmenu_edit->setItemEnabled(_popupmenu_edit_undo_id,false);
-  _popupmenu_edit->insertSeparator();
-  _popupmenu_edit->insertItem("&Mutation parameters...",_dialog_mutation_parameters,SLOT(show()));
   _menubar->insertItem("&Edit",_popupmenu_edit);
+  
+  _popupmenu_settings=new QPopupMenu;
 
+  // We want to use a checkmark on some items
+  _popupmenu_settings->setCheckable(true);
+
+  _popupmenu_settings->insertItem("&Mutation parameters...",_dialog_mutation_parameters,SLOT(show()));
+
+#ifdef FULLSCREEN
+  _popupmenu_settings->insertSeparator();
+
+  _menu_item_number_fullscreen=_popupmenu_settings->insertItem("&Fullscreen",this,SLOT(toggle_fullscreen()));
+  _menu_item_number_hide_menu=_popupmenu_settings->insertItem("Hide &menu and statusbar",this,SLOT(toggle_hide_menu()));  
+
+  _popupmenu_settings->setItemChecked(_menu_item_number_fullscreen,start_fullscreen);
+  _popupmenu_settings->setItemChecked(_menu_item_number_hide_menu,start_menuhidden);
+#endif //FULLSCREEN
+
+  _menubar->insertItem("&Settings",_popupmenu_settings);
+
+  //! This doesn't seem to do anything (supposed to push help menu over to far end ?)
   _menubar->insertSeparator();
 
   _popupmenu_help=new QPopupMenu;
@@ -286,7 +304,6 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
 
   _farm=new MutatableImageComputerFarm(n_threads);
 
-
   //! \todo frames and framerate should be retained and modifiable from the GUI
   for (int r=0;r<grid_size.height();r++)
     for (int c=0;c<grid_size.width();c++)
@@ -297,6 +314,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   // Run tick() at 100Hz
   _timer->start(10);
 
+#ifdef FULLSCREEN
   if (start_fullscreen)
     {
       showFullScreen();
@@ -307,6 +325,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
       menuBar()->hide();
       statusBar()->hide();
     }
+#endif
 }
 
 /*! If this is being destroyed then the whole application is going down.
@@ -601,26 +620,18 @@ void EvolvotronMain::keyPressEvent(QKeyEvent* e)
       showNormal();
       menuBar()->show();
       statusBar()->show();
+      _popupmenu_settings->setItemChecked(_menu_item_number_fullscreen,false);
+      _popupmenu_settings->setItemChecked(_menu_item_number_hide_menu,false);
     }
   else if (e->key()==Qt::Key_F && !(e->state()^Qt::ControlButton))
     {
       //Ctrl-F toggles fullscreen mode
-      if (isFullScreen()) 
-	showNormal();
-      else showFullScreen();
+      toggle_fullscreen();
     }
   else if (e->key()==Qt::Key_M && !(e->state()^Qt::ControlButton))
     {
       //Ctrl-M toggles menu and status-bar display
-      if (menuBar()->isHidden())
-	menuBar()->show();
-      else if (menuBar()->isShown())
-	menuBar()->hide();
-      
-      if (statusBar()->isHidden())
-	statusBar()->show();
-      else if (statusBar()->isShown())
-	statusBar()->hide();
+      toggle_hide_menu();
     }
   else
 #endif // FULLSCREEN
@@ -640,6 +651,43 @@ void EvolvotronMain::keyPressEvent(QKeyEvent* e)
 	e->ignore();
       }
 }
+
+#ifdef FULLSCREEN
+
+void EvolvotronMain::toggle_fullscreen()
+{
+  if (isFullScreen()) 
+    {
+      showNormal();
+      _popupmenu_settings->setItemChecked(_menu_item_number_fullscreen,false);
+    }
+  else 
+    {
+      showFullScreen();
+      _popupmenu_settings->setItemChecked(_menu_item_number_fullscreen,true);
+    }
+}
+
+void EvolvotronMain::toggle_hide_menu()
+{
+  if (menuBar()->isHidden())
+    {
+      menuBar()->show();
+      _popupmenu_settings->setItemChecked(_menu_item_number_hide_menu,false);
+    }
+  else if (menuBar()->isShown())
+    {
+      menuBar()->hide();
+      _popupmenu_settings->setItemChecked(_menu_item_number_hide_menu,true);
+    }
+  
+  if (statusBar()->isHidden())
+    statusBar()->show();
+  else if (statusBar()->isShown())
+    statusBar()->hide();
+}
+
+#endif // FULLSCREEN
 
 /*! Set up an initial random image in the specified display. 
 

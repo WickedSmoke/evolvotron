@@ -132,11 +132,20 @@ class EvolvotronMain : public QMainWindow
   //! The file menu.
   QPopupMenu* _popupmenu_file;
 
-  //! The mutate menu.
+  //! The edit menu.
   QPopupMenu* _popupmenu_edit;
 
   //! ID for the undo item (so we can disable it).
   int _popupmenu_edit_undo_id;
+
+  //! The settings menu
+  QPopupMenu* _popupmenu_settings;
+
+  //! Item number for setting check mark
+  int _menu_item_number_fullscreen;
+
+  //! Item number for setting check mark
+  int _menu_item_number_hide_menu;
 
   //! The help menu.
   QPopupMenu* _popupmenu_help;
@@ -323,15 +332,23 @@ class EvolvotronMain : public QMainWindow
   void undo();
 
  public slots:
-   
+
+#ifdef FULLSCREEN
+  //! Signalled by menu item.
+  void toggle_hide_menu();
+
+  //! Signalled by menu item
+  void toggle_fullscreen();
+#endif
+  
   //! Signalled by menu item.  Public because called from evolvotron app wrapper.
   void reset(bool reset_mutation_parameters,bool reset_locks);
- 
- //! Forwards to reset(false)
- void reset_warm();
- 
- //! Forwards to reset(true)
- void reset_cold();
+  
+  //! Forwards to reset(false)
+  void reset_warm();
+  
+  //! Forwards to reset(true)
+  void reset_cold();
 };
 
 #endif

@@ -59,7 +59,7 @@ void MutatableImageDisplayBig::keyPressEvent(QKeyEvent* e)
       if (isFullScreen())
 	{
 	  if (main()->isFullScreen())
-	    main()->showNormal();
+	    main()->toggle_fullscreen();  // Need to use this to maintain menu checkmarks
 	  showNormal();
 	}
       else 

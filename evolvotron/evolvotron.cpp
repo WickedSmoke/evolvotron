@@ -110,9 +110,14 @@ int main(int argc,char* argv[])
       testfn_unwrapped=true;
     }
 
+#ifdef FULLSCREEN
   // Use same keys as used by app to toggle modes
   bool start_fullscreen=args.option("-F");
   bool start_menuhidden=args.option("-M");
+#else
+  bool start_fullscreen=false;
+  bool start_menuhidden=false;
+#endif
 
   std::clog
     << "Evolvotron version "
