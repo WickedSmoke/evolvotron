@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "dialog_mutatable_image_display.h"
 
 DialogMutatableImageDisplay::DialogMutatableImageDisplay(QWidget* parent)
-  :QDialog(parent)
+  :QDialog(parent,0,TRUE)
 {
   setCaption("Image Properties");
   setMinimumSize(128,128);
