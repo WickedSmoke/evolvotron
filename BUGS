@@ -6,7 +6,7 @@ Known bugs:
 
 - Have yet to find a tool which can display anything other than the
   first frame of a Qt-generated MNG format.  (Apparently Qt's mng
-  has little to do with the multi-frame png format).
+  actually has nothing to do with the standard multi-frame png format).
 
 - Very rarely image calculations appear to arrive seriously out-of-order.
   May be a more of a problem on slower hardware ? 
@@ -18,12 +18,12 @@ Known bugs:
     Open the properties dialog for the "big" window.
     This results in metacity showing the task bar.
     Use the task bar to select the main app window into the foreground.
-    Watch both fullscreen windows fight for supremacy.  Ouch!
+    Watch both fullscreen windows battle for supremacy!
   This sort of thing is unlikely to be fixed.
 
 - Resizing the evolvotron window queues up crazy numbers of tasks.
-  This didn't matter too much in 2D mode, but with animations the memory reserved
-  for each task's render target is considerably larger. 
+  This didn't matter too much in 2D mode, but with animations the
+  memory reserved for each task's render target is considerably larger. 
 
 - Undo doesn't always work how you'd expect.
   e.g respawn after undo doesn't respawn from what you'd expect.
@@ -35,7 +35,10 @@ Known bugs:
   not actually present in larger resolution versions.
 
 - Once image colours become saturated there's not much which will cause
-  them to scale back down to sensible ranges, unless you're lucky
+  them to scale back down to sensible ranges, unless you're lucky.
+
+- Simplifying functions sometimes changes their appearance
+  (implies "is_constant" probably buggy for some functions).
 
 - Recolour behaves strangely sometimes (?)
   (e.g spawns all-black images or subtly warped images)

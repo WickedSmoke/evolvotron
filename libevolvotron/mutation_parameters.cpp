@@ -164,6 +164,24 @@ void MutationParameters::change_function_weighting(const FunctionRegistration* f
   emit changed();
 }
 
+void MutationParameters::randomize_function_weightings_for_classifications(uint classification_mask)
+{
+  for (
+       std::map<const FunctionRegistration*,float>::iterator it=_function_weighting.begin();
+       it!=_function_weighting.end();
+       it++
+       )
+    {
+      const int i=static_cast<int>(floor(11.0f*r01()));
+      (*it).second=pow(2,-i);
+    }
+
+  recalculate_function_stuff();
+
+  emit changed();
+}
+
+
 const float MutationParameters::get_weighting(const FunctionRegistration* fn)
 {
   std::map<const FunctionRegistration*,float>::const_iterator it=_function_weighting.find(fn);

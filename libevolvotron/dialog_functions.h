@@ -43,14 +43,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*! Would ideally live in dialog_functions.cpp, but that causes (moc-related?) problems with linking;
   seems to need wider visibility.  \todo Move to own file and only include in dialog_functions.cpp
  */
-class SignalExpanderQSlider : public QObject
+class SignalExpanderValueChangedQSlider : public QObject
 {
 private:
   Q_OBJECT
   
   QSlider*const _src;
 public:
-  SignalExpanderQSlider(QObject* parent,QSlider* src)
+  SignalExpanderValueChangedQSlider(QObject* parent,QSlider* src)
     :QObject(parent)
     ,_src(src)
   {}
@@ -65,27 +65,25 @@ signals:
 };
 
 //! Similar to SignalExpanderQSlider except attaches an integer argument to the clicked signal
-/*
-class SignalExpanderQButton : public QObject
+class SignalExpanderClickedUint : public QObject
 {
  private:
   Q_OBJECT
 
   uint _arg;
  public:
-  SignalExpanderQButton(QObject* parent,uint arg)
+  SignalExpanderClickedUint(QObject* parent,uint arg)
     :QObject(parent)
     ,_arg(arg)
     {}
  public slots:
   void clicked()
     {
-      emit clicked(arg);
+      emit clicked(_arg);
     }
  signals:
  void clicked(uint);
-}
-*/
+};
 
 //! Provides a dialog for controlling which functions are available.
 class DialogFunctions : public QDialog
@@ -148,9 +146,13 @@ class DialogFunctions : public QDialog
    void changed_function_weighting(QSlider*,int v);
    //@}
 
+   //! Signalled by randomization methods
+   void clicked_button_rand(uint mask);
+
  public slots:
   //! Signalled by mutation parameters
   void mutation_parameters_changed();
+
 };
 
 #endif

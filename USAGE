@@ -96,7 +96,7 @@ POWER-USER & DEBUG OPTIONS
 	by spatial and colour warping functions which may disguise 
 	it considerably.  A list of all the function names understood 
 	by evolvotron is output during app startup when the -v option 
-	is specified.
+	is specified.  Function name recognition is case sensitive.
 	Example: 
         $ evolvotron -x FunctionSpiralLinear
 
@@ -105,6 +105,7 @@ POWER-USER & DEBUG OPTIONS
 	by space/colour transforms.  NB For functions without leaf nodes 
 	or parameters (e.g FunctionSphericalToCartesian) this doesn't
 	leave any scope for variation or future mutation.
+        Function name recognition is case sensitive.
         Example (highly recommended): 
         $ evolvotron -X FunctionKaleidoscope 
 
@@ -112,13 +113,9 @@ POWER-USER & DEBUG OPTIONS
         Images are produced by sampling the underlying 3D function on the
         latitude-longitude grid of a sphere.  The resulting images should be
         usable as spheremaps/spherical environment maps.  Animations vary
-        the radius of the sphere.  Note that when in spheremap mode,
-        middle mouse button adjustments don't behave like you'd expect.
+        the radius of the sphere.  NB when in spheremap mode,
+        middle mouse button adjustments do not yet behave like you'd expect.
        
-Note that you can also specify iterative & fractal function
-types as an argument to -x/-X, even when they are disabled 
-(as they are by default) in the mutation parameters.
-Function name recognition is case sensitive.
 
 MOUSE CONTROL
 ============= 
@@ -356,7 +353,7 @@ an animated GIF playing at approx. 8 frames per second with:
   $  convert -delay 12 foo.f??????.ppm foo.gif
 
 If you save an animation as "QT-MNG" a single file will be
-generated.  THIS IS IN A PROPRIETARY QT FORMAT WHICH PREDATES
+generated.  NB THIS IS IN A PROPRIETARY QT FORMAT WHICH PREDATES
 MULTI-FRAME PNG (also known as MNG) AND IS UNLIKELY TO BE
 READABLE BY ANYTHING OTHER THAN QT PROGRAMS.  In other words,
 it's not very useful.  Image viewers will generally recognise
@@ -458,9 +455,8 @@ This release also builds two other executables:
    (minimise sum-of-squares of pixel value differences between evolvotron
    image and image specified on command line).  Outputs f??????.png whenever
    it finds a better match.  Terminates after 10000000 iterations and writes
-   match.png.  However, all it seems to do is converge with the average colour
-   of the target image.
-
+   match.png.  However, all it has ever done so far is to converge with the
+   average colour of the target image.
 
 EXAMPLES
 --------
@@ -477,7 +473,7 @@ $ cat ani.xml | evolvotron_render -f 100 -v -s 256 256 ani.ppm ; animate ani.f??
 
 FUTURE DEVELOPMENTS
 ===================
-Check the TODO file first before you send me suggestions!
+Please check the TODO file first before you send me suggestions!
 
 Please don't ask me to port evolvotron to proprietary platforms.
 You are of course Free under the terms of the GPL to do so yourself, 
@@ -497,10 +493,10 @@ To those who have contributed feedback, suggestions and patches:
   - Michael Sterrett
   - Massimiliano Guastafierro
 
-To the participants in a SIGGRAPH conference panel many
-years ago who first got me interested in this kind of thing.
+To www.di.fm, www.somafm.com and Trance4Ever for music for coding.
 
-To www.di.fm, www.somafm.com and Trance4Ever for music to code to.
+And especially to the participants in a SIGGRAPH conference panel many
+years ago who first got me interested in this kind of thing.
 
 WHY ?
 =====

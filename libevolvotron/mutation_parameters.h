@@ -270,6 +270,8 @@ class MutationParameters : public QObject
     
   void change_function_weighting(const FunctionRegistration* fn,float w);
 
+  void randomize_function_weightings_for_classifications(uint classification_mask);
+
   const float get_weighting(const FunctionRegistration* fn);
 
  protected:

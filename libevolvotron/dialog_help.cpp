@@ -113,7 +113,7 @@ static const char*const helptext_short=
 "    <b>-X</b> <i>function</i> : Use specified function name at top-level, with no wrapper."
 "  </li>"
 "  <li>"
-"    <b>-spheremap</b> : Work with spheremaps instead of planar textures."
+"    <b>-spheremap</b> : Work with spheremaps instead of planar textures.  (NB Middle-mouse drags do not behave sensibly in this mode)."
 "  </li>"
 "</ul>"
 "</qt>"

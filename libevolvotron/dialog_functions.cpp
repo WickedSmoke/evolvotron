@@ -57,20 +57,10 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
       QPushButton*const button_rand=new QPushButton("Randomize",buttons);
       QPushButton*const button_more=new QPushButton("More",buttons);
 
-      
+      SignalExpanderClickedUint*const bx_rand=new SignalExpanderClickedUint(this,(c==-1 ? 0xffffffff : (1<<c)));
 
-      /*
-      SignalExpanderQPushButton*const bx_less=new SignalExpanderQPushButton(this,(c==-1 : 0xffffffff ? (1<<c)));
-      SignalExpanderQPushButton*const bx_rand=new SignalExpanderQPushButton(this,(c==-1 : 0xffffffff ? (1<<c)));
-      SignalExpanderQPushButton*const bx_more=new SignalExpanderQPushButton(this,(c==-1 : 0xffffffff ? (1<<c)));
-
-      connect(button_less,SIGNAL(clicked()),bx_less,SLOT(clicked()));
       connect(button_rand,SIGNAL(clicked()),bx_rand,SLOT(clicked()));
-      connect(button_more,SIGNAL(clicked()),bx_more,SLOT(clicked()));
-      connect(bx_less,SIGNAL(clicked(uint)),this,SLOT(clicked_less(uint)));
-      connect(bx_rand,SIGNAL(clicked(uint)),this,SLOT(clicked_rand(uint)));
-      connect(bx_more,SIGNAL(clicked(uint)),this,SLOT(clicked_more(uint)));
-      */
+      connect(bx_rand,SIGNAL(clicked(uint)),this,SLOT(clicked_button_rand(uint)));
 
       VBoxScrollView* scrollview=new VBoxScrollView(tab_content);
       tab_content->setStretchFactor(scrollview,1);
@@ -94,7 +84,7 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 	      
 	      _slider_to_function.insert(std::make_pair(s,fn));
 
-	      SignalExpanderQSlider*const sx=new SignalExpanderQSlider(this,s);
+	      SignalExpanderValueChangedQSlider*const sx=new SignalExpanderValueChangedQSlider(this,s);
 	      connect(
 		      s,SIGNAL(valueChanged(int)),
 		      sx,SLOT(valueChanged(int))
@@ -253,6 +243,11 @@ void DialogFunctions::changed_function_weighting(QSlider* s,int v)
       std::clog << fn->name() << " weighting changed to " << w << "\n";
       _mutation_parameters->change_function_weighting(fn,w);
     }
+}
+
+void DialogFunctions::clicked_button_rand(uint mask)
+{
+  _mutation_parameters->randomize_function_weightings_for_classifications(mask);
 }
 
 void DialogFunctions::mutation_parameters_changed()
