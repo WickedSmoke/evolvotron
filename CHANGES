@@ -1,3 +1,7 @@
+*** REMINDER : BEFORE RELEASING ***
+ - Double check VERSION file
+ - Double check compile flag overrides in common.pro 
+------------------------------------------------------------------------
 [Most recent at top]
 
 From release 0.2.1:
