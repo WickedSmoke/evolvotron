@@ -65,31 +65,59 @@ Right clicking on an image gets you a few more options:
  - "Spawn" is the same as clicking an image
  - "Recolour" to produce different coloured variants of the selected image
  - "Warp" to produce variants of the image with different spatial co-ordinates
- - "Lock" to prevent an image from being overwritten by spawns from other images.
+ - "Lock" to prevent an image from being overwritten by spawns from other images
+   (select again to toggle).
  - "Big" to produce a blow-up of the image in a single window.
    (either a scrollable view of a fixed size image, or in a freely resizable window)
  - "Save" to save the image in a file (.ppm or .png format).
    Note that this is most useful on a "Big" blown-up image,
-   and the save won't be allowed until the full resolution image has been generated.
+   and that the save won't be allowed until the full resolution image has been generated.
 
 IMPORTANT: Initially you should select images with some sort of variation.
-If you select a uniform image, you may get stuck in a degenerate zone with 
-little to mutate and therefore little chance of escape to a more interesting 
-area.  You can always restart from the "File" menu.
+It can take quite a few generations before you get something more interesting
+than a simple gradient.  If you select a uniform image, you may get stuck
+in a degenerate zone with little to mutate and therefore little chance of
+escape to a more interesting area.  You can always restart from the "File" menu.
 
-The status bar shows how many "tasks" are outstanding.  
+An area on the status bar shows how many "tasks" are outstanding.  
 Each "task" is the recomputation of an image at some resolution.
 Tasks are prioritised by their number of pixels (small image => higher priority).
 This is why, if the main grid is still recomputing, a "big" image 
 will appear to freeze after it has reached a certain resolution, 
 at least until other lower resolution tasks have completed. 
 
-Currently the software runs 2 compute threads so those of 
+Currently the software runs 2 compute threads by default so those of 
 you lucky enough to have dual processor machines should see some 
 benefit (or see it deadlock :^)... Be warned that I haven't had 
 an opportunity to test on more than a single processor.  
-The number of compute threads will be under command-line-option 
-control at some point.
+
+ADVANCED USAGE
+==============
+To understand what is going on, you need to know that the images are constructed
+from trees of function nodes acting on image co-ordinates to produce a colour.
+The properties of the tree are mutated to produce variant images.
+
+The mutation parameters are under control from the dialog accessible via the
+Mutate->Parameters... menu, and also from buttons on the status bar).
+
+There are two kinds of mutation: perturbations to the magnitude of constants, 
+and structural mutations which rearrage the function tree of an image.  
+Two kinds of structural mutations are currently implemented:
+replacement of a function branch by a new random stub (a "Glitch" mutation),
+and a random shuffle of a node's arguments.  The probability (per function node)
+of these mutations is controlled from spinboxes on the dialog (expressed as 
+chances-in-a-million), as is the size of perturbations from constant.
+
+I tend to think of the constant perturbations as being a thermal effect (hence
+the "heat" and "cool" buttons), while structural alterations are more drastic and
+are caused by high energy gamma rays or something (hence "irradiate" and "shield" 
+buttons to adjust the probability of structual mutations). 
+
+Anway why would you want to change the mutation parameters from the initial defaults ?
+Basically, if you're getting too much variation in spawned images (this tends to happen
+after many generations of images, by which time the function trees have grown quite large
+and therefore are experiencing a lot of mutations), cool and/or shield.
+If all the images look too similar, heat and/or irradiate.
 
 INSTALL
 =======
@@ -99,8 +127,8 @@ will attempt to install the executable in /usr/local/bin
 
 BUILDING CODE DOCUMENTATION
 ===========================
-If you have doxygen (and graphviz NB!!!) and want to build the documentation 
-subdirectory too, execute 
+If you have doxygen (and graphviz NB!!!) and want to build
+the source code documentation  subdirectory too, execute 
   make doc
 The code documentation then appears in ./doc/html/
 
@@ -120,6 +148,6 @@ a Qt app ("fracplanet") and wanted to judge for myself how gtkmm compared.  Howe
 any gtkmm RPMs for RedHat 8 (I did find some old ones on "freshrpms", but when I tried to use them RH's 
 pkg-conf didn't seem to be set up right to actually build anything).  Sure, I could have probably 
 compiled the sources, but most people aren't going to bother and so if I want to write software
-people will actually download and try then it's going to have to use the libs which come with the
+people will actually download and try out then it's going to have to use the libs which come with the
 distros, or at least which have hassle free ready-to-go RPMs available.
 Oh well, maybe next time... but Qt is really growing on me.
