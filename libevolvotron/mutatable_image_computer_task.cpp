@@ -22,7 +22,7 @@
 
 #include "mutatable_image_computer_task.h"
 
-MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImage* img,const QSize& s,uint f,uint lev)
+MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImage* img,const QSize& s,uint f,uint lev,unsigned long long int n)
   :_aborted(false)
    ,_display(disp)
    ,_image(img)
@@ -35,6 +35,7 @@ MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*con
    ,_current_frame(0)
    ,_image_data(s.width()*s.height()*f)
    ,_completed(false)
+   ,_serial(n)
 {
   assert(_image->ok());
 }

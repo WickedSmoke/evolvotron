@@ -1,7 +1,8 @@
 Known bugs:
 
 - Very rarely image calculations appear to arrive seriously out-of-order.
-  May be a more of a problem on slower hardware ?
+  May be a more of a problem on slower hardware ? 
+  If this is causing trouble, try using "-t 1" command-line option to fix it.
 
 - Example of "interesting" fullscreen bahaviour (Metacity on RedHat9):
     Run app fullscreen.

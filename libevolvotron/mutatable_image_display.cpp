@@ -65,6 +65,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
    ,_properties(0)
    ,_menu(0)
    ,_menu_big(0)
+   ,_serial(0LL)
 {
   
   // We DO want background drawn for fixed size because window could be bigger than image (not entirely satisfactory however: still flickers)
@@ -218,6 +219,9 @@ void MutatableImageDisplay::image(MutatableImage* i)
   assert(_image==0 || _image->ok());
   assert(i==0 || i->ok());
 
+  // New image, so increment serial number so any old incoming stuff which avoids abort is ignored.
+  _serial++;
+
   _properties->set_message(std::string("Not yet implemented"));
 
   // This might have already been done (e.g by resizeEvent), but it can't hurt to be sure.
@@ -261,7 +265,7 @@ void MutatableImageDisplay::image(MutatableImage* i)
 
 	      /*! \todo Should computed frames be constant or reduced c.f spatial resolution ?  (Do full z resolution for now)
 	       */
-	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_image,image_size()/s,_frames,level);
+	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_image,image_size()/s,_frames,level,_serial);
 
 	      main()->farm()->push_todo(task);
 	    }
@@ -276,7 +280,7 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
   /*! \todo Not entirely sure the level check is sufficient in all possible situations,
       would be best to have a serial number incremented for each recompute.
    */
-  if (!task->aborted() && task->level()<_current_display_level)
+  if (!task->aborted() && task->level()<_current_display_level && task->serial()==_serial)
     {
       for (uint f=0;f<_offscreen_image.size();f++)
 	{

@@ -82,9 +82,12 @@ class MutatableImageComputerTask
   //! Set true by pixel_advance when it advances off the last frame.
   bool _completed;
 
+  //! Serial number, to fix some occasional out-of-order display problems
+  unsigned long long int _serial;
+
  public:
   //! Constructor.
-  MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImage* img,const QSize& s,uint f,uint lev);
+  MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImage* img,const QSize& s,uint f,uint lev,unsigned long long int n);
   
   //! Destructor.
   ~MutatableImageComputerTask();
@@ -129,6 +132,12 @@ class MutatableImageComputerTask
   const uint level() const
     {
       return _level;
+    }
+
+  //! Serial number
+  const unsigned long long int serial() const
+    {
+      return _serial;
     }
 
   //! Compute task priority.  Smallest images go first.

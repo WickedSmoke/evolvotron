@@ -119,6 +119,9 @@ class MutatableImageDisplay : public QWidget
   //! Coordinate of last mouse event when mid-button adjusting
   QPoint _mid_button_adjust_last_pos;
 
+  //! Serial number to kill some rare problems with out-of-order tasks being returned
+  unsigned long long int _serial;
+
  public:
   //! Constructor.
   MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full,bool fixed_size,const QSize& image_size,uint f,uint fr);
