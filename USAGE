@@ -84,10 +84,11 @@ ANIMATION OPTIONS
 POWER-USER & DEBUG OPTIONS
 --------------------------
   -v 
-	Verbose mode, writes various things to application stderr 
-	(mainly to assist debugging).
-        Probably most useful for getting a list of supported function 
-	names for use with the -x/-X options
+	Verbose mode, writes various things to application stderr; this is 
+	primarily intended to assist debugging.
+        This options used to be useful for getting a list of supported function 
+	names for use with the -x/-X options, but those can now be inspected
+        via the Settings/Functions dialog.
 
   -x <functionname>
 	Force a specific function type to be used at the top level 

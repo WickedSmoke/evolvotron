@@ -20,7 +20,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class DialogMutationParameters.
 */
 
+#include <iostream>
 #include <qtooltip.h>
+
 #include "dialog_mutation_parameters.h"
 
 /*! About dialog displays author info, web addresses and license info.
@@ -101,6 +103,11 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
 	  _ok,SIGNAL(clicked()),
 	  this,SLOT(hide())
 	  );
+
+  connect(
+	  _mutation_parameters,SIGNAL(changed()),
+	  this,SLOT(mutation_parameters_changed())
+	  );
 }
 
 void DialogMutationParameters::resizeEvent(QResizeEvent*)
@@ -116,10 +123,10 @@ void DialogMutationParameters::setup_from_mutation_parameters()
   _spinbox_insert    ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_insert()));
   _spinbox_substitute->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_substitute()));
 
-  parameters_changed();
+  parameters_changed_status_display();
 }
 
-void DialogMutationParameters::parameters_changed()
+void DialogMutationParameters::parameters_changed_status_display()
 {
   QString message
     =QString("%1/%2/%3/%4/%5")
@@ -168,30 +175,30 @@ void DialogMutationParameters::shield()
 void DialogMutationParameters::changed_magnitude(int v)
 {
   _mutation_parameters->magnitude(v/static_cast<float>(_scale));
-  parameters_changed();
 }
 
 void DialogMutationParameters::changed_glitch(int v)
 {
   _mutation_parameters->probability_glitch(v/static_cast<float>(_scale));
-  parameters_changed();
 }
 
 void DialogMutationParameters::changed_shuffle(int v)
 {
   _mutation_parameters->probability_shuffle(v/static_cast<float>(_scale));
-  parameters_changed();
 }
 
 void DialogMutationParameters::changed_insert(int v)
 {
   _mutation_parameters->probability_insert(v/static_cast<float>(_scale));
-  parameters_changed();
 }
 
 void DialogMutationParameters::changed_substitute(int v)
 {
   _mutation_parameters->probability_substitute(v/static_cast<float>(_scale));
-  parameters_changed();
 }
 
+void DialogMutationParameters::mutation_parameters_changed()
+{
+  std::clog << "[DialogMutationParameters::mutation_parameters_changed()]\n";
+  setup_from_mutation_parameters();  
+}

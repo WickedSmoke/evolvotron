@@ -26,8 +26,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_boilerplate.h"
 #include "function_core.h"
 
-MutationParameters::MutationParameters(uint seed)
-  :_r01(seed)
+MutationParameters::MutationParameters(uint seed,QObject* parent)
+  :QObject(parent)
+  ,_r01(seed)
 {
   reset();
 }
@@ -60,6 +61,10 @@ void MutationParameters::reset()
        it++
        )
     _function_weighting.insert(std::make_pair(*it,1.0f));
+
+  recalculate_function_stuff();
+
+  emit changed();
 }
 
 void MutationParameters::general_cool(float f)
@@ -73,6 +78,8 @@ void MutationParameters::general_cool(float f)
 
   _probability_iterations_change_step*=f;
   _probability_iterations_change_jump*=f;
+
+  emit changed();
 }
 
 /*! This returns a random bit of image tree.
@@ -108,33 +115,76 @@ FunctionNode*const MutationParameters::random_function_stub(bool exciting) const
 
 FunctionNode*const MutationParameters::random_function() const
 {
-  const FunctionRegistration*const fn_reg=random_function_registration();
+  const FunctionRegistration*const fn_reg=random_weighted_function_registration();
   return (*(fn_reg->stubnew_fn()))(*this,false);    
 }
 
-const FunctionRegistration*const MutationParameters::random_function_registration() const
+const FunctionRegistration*const MutationParameters::random_weighted_function_registration() const
 {  
-  //! \todo Needs to take function weighting into account (rename function when done)
-  const FunctionRegistration* fn_reg=FunctionRegistry::get()->lookup(r01());
-  return fn_reg;
+  const float r=r01();
+  
+  const std::map<float,const FunctionRegistration*>::const_iterator it=_function_pick.lower_bound(r);
+
+  // Just in case last key isn't quite 1.0f
+  if (it!=_function_pick.end())
+    {
+      return (*it).second;
+    }
+  else
+    {
+      return (*(_function_pick.rbegin())).second;
+    }
 }
 
 const float MutationParameters::random_function_branching_ratio() const
 {
-  //! \todo This is WRONG.
-  float t=0.0f;
+  float weighted_args=0.0f;
+
   for (
        std::map<const FunctionRegistration*,float>::const_iterator it=_function_weighting.begin();
        it!=_function_weighting.end();
        it++
        )
     {
-      t+=(*it).second*(*it).first->params();
+      weighted_args+=(*it).second*(*it).first->args();
     }
-  return t/_function_weighting.size();
+  return weighted_args/_function_weighting_total;
 }
 
 void MutationParameters::change_function_weighting(const FunctionRegistration* fn,float w)
 {
   _function_weighting[fn]=w;
+  recalculate_function_stuff();
+  emit changed();
+}
+
+const float MutationParameters::get_weighting(const FunctionRegistration* fn)
+{
+  std::map<const FunctionRegistration*,float>::const_iterator it=_function_weighting.find(fn);
+  assert(fn!=_function_weighting.end());
+  return (*it).second;
+}
+
+void MutationParameters::recalculate_function_stuff()
+{
+  _function_weighting_total=0.0f;
+  for (
+       std::map<const FunctionRegistration*,float>::const_iterator it=_function_weighting.begin();
+       it!=_function_weighting.end();
+       it++
+       )
+    _function_weighting_total+=(*it).second;
+
+  float normalised=0.0f;
+  _function_pick.clear();
+  for (
+       std::map<const FunctionRegistration*,float>::const_iterator it=_function_weighting.begin();
+       it!=_function_weighting.end();
+       it++
+       )
+    {
+      normalised+=(*it).second/_function_weighting_total;
+      _function_pick.insert(std::make_pair(normalised,(*it).first));
+      std::clog << "[" << normalised << ":" << (*it).first->name() << "]";
+    }
 }

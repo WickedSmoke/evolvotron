@@ -39,33 +39,30 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "useful.h"
 #include "mutation_parameters.h"
 
-//! Utility class for DialogFunctions
+//! Utility class for DialogFunctions.  Expands changed(int) to changed(src,int)
 /*! Would ideally live in dialog_functions.cpp, but that causes (moc-related?) problems with linking;
   seems to need wider visibility.  \todo Move to own file and only include in dialog_functions.cpp
  */
-class SignalExpander : public QObject
+class SignalExpanderQSlider : public QObject
 {
 private:
   Q_OBJECT
   
-  QObject* _tgt;
-  const FunctionRegistration*const _fn;
+  QSlider*const _src;
 public:
-  SignalExpander(QObject* parent,QObject* tgt,const FunctionRegistration* fn)
+  SignalExpanderQSlider(QObject* parent,QSlider* src)
     :QObject(parent)
-    ,_tgt(tgt)
-    ,_fn(fn)
+    ,_src(src)
   {}
 public slots:
-  void changed_weighting(int v)
+  void valueChanged(int v)
   {
-    emit changed_function_weighting(_fn,v);
+    emit valueChanged(_src,v);
   }
 
 signals:
-  void changed_function_weighting(const FunctionRegistration*,int);
+  void valueChanged(QSlider*,int);
 };
-
 
 
 //! Provides a dialog for controlling which functions are available.
@@ -99,6 +96,9 @@ class DialogFunctions : public QDialog
 
   //! Proportion of non-constant nodes which are 12-parameter transforms
   QSlider* _slider_identity_supression;
+  
+  //! Lookup from each slider in the weighting controls area to corresponding function.
+  std::map<QSlider*,const FunctionRegistration*> _slider_to_function;
 
   //! Button to close dialog.
   QPushButton* _ok;
@@ -123,8 +123,12 @@ class DialogFunctions : public QDialog
    void changed_target_branching_ratio(int v);
    void changed_proportion_constant(int v);
    void changed_identity_supression(int v);
-   void changed_function_weighting(const FunctionRegistration*,int v);
+   void changed_function_weighting(QSlider*,int v);
    //@}
+
+ public slots:
+  //! Signalled by mutation parameters
+  void mutation_parameters_changed();
 };
 
 #endif

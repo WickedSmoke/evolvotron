@@ -46,10 +46,10 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 
   _branching_ratio=new QLabel(_vbox);
 
-  QGroupBox* c0=new QGroupBox(3,Qt::Horizontal,"Diluted branching ratio",_vbox);
+  QGroupBox* c0=new QGroupBox(3,Qt::Horizontal,"Required branching ratio after dilution",_vbox);
   new QLabel("0.1",c0);
   _slider_target_branching_ratio=new QSlider(10,90,1,50,Qt::Horizontal,c0);
-  QToolTip::add(_slider_target_branching_ratio,"The branching ratio must be diluted to <1.0 to prevent formation of infinitely large function-trees.");
+  QToolTip::add(_slider_target_branching_ratio,"The branching ratio must be diluted to <1.0 to prevent formation of infinitely large function-trees.\nWarning: setting a high value results in complex function trees taking a long time to compute.\nSetting a low value results in very simple images.");
   new QLabel("0.9",c0);
 
   QGroupBox* c1=new QGroupBox(3,Qt::Horizontal,"Of diluting nodes, proportion constant:",_vbox);
@@ -65,7 +65,7 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
   new QLabel("1.0",c2);
 
   QGroupBox* c3=new QGroupBox(1,Qt::Horizontal,"Specific function weightings",_vbox);
-  QTabWidget* tabs=new QTabWidget(c3/*_vbox*/);
+  QTabWidget* tabs=new QTabWidget(c3);
 
   for (int c=-1;c<FnClassifications;c++)
     {
@@ -74,6 +74,8 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 	tabs->addTab(scrollview,"All");
       else 
 	tabs->addTab(scrollview,function_classification_name[c]);
+
+      //! \todo Add buttons to affect all items in group
 
       for (std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
 	   it!=FunctionRegistry::get()->registrations().end();
@@ -92,14 +94,16 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 	      s->setSizePolicy(spx);
 	      new QLabel("1",g);
 	      
-	      SignalExpander*const sx=new SignalExpander(this,this,fn);
+	      _slider_to_function.insert(std::make_pair(s,fn));
+
+	      SignalExpanderQSlider*const sx=new SignalExpanderQSlider(this,s);
 	      connect(
 		      s,SIGNAL(valueChanged(int)),
-		      sx,SLOT(changed_weighting(int))
+		      sx,SLOT(valueChanged(int))
 		      );
 	      connect(
-		      sx,SIGNAL(changed_function_weighting(const FunctionRegistration*,int)),
-		      this,SLOT(changed_function_weighting(const FunctionRegistration*,int))
+		      sx,SIGNAL(valueChanged(QSlider*,int)),
+		      this,SLOT(changed_function_weighting(QSlider*,int))
 		      );
 	    }
 	}
@@ -128,6 +132,11 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 	  );
 
   setup_from_mutation_parameters();
+
+  connect(
+	  _mutation_parameters,SIGNAL(changed()),
+	  this,SLOT(mutation_parameters_changed())
+	  );
 }
 
 DialogFunctions::~DialogFunctions()
@@ -147,18 +156,26 @@ void DialogFunctions::setup_from_mutation_parameters()
 
   std::stringstream msg;
   msg 
-    << "Undiluted random function branching ratio: " << b << "\n"
-    << "Dilution proportion: " << s;
+    << "Undiluted random function branching ratio is " << b << "\n"
+    << "Diliuting in proportion " << s << " to obtain required branching ratio.";
   _branching_ratio->setText(msg.str().c_str());
 
   _slider_target_branching_ratio->setValue(static_cast<int>(100.0f*br+0.5f));
-
   _slider_proportion_constant->setValue(static_cast<int>(0.5f+100.0f*_mutation_parameters->proportion_constant()));
   _slider_identity_supression->setValue(static_cast<int>(0.5f+100.0f*_mutation_parameters->identity_supression()));
 
-  /*! \warning We DON'T NEED to set the function weighting sliders too
-    because they're the only way function weightings can be modified currently.
-  */
+  for (std::map<QSlider*,const FunctionRegistration*>::const_iterator it=_slider_to_function.begin();
+       it!=_slider_to_function.end();
+       it++
+       )
+    {
+      const float w=_mutation_parameters->get_weighting((*it).second);
+      const int iw=static_cast<int>(floor(0.5f+(log(w)*(1.0/M_LN2))));
+      if (iw!=(*it).first->value())
+	{
+	  (*it).first->setValue(iw);
+	}
+    }
 }
 
 void DialogFunctions::changed_target_branching_ratio(int v)
@@ -190,11 +207,25 @@ void DialogFunctions::changed_identity_supression(int v)
   _mutation_parameters->identity_supression(v/100.0f);
 }
 
-void DialogFunctions::changed_function_weighting(const FunctionRegistration* fn,int v)
+void DialogFunctions::changed_function_weighting(QSlider* s,int v)
 {
-  const float w=pow(2,v);
-  std::clog << fn->name() << " weighting changed to " << w << "\n";
-  _mutation_parameters->change_function_weighting(fn,w);
+  std::map<QSlider*,const FunctionRegistration*>::const_iterator it=_slider_to_function.find(s);
+  if (it==_slider_to_function.end())
+    {
+      std::clog << "DialogFunctions::changed_function_weighting : unknown source slider, ignoring\n";
+    }
+  else
+    {
+      const FunctionRegistration* fn=(*it).second;
+      
+      const float w=pow(2,v);
+      std::clog << fn->name() << " weighting changed to " << w << "\n";
+      _mutation_parameters->change_function_weighting(fn,w);
+    }
+}
 
-  setup_from_mutation_parameters();
+void DialogFunctions::mutation_parameters_changed()
+{
+  std::clog << "[DialogFunctions::mutation_parameters_changed()]\n";
+  setup_from_mutation_parameters();  
 }

@@ -49,12 +49,6 @@ class FunctionRegistry : public Singleton<FunctionRegistry>
   //! Return the registration for the function named (returns 0 if unknown)
   const FunctionRegistration*const lookup(const std::string& f) const;
   
-  //! Lookup by number
-  const FunctionRegistration*const lookup(uint n) const;
-
-  //! Lookup by [0-1) 
-  const FunctionRegistration*const lookup(float f) const;
-
   //! Just get the collection of registrations.
   const std::vector<const FunctionRegistration*>& registrations() const
     {

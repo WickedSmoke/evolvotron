@@ -89,8 +89,8 @@ class DialogMutationParameters : public QDialog
   //! Need to pass resizes on to vbox or things just get chopped.
   virtual void resizeEvent(QResizeEvent*);
 
-  //! Notification to refresh display fields from updated mutation parameters.
-  void parameters_changed();
+  //! Put a quick message in the status bar showing the new numbers.
+  void parameters_changed_status_display();
 
   //! Reload spinboxes from _mutation_parameters.
   void setup_from_mutation_parameters();
@@ -122,6 +122,9 @@ class DialogMutationParameters : public QDialog
   void changed_insert(int v);
   void changed_substitute(int v);
   //@}
+
+  //! Signalled by mutation parameters
+  void mutation_parameters_changed();
 };
 
 #endif

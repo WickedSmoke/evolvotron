@@ -47,16 +47,6 @@ const FunctionRegistration*const FunctionRegistry::lookup(const std::string& f) 
     return (*it).second;
 }
 
-const FunctionRegistration*const FunctionRegistry::lookup(uint n) const
-{
-  return _registry_by_series[n];
-}
-
-const FunctionRegistration*const FunctionRegistry::lookup(float f) const
-{
-  return lookup(static_cast<uint>(f*_registry_by_series.size()));
-}
-
 std::ostream& FunctionRegistry::status(std::ostream& out) const
 {
   out << "Registered functions:\n";

@@ -23,10 +23,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _mutation_parameters_h_
 #define _mutation_parameters_h_
 
-#include "useful.h"
-
-#include "random.h"
 #include <map>
+
+#include <qobject.h>
+
+#include "useful.h"
+#include "random.h"
 
 class FunctionRegistration;
 class FunctionNode;
@@ -34,9 +36,14 @@ class FunctionNode;
 //! Class encapsulating mutation parameters.
 /*! For example, magnitude of variations, probability of leaves being dropped.
   Also provides a random number generator.
+  Is a QObject so we can use signals to notify clients of state changes.
  */
-class MutationParameters
+class MutationParameters : public QObject
 {
+ private:
+  Q_OBJECT
+
+ protected:
   //! A random number generator.
   /*! Declared mutable so we can pass const MutationParameters& around and still do useful work with it.
    */
@@ -82,9 +89,17 @@ class MutationParameters
    */
   std::map<const FunctionRegistration*,float> _function_weighting;
 
+  //! Total of function weights, for normalisation.
+  float _function_weighting_total;
+
+  //! Map from [0,1] to a function registration, taking weights into account.
+  std::map<float,const FunctionRegistration*> _function_pick;
+
+  void recalculate_function_stuff();
+
  public:
   //! Trivial constructor.
-  MutationParameters(uint seed);
+  MutationParameters(uint seed,QObject* parent);
 
   //! Trivial destructor.
   /*! virtual becuase Q_OBJECT/slot mechanism involves virtual functions
@@ -120,6 +135,7 @@ class MutationParameters
   void magnitude(float v) 
     {
       _magnitude=v;
+      emit changed();
     }
 
   //! Accessor.
@@ -131,6 +147,7 @@ class MutationParameters
   void probability_glitch(float v)
     {
       _probability_glitch=v;
+      emit changed();
     }
 
   //! Accessor.
@@ -142,6 +159,7 @@ class MutationParameters
   void probability_shuffle(float v)
     {
       _probability_shuffle=v;
+      emit changed();
     }
 
   //! Accessor.
@@ -153,6 +171,7 @@ class MutationParameters
   void probability_insert(float v)
     {
       _probability_insert=v;
+      emit changed();
     }
 
   //! Accessor.
@@ -164,6 +183,7 @@ class MutationParameters
   void probability_substitute(float v)
     {
       _probability_substitute=v;
+      emit changed();
     }
 
   //! Accessor.
@@ -175,6 +195,7 @@ class MutationParameters
   void proportion_constant(float v)
     {
       _proportion_constant=v;
+      emit changed();
     }
 
   //! Accessor.
@@ -186,6 +207,7 @@ class MutationParameters
   void identity_supression(float v)
     {
       _identity_supression=v;
+      emit changed();
     }
 
   //! Accessor.
@@ -197,6 +219,7 @@ class MutationParameters
   void max_initial_iterations(uint v)
     {
       _max_initial_iterations=v;
+      emit changed();
     }
 
   //! Accessor.
@@ -208,6 +231,7 @@ class MutationParameters
   void probability_iterations_change_step(float v)
     {
       _probability_iterations_change_step=v;
+      emit changed();
     }
 
   //! Accessor.
@@ -219,6 +243,7 @@ class MutationParameters
   void probability_iterations_change_jump(float v)
     {
       _probability_iterations_change_jump=v;
+      emit changed();
     }
 
   //! Accessor.
@@ -230,6 +255,7 @@ class MutationParameters
   void proportion_basic(float p)
     {
       _proportion_basic=p;
+      emit changed();
     }
 
   //! Calculate branching ratio for above calls
@@ -244,13 +270,19 @@ class MutationParameters
     
   void change_function_weighting(const FunctionRegistration* fn,float w);
 
+  const float get_weighting(const FunctionRegistration* fn);
+
  protected:
 
   //! Return a random function appropriately biased by current settings
   FunctionNode*const MutationParameters::random_function() const;
 
   //! Return a random function registration, appropriately biased by current settings
-  const FunctionRegistration*const random_function_registration() const;
+  const FunctionRegistration*const random_weighted_function_registration() const;
+
+ public:
+ signals:
+  void changed();
 };
 
 #endif

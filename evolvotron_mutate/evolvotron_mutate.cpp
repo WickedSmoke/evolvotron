@@ -59,7 +59,7 @@ int main(int argc,char* argv[])
   
   std::clog << "Random seed is " << seed << "\n";
   
-  MutationParameters mutation_parameters(seed);
+  MutationParameters mutation_parameters(seed,0);
 
   std::string report;
   MutatableImage* imagefn_out=0;
