@@ -146,6 +146,66 @@ class MutatableImageNodePosition : public MutatableImageNode
   virtual MutatableImageNode*const deepclone() const;
 };
 
+//! This node implements sin
+class MutatableImageNodeSin : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodeSin(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeSin();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! This node implements cos
+class MutatableImageNodeCos : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodeCos(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeCos();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! This node implements grad
+class MutatableImageNodeGrad : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodeGrad(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeGrad();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
 //! This node implements functional concatenation
 class MutatableImageNodeConcatenatePair : public MutatableImageNode
 {
@@ -181,6 +241,26 @@ class MutatableImageNodeAdd : public MutatableImageNode
 
   //! Destructor.
   virtual ~MutatableImageNodeAdd();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! This node implements componentwise multiply
+class MutatableImageNodeMultiply : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodeMultiply(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeMultiply();
 
   //! Return a clone.
   virtual MutatableImageNode*const deepclone() const;
@@ -305,6 +385,5 @@ class MutatableImageNodeTransform : public MutatableImageNode
   //! Return a clone.
   virtual MutatableImageNode*const deepclone() const;
 };
-
 
 #endif

@@ -48,18 +48,26 @@ MutatableImageNode* MutatableImageNode::stub(Random01& r01)
   else if (r<0.8)
     return new MutatableImageNodePosition();
   else if (r<0.81) 
-    return new MutatableImageNodeConcatenatePair(stubvector(r01,2));
+    return new MutatableImageNodeSin(stubvector(r01,1));
   else if (r<0.82) 
-    return new MutatableImageNodeAdd(stubvector(r01,2));
+    return new MutatableImageNodeCos(stubvector(r01,1));
   else if (r<0.83) 
-    return new MutatableImageNodeCross(stubvector(r01,2));
+    return new MutatableImageNodeGrad(stubvector(r01,1));
   else if (r<0.84) 
-    return new MutatableImageNodeMod(stubvector(r01,2));
+    return new MutatableImageNodeConcatenatePair(stubvector(r01,2));
   else if (r<0.85) 
-    return new MutatableImageNodeConcatenateTriple(stubvector(r01,3));
+    return new MutatableImageNodeAdd(stubvector(r01,2));
   else if (r<0.86) 
+    return new MutatableImageNodeMultiply(stubvector(r01,2));
+  else if (r<0.87) 
+    return new MutatableImageNodeCross(stubvector(r01,2));
+  else if (r<0.88) 
+    return new MutatableImageNodeMod(stubvector(r01,2));
+  else if (r<0.89) 
+    return new MutatableImageNodeConcatenateTriple(stubvector(r01,3));
+  else if (r<0.90) 
     return new MutatableImageNodeReflect(stubvector(r01,3));
-  else if (r<0.9) 
+  else if (r<0.91) 
     return new MutatableImageNodeChoose(stubvector(r01,4));
   else 
     return new MutatableImageNodeTransform(stubvector(r01,5));
@@ -128,6 +136,8 @@ void MutatableImageNode::mutate(const MutationParameters& parameters)
     }
 }
 
+/*******************************************/
+
 const XYZ MutatableImageNodeConstant::evaluate(const XYZ&) const
 {
   return _value;
@@ -150,6 +160,7 @@ MutatableImageNode*const MutatableImageNodeConstant::deepclone() const
   return new MutatableImageNodeConstant(_value);
 }
 
+/*******************************************/
 
 /*! No work to be done for evaluate because _value is already set.
  */
@@ -172,6 +183,76 @@ void MutatableImageNodePosition::mutate(const MutationParameters&)
 MutatableImageNode*const MutatableImageNodePosition::deepclone() const
 {
   return new MutatableImageNodePosition();
+}
+
+/*******************************************/
+
+const XYZ MutatableImageNodeSin::evaluate(const XYZ& p) const
+{
+  const XYZ v(arg(0)(p));
+  return XYZ(sin(v.x),sin(v.y),sin(v.z));
+}
+
+MutatableImageNodeSin::MutatableImageNodeSin(const std::vector<MutatableImageNode*>& a)
+  :MutatableImageNode(a)
+{
+  assert(args().size()==1);
+}
+
+MutatableImageNodeSin::~MutatableImageNodeSin()
+{}
+
+MutatableImageNode*const MutatableImageNodeSin::deepclone() const
+{
+  return new MutatableImageNodeSin(cloneargs());
+}
+
+/*******************************************/
+
+const XYZ MutatableImageNodeCos::evaluate(const XYZ& p) const
+{
+  const XYZ v(arg(0)(p));
+  return XYZ(cos(v.x),cos(v.y),cos(v.z));
+}
+
+MutatableImageNodeCos::MutatableImageNodeCos(const std::vector<MutatableImageNode*>& a)
+  :MutatableImageNode(a)
+{
+  assert(args().size()==1);
+}
+
+MutatableImageNodeCos::~MutatableImageNodeCos()
+{}
+
+MutatableImageNode*const MutatableImageNodeCos::deepclone() const
+{
+  return new MutatableImageNodeCos(cloneargs());
+}
+
+/*******************************************/
+
+const XYZ MutatableImageNodeGrad::evaluate(const XYZ& p) const
+{
+  const float epsilon=1e-6;
+  const XYZ vepsilon(epsilon,epsilon,epsilon);
+
+  const XYZ v0(arg(0)(p-vepsilon));
+  const XYZ v1(arg(0)(p+vepsilon));
+  return (v1-v0)/(2.0*epsilon);
+}
+
+MutatableImageNodeGrad::MutatableImageNodeGrad(const std::vector<MutatableImageNode*>& a)
+  :MutatableImageNode(a)
+{
+  assert(args().size()==1);
+}
+
+MutatableImageNodeGrad::~MutatableImageNodeGrad()
+{}
+
+MutatableImageNode*const MutatableImageNodeGrad::deepclone() const
+{
+  return new MutatableImageNodeGrad(cloneargs());
 }
 
 /*******************************************/
@@ -214,6 +295,27 @@ MutatableImageNodeAdd::~MutatableImageNodeAdd()
 MutatableImageNode*const MutatableImageNodeAdd::deepclone() const
 {
   return new MutatableImageNodeAdd(cloneargs());
+}
+
+/*******************************************/
+
+const XYZ MutatableImageNodeMultiply::evaluate(const XYZ& p) const
+{
+  return arg(0)(p)*arg(1)(p);
+}
+
+MutatableImageNodeMultiply::MutatableImageNodeMultiply(const std::vector<MutatableImageNode*>& a)
+  :MutatableImageNode(a)
+{
+  assert(args().size()==2);
+}
+
+MutatableImageNodeMultiply::~MutatableImageNodeMultiply()
+{}
+
+MutatableImageNode*const MutatableImageNodeMultiply::deepclone() const
+{
+  return new MutatableImageNodeMultiply(cloneargs());
 }
 
 /*******************************************/

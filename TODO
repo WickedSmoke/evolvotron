@@ -1,6 +1,11 @@
-- More functions (sin, rotate, sawtooth, multiply, divide).
+- More functions 
 - Control grid size and number of threads from command line options.
 - Control over mutation parameters (dialog box)
-- Quick "Hotter"/"Colder" controls
+- Quick access "Hotter"/"Colder" controls
 - Use hourglass cursor over displays which haven't got final high resolution yet ?
-- Release 0.0.0
+- Context menu "recolour" spawn variant which just slaps a final random transform on the function output.
+- Computing zero co-ordinate sometimes gives unusual output (black lines across images).  Avoid by jittering co-ordinate ?
+  (Would break up jaggies).  Could even do super-resolution tasks for sampled anti-aliasing.
+
+
+

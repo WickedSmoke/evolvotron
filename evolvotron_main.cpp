@@ -83,7 +83,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
  */
 void EvolvotronMain::spawn(MutatableImageDisplay* spawning_display)
 {
-  // Spawn can be a bit sluggish so set the hourglass cursor.
+  // Spawn potentially a bit sluggish so set the hourglass cursor.
   QApplication::setOverrideCursor(Qt::WaitCursor);
   
   // Issue new images (except to locked displays and to originator)
