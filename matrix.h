@@ -204,6 +204,9 @@ template <uint R,uint C,class T> class Matrix : public MatrixBase<R,C,T>
     }
 };
 
+//! Matrix multiplication
+/*! \todo Check assembler code.  Want loops to unroll - use template recursion ?
+ */
 template <uint AR,uint N,uint BC,class T> inline const Matrix<AR,BC,T> operator*(const Matrix<AR,N,T>& a,const Matrix<N,BC,T>& b)
 {
   Matrix<AR,BC,T> ret;
@@ -219,6 +222,25 @@ template <uint AR,uint N,uint BC,class T> inline const Matrix<AR,BC,T> operator*
       }
   return ret;
 }
+
+//! Matrix x tuple multiplication
+/*! \todo Check assembler code.  Want loops to unroll - use template recursion ?
+ */
+template <uint R,uint C,class T> inline const Tuple<R,T> operator*(const Matrix<R,C,T>& m,const Tuple<C,T>& v)
+{
+  Tuple<R,T> ret;
+  for (uint r=0;r<R;r++)
+    {
+      T t(0);
+      for (uint c=0;c<C;c++)
+	{
+	  t+=m[r][c]*v[c];
+	}
+      ret[r]=t;
+    }
+  return ret;
+}
+
 
 //! (Partial) specialisation for 1x1 matrix
 /*! NB Has no extract_minor method because doesn't make sense for 1x1 matrix.
@@ -413,6 +435,56 @@ template <uint ROWS,uint COLS,class T> class MatrixHelperInvert<0,0,ROWS,COLS,T>
       Matrix<ROWS-1,COLS-1,T> minor_matrix;
       TupleHelperDoubleCopyEliminate<ROWS-2,0,0,ROWS-1,COLS-1,T>::execute(minor_matrix,m_in);
       m_out[0][0]=Matrix<ROWS,COLS,T>::cofactor_sign(0,0,minor_matrix.determinant());
+    }
+};
+
+//! 3x3 matrix class
+class Matrix33 : public Matrix<3,3,float>
+{
+ public:
+  Matrix33()
+    {}
+  Matrix33(const Matrix33& m)
+    :Matrix<3,3,float>(m)
+    {}
+};
+
+class Matrix33RotateX : public Matrix33
+{
+ public:
+  Matrix33RotateX(float a)
+    {
+      const float sa=sin(a);
+      const float ca=cos(a);
+      (*this)[0][0]=1.0f;(*this)[0][1]=0.0f;(*this)[0][2]=0.0f;
+      (*this)[1][0]=0.0f;(*this)[1][1]=  ca;(*this)[1][2]= -sa;
+      (*this)[2][0]=0.0f;(*this)[2][1]=  sa;(*this)[2][2]=  ca;
+    }
+};
+
+class Matrix33RotateY : public Matrix33
+{
+ public:
+  Matrix33RotateY(float a)
+    {
+      const float sa=sin(a);
+      const float ca=cos(a);
+      (*this)[0][0]=  ca;(*this)[0][1]=0.0f;(*this)[0][2]=  sa;
+      (*this)[1][0]= -sa;(*this)[1][1]=1.0f;(*this)[1][2]=  ca;
+      (*this)[2][0]=0.0f;(*this)[2][1]=0.0f;(*this)[2][2]=0.0f;
+    }
+};
+
+class Matrix33RotateZ : public Matrix33
+{
+ public:
+  Matrix33RotateZ(float a)
+    {
+      const float sa=sin(a);
+      const float ca=cos(a);
+      (*this)[0][0]=  ca;(*this)[0][1]= -sa;(*this)[0][2]=0.0f;
+      (*this)[1][0]=  sa;(*this)[1][1]=  ca;(*this)[1][2]=0.0f;
+      (*this)[2][0]=0.0f;(*this)[2][1]=0.0f;(*this)[2][2]=1.0f;
     }
 };
 

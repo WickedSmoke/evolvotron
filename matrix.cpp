@@ -57,7 +57,7 @@ void testmatrix()
   std::cout << "Testing matrix class:\n";
   Random01 r01(time(0));
 
-  for (uint i=0;i<3;i++)
+  for (uint i=0;i<4;i++)
     {
       Matrix<3,3,float> m0;
 
@@ -68,6 +68,8 @@ void testmatrix()
 	      m0[r][c]=(r==c);
 	    else if (i==1)
 	      m0[r][c]=2*(r==c);
+	    else if (i==2)
+	      m0[r][c]=0.0;
 	    else
 	      m0[r][c]=2.0*r01()-1.0;
 	  }

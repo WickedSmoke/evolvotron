@@ -206,6 +206,26 @@ class MutatableImageNodeSphericalize : public MutatableImageNode
   virtual MutatableImageNode*const deepclone() const;
 };
 
+//! This node applies rotation matrices to it's argument
+class MutatableImageNodeRotate : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodeRotate(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeRotate();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
 //! This node implements sin
 class MutatableImageNodeSin : public MutatableImageNode
 {
