@@ -635,12 +635,35 @@ void MutatableImageDisplay::menupick_save_image()
 		 );
 	    }
 	  
-	  //! \todo Need to deal with multi-frame case
 	  if (!save_filename.isEmpty())
 	    {
-	      if (!_offscreen_image[0]->save(save_filename.local8Bit(),save_format))
+	      for (uint f=0;f<_offscreen_image.size();f++)
 		{
-		  QMessageBox::critical(this,"Evolvotron","File write failed");
+		  QString actual_save_filename(save_filename);
+	     
+		  if (_offscreen_image.size()>1)
+		    {
+		      QString frame_component;
+		      frame_component.sprintf(".f%06d",f);
+		      int insert_point=save_filename.findRev(QString("."));
+		      if (insert_point==-1)
+			{
+			  actual_save_filename.append(frame_component);
+			}
+		      else
+			{
+			  actual_save_filename.insert(insert_point,frame_component);
+			}
+		    
+		    }
+
+		  if (!_offscreen_image[f]->save(actual_save_filename.local8Bit(),save_format))
+		    {
+		      QMessageBox::critical(this,"Evolvotron","Failed to write file "+actual_save_filename);
+		      if (f<_offscreen_image.size()-1)
+			QMessageBox::critical(this,"Evolvotron","Not attempting to save remaining images in animation");
+		      break;
+		    }
 		}
 	    }
 	}

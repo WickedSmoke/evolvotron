@@ -10,6 +10,7 @@ Animation
 - More control over animation (frames & framerate) from edit/options menu
   (or on a display by display basis ?)
 - Ability to degrade temporal resolution with spatial resolution at low-res render levels
+- Support animation in evolvotron_render 
 
 Conventional
 ------------

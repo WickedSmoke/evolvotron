@@ -149,12 +149,13 @@ MutatableImageComputerTask* MutatableImageComputerFarm::pop_done()
 
 void MutatableImageComputerFarm::abort_all()
 {
-  //! \todo Not essential, but could make a case for moving aborted tasks straight from _todo to _done
   _mutex.lock();
 
   for (std::multiset<MutatableImageComputerTask*,CompareTaskPriority>::iterator it=_todo.begin();it!=_todo.end();it++)
     {
       (*it)->abort();
+      delete (*it);
+      _todo.erase(it);
     }
 
   for (std::vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
@@ -165,6 +166,8 @@ void MutatableImageComputerFarm::abort_all()
   for (std::multiset<MutatableImageComputerTask*,CompareTaskPriority>::iterator it=_done.begin();it!=_done.end();it++)
     {
       (*it)->abort();
+      delete (*it);
+      _done.erase(it);
     }
   
   _mutex.unlock();  
@@ -172,13 +175,16 @@ void MutatableImageComputerFarm::abort_all()
 
 void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
 {
-  //! \todo Not essential, but could make a case for moving aborted tasks straight from _todo to _done
   _mutex.lock();
 
   for (std::multiset<MutatableImageComputerTask*,CompareTaskPriority>::iterator it=_todo.begin();it!=_todo.end();it++)
     {
       if ((*it)->display()==disp)
-	(*it)->abort();
+	{
+	  (*it)->abort();
+	  delete (*it);
+	  _todo.erase(it);
+	}
     }
 
   for (std::vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
@@ -189,7 +195,11 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
   for (std::multiset<MutatableImageComputerTask*,CompareTaskPriority>::iterator it=_done.begin();it!=_done.end();it++)
     {
       if ((*it)->display()==disp)
-	(*it)->abort();
+	{
+	  (*it)->abort();
+	  delete (*it);
+	  _done.erase(it);
+	}
     }
   
   _mutex.unlock();  

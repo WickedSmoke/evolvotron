@@ -84,8 +84,11 @@ Here's the times for a 2.4GHz P4 to run a 2048x2048 evolvotron_render
 
 BUILD PROBLEMS
 ==============
-The author develops on a RedHat8 system (gcc 3.2, qt 3.0.5) and now
-(release 0.1.2 and later) also tests on RedHat 7.3 (gcc 2.96, qt 3.0.5).
+The author develops on 
+  RedHat 8 (gcc 3.2, qt 3.0.5),
+  RedHat 9 (gcc 3.2.2, qt 3.1.1)
+and sometimes also tests on on RedHat 7.3 (gcc 2.96, qt 3.0.5).
+(So the closer your system is to these, the less likely you are to have problems).
 
 If you have QT problems:
 
@@ -180,7 +183,9 @@ COMMAND LINE OPTIONS
   -g <rows> <cols> : sets number of image display cells (defaults 7 by 5)
   -t <threads> : sets number of compute threads (defaults to 2)
   -v : verbose mode (mainly to assist debugging)
-
+  -f <frames> : Number of frames in animations (defaults to 1 i.e no animation)
+  -r <framerate> : Rate at which frames are displayed (integer).  (Defaults to 8).
+ 
 RIGHT-CLICK CONTEXT MENU
 ------------------------
 Right clicking on an image gets you a few more options:
@@ -204,6 +209,11 @@ Right clicking on an image gets you a few more options:
    save a small grid image, the size you see on the screen is the size
    you get in the file.  Note that the save won't be allowed until the
    full resolution image has been generated.
+   If you save an animation, multiple files will be saved with
+   .fnnnnnn (where nnnnnn is the zero-filled frame number) will be
+   inserted in each filename before the filetype qualifier.
+   Qt lacks support for saving movies, so I suggest you use the
+   ImageMagick tools to convert to a more usable format for now. 
  - "Save function" to store the function to an XML file.
  - "Load function" to load a stored function from an XML file.
    NB if the file was saved from a different version numbered
