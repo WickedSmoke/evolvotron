@@ -273,13 +273,12 @@ MAIN MENU BAR
   The difference between restart and reset is that reset 
   sets the mutation parameters back the their default values.
 - Edit menu:
-  "Undo" lets you undo previous full-grid spawns and middle-button
-  adjustments.  There is a large but limited number of levels of
-  undo (note that locking is overriden, and that locking/unlocking 
-  a display is not currently recorded in the undo history).
+  "Undo" lets you undo certain actions: e.g spawn,
+  middle-button adjustment, simplification and lock/unlock.
+  There is a large but limited number of levels of undo. 
   "Simplify" is of curiosity value only: it prunes redundant
-  branches from images; this may help them recompute faster
-  but at the cost of there being less mutatable material.
+  branches from images ("junk DNA"); this may help them recompute
+  faster but at the cost of there being less mutatable material.
 - Settings menu:
   "Mutations" brings up a dialog to modify the amount
   of change spawned images are subject to.  
