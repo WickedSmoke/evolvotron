@@ -148,6 +148,9 @@ MutatableImageDisplay::~MutatableImageDisplay()
 
 void MutatableImageDisplay::image(MutatableImageNode* i)
 {
+  assert(_image==0 || _image->ok());
+  assert(i==0 || i->ok());
+
   // This might have already been done (e.g by resizeEvent), but it can't hurt to be sure.
   main()->farm()->abort_for(this);
 
@@ -176,7 +179,12 @@ void MutatableImageDisplay::image(MutatableImageNode* i)
 		to avoid having to deepclone.
 		On the other hand this seems to work very robustly for now and isn't a killer.
 		*/
-	      main()->farm()->push_todo(new MutatableImageComputerTask(this,_image->deepclone(),image_size()/s,level));
+	      const MutatableImageNode*const task_copy=_image->deepclone();
+	      assert(task_copy->ok());
+
+	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_copy,image_size()/s,level);
+
+	      main()->farm()->push_todo(task);
 	    }
 	}
     }
@@ -401,17 +409,23 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	  MutatableImageNodeTransformWrapper* root=new_image->is_a_MutatableImageNodeTransformWrapper();
 	  assert(root!=0);
 	  
-	  root->transform().concatenate_on_right(transform);
+	  Transform current_transform=root->get_transform();
+	  current_transform.concatenate_on_right(transform);
+	  root->set_transform(current_transform);
 	}
       else
 	{
-	  // Otherwise have to create a new wrapper for the transform
-	  std::vector<MutatableImageNode*> args;
+	  // Otherwise have to create a new wrapper for the transform:
+
+	  std::vector<float> params=transform.get_columns();
+
+	  std::vector<MutatableImageNode*> args;	  
 	  args.push_back(image()->deepclone());
-	  new_image=new MutatableImageNodeTransformWrapper(args,transform);
+	  
+	  new_image=new MutatableImageNodeTransformWrapper(params,args);
 	}
 
-      // Install new image (triggers recompute)
+      // Install new image (triggers recompute).
       image(new_image);
 
       // Finally, record position of this event as last event

@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "useful.h"
 #include "xyz.h"
 #include "matrix.h"
+#include <vector>
 
 //! Class representing 3d linear transforms.
 /*! Not much functionality currently because is used mainly to pass info around for warp functionality
@@ -41,6 +42,9 @@ class Transform
 
   //! Constructor specifying column vectors.
   Transform(const XYZ& t,const XYZ& x,const XYZ& y,const XYZ& z);
+
+  //! Constructor specifying column-wise elements.
+  Transform(const std::vector<float>& v);
 
   //@{
   //! Accessor
@@ -61,6 +65,9 @@ class Transform
   void basis_z(const XYZ &z)
      {_basis_z=z;}
   //@}
+
+  //! Get column-wise element values as a vector
+  const std::vector<float> get_columns() const;
 
   //! Transform a point
   const XYZ transformed(const XYZ& p) const

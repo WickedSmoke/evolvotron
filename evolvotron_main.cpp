@@ -336,15 +336,17 @@ void EvolvotronMain::spawn_normal(const MutatableImageNode* image,MutatableImage
 
 void EvolvotronMain::spawn_recoloured(const MutatableImageNode* image,MutatableImageDisplay* display)
 {
+  std::vector<float> params;
+
   std::vector<MutatableImageNode*> args;
-  args.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
+  args.push_back(new MutatableImageNodeConstant(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
+  args.push_back(new MutatableImageNodeConstant(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
+  args.push_back(new MutatableImageNodeConstant(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
+  args.push_back(new MutatableImageNodeConstant(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
   args.push_back(image->deepclone());
   
   history().replacing(display);
-  display->image(new MutatableImageNodePostTransform(args));
+  display->image(new MutatableImageNodePostTransform(params,args));
 }
 
 void EvolvotronMain::spawn_warped(const MutatableImageNode* image,MutatableImageDisplay* display)
@@ -361,14 +363,16 @@ void EvolvotronMain::spawn_warped(const MutatableImageNode* image,MutatableImage
       MutatableImageNodeTransformWrapper* root=new_image->is_a_MutatableImageNodeTransformWrapper();
       assert(root!=0);
 
-      root->transform().concatenate_on_right(transform);
+      Transform current_transform(root->get_transform());
+      current_transform.concatenate_on_right(transform);
+      root->set_transform(current_transform);
     }
   else
     {
       // Otherwise have to create a new wrapper for the transform
       std::vector<MutatableImageNode*> args;
       args.push_back(image->deepclone());
-      new_image=new MutatableImageNodeTransformWrapper(args,transform);
+      new_image=new MutatableImageNodeTransformWrapper(transform.get_columns(),args);
     }
   
   history().replacing(display);
@@ -558,36 +562,37 @@ void EvolvotronMain::tick()
  */
 void EvolvotronMain::reset(MutatableImageDisplay* display)
 {
-  const float k=sqrt(2.0f);
-
   MutatableImageNode* image;
   bool image_is_constant;
 
   do
     {
+      std::vector<float> params_toplevel;
       std::vector<MutatableImageNode*> args_toplevel;
   
+      std::vector<float> params_in;
       std::vector<MutatableImageNode*> args_in;
-      args_in.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
-      args_in.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
-      args_in.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
-      args_in.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
-      args_in.push_back(new MutatableImageNodePosition());
-  
-      args_toplevel.push_back(new MutatableImageNodePostTransform(args_in));
+      args_in.push_back(new MutatableImageNodeConstant(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
+      args_in.push_back(new MutatableImageNodeConstant(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
+      args_in.push_back(new MutatableImageNodeConstant(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
+      args_in.push_back(new MutatableImageNodeConstant(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
+      args_in.push_back(new MutatableImageNodePosition(MutatableImageNode::stubparams(mutation_parameters(),0),MutatableImageNode::stubargs(mutation_parameters(),0)));
+      args_toplevel.push_back(new MutatableImageNodePostTransform(params_in,args_in)); // Seems to be a big problem here
   
       args_toplevel.push_back(MutatableImageNode::stub(mutation_parameters(),true));
 
+      std::vector<float> params_out;
       std::vector<MutatableImageNode*> args_out;
-      args_out.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
-      args_out.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
-      args_out.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
-      args_out.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
-      args_out.push_back(new MutatableImageNodePosition());
-      
-      args_toplevel.push_back(new MutatableImageNodePostTransform(args_out));
+      args_out.push_back(new MutatableImageNodeConstant(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
+      args_out.push_back(new MutatableImageNodeConstant(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
+      args_out.push_back(new MutatableImageNodeConstant(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
+      args_out.push_back(new MutatableImageNodeConstant(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
+      args_out.push_back(new MutatableImageNodePosition(MutatableImageNode::stubparams(mutation_parameters(),0),MutatableImageNode::stubargs(mutation_parameters(),0)));
+      args_toplevel.push_back(new MutatableImageNodePostTransform(params_out,args_out));
 
-      image=new MutatableImageNodeConcatenateTriple(args_toplevel);
+      image=new MutatableImageNodeConcatenateTriple(params_toplevel,args_toplevel);
+
+      assert(image->ok());
 
       image_is_constant=image->is_constant();
 
@@ -597,6 +602,8 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
 	}
     }
   while (image_is_constant);
+
+  assert(image->ok());
 
   history().replacing(display);
   display->image(image);

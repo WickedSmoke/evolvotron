@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 # append debug or release
-CONFIG+= qt thread release
+CONFIG+= qt thread debug
 
 ##################
 # Better optimisations than qmake defaults IF you have the right processor.
@@ -22,6 +22,7 @@ HEADERS += \
 	dialog_about.h \
 	dialog_mutation_parameters.h \
 	evolvotron_main.h \
+        function.h \
 	license.h \
         matrix.h \
 	mutatable_image.h \
@@ -43,6 +44,7 @@ SOURCES += \
 	dialog_mutation_parameters.cpp \
 	evolvotron.cpp \
 	evolvotron_main.cpp \
+        function.h \
 	license.cpp \
         matrix.cpp \
 	mutatable_image.cpp \
@@ -73,7 +75,7 @@ QMAKE_CXXFLAGS_DEBUG += -pthread
 #######################################
 # Install targets
 #
-# This doesn't work on RedHat... tries to strip install directory, not file
+# This doesnt actually work on RedHat... tries to strip install directory, not file
 executable.path = /usr/local/bin
 executable.files = evolvotron
 INSTALLS += executable
@@ -99,7 +101,7 @@ QMAKE_EXTRA_UNIX_TARGETS += doc
 #Add this to build documentation every time
 #TARGETDEPS += $$doc.target
 
-#Unfortunately it doesn't generate rm -r -f doc, so this doesn't work
+#Unfortunately it doesnt generate rm -r -f doc, so this doesnt work
 #QMAKE_CLEAN += doc
 
 # Separate target for cleaning up documentation
@@ -113,7 +115,7 @@ realclean.commands = rm -r -f doc
 MOC_DIR = moc
 
 ##################
-# Use these for profiling
+# Use these options for profiling
 #
 #QMAKE_CXXFLAGS_RELEASE -= -fomit-frame-pointer
 #QMAKE_LFLAGS_RELEASE += -pg

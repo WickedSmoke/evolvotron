@@ -51,7 +51,7 @@ class MutatableImageComputerTask
     so some sort of reference counting scheme should be used.
     \todo Reference counting scheme to avoid excessive deepcloning of images.
    */
-  MutatableImageNode*const _image;
+  const MutatableImageNode*const _image;
 
   //! The size of the image to be generated.
   const QSize _size;
@@ -73,7 +73,7 @@ class MutatableImageComputerTask
 
  public:
   //! Constructor.
-  MutatableImageComputerTask(MutatableImageDisplay*const disp,MutatableImageNode* img,const QSize& s,uint lev);
+  MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImageNode* img,const QSize& s,uint lev);
   
   //! Destructor.
   ~MutatableImageComputerTask();
@@ -97,7 +97,7 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
-  MutatableImageNode*const image() const
+  const MutatableImageNode*const image() const
     {
       return _image;
     }

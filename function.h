@@ -16,26 +16,35 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-/*! \file
-  \brief Implementation of class MutatableImageComputerTask
+/*! \file 
+  \brief Interfaces for Function classes.
+  NB There is no class heirarchy here as all virtualisation and boilerplate services are supplied when the functions are plugged into the MutatableImageNode template.
 */
 
-#include "mutatable_image_computer_task.h"
+#ifndef _function_h_
+#define _function_h_
 
-MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImageNode* img,const QSize& s,uint lev)
-  :_aborted(false)
-   ,_display(disp)
-   ,_image(img)
-   ,_size(s)
-   ,_level(lev)
-   ,_image_data(s.width()*s.height())
-   ,_pixel(0)
-{}
+#include "mutatable_image.h"
+#include "xyz.h"
 
-/*! Destructor currently deletes its image because it owns its deepcloned copy.
-  However, see todo comments in MutatableImageDisplay::image about reference counting plan for this. 
- */
-MutatableImageComputerTask::~MutatableImageComputerTask()
+namespace Function
 {
-  delete _image;
+
+class Identity
+{
+ public:
+  
+  static const uint parameters()
+    {
+      return 0;
+    }
+  static const uint arguments()
+    {
+      return 0;
+    }
+  static const XYZ evaluate(const MutatableImageNode*const our,const XYZ& p);
+};
+
 }
+
+#endif
