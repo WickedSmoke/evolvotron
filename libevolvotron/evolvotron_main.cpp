@@ -335,8 +335,7 @@ void EvolvotronMain::spawn_normal(const MutatableImage* image,MutatableImageDisp
 
   do
     {
-      new_image=image->deepclone();
-      new_image->mutate(mutation_parameters());
+      new_image=image->mutated(mutation_parameters());
 
       new_image_is_constant=new_image->is_constant();
 

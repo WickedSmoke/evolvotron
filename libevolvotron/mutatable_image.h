@@ -26,16 +26,22 @@
 #include <iosfwd>
 
 #include "function_node.h"
+#include "function_null.h"
 
 //! Class to hold the base FunctionNode of an image.
-/*! \todo Do reference counting on this object.
+/*! Once it owns a root FunctionNode* the whole structure should be fixed (mutate isn't available, only mutated).
+  \todo Do reference counting on this object ?  Maybe not: have to worry about stateful nodes,
+  \todo Generally tighten up const-ness of interfaces.
  */
 class MutatableImage
 {
  protected:
 
-  //! The top level FunctionNode of the image.
-  FunctionNode* _root;
+  //! Holds the top level FunctionNode of the image.
+  /*! This is only used because FunctionNode::mutate can't change the type of the node it is invoked on,
+    but child nodes can be zapped.
+   */
+  FunctionNull* _root_holder;
 
   //! Whether to sweep z sinusoidally (vs linearly)
   bool _sinusoidal_z;
@@ -44,38 +50,47 @@ class MutatableImage
   
   //! Take ownership of the image tree with the specified root node.
   MutatableImage(FunctionNode* r,bool sinz)
-    :_root(r)
+    :_root_holder(0)
     ,_sinusoidal_z(sinz)
     {
-      assert(_root!=0);
+      assert(r!=0);
+      std::vector<float> pv;
+      std::vector<FunctionNode*> av;
+      av.push_back(r);
+      _root_holder=new FunctionNull(pv,av,0);
     }
 
   //! Create a new random image tree.
   MutatableImage(const MutationParameters& parameters,bool exciting=false)
-    :_root(FunctionNode::stub(parameters,exciting))
+    :_root_holder(0)
     ,_sinusoidal_z(true)
-    {
+    {      
+      std::vector<float> pv;
+      std::vector<FunctionNode*> av;
+      av.push_back(FunctionNode::stub(parameters,exciting));
+      _root_holder=new FunctionNull(pv,av,0);
       //! \todo _sinusoidal_z should be obtained from AnimationParameters when it exists
-      assert(_root!=0);
     }
 
   //! Destructor.  NB Deletes owned image function tree.
   ~MutatableImage()
     {
-      delete _root;
+      delete _root_holder;
     }
 
   //! Accessor.
   const FunctionNode*const root() const
     {
-      return _root;
+      return _root_holder->argptr(0);
     }
 
   //! Accessor.
+  /*
   FunctionNode*const root()
     {
-      return _root;
+      return &(_root_holder->arg(0));
     }
+  */
 
   //! Accessor.
   const bool sinusoidal_z() const
@@ -86,11 +101,11 @@ class MutatableImage
   //! Clone this image.
   MutatableImage*const deepclone() const
     {
-      return new MutatableImage(_root->deepclone(),_sinusoidal_z); 
+      return new MutatableImage(root()->deepclone(),sinusoidal_z()); 
     }
 
-  //! Mutate this image
-  void mutate(const MutationParameters& p);
+  //! Return a mutated version of this image
+  MutatableImage*const mutated(const MutationParameters& p) const;
 
   //! Evaluate the image at specified coordinate.
   const XYZ operator()(const XYZ& p) const

@@ -30,18 +30,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_node_info.h"
 #include "function_null.h"
 
-/*! Mutation method can never change the type of the object it is invoked on, 
-  so use a temporary placeholder.
- */
-void MutatableImage::mutate(const MutationParameters& p)
+
+MutatableImage*const MutatableImage::mutated(const MutationParameters& p) const
 {
-  std::vector<float> tmp_p;
-  std::vector<FunctionNode*> tmp_a;
-  tmp_a.push_back(_root);_root=0;
-  FunctionNull tmp(tmp_p,tmp_a,0);
-  tmp.mutate(p);
-  
-  _root=tmp.args()[0];tmp.args()[0]=0;
+  FunctionNode*const c=_root_holder->deepclone();  
+  c->mutate(p);
+  return new MutatableImage(c->argptr(0),sinusoidal_z());
 }
 
 void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const

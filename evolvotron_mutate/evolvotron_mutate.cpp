@@ -62,19 +62,20 @@ int main(int argc,char* argv[])
   MutationParameters mutation_parameters(seed);
 
   std::string report;
-  MutatableImage* imagefn;
+  MutatableImage* imagefn_out=0;
+
   if (args.option("-g"))
     {
       FunctionNode*const fn=FunctionNode::initial(mutation_parameters);
       //! \todo Should obtain sinusoidalness from command line option.
-      imagefn=new MutatableImage(fn,true);
+      imagefn_out=new MutatableImage(fn,true);
     }
   else
     {
 
-      imagefn=MutatableImage::load_function(std::cin,report);
+      MutatableImage* imagefn_in=MutatableImage::load_function(std::cin,report);
 
-      if (imagefn==0)
+      if (imagefn_in==0)
 	{
 	  std::cerr << "evolvotron_render: Error: Function not loaded due to errors:\n" << report;
 	  exit(1);
@@ -84,10 +85,10 @@ int main(int argc,char* argv[])
 	  std::cerr << "evolvotron_render: Warning: Function loaded with warnings:\n" << report;
 	}
 
-      imagefn->mutate(mutation_parameters);
+      imagefn_out=imagefn_in->mutated(mutation_parameters);
     }
 
-  imagefn->save_function(std::cout);
+  imagefn_out->save_function(std::cout);
 
   exit(0);
 }

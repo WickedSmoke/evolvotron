@@ -40,12 +40,17 @@ class FunctionNodeInfo;
 
 class FunctionPreTransform;
 class FunctionPostTransform;
+class MutatableImage;
 
 //! Abstract base class for all kinds of mutatable image node.
+/*! MutatableImage declared a friend to help constification of the public accessors.
+ */
 class FunctionNode
 {
- private:
+ public:
+  friend class MutatableImage;
 
+ private:
   //! The arguments (ie child nodes) for this node.
   std::vector<FunctionNode*> _args;
 
@@ -141,12 +146,6 @@ class FunctionNode
       return params()[n];
     }
 
-  //! Accessor
-  std::vector<float>& params()
-    {
-      return _params;
-    }
-
   //! Accessor.
   const uint iterations() const
     {
@@ -163,12 +162,6 @@ class FunctionNode
   void args(const std::vector<FunctionNode*>& a)
     {
       _args=a;
-    }
-
-  //! Accessor
-  std::vector<FunctionNode*>& args()
-    {
-      return _args;
     }
 
   //! Accessor. 
@@ -204,6 +197,32 @@ class FunctionNode
 
   //! Impose a new set of parameters and arguments on the node.  Existing arguments are cleaned up.
   void impose(std::vector<float>& p,std::vector<FunctionNode*>& a);
+
+  //! Accessor (non-const).
+  std::vector<FunctionNode*>& args()
+    {
+      return _args;
+    }
+
+  //! Accessor (non-const).
+  std::vector<float>& params()
+    {
+      return _params;
+    }
+
+  //! Accessor. 
+  const FunctionNode* argptr(uint n) const
+    {
+      assert(n<args().size());
+      return args()[n];
+    }
+
+  //! Accessor. 
+  FunctionNode* argptr(uint n)
+    {
+      assert(n<args().size());
+      return args()[n];
+    }
 };
 
 #endif
