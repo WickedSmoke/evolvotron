@@ -3,8 +3,6 @@ EVOLVOTRON USAGE
 
 For the default 2D image mode, you will need a fast machine or patience.
 For the optional animation mode, you will need both.
-(If you're desperate, a little more performance can be obtained by
-messing with the compile flags: see the BUILD OPTIONS section above).
 
 On starting the application, a grid of images is displayed.
 (Resize or maximise the application if you like, but the more
@@ -80,7 +78,7 @@ POWER-USER & DEBUG OPTIONS
 	Verbose mode, writes various things to application stderr 
 	(mainly to assist debugging).
         Probably most useful for getting a list of supported function 
-	names for use with the -x/-X options.
+	names for use with the -x/-X options
 
   -x <functionname>
 	Force a specific function type to be used at the top level 
@@ -89,17 +87,21 @@ POWER-USER & DEBUG OPTIONS
 	it considerably.  A list of all the function names understood 
 	by evolvotron is output during app startup when the -v option 
 	is specified.
-	Example: evolvotron -x FunctionSpiralLinear
+	Example: 
+        $ evolvotron -x FunctionSpiralLinear
 
   -X <functionname>
 	Similar to -x except that the specified function is NOT wrapped 
 	by space/colour transforms.  NB For functions without leaf nodes 
 	or parameters (e.g FunctionSphericalToCartesian) this doesn't
 	leave any scope for variation or future mutation.
-        Example: evolvotron -X FunctionKaleidoscope
+        Example (highly recommended): 
+        $ evolvotron -X FunctionKaleidoscope 
 
-Note that you can also specify iterative & fractal function types as an argument to -x/-X,
-even when they are disabled (as they are by default) in the mutation parameters.
+Note that you can also specify iterative & fractal function
+types as an argument to -x/-X, even when they are disabled 
+(as they are by default) in the mutation parameters.
+Function name recognition is case sensitive.
 
 MOUSE CONTROL
 ============= 
@@ -202,7 +204,7 @@ KEYBOARD CONTROL
 MAIN WINDOW
 -----------
 
-Ctrl-f [NB only available with fullscreen build option] toggles 
+- Ctrl-f [NB only available with fullscreen build option] toggles 
 full-screen mode (on X11, Qt does this by asking the
 window manager for a screen-filling undecorated window, and the
 documentation contains some dire warnings about problems with broken
@@ -211,30 +213,30 @@ Fullscreen mode propagates to "Big" image display windows.
 NB The application may completely disappear from the screen for 
 a brief interval while switching mode.
 
-Ctrl-m [NB only available with fullscreen build option]
+- Ctrl-m [NB only available with fullscreen build option]
 toggles status and menu-bar hiding, which can be nice 
 when in full-screen or window-maximised mode.  See also "-M" 
 command line option.
 
-Esc [NB only available with fullscreen build option] kills 
+- Esc [NB only available with fullscreen build option] kills 
 full-screen and/or menu-hiding, putting the application
 into its normal default state. 
 
-Ctrl-r does a restart (for convenience when the menu bar
+- Ctrl-r does a restart (for convenience when the menu bar
 is hidden, because this is such a common operation).
 
-Ctrl-z does an undo.
+- Ctrl-z does an undo.
 
-"BIG IMAGE" WINDOWS
+ENLARGEMENT WINDOWS
 -------------------
 The image display windows created by selecting "Big" from a
 context menu also have a couple of keyboard operations:
 
-Ctrl-f [NB only available with fullscreen build option] toggles 
+- Ctrl-f [NB only available with fullscreen build option] toggles 
 full-screen mode.  When returning to normal mode, if the main app 
 window was fullscreen then it will also drop back to normal mode.
 
-Esc [NB only available with fullscreen build option]
+- Esc [NB only available with fullscreen build option]
 completely closes a fullscreen-mode "big" window.
 
 GUI ELEMENTS
@@ -289,10 +291,10 @@ THE CONVENTIONAL STATIC IMAGE MODE.
 
 Simply supply a -f <frames> command line option and evolvotron will
 generate animated sequences with the specified number of frames.
-These will be displayed at the frame rate specified by the optional
--r <framerate> option (default 8).  So "evolvotron -f 24" will generate
-3 second long animations.  Animations reverse direction at each end
-to avoid a sudden jump.
+These will be displayed at the frame rate specified by the
+optional -r <framerate> option (default 8).  So "evolvotron -f 24" 
+will generate 3 second long animations.  Animations reverse direction
+at each end to avoid a sudden jump.
 
 If you save an animation, multiple files will be saved with
 .fnnnnnn (where nnnnnn is the zero-filled frame number) 
@@ -378,7 +380,7 @@ OTHER EXECUTABLES
 =================
 This release also builds two other executables:
 
- - evolvotron_render [-v] [-s <width> <height>] [-f <frames>] [<file.ppm>|<file.png>] < <file.xml>
+ $ evolvotron_render [-v] [-s <width> <height>] [-f <frames>] [<file.ppm> | <file.png>] < <file.xml>
    Reads a XML function description from it's standard input and renders it to the
    file specified (suffix determines type, defaults to ppm if not recognised) at the
    specified resolution.  Image size is specified by -s option and defaults to 512x512.
@@ -389,7 +391,7 @@ This release also builds two other executables:
    Use the -v option to monitor the progress of a long animation run.
    [NB This app does not use multiple compute threads].
 
- - evolvotron_mutate [-g | < <file.xml>] > <file.xml>
+ $ evolvotron_mutate [-g | < <file.xml>] > <file.xml>
    With the -g (generate, genesis?) option, creates a new random
    evolvotron function and writes its XML description to standard out.
    Without the -g option, reads an XML function description from
@@ -397,13 +399,18 @@ This release also builds two other executables:
    as evolvotron in its default state) and writes the new function's XML
    representation to the standard output.
 
- Examples:
-  Evolving and mutating on the command line:
-    evolvotron_mutate -g | tee fn.xml | evolvotron_render /tmp/xxx.ppm ; display /tmp/xxx.ppm
-    cat fn.xml | evolvotron_mutate | evolvotron_render /tmp/xxx.ppm ; display /tmp/xxx.ppm
+EXAMPLES
+--------
 
-  Animating a function ani.xml produced from evolvotron in animation mode:
-    cat ani.xml | evolvotron_render -f 100 -v -s 256 256 ani.ppm ; animate ani.f??????.ppm
+Evolving and mutating on the command line:
+  
+$ evolvotron_mutate -g | tee fn.xml | evolvotron_render /tmp/xxx.ppm ; display /tmp/xxx.ppm
+  
+$ cat fn.xml | evolvotron_mutate | evolvotron_render /tmp/xxx.ppm ; display /tmp/xxx.ppm
+
+Animating a function ani.xml produced from evolvotron in animation mode:
+    
+$ cat ani.xml | evolvotron_render -f 100 -v -s 256 256 ani.ppm ; animate ani.f??????.ppm
 
 FUTURE DEVELOPMENTS
 ===================
@@ -417,20 +424,19 @@ first.
 
 THANKS
 ======
-...to
-  Dmitry Kirsanov
-  Jonathan Melhuish
-  Karl Robillard
-  Linc Davis
-  Paolo Greppi  
-  Marcin Wojtczuk
-  Michael Sterrett
-for feedback, suggestions and patches.
+To those who have contributed feedback, suggestions and patches:
+  - Dmitry Kirsanov
+  - Jonathan Melhuish
+  - Karl Robillard
+  - Linc Davis
+  - Paolo Greppi  
+  - Marcin Wojtczuk
+  - Michael Sterrett
 
-...to the participants in a SIGGRAPH conference panel many
+To the participants in a SIGGRAPH conference panel many
 years ago who first got me interested in this kind of thing.
 
-...to www.di.fm, www.somafm.com and Trance4Ever for music to code to.
+To www.di.fm, www.somafm.com and Trance4Ever for music to code to.
 
 WHY ?
 =====
@@ -445,5 +451,5 @@ and the ability to write working code (well, sometimes).  If you like
 an image it produces, then as far as I'm concerned that's as satisfying 
 a result as if you liked something I'd drawn myself.
 
-Tim
+Tim Day
 

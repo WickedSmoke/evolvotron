@@ -1,5 +1,6 @@
 INTRODUCTION
 ============
+
 Evolvotron is interactive "generative art" software to evolve
 images/textures/patterns through an iterative process of random
 mutation and user-selection driven evolution.  If you like lava-lamps,
@@ -11,6 +12,9 @@ It uses C++ (and STL) & Qt, and is multithreaded (using Qt's threading API).
 Home page: http://www.bottlenose.demon.co.uk/share/evolvotron
 
 Author: timday at timday dot com
+
+This file describes how to build evolvotron.
+See the USAGE file for details of what you can do with the built executable.
 
 If you manage to make practical use of evolvotron, especially
 if evolvotron derived imagery makes it into print or other

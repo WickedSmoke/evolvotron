@@ -17,6 +17,8 @@ Animation
 
 Conventional
 ------------
+- Get USAGE file into qml and app.  Don't worry about HTML or being too pretty.
+- man pages ?  Knock off something simple.
 - Window ordering (and whether fullscreen) should be an input to
   compute priority.  Need to be able to change priorities once tasks
   are in queue, and re-order queue.
