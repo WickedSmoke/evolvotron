@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qcursor.h>
 #include <qdatetime.h>
 #include <qmessagebox.h>
+#include <qtooltip.h>
 
 #include "evolvotron_main.h"
 #include "xyz.h"
@@ -168,7 +169,8 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
   _menubar=new QMenuBar(this);
 
   _popupmenu_file=new QPopupMenu;
-  _popupmenu_file->insertItem("&Restart",this,SLOT(reset()));
+  _popupmenu_file->insertItem("&Restart",this,SLOT(reset_warm()));
+  _popupmenu_file->insertItem("Re&set",this,SLOT(reset_cold()));
   _popupmenu_file->insertItem("&Quit",qApp,SLOT(quit()));
   _menubar->insertItem("&File",_popupmenu_file);
 
@@ -190,18 +192,23 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
 
   //! \todo These might work better as QToolButton
   _button_cool=new QPushButton("&Cool",_statusbar);
-  _button_heat=new QPushButton("&Heat",_statusbar);
   _button_shield=new QPushButton("&Shield",_statusbar);
+  _button_heat=new QPushButton("&Heat",_statusbar);
   _button_irradiate=new QPushButton("&Irradiate",_statusbar);
 
+  QToolTip::add(_button_cool,"Decrease size of constant perturbations during mutation");
+  QToolTip::add(_button_heat,"Increase size of constant perturbations during mutation");
+  QToolTip::add(_button_shield,"Decrease probability of function tree structural mutations");
+  QToolTip::add(_button_irradiate,"Increase probability of function tree structural mutations");
+  
   connect(_button_cool,     SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(cool()));
   connect(_button_heat,     SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(heat()));
   connect(_button_shield,   SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(shield()));
   connect(_button_irradiate,SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(irradiate()));
 
   _statusbar->addWidget(_button_cool,0,true);
-  _statusbar->addWidget(_button_heat,0,true);
   _statusbar->addWidget(_button_shield,0,true);
+  _statusbar->addWidget(_button_heat,0,true);
   _statusbar->addWidget(_button_irradiate,0,true);
   
   // We need to make sure the display grid gets all the space it can
@@ -228,8 +235,23 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
 
 void EvolvotronMain::spawn_normal(const MutatableImageNode* image,MutatableImageDisplay* display)
 {
-  MutatableImageNode*const new_image=image->deepclone();
-  new_image->mutate(mutation_parameters());
+  MutatableImageNode* new_image;
+  bool new_image_is_constant;
+
+  do
+    {
+      new_image=image->deepclone();
+      new_image->mutate(mutation_parameters());
+
+      new_image_is_constant=new_image->is_constant();
+
+      if (new_image_is_constant)
+	{
+	  delete new_image;
+	}
+    }
+  while (new_image_is_constant);
+
   history().replacing(display);
   display->image(new_image);
 }
@@ -253,14 +275,34 @@ void EvolvotronMain::spawn_warped(const MutatableImageNode* image,MutatableImage
   
   // NB We don't generate any z co-ordinates (except z identity) so the random transform remains in the image plane.
   // (completely random transforms mostly look too dissimilar; they are different slices of the 3D image volume)
-  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),1.0)));
-  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),2.0)));
-  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),2.0)));
-  args.push_back(new MutatableImageNodeConstant(XYZ(0.0,0.0,1.0f)));
+  // For now we're not generating shears either.
+  // ... or translations.  There's something funny going on here.
+
+  // Gives a scale between 0.5 and 2, average 1.
+  const float r=pow(2.0f,2.0f*mutation_parameters().r01()-1.0f);
+
+  // Random rotation  
+  const float a=(2.0f*M_PI)*mutation_parameters().r01();
+
+  const XYZ basis_x( r*cos(a), r*sin(a),0.0f);
+  const XYZ basis_y(-r*sin(a), r*cos(a),0.0f);
+  const XYZ basis_z(0.0f,0.0f,1.0f);
+
+  const float ox=2.0f*mutation_parameters().r01()-1.0f;
+  const float oy=2.0f*mutation_parameters().r01()-1.0f;
+  const XYZ offset(ox,oy,0.0f);
+
+  args.push_back(new MutatableImageNodeConstant(offset));
+  args.push_back(new MutatableImageNodeConstant(basis_x));
+  args.push_back(new MutatableImageNodeConstant(basis_y));
+  args.push_back(new MutatableImageNodeConstant(basis_z));
+
   args.push_back(image->deepclone());
-  
+
+  MutatableImageNode*const new_image=new MutatableImageNodePreTransform(args);
+
   history().replacing(display);
-  display->image(new MutatableImageNodePreTransform(args));
+  display->image(new_image);
 }
 
 void EvolvotronMain::restore(MutatableImageDisplay* display,MutatableImageNode* image)
@@ -415,47 +457,56 @@ void EvolvotronMain::tick()
 /*! Set up an initial random image in the specified display. 
 
   The choice of initial structure to start from is quite crucial to giving a good user experience.
-  We concatenate 3 transforms, each seeded with random basis vectors and offsets.
+  We concatenate 3 functions.  The outer 2 are transforms.
   You can think of the first function as a co-ordinate transform,
-  the second function as being the "actual" image,
+  the second function as being the "actual" image (we use an "exciting" stub to avoid boring constants or identities),
   and the final function as being a colour-space transform.
   Basically the idea is to give lots of opportunities for stuff to happen.
-
-  \todo Try something more interesting for the middle function.  (But can't just use a random stub because the chances are it will just be a constant.)
  */
 void EvolvotronMain::reset(MutatableImageDisplay* display)
 {
-  std::vector<MutatableImageNode*> args_toplevel;
+  const float k=sqrt(2.0f);
+
+  MutatableImageNode* image;
+  bool image_is_constant;
+
+  do
+    {
+      std::vector<MutatableImageNode*> args_toplevel;
   
-  std::vector<MutatableImageNode*> args0;
-  args0.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args0.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args0.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args0.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args0.push_back(new MutatableImageNodePosition());
+      std::vector<MutatableImageNode*> args_in;
+      args_in.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
+      args_in.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
+      args_in.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
+      args_in.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
+      args_in.push_back(new MutatableImageNodePosition());
   
-  args_toplevel.push_back(new MutatableImageNodePostTransform(args0));
+      args_toplevel.push_back(new MutatableImageNodePostTransform(args_in));
   
-  std::vector<MutatableImageNode*> args1;
-  args1.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args1.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args1.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args1.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args1.push_back(new MutatableImageNodePosition());
-  
-  args_toplevel.push_back(new MutatableImageNodePostTransform(args1));
-  
-  std::vector<MutatableImageNode*> args2;
-  args2.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args2.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args2.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args2.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
-  args2.push_back(new MutatableImageNodePosition());
+      args_toplevel.push_back(MutatableImageNode::stub(mutation_parameters(),true));
+
+      std::vector<MutatableImageNode*> args_out;
+      args_out.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
+      args_out.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
+      args_out.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
+      args_out.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),k)));
+      args_out.push_back(new MutatableImageNodePosition());
       
-  args_toplevel.push_back(new MutatableImageNodePostTransform(args2));
-      
+      args_toplevel.push_back(new MutatableImageNodePostTransform(args_out));
+
+      image=new MutatableImageNodeConcatenateTriple(args_toplevel);
+
+      image_is_constant=image->is_constant();
+
+      if (image_is_constant)
+	{
+	  delete image;
+	}
+    }
+  while (image_is_constant);
+
   history().replacing(display);
-  display->image(new MutatableImageNodeConcatenateTriple(args_toplevel));
+  display->image(image);
 }
 
 void EvolvotronMain::undo()
@@ -465,18 +516,36 @@ void EvolvotronMain::undo()
 
 /*! Reset each image in the grid, and the mutation parameters.
  */
-void EvolvotronMain::reset()
+void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
 {
   history().begin_action();
 
   for (std::vector<MutatableImageDisplay*>::iterator it=displays().begin();it!=displays().end();it++)
     {
-      reset(*it);
+      if (clear_locks)
+	(*it)->lock(false);
+
+      if (!(*it)->locked())
+	reset(*it);
     }
 
-  _dialog_mutation_parameters->reset();
+  if (reset_mutation_parameters)
+    {
+      _dialog_mutation_parameters->reset();
+    }
 
   last_spawned(0,&EvolvotronMain::spawn_normal);
 
   history().end_action();
 }
+
+void EvolvotronMain::reset_warm()
+{
+  reset(false,false);
+}
+
+void EvolvotronMain::reset_cold()
+{
+  reset(true,true);
+}
+

@@ -198,6 +198,13 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
   delete task;
 }
 
+void MutatableImageDisplay::lock(bool l)
+{
+  _locked=l;
+
+  _menu->setItemChecked(_menu_item_number_lock,_locked);
+}
+
 void MutatableImageDisplay::paintEvent(QPaintEvent*)
 {
   // Repaint the screen from the offscreen buffer
@@ -284,9 +291,7 @@ void MutatableImageDisplay::menupick_spawn_warped()
  */
 void MutatableImageDisplay::menupick_lock()
 {
-  _locked=!_locked;
-
-  _menu->setItemChecked(_menu_item_number_lock,_locked);
+  lock(!_locked);
 }
 
 /*! Saves image (unless the image is not full resolution yet, in which case an informative dialog is generated.

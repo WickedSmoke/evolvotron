@@ -28,13 +28,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qgrid.h>
 #include <qlabel.h>
 #include <qspinbox.h>
+#include <qslider.h>
 #include <qpushbutton.h>
+#include <qcheckbox.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
 
 #include "useful.h"
 #include "mutation_parameters.h"
-
 
 //! Provides an "About" dialog box, manages an instance of MutationParameters.
 class DialogMutationParameters : public QDialog
@@ -78,6 +79,24 @@ class DialogMutationParameters : public QDialog
   QSpinBox* _spinbox_glitch;
   QSpinBox* _spinbox_shuffle;
   QSpinBox* _spinbox_insert;
+  //@}
+
+  //! Holder for slider decoration
+  //@{
+  QHBox* _hbox_proportion_constant;
+  QHBox* _hbox_identity_supression;
+  //@}
+
+  //! Slider for controlling indentity_supression
+  //@{
+  QSlider* _slider_proportion_constant;
+  QSlider* _slider_identity_supression;
+  //@}
+
+  //@{
+  //! Checkbox to supress certain function node types
+  QCheckBox* _checkbox_iterative;
+  QCheckBox* _checkbox_fractal;
   //@}
 
   //! Button to close dialog.
@@ -130,6 +149,19 @@ class DialogMutationParameters : public QDialog
   void changed_shuffle(int v);
   void changed_insert(int v);
   //@}
+  
+  //@{
+  //! Signalled by slider.
+  void changed_proportion_constant(int v);
+  void changed_identity_supression(int v);
+  //@}
+
+  //@{
+  //! Signalled by checkbox.
+  void changed_iterative(int v);
+  void changed_fractal(int v);
+  //@}
+
 };
 
 #endif

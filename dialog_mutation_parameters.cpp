@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class DialogMutationParameters.
 */
 
+#include <qtooltip.h>
 #include "dialog_mutation_parameters.h"
 
 /*! About dialog displays author info, web addresses and license info.
@@ -40,9 +41,14 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent)
 
   _button_reset=new QPushButton("&Reset",_grid_buttons);
   _button_cool=new QPushButton("&Cool",_grid_buttons);
-  _button_heat=new QPushButton("&Heat",_grid_buttons);
   _button_shield=new QPushButton("&Shield",_grid_buttons);
+  _button_heat=new QPushButton("&Heat",_grid_buttons);
   _button_irradiate=new QPushButton("&Irradiate",_grid_buttons);
+
+  QToolTip::add(_button_cool,"Decrease size of constant perturbations during mutation");
+  QToolTip::add(_button_heat,"Increase size of constant perturbations during mutation");
+  QToolTip::add(_button_shield,"Decrease probability of function tree structural mutations");
+  QToolTip::add(_button_irradiate,"Increase probability of function tree structural mutations");  
 
   connect(_button_reset,    SIGNAL(clicked()),this,SLOT(reset()));
   connect(_button_cool,     SIGNAL(clicked()),this,SLOT(cool()));
@@ -55,26 +61,57 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent)
   new QLabel("Perturbation magnitude:",_grid_parameters);
   _spinbox_magnitude=new QSpinBox(0,_scale,maximum(1,_scale/100),_grid_parameters);
   _spinbox_magnitude->setSuffix(QString("/%1").arg(_scale));
+  QToolTip::add(_spinbox_magnitude,"Maximum size of constant perturbations");
   
   new QLabel("p(Glitch)",_grid_parameters);
   _spinbox_glitch=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
   _spinbox_glitch->setSuffix(QString("/%1").arg(_scale));
+  QToolTip::add(_spinbox_glitch,"Probability of function branch being replaced by new random stub");
 
   new QLabel("p(Shuffle)",_grid_parameters);
   _spinbox_shuffle=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
   _spinbox_shuffle->setSuffix(QString("/%1").arg(_scale));
+  QToolTip::add(_spinbox_shuffle,"Probability of function branches being reordered");
 
   new QLabel("p(Insert)",_grid_parameters);
   _spinbox_insert=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
   _spinbox_insert->setSuffix(QString("/%1").arg(_scale));
+  QToolTip::add(_spinbox_insert,"Probability of function branch having random stub inserted");
+
+  new QLabel("Proportion constant",_grid_parameters);
+  _hbox_proportion_constant=new QHBox(_grid_parameters);
+  new QLabel("0.0",_hbox_proportion_constant);
+  _slider_proportion_constant=new QSlider(0,100,10,50,Qt::Horizontal,_hbox_proportion_constant);
+  QToolTip::add(_slider_proportion_constant,"Probability of most basic function node being a constant value");
+  new QLabel("1.0",_hbox_proportion_constant);
+  
+  new QLabel("Identity supression",_grid_parameters);
+  _hbox_identity_supression=new QHBox(_grid_parameters);
+  new QLabel("0.0",_hbox_identity_supression);
+  _slider_identity_supression=new QSlider(0,100,10,50,Qt::Horizontal,_hbox_identity_supression);
+  QToolTip::add(_slider_identity_supression,"Probability of identity node including transform parameters");
+  new QLabel("1.0",_hbox_identity_supression);
+
+  _checkbox_iterative=new QCheckBox("Allow iterative nodes",_vbox);
+  _checkbox_fractal  =new QCheckBox("Allow fractal nodes",_vbox);
+
+  QToolTip::add(_checkbox_iterative,"Allow computationally intensive iterative node types (required for Mandelbrot/Julia nodes).");
+  QToolTip::add(_checkbox_fractal  ,"Allow Mandelbrot and Julia set nodes (also requires iterative node types).");
 
   setup_from_mutation_parameters();
 
   // Do this AFTER setup
+
   connect(_spinbox_magnitude,SIGNAL(valueChanged(int)),this,SLOT(changed_magnitude(int)));
   connect(_spinbox_glitch,SIGNAL(valueChanged(int)),this,SLOT(changed_glitch(int)));
   connect(_spinbox_shuffle,SIGNAL(valueChanged(int)),this,SLOT(changed_shuffle(int)));
   connect(_spinbox_insert,SIGNAL(valueChanged(int)),this,SLOT(changed_insert(int)));
+ 
+  connect(_slider_proportion_constant,SIGNAL(valueChanged(int)),this,SLOT(changed_proportion_constant(int)));
+  connect(_slider_identity_supression,SIGNAL(valueChanged(int)),this,SLOT(changed_identity_supression(int)));
+
+  connect(_checkbox_iterative,SIGNAL(stateChanged(int)),this,SLOT(changed_iterative(int)));
+  connect(_checkbox_fractal  ,SIGNAL(stateChanged(int)),this,SLOT(changed_fractal(int)));
 
   _vbox->setStretchFactor(_grid_parameters,1);
 
@@ -93,10 +130,16 @@ void DialogMutationParameters::resizeEvent(QResizeEvent*)
 
 void DialogMutationParameters::setup_from_mutation_parameters()
 {
+  _checkbox_iterative->setChecked(mutation_parameters().allow_iterative_nodes());
+  _checkbox_fractal  ->setChecked(mutation_parameters().allow_fractal_nodes());
+
   _spinbox_magnitude->setValue(static_cast<int>(0.5+_scale*mutation_parameters().magnitude()));
   _spinbox_glitch   ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_glitch()));
   _spinbox_shuffle  ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_shuffle()));
   _spinbox_insert   ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_insert()));
+
+  _slider_proportion_constant->setValue(static_cast<int>(0.5+100*mutation_parameters().proportion_constant()));
+  _slider_identity_supression->setValue(static_cast<int>(0.5+100*mutation_parameters().identity_supression()));
 
   parameters_changed();
 }
@@ -143,6 +186,7 @@ void DialogMutationParameters::shield()
   _spinbox_insert->stepDown();
 }
 
+
 void DialogMutationParameters::changed_magnitude(int v)
 {
   mutation_parameters().magnitude(v/static_cast<float>(_scale));
@@ -166,3 +210,45 @@ void DialogMutationParameters::changed_insert(int v)
   mutation_parameters().probability_insert(v/static_cast<float>(_scale));
   parameters_changed();
 }
+
+void DialogMutationParameters::changed_proportion_constant(int v)
+{
+  mutation_parameters().proportion_constant(v/100.0f);
+  parameters_changed();
+}
+
+void DialogMutationParameters::changed_identity_supression(int v)
+{
+  mutation_parameters().identity_supression(v/100.0f);
+  parameters_changed();
+}
+
+/*! Disabling iterative nodes also supresses fractal nodes.
+ */
+void DialogMutationParameters::changed_iterative(int v)
+{
+  mutation_parameters().allow_iterative_nodes(v==2);
+
+  if (v!=2)
+    {
+      mutation_parameters().allow_fractal_nodes(false);
+      _checkbox_fractal->setChecked(false);
+    }
+
+  parameters_changed();
+}
+
+/*! Enabling fractal nodes also enables iterative nodes.
+ */
+void DialogMutationParameters::changed_fractal(int v)
+{
+  mutation_parameters().allow_fractal_nodes(v==2);
+
+  if (v==2)
+    {
+      mutation_parameters().allow_iterative_nodes(true);
+      _checkbox_iterative->setChecked(true);
+    }
+  parameters_changed();
+}
+

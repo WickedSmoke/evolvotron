@@ -38,6 +38,12 @@ class MutationParameters
    */
   mutable Random01 _r01;
 
+  //! Disables generation of (computationally intensive) iterative nodes.
+  bool _allow_iterative_nodes;
+
+  //! Disables generation of Mandelbrot & Julia set node types.
+  bool _allow_fractal_nodes;
+
   //! Specifies the magnitude of random changes to MutatableImageNodeConstant.
   float _magnitude;
 
@@ -49,6 +55,21 @@ class MutationParameters
 
   //! Specifies the probability of a random stub being inserted before a child.
   float _probability_insert;
+
+  //! Specifies the proportion of Constant nodes vs Position type nodes.
+  float _proportion_constant;
+
+  //! Specifies the probability of a using a MutatableImageNodePositionTransformed instead of MutatableImageNodePosition
+  float _identity_supression;
+
+  //! The maximum number of iterations an iterative function node can have initially.
+  uint _max_initial_iterations;
+
+  //! The probability of the number of iterations changing by plus or minus 1.
+  float _probability_iterations_change_step;
+  
+  //! The probability of the number of iterations changing by times or divide 2.
+  float _probability_iterations_change_jump;
   
  public:
   //! Trivial constructor.
@@ -75,6 +96,30 @@ class MutationParameters
     {
       return _r01();
     }
+
+
+  //! Accessor.
+  const bool allow_iterative_nodes() const
+    {
+      return _allow_iterative_nodes;
+    }
+  //! Accessor.
+  void allow_iterative_nodes(bool v) 
+    {
+      _allow_iterative_nodes=v;
+    }
+
+  //! Accessor.
+  const bool allow_fractal_nodes() const
+    {
+      return _allow_fractal_nodes;
+    }
+  //! Accessor.
+  void allow_fractal_nodes(bool v) 
+    {
+      _allow_fractal_nodes=v;
+    }
+
 
   //! Accessor.
   const float magnitude() const
@@ -120,6 +165,60 @@ class MutationParameters
       _probability_insert=v;
     }
 
+  //! Accessor.
+  const float proportion_constant() const
+    {
+      return _proportion_constant;
+    }
+  //! Accessor.
+  void proportion_constant(float v)
+    {
+      _proportion_constant=v;
+    }
+
+  //! Accessor.
+  const float identity_supression() const
+    {
+      return _identity_supression;
+    }
+  //! Accessor.
+  void identity_supression(float v)
+    {
+      _identity_supression=v;
+    }
+
+  //! Accessor.
+  const uint max_initial_iterations() const
+    {
+      return _max_initial_iterations;
+    }
+  //! Accessor.
+  void max_initial_iterations(uint v)
+    {
+      _max_initial_iterations=v;
+    }
+
+  //! Accessor.
+  const float probability_iterations_change_step() const
+    {
+      return _probability_iterations_change_step;
+    }
+  //! Accessor.
+  void probability_iterations_change_step(float v)
+    {
+      _probability_iterations_change_step=v;
+    }
+
+  //! Accessor.
+  const float probability_iterations_change_jump() const
+    {
+      return _probability_iterations_change_jump;
+    }
+  //! Accessor.
+  void probability_iterations_change_jump(float v)
+    {
+      _probability_iterations_change_jump=v;
+    }
 };
 
 #endif

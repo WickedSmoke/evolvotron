@@ -68,11 +68,19 @@ class MutatableImageNode
 
  public:
 
-  //! This returns a new random bit of tree.
-  static MutatableImageNode* stub(Random01& r01);
+  //! Returns true if the function is independent of it's position argument.
+  /*! This isn't used for optimisation (which would require MutatableImageNode to have state,
+      which would wreck plans for reference counted deepclone()), but to cull boring constant
+      images on creation.
+   */
+  virtual const bool is_constant() const
+    =0;
+
+  //! This returns a new random bit of tree.  Setting the "exciting" avoids basic node types, but only at the top level of the stub tree.
+  static MutatableImageNode* stub(const MutationParameters& parameters,bool exciting=false);
 
   //! This returns a vector of new random bits of tree.
-  static const std::vector<MutatableImageNode*> stubvector(Random01& r01,uint n);
+  static const std::vector<MutatableImageNode*> stubvector(const MutationParameters& parameters,uint n);
 
   //! Constructor.
   MutatableImageNode();
@@ -110,13 +118,17 @@ class MutatableImageNodeConstant : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+
+  //! Returns true if the function is independent of it's position argument (obviously always true in this case).
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeConstant(const XYZ& v);
 
   //! Destructor.
   virtual ~MutatableImageNodeConstant();
 
-  //! Return a mutated version of this node.
+  //! Mutate this node.
   virtual void mutate(const MutationParameters&);
 
   //! Returns a clone.
@@ -133,6 +145,10 @@ class MutatableImageNodePosition : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+
+  //! Returns true if the function is independent of it's position argument (obviously always false in this case).
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodePosition();
 
@@ -146,6 +162,82 @@ class MutatableImageNodePosition : public MutatableImageNode
   virtual MutatableImageNode*const deepclone() const;
 };
 
+//! This node type is intended as a substitute for MutatableImageNodePosition.  
+/*! This means the zero co-ordinate is generally mapped to something else, which should supress obviously origin-centred images.
+ */
+class MutatableImageNodePositionTransformed : public MutatableImageNode
+{
+ private:
+  XYZ _translate;
+  XYZ _basis_x;
+  XYZ _basis_y;
+  XYZ _basis_z;
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Returns true if the function is independent of it's position argument (obviously generally false in this case).
+  virtual const bool is_constant() const;
+
+  //! Constructor.
+  MutatableImageNodePositionTransformed(const XYZ& t,const XYZ& bx,const XYZ& bx,const XYZ& bz);
+
+  //! Destructor.
+  virtual ~MutatableImageNodePositionTransformed();
+
+  //! Change it a bit (except there's nothing to change in this case).
+  virtual void mutate(const MutationParameters&);
+
+  //! Returns a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! This node type is intended as a substitute for MutatableImageNodePositionTransformed.  
+class MutatableImageNodePositionTransformedQuadratic : public MutatableImageNode
+{
+ private:
+  XYZ _translate;
+  XYZ _basis_x;
+  XYZ _basis_y;
+  XYZ _basis_z;
+  XYZ _basis_xy;
+  XYZ _basis_xz;
+  XYZ _basis_yz;
+  XYZ _basis_xx;
+  XYZ _basis_yy;
+  XYZ _basis_zz;
+  
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Returns true if the function is independent of it's position argument (obviously generally false in this case).
+  virtual const bool is_constant() const;
+
+  //! Constructor.
+  MutatableImageNodePositionTransformedQuadratic
+    (
+     const XYZ& t,
+     const XYZ& bx,const XYZ& bx,const XYZ& bz,
+     const XYZ& bxy,const XYZ& bxz,const XYZ& byz,
+     const XYZ& bxx,const XYZ& byy,const XYZ& bzz
+     );
+
+  //! Destructor.
+  virtual ~MutatableImageNodePositionTransformedQuadratic();
+
+  //! Change it a bit (except there's nothing to change in this case).
+  virtual void mutate(const MutationParameters&);
+
+  //! Returns a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+
+
 //! This node implements XYZ to spherical co-ords
 class MutatableImageNodeXYZToSpherical : public MutatableImageNode
 {
@@ -156,6 +248,9 @@ class MutatableImageNodeXYZToSpherical : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeXYZToSpherical();
 
@@ -176,6 +271,9 @@ class MutatableImageNodeSphericalToXYZ : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeSphericalToXYZ();
 
@@ -196,6 +294,9 @@ class MutatableImageNodeSphericalize : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeSphericalize(const std::vector<MutatableImageNode*>& a);
 
@@ -216,6 +317,9 @@ class MutatableImageNodeRotate : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeRotate(const std::vector<MutatableImageNode*>& a);
 
@@ -236,6 +340,9 @@ class MutatableImageNodeSin : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeSin(const std::vector<MutatableImageNode*>& a);
 
@@ -256,11 +363,60 @@ class MutatableImageNodeCos : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeCos(const std::vector<MutatableImageNode*>& a);
 
   //! Destructor.
   virtual ~MutatableImageNodeCos();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! This node implements a linear spiral
+class MutatableImageNodeSpiralLinear : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
+  //! Constructor.
+  MutatableImageNodeSpiralLinear(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeSpiralLinear();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! This node implements a logarithmic spiral
+class MutatableImageNodeSpiralLogarithmic : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
+  //! Constructor.
+  MutatableImageNodeSpiralLogarithmic(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeSpiralLogarithmic();
 
   //! Return a clone.
   virtual MutatableImageNode*const deepclone() const;
@@ -275,6 +431,9 @@ class MutatableImageNodeGrad : public MutatableImageNode
   //! Implements this node's function.
   virtual const XYZ evaluate(const XYZ&) const;
   
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
  public:
   //! Constructor.
   MutatableImageNodeGrad(const std::vector<MutatableImageNode*>& a);
@@ -296,6 +455,9 @@ class MutatableImageNodeConcatenatePair : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeConcatenatePair(const std::vector<MutatableImageNode*>& a);
 
@@ -316,6 +478,9 @@ class MutatableImageNodeAdd : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeAdd(const std::vector<MutatableImageNode*>& a);
 
@@ -336,6 +501,9 @@ class MutatableImageNodeMultiply : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeMultiply(const std::vector<MutatableImageNode*>& a);
 
@@ -356,6 +524,9 @@ class MutatableImageNodeDivide : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeDivide(const std::vector<MutatableImageNode*>& a);
 
@@ -376,11 +547,38 @@ class MutatableImageNodeCross : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeCross(const std::vector<MutatableImageNode*>& a);
 
   //! Destructor.
   virtual ~MutatableImageNodeCross();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+
+//! This node implements geometric inversion of the a point in a sphere with an origin and radius given by child functions.
+class MutatableImageNodeGeometricInversion : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
+  //! Constructor.
+  MutatableImageNodeGeometricInversion(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeGeometricInversion();
 
   //! Return a clone.
   virtual MutatableImageNode*const deepclone() const;
@@ -396,6 +594,9 @@ class MutatableImageNodeMax : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeMax(const std::vector<MutatableImageNode*>& a);
 
@@ -416,6 +617,9 @@ class MutatableImageNodeMin : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeMin(const std::vector<MutatableImageNode*>& a);
 
@@ -436,6 +640,9 @@ class MutatableImageNodeMod : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeMod(const std::vector<MutatableImageNode*>& a);
 
@@ -457,6 +664,9 @@ class MutatableImageNodeConcatenateTriple : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeConcatenateTriple(const std::vector<MutatableImageNode*>& a);
 
@@ -476,6 +686,9 @@ class MutatableImageNodeReflect : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeReflect(const std::vector<MutatableImageNode*>& a);
 
@@ -495,6 +708,9 @@ class MutatableImageNodeMagnitudes : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeMagnitudes(const std::vector<MutatableImageNode*>& a);
 
@@ -515,6 +731,9 @@ class MutatableImageNodeChooseSphere : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodeChooseSphere(const std::vector<MutatableImageNode*>& a);
 
@@ -524,6 +743,30 @@ class MutatableImageNodeChooseSphere : public MutatableImageNode
   //! Return a clone.
   virtual MutatableImageNode*const deepclone() const;
 };
+
+//! This node implements selection between 2 functions based on whether a rectangle contains a point
+class MutatableImageNodeChooseRect : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
+  //! Constructor.
+  MutatableImageNodeChooseRect(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeChooseRect();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
 
 //! This node implements something like a 3D transform.
 class MutatableImageNodePreTransform : public MutatableImageNode
@@ -535,6 +778,9 @@ class MutatableImageNodePreTransform : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodePreTransform(const std::vector<MutatableImageNode*>& a);
 
@@ -555,11 +801,193 @@ class MutatableImageNodePostTransform : public MutatableImageNode
   virtual const XYZ evaluate(const XYZ&) const;
   
  public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
   //! Constructor.
   MutatableImageNodePostTransform(const std::vector<MutatableImageNode*>& a);
 
   //! Destructor.
   virtual ~MutatableImageNodePostTransform();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! Base class for iterative node types.
+/*! evaluate, is_constant and deepclone methods remain virtual.
+ */
+class MutatableImageNodeIterative : public MutatableImageNode
+{
+ private:
+
+ protected:
+  
+  //! Number of iterations performed (or maximum number).
+  uint _iterations;
+
+ public:
+  //! Constructor.
+  MutatableImageNodeIterative(const std::vector<MutatableImageNode*>& a,uint i);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeIterative();
+  
+  void mutate(const MutationParameters& parameters);
+};
+
+//! Repeatedly apply function to argument.
+class MutatableImageNodeIterativeMap : public MutatableImageNodeIterative
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
+  //! Constructor.
+  MutatableImageNodeIterativeMap(const std::vector<MutatableImageNode*>& a,uint i);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeIterativeMap();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! Accumulate function values as parameter is mapped
+class MutatableImageNodeIterativeMapAccumulator : public MutatableImageNodeIterative
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
+  //! Constructor.
+  MutatableImageNodeIterativeMapAccumulator(const std::vector<MutatableImageNode*>& a,uint i);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeIterativeMapAccumulator();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! Abstract base class for Mandelbrot and Julie sets.
+class MutatableImageNodeIterativeZSquaredPlusC : public MutatableImageNodeIterative
+{
+ protected:
+  //! Shared iteration code.
+  const uint iterate(const XYZ& z0,const XYZ& c) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodeIterativeZSquaredPlusC(const std::vector<MutatableImageNode*>& a,uint i);
+
+  //! Destructor;
+  ~MutatableImageNodeIterativeZSquaredPlusC();
+};
+
+//! Do Mandelbrot Set test to choose between two functions.
+class MutatableImageNodeIterativeMandelbrotChoose : public MutatableImageNodeIterativeZSquaredPlusC
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
+  //! Constructor.
+  MutatableImageNodeIterativeMandelbrotChoose(const std::vector<MutatableImageNode*>& a,uint i);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeIterativeMandelbrotChoose();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! Do Mandelbrot Set returning co-ordinate filled with normalised iterations, or -1 in set.
+class MutatableImageNodeIterativeMandelbrotContour : public MutatableImageNodeIterativeZSquaredPlusC
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
+  //! Constructor.
+  MutatableImageNodeIterativeMandelbrotContour(const std::vector<MutatableImageNode*>& a,uint i);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeIterativeMandelbrotContour();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! Do Julia test to choose between two functions.
+/*! Julia set parameter is picked up from an extra argument c.f Mandelbrot
+ */
+class MutatableImageNodeIterativeJuliaChoose : public MutatableImageNodeIterativeZSquaredPlusC
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
+  //! Constructor.
+  MutatableImageNodeIterativeJuliaChoose(const std::vector<MutatableImageNode*>& a,uint i);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeIterativeJuliaChoose();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! Do Julia set returning co-ordinate filled with normalised iterations, or -1 in set.
+/*! Julia set parameter is picked up from an extra argument c.f Mandelbrot
+ */
+class MutatableImageNodeIterativeJuliaContour : public MutatableImageNodeIterativeZSquaredPlusC
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Query whether node value is independent of position argument.
+  virtual const bool is_constant() const;
+
+  //! Constructor.
+  MutatableImageNodeIterativeJuliaContour(const std::vector<MutatableImageNode*>& a,uint i);
+
+  //! Destructor.
+  virtual ~MutatableImageNodeIterativeJuliaContour();
 
   //! Return a clone.
   virtual MutatableImageNode*const deepclone() const;

@@ -144,6 +144,9 @@ class MutatableImageDisplay : public QWidget
   //! Evolvotron main calls this with completed (but possibly aborted) tasks.
   void deliver(MutatableImageComputerTask* task);
 
+  //! Set the lock state.
+  void lock(bool l);
+
  protected:
   //! Usual handler for repaint events.
   virtual void paintEvent(QPaintEvent* event);

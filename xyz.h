@@ -147,8 +147,21 @@ class XYZ : public Tuple<3,float>
   //! Normalise this vector.
   void normalise();
 
+  //! Returns true if an origin centred cuboid with this vectors semi-axes contains the argument.
+  const bool origin_centred_rect_contains(const XYZ& p) const
+    {
+      return (-x()<=p.x() && p.x()<=x() && -y()<=p.y() && p.y()<=y() && -z()<=p.z() && p.z()<=z()); 
+    }
+
   //! Write the vector.
   std::ostream& write(std::ostream&) const;
+
+  //! Helper for common case of creating an instance filled with a common value.
+  static const XYZ fill(float v)
+    {
+      return XYZ(Tuple<3,float>::fill(v));
+    }
+
 };
 
 //! Cross product.

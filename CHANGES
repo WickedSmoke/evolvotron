@@ -1,16 +1,21 @@
-From release 0.0.0:
- - Bump version to 0.0.1
- - Add volatile to inter-thread communication flags
- - Added a few more image node function types
- - Add "spawn_recoloured"
- - Add "spawn_warped"
+[Most recent at top]
 
-From release 0.0.1:
- - Bump version to 0.0.2
- - Switch to QMainWindow base in anticipation of toolbar.
- - Save as PPM or PNG
- - Scrollable fixed-size image "Big" windows.
- - Improvements to app response under load.
+From release 0.0.3:
+ - Bump version to 0.0.4
+ - More interesting start up functions
+ - More functions (e.g rotation and spirals, geometric inverse, iterated fns, fractals...)
+ - Controls to enable/disable expensive/ugly iterative and fractal functions (default off).
+ - Fix dumb bug in xy range of image
+   (makes everything generally behave a lot better; most noticeable with warp)
+ - "Identity supression" control which helps eliminate/reduces obvious origin centering.
+ - "Proportion constant" control (doesn't seem to have that much effect).
+ - Separate reset/restart functionality (reset also resets mutation parameters).
+ - Move Cool/Shield buttons to be adjacent (commonly used together).
+ - "is_constant" query method used to eliminate boring constant images.
+ - x&y co-ordinate alignment fixed (not something users would notice)
+ - Spawn warped made less messy: just generates translate/scale/rotate... no shearing.
+ - Reset clears locks / restart doesn't
+ - Gratuitously templatized tuple/matrix class added to help geometric transforms.
 
 From release 0.0.2:
  - Bump version to 0.0.3
@@ -21,5 +26,17 @@ From release 0.0.2:
  - "Insert" mutation type.
  - "Undo" functionality.
 
-From release 0.0.3:
- - Bump version to 0.0.4
+From release 0.0.1:
+ - Bump version to 0.0.2
+ - Switch to QMainWindow base in anticipation of toolbar.
+ - Save as PPM or PNG
+ - Scrollable fixed-size image "Big" windows.
+ - Improvements to app response under load.
+
+From release 0.0.0:
+ - Bump version to 0.0.1
+ - Add volatile to inter-thread communication flags
+ - Added a few more image node function types
+ - Add "spawn_recoloured"
+ - Add "spawn_warped"
+

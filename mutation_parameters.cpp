@@ -24,10 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 MutationParameters::MutationParameters(uint seed)
   :_r01(seed)
-  ,_magnitude(0.0)
-  ,_probability_glitch(0.0)
-  ,_probability_shuffle(0.0)
-  ,_probability_insert(0.0)
 {
   reset();
 }
@@ -37,9 +33,23 @@ MutationParameters::~MutationParameters()
 
 void MutationParameters::reset()
 {
+  // Leave these off by default because they're slow
+  _allow_iterative_nodes=false;
+
+  // Leave these off by default because they're ugly
+  _allow_fractal_nodes=false;
+
   _magnitude=0.5;
   
   _probability_glitch=0.02;
   _probability_shuffle=0.02;
   _probability_insert=0.02;
+
+  _proportion_constant=0.5;
+  _identity_supression=1.0;
+
+  //! \todo Could do with _max_initial_iterations being higher (64?) but it slows things down.
+  _max_initial_iterations=16;
+  _probability_iterations_change_step=0.25;
+  _probability_iterations_change_jump=0.02;
 }

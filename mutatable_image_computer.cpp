@@ -81,14 +81,18 @@ void MutatableImageComputer::run()
 		
 		  // xy co-ords vary over -1.0 to 1.0
 		  const XYZ p(
-			      -1.0+2.0*(r+0.5)/height,
-			      1.0-2.0*(c+0.5)/width,
+			      -1.0+2.0*(c+0.5)/width,
+			       1.0-2.0*(r+0.5)/height,
 			      0.0
 			      );
 		  
 		  // Actually calculate a pixel value from the image.
 		  // Scale nominal -1.0 to 1.0 range to 0-255
-		  XYZ v(127.5*((*(task()->image()))(p)+XYZ(1.0,1.0,1.0)));
+
+		  const MutatableImageNode*const image_root=task()->image();
+		  const XYZ pv((*image_root)(p));
+
+		  XYZ v(127.5*(pv+XYZ(1.0,1.0,1.0)));
 		  
 		  // Clamp out of range values.
 		  v.x(clamped(v.x(),0.0f,255.0f));

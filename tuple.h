@@ -26,7 +26,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "useful.h"
 
 //! Class to hold a fixed size tuple of elements
-/*! Maybe Array would have been a better name
+/*! Maybe Array would have been a better name.
+  NB No destructor defined because gcc generates less efficient code for matrices.
  */
 template <uint N,class T> class Tuple
 {
@@ -87,6 +88,7 @@ template <uint N,class T> class Tuple
 	_element[i]*=k;
     }
 
+  //! Write method (delimits with curly braces, elements are whitespace separated).
   std::ostream& write(std::ostream& out) const
     {
       out << "{";
@@ -98,6 +100,14 @@ template <uint N,class T> class Tuple
       return out;
     }
 
+  //! Helper for common case of creating an instance filled with a common value.
+  static const Tuple<N,T> fill(T v)
+    {
+      Tuple<N,T> ret;
+      for (uint i=0;i<N;i++)
+	ret[i]=v;
+      return ret;
+    }
 };
 
 //! Equality operator.

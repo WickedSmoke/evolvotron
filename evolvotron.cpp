@@ -47,7 +47,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 int main(int argc,char* argv[])
 {
   // Call test of matrix functionality
-  testmatrix();
+  //testmatrix();
 
   QApplication app(argc,argv);
 
@@ -86,7 +86,7 @@ int main(int argc,char* argv[])
   std::cerr << "Commencing main loop...\n";
 
   // NB Do this here rather than in constructor so that compute threads aren't being fired off during general GUI set-up
-  main_widget->reset();
+  main_widget->reset_cold();
 
   return app.exec();
 }

@@ -1,18 +1,34 @@
+- Add control over MutatableImageNodePositionTransformedQuadratic vs MutatableImageNodePositionTransformed proportions
+  (part of rationalising all of function selection)
+- Warp should maybe scale differently in different directions.
+- Add "standard" configure step.
+- Command line option to enable/disable fractal and iterative types.
+- Replace "Lock" with a "save" or "put-aside" window (could make history/undo simpler).
 - "Unlock all" on edit menu
+- More iterative functions (e.g average along a segment between two co-ordinates).
+- More functions (reflection from environment, Perlin noise).
+- Create registry of all function node types
+  - use to bring up a panel for setting relative frequencies (check for exploding branching ratios)
+  - Allow iterative/allow fractal would then become convenience buttons for quick-setting a whole group of frequencies
+- Reset & Restart should bring up modal "are you sure" dialog box which can also contain check boxes for what to reset:
+    mutation parameters
+    function freqencies (when implemented)
+    locked displays
+- Quit should bring up "are you sure" dialog.
+- Option to increase number of iterations of certain types of iterative node in an image (i.e "accuracy")
+  (probably makes sense for Mandelbrot/Julia or a sampling blur where it just increases the detail, 
+  but less useful for repeated function map).
 - Undo needs to restore _last_spawned too
 - "Move all locked to start" on edit menu
   (or move them to a "safe area", or save them in reloadable form).
-- Restart should honour lock (2 kinds of restart ?  Dialog choice ?)
 - Save whole grid as a single image (from File menu).
-- More functions 
-- Option to reduce/elimintate position (identity) nodes to avoid blatantly centred images.
-  (Introduce an atomic transform type).
 - Context menu option to bring up info about an image
   (in particular number of nodes and max depth)
 - Reference counting for images
-  (far too much deepcloning currently; e.g to tasks and history)
+  (far too much deepcloning currently; e.g to tasks and history).
+  But if it ain't broken don't fix it.
 - Use hourglass cursor over displays which haven't got final high resolution yet ?
-  (Need combined hourglass/pointer but Qt doesn't have one built in).
+  (Need combined hourglass/pointer cursor but Qt doesn't have one built in).
 - Computing zero co-ordinate sometimes gives unusual output (black lines across images).
   Avoid by jittering co-ordinate (would break up jaggies), or just avoid exact zero ?
 - Why stop at screen resolution ? Antialiasing by supersampling.
@@ -31,3 +47,8 @@
   (probably wanted for autocool).
 - Evolve other things e.g parameters of celluar automata/reaction diffusion equations/iterated function systems.
 - Maybe lock status of a display should be stored in undo history too.
+- Rationalise MutatableImageNode::stub so more work is done by Node constructors
+  (just pass in a MutationParameters).  Have to keep existing ctor. form for deepclone though.
+- Special reset which uses iterative types to set up nothing but Mandelbrot/Julia-set type functions.
+- Generalise "parameters" along with "args".
+- Avoid misleading moire patterns by jittering

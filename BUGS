@@ -1,9 +1,14 @@
 Known bugs:
 
-  - Recolour behaves strangely sometimes
-    (e.g spawns all-black images or subtly warped images)
-    Suspect buggy deepclone or similar.
+  - Undo doesn't work properly for much except undoing an immediately previous Spawn
+    (e.g undoing a single-image respawn undoes too much).
 
-  - Segv once observed on attempting a resize immediately on app startup.
+  - Recolour behaves strangely sometimes (?)
+    (e.g spawns all-black images or subtly warped images)
+
+  - Segv once observed on attempting to resize immediately on app startup.
     Never suceeded in reproducing this.
+
+  - Moire patterns mean small images can show structures not actually present in larger resolution versions.
+
 

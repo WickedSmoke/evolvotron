@@ -262,8 +262,15 @@ class EvolvotronMain : public QMainWindow
   void undo();
 
  public slots:
+   
   //! Signalled by menu item.  Public because called from evolvotron app wrapper.
-  void reset();
+  void reset(bool reset_mutation_parameters,bool reset_locks);
+ 
+ //! Forwards to reset(false)
+ void reset_warm();
+ 
+ //! Forwards to reset(true)
+ void reset_cold();
 };
 
 #endif
