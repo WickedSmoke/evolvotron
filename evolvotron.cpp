@@ -36,6 +36,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <qapplication.h>
 
+#include "args.h"
+
 #include "evolvotron_main.h"
 
 //! Application code
@@ -43,12 +45,34 @@ int main(int argc,char* argv[])
 {
   QApplication app(argc,argv);
 
-  //! \todo: Use getopt to pick up size arguments
+  Args args(argc,argv);
+
+  uint rows=6;
+  uint cols=8;
+  uint threads=2;
+
+  if (args.option("-g")) args.after() >> cols >> rows;
+  
+  if (args.option("-t")) args.after() >> threads;
+
+  std::cerr << "Starting with " << cols << " by " << rows << " display cells and " << threads << " compute threads\n";
+
+  if (threads<1)
+    {
+      std::cerr << "Must specify at least one compute thread (option: -t <threads>)\n";
+      exit(1);
+    }
+
+  if (cols*rows<2)
+    {
+      std::cerr << "Must be at least 2 display grid cells (options: -g <cols> <rows>)\n";
+      exit(1);
+    }
 
   // Columns, rows, threads
-  EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(8,6),2);
+  EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),threads);
 
-  main_widget->resize(800,600);
+  //main_widget->resize(800,600);
 
   app.setMainWidget(main_widget);
   main_widget->show();

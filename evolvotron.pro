@@ -5,6 +5,7 @@ CONFIG+= qt thread release
 
 # Input
 HEADERS += \
+        args.h \
 	dialog_about.h \
 	license.h \
 	mutatable_image.h \
@@ -19,6 +20,7 @@ HEADERS += \
 	xyz.h
 
 SOURCES += \
+        args.cpp \
 	dialog_about.cpp \
 	license.cpp \
 	mutatable_image.cpp \

@@ -14,5 +14,6 @@
 - Separate tool to evolve images towards a given image.  How close would it get ?  Would the process of getting there be interesting ?
 - Compute farms on multiple remote machines.
 - Tasks should be a tile of an image.
+- Menu options to add/remove rows/columns from display grid
 
 

@@ -47,8 +47,12 @@ USAGE
 =====
 You will need a fast machine, or patience.
 
-On starting the app, a grid of images is displayed.
-(grid size not yet under command line control sorry).
+Command line options:
+  -geometry <rows>x<cols> : usual X option to set on-screen size
+  -g <rows> <cols> : sets number of image display cells (defaults 8 by 6)
+  -t <threads> : sets number of compute threads (defaults to 2)
+
+On starting the app, a grid of images is displayed.  (You'll probably want to resize it to be larger).
 
 Repeat the following until bored:
  - Click (singleclick) on an image you like to 
