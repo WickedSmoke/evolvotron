@@ -300,3 +300,15 @@ which deletes everything except the doc directory.
 Do 
   make realclean
 to get rid of everything including the doc directory.
+
+THANKS
+======
+Thanks to
+  Dmitry Kirsanov
+  Jonathan Melhuish
+  Karl Robillard
+for feedback and suggestions.
+
+And to the participants in a SIGGRAPH conference panel many
+years ago who first got me interested in this kind of thing.
+

@@ -1,7 +1,13 @@
+- Big images should be able to create Big images.
 - Shift middle mouse drag should be safer
   (compute zoom using radial motion only)
 - Use shift-alt for unsafe zoom
 - Use ctrl for rotate
+- Load/save to XML file.
+- Pure command line tools to mutate a saved file (generates more xml files from an xml file)
+  and render a saved file (generates image file from an xml file).
+- Web front end to command line tools to run an evolvotron web-server.
+- Command line option for border around images... indicate locked status.
 - Maybe add "view" menu: like warp but just applying to current image
   (would need explicit control over amounts: maybe above approach better ?).
 - Last method used should point to an object encapsulating the behaviour
@@ -68,6 +74,8 @@
     Insert one image at a random point into the other.
     Concatenate the 2 images.
 - Compute volumes in Z direction.
-  Use time as z co-ordinate.
-- No low-res images option for when using remotely over slow link
+  Oscillate z co-ordinate with time.
+- No low-res images option for when using remotely via X11 over slow link
   (they take longer to display than compute).
+
+
