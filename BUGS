@@ -2,7 +2,7 @@ Known bugs:
 
   - Resizing the evolvotron window queues up crazy numbers of tasks.
     This didn't matter too much in 2D mode, but with animations the memory reserved
-    for the task's render target is considerably larger. 
+    for each task's render target is considerably larger. 
 
   - Undo doesn't always work how you'd expect
     - better than it used to be though
@@ -10,12 +10,13 @@ Known bugs:
   - Undo and lock don't interact well.
     (Solution: make lock a property of images, not displays).
 
-  - Recolour behaves strangely sometimes (?)
-    (e.g spawns all-black images or subtly warped images)
-    Not seen recently.
-
   - Moire patterns mean small images can show structures
     not actually present in larger resolution versions.
 
   - Once image colours become saturated there's not much which will cause
-    them to scale back down to sensible ranges.
+    them to scale back down to sensible ranges, unless you're lucky
+
+  - Recolour behaves strangely sometimes (?)
+    (e.g spawns all-black images or subtly warped images)
+    Not seen recently.
+

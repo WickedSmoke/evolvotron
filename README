@@ -43,7 +43,7 @@ BUILDING
 There's no reason it shouldn't work on any platform with a correctly
 set up qmake.
  
-You do NOT need to be root until the (optional) install stage.
+You do NOT need to be root until the (optional) final install stage.
 
 In the top level directory, you can either do the "traditional"
 
@@ -56,7 +56,7 @@ or just have both done for you by doing
 
 [Note that BUILD also adds $QTDIR/bin to the path while it runs the commands,
 and is probably the easiest way to build if your PATH doesn't include a directory
-containing qmake.]
+containing qmake and you like it that way.]
 
 Make will recurse into and build the libevolvotron directory
 (which is 99% of the work) and some additional subdirectories with executables.
@@ -72,7 +72,8 @@ Short story:
 
 1. Check you have your QTDIR environment variable defined correctly.
 2. Check your PATH will find qmake (i.e do "which qmake") 
-   (adding $QTDIR/bin to your path will fix this on most distros).
+   (adding $QTDIR/bin to your path will fix this on most distros; note that
+   the BUILD script does this while it runs).
 
 Long story:
 
@@ -118,9 +119,9 @@ If you can fix it, the patches would be even better!
 BUILD OPTIONS
 =============
 qmake's default optimisation settings are pretty conservative
-(-O2, i386 instructions, i686 timings).  There are some overrides
-modifying QMAKE_CXXFLAGS_RELEASE near the start of common.pro. 
-If you change them, do "make distclean" and ./BUILD to ensure `
+(-O2, i386 instructions, i686 timings on RedHat).  There are some
+overrides modifying QMAKE_CXXFLAGS_RELEASE near the start of common.pro. 
+If you change them, do "make distclean" and ./BUILD to ensure
 Makefiles are rebuilt.
 
 Here's the times for a 2.4GHz P4 to run a 2048x2048 evolvotron_render
@@ -133,7 +134,8 @@ Here's the times for a 2.4GHz P4 to run a 2048x2048 evolvotron_render
    add arch/cpu -> -march=pentium4 -mfpmath=sse -msse2      23.6s
    add -finline-limit=4000                                  19.4s
 (but that last one involves a 32m build time (!!!), cf ~2m for the others)
-[This was done a while ago; things have probably changed a bit especially from version ~0.2.1]
+[This was done a while ago; things have probably changed a bit, especially after
+version 0.2.0]
 
 BUILDING ON OTHER PLATFORMS
 ===========================
@@ -153,7 +155,6 @@ Paolo Greppi built it on OSX like this:
         setenv QTDIR /usr/local/qt
         setenv PATH $QTDIR/bin:$PATH
         setenv DYLD_LIBRARY_PATH $QTDIR/lib
-
  - modify the Makefile in evolvotron adding -lqt-mt at the end of LIBS
  - cd libevolvotron
    mv mutatable_image_computer_farm.c mutatable_image_computer_farm.cpp
@@ -168,7 +169,7 @@ Doing
   make install
 will attempt to install the executable in the INSTALLPATH directory defined in
 common.pro.  This is set to ~/bin by default (which will give you a "personal
-install" of evolvotron assuming you have such a directory in your path).
+install" of evolvotron assuming you have such a directory in your PATH).
 If you change INSTALLPATH to /usr/local/bin then you'll need to "su" before
 the make install.
 
@@ -190,15 +191,17 @@ There are no extra supporting files which need to be in special places.
 USAGE
 =====
 
-You will need a fast machine, or patience.
-(A little more performance can be obtained from messing with the compile flags:
-see the BUILD OPTIONS section above).
+For the default 2D image mode, you will need a fast machine or patience.
+For the optional animation mode, you will need both.
+(If you're desperate, a little more performance can be obtained by
+messing with the compile flags: see the BUILD OPTIONS section above).
 
 On starting the application, a grid of images is displayed.
 (For some reason the default size is quite small: you'll 
-probably want to resize/fullscreen the window to be larger).
+probably want to resize/fullscreen the window to be larger.
+On the other hand, small is faster).
 
-Repeat the following until bored:
+Simply repeat the following until bored:
  - Click (singleclick) on an image you like to 
    spawn the next generation of its mutant offspring.
  - Wait until variations on it are regenerated in sufficient 
@@ -209,6 +212,10 @@ If you select a uniform image, you may get stuck in a degenerate zone with
 little to mutate and therefore little chance of escape to a more interesting
 area.  You can always reset/restart from the "File" menu (the difference is
 that "reset" also resets the mutation parameters to their default values).
+Selecting one of the "warp" options from the contect menu (right-click on
+an image) can also help by introducing an additional opportunity for
+mutation on subsequent spawns.
+
 Note that spirals, grids and tiles, although complex looking, are actually
 implemented by a single function node and may leave you stuck too.
 
@@ -218,7 +225,7 @@ COMMAND LINE OPTIONS
 USER OPTIONS
 ------------
   -geometry <width>x<height>
-	- The usual Qt/X option to set on-screen size in pixels
+	- The usual Qt/X11 option to set on-screen size in pixels
 
   -g <rows> <cols>
 	- Sets number of image display cells (defaults to 7 by 5)
@@ -258,7 +265,7 @@ DEBUGGING/POWER-USER OPTIONS
 
 Note that you can also specify iterative & fractal function types as an argument to -x/-X,
 even though they are disabled by default in the mutation parameters.
-	 
+
 MOUSE CONTROL
 ============= 
 
@@ -270,6 +277,7 @@ Right clicking on an image gets you a few more options:
    to produce it).
    The main use of this is to make your grid of images look nice
    for screendumps, by regenerating any which aren't up to scratch.
+   NB May not work as expected after an "undo".
  - "Spawn" is the same as clicking an image.  It generates mutated
    images to all unlocked images in the grid.
  - "Recolour" to produce different coloured variants of the selected image
@@ -297,7 +305,7 @@ Right clicking on an image gets you a few more options:
 
 MIDDLE MOUSE BUTTON
 -------------------
-[NB This feature will probably only be usable by those with multi-GHz machines].
+[NB This feature will probably only be of practical use to those with multi-GHz machines].
 
 You can use the middle mouse button to drag-adjust individual images.
 This is useful for "final composition" type tweaks, e.g centering an
@@ -396,7 +404,7 @@ inserted in each filename before the filetype qualifier.
 This is a bit awkward, but is a consequence of Qt lacking
 support for saving movie format files, so I suggest
 you use the ImageMagick tools to convert to a more usable
-format for now.
+format (GIF or MNG) for now.
 
 For example, if you enter foo.ppm as the filename to save,
 files foo.f000000.ppm, foo.f000001.ppm... will be saved.
@@ -414,7 +422,7 @@ with time when animating).
 
 The image functions are constructed from trees of function nodes.
 (In the mathematical expression 1+(2*x) the "+" and the "*" would
-be function nodes.)  Evolvotron's nodes tend to correspond to
+be function nodes.)  Evolvotron's functions tend to correspond to
 geometric or colour-space operations or anything else which can be
 applied to a 3D vector.
 
@@ -508,7 +516,7 @@ FUTURE DEVELOPMENTS
 Check the TODO file first before you send me suggestions!
 
 Please don't ask me to port evolvotron to Windows.
-You are of course free to do so yourself, but please reed
+You are of course Free to do so yourself, but please reed
   http://www.fefe.de/nowindows/ 
 first.
 
@@ -545,8 +553,8 @@ predecessors developed on and off over a decade since I first came across
 the idea, are an attempt to compensate for this using the skills I do have 
 i.e some mathematical sensibility and the ability to write working code
 (well, sometimes).  If you like an image it produces, then as far as
-I'm concerned that's as satisfying a result as if I'd drawn it myself
-in ink or paint.
+I'm concerned that's as satisfying a result as if you liked something
+I'd drawn myself.
 
 Tim
 

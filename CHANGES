@@ -5,7 +5,8 @@ From release 0.2.0:
  - Display (not compute) priority to higher resolution images
    (saves time enlarging low res images unnecessarily)
  - Blank images on replacement (above change makes this more necessary)
- - x and -X command line options to specify specifc top level function types.
+ - Round-robin dispatch of done tasks to displays means redisplay more balanced.
+ - -x and -X command line options to specify specifc top level function types.
  - FunctionKaleidoscope*, FunctionWindmill*, FunctionSeparateZ added.
  - More iterative functions also added: FunctionStreak Function*Ring
  - Added -f <frames> option to evolvotron_render
