@@ -2,7 +2,7 @@
 # qmake should NOT be executed on this file directly
 
 # append debug or debug
-CONFIG+= qt thread debug
+CONFIG+= qt thread release
 
 ##################
 # Set install path.
