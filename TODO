@@ -6,6 +6,8 @@
   (Need combined hourglass/pointer but Qt doesn't have one built in).
 - Computing zero co-ordinate sometimes gives unusual output (black lines across images).  Avoid by jittering co-ordinate ?
   (Would break up jaggies).  Could even do super-resolution tasks for sampled anti-aliasing.
-
+- "Big" should have fixed size options (with scrollbars)
+- Have a function type which can suck in random images from directories of images (specify by environmental variable ?)
+- Separate tool to evolve images towards a given image.  How close would it get ?  Would the process of getting there be interesting ?
 
 

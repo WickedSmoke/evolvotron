@@ -34,6 +34,7 @@ extern "C"
 #include <qmenubar.h>
 #include <qstatusbar.h>
 #include <qvbox.h>
+#include <qmainwindow.h>
 #include <qgrid.h>
 #include <qtimer.h>
 
@@ -46,7 +47,7 @@ extern "C"
 #include "mutation_parameters.h"
 
 //! Top level GUI component for evolvotron application
-class EvolvotronMain : public QVBox
+class EvolvotronMain : public QMainWindow
 {
  private:
   Q_OBJECT

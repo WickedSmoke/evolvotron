@@ -34,7 +34,7 @@ DialogAbout::DialogAbout(QWidget* parent)
 
   // This should be the ONLY place a release number appears (other than CHANGES and the tar file name).  
   // I can't be doing with changing release numbers in a zillion places... one ALWAYS gets missed.
-  _label=new QLabel("\nEvolvotron 0.0.1\n\nAuthor: timday@timday.com\n\nHome page: http://evolvotron.sourceforge.net\n\nProject page: http://sourceforge.net/projects/evolvotron\n\nLicense:",_vbox);
+  _label=new QLabel("\nEvolvotron 0.0.2\n\nAuthor: timday@timday.com\n\nHome page: http://evolvotron.sourceforge.net\n\nProject page: http://sourceforge.net/projects/evolvotron\n\nLicense:",_vbox);
   _label->setAlignment(Qt::AlignHCenter|_label->alignment());
   
   _license=new QTextEdit(_vbox);

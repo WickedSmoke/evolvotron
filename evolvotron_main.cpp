@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*! Constructor sets up GUI components and fires up QTimer.
  */
 EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_threads)
-  :QVBox(parent)
+  :QMainWindow(parent)
    ,_statusbar_tasks(0)
    ,_mutation_parameters(time(0),0.5,0.05,0.05)
 {
@@ -56,8 +56,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
   _statusbar->message("Ready");
 
   // We need to make sure the display grid gets all the space it can
-  setStretchFactor(_grid,1);
-  setStretchFactor(_statusbar,0);
+  setCentralWidget(_grid);
 
   _timer=new QTimer(this);
 
@@ -150,7 +149,7 @@ void EvolvotronMain::spawn_warped(MutatableImageDisplay* spawning_display)
 	  std::vector<MutatableImageNode*> args;
 
 	  // NB We don't generate any z co-ordinates so the random transform remains in the image plane.
-	  // (completely random transforms mostly look to dissimilar; they are different slices of the 3D image volume)
+	  // (completely random transforms mostly look too dissimilar; they are different slices of the 3D image volume)
 	  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),1.0)));
 	  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),2.0)));
 	  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),2.0)));
