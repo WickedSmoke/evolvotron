@@ -36,7 +36,7 @@
 //! Sane modulus function always returning a number in the range [0,y)
 inline float modulusf(float x,float y)
 {
-  if (y<0) y=-y;
+  if (y<0.0f) y=-y;
   float r=fmod(x,y);
   if (r<0.0f) r+=y;
   return r;
@@ -49,6 +49,16 @@ inline uint modulusi(int x,int y)
   int r=x%y;
   if (r<0) r+=y;
   assert(r>=0);
+  return r;
+}
+
+//! Triangle function: like modulus, but ramps down instead of discontinuity at y
+inline float trianglef(float x,float y)
+{
+  if (y<0.0f) y=-y;
+  if (x<0.0f) x=-x;
+  float r=fmod(x,2.0f*y);
+  if (r>y) r=2.0f*y-r;
   return r;
 }
 
@@ -1105,6 +1115,7 @@ class FunctionReflect : public Function
       const float distance_from_plane=(pos-pt_in_plane)%normal;
       
       // If pos is on the wrong side of the plane, reflect it over
+      // Check: normal (0,0,1), pos (0,0,-1) => distance -1, pos-=(2*-1)*(0,0,1) => pos-=(0,0,-2)
       if (distance_from_plane<0.0)
 	{
 	  pos-=(2.0*distance_from_plane)*normal;
@@ -1121,6 +1132,88 @@ class FunctionReflect : public Function
 };
 
 REGISTER(FunctionReflect);
+
+//------------------------------------------------------------------------------------------
+
+//! Implements reflection of sampling point about multiple planes
+class FunctionKaleidoscope : public Function
+{
+ public:
+  //! One parameter.
+  static const uint parameters()
+    {
+      return 1;
+    }
+
+  //! One argument.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const uint n=2+static_cast<uint>(floor(8.0f*fabs(our.param(0))));
+
+      const float a=atan2(p.x(),p.y());
+      const float r=sqrt(p.x()*p.x()+p.y()*p.y());
+      
+      const float sa=trianglef(a,M_PI/n);
+
+      const XYZ s(r*sin(sa),r*cos(sa),p.z());
+      return our.arg(0)(s);
+    }
+  
+  //! Is constant if sampled function is
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionKaleidoscope);
+
+//------------------------------------------------------------------------------------------
+
+//! Implements reflection of sampling point about multiple planes
+class FunctionWindmill : public Function
+{
+ public:
+  //! One parameter.
+  static const uint parameters()
+    {
+      return 1;
+    }
+
+  //! One argument.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const uint n=1+static_cast<uint>(floor(8.0f*fabs(our.param(0))));
+
+      const float a=atan2(p.x(),p.y());
+      const float r=sqrt(p.x()*p.x()+p.y()*p.y());
+      
+      const float sa=modulusf(a,M_PI/n);
+
+      const XYZ s(r*sin(sa),r*cos(sa),p.z());
+      return our.arg(0)(s);
+    }
+  
+  //! Is constant if sampled function is
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionWindmill);
 
 //------------------------------------------------------------------------------------------
 

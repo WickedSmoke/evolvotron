@@ -63,16 +63,16 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
   const float base=0.7;
 
-  uint steps=61;
+  uint steps=63;
 
   if (!parameters.allow_fractal_nodes())
     {
-      steps=minimum(steps,57u);     // Currently 4 fractal types
+      steps=minimum(steps,59u);     // Currently 4 fractal types
     }
 
   if (!parameters.allow_iterative_nodes())
     {
-      steps=minimum(steps,51u);     // Currently 6 non-fractal iterative types (including multiscale noise - not strictly iterative but expensive)
+      steps=minimum(steps,53u);     // Currently 6 non-fractal iterative types (including multiscale noise - not strictly iterative but expensive)
     }
 
   const float step=(1.0-base)/steps;
@@ -133,84 +133,88 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   else if (r<base+21*step) 
     return FunctionNodeUsing<FunctionReflect>::stubnew(parameters);
   else if (r<base+22*step) 
-    return FunctionNodeUsing<FunctionMagnitude>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionKaleidoscope>::stubnew(parameters);
   else if (r<base+23*step) 
-    return FunctionNodeUsing<FunctionMagnitudes>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionWindmill>::stubnew(parameters);
   else if (r<base+24*step) 
-    return FunctionNodeUsing<FunctionChooseSphere>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionMagnitude>::stubnew(parameters);
   else if (r<base+25*step) 
-    return FunctionNodeUsing<FunctionChooseRect>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionMagnitudes>::stubnew(parameters);
   else if (r<base+26*step) 
-    return FunctionNodeUsing<FunctionChooseFrom2InCubeMesh>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionChooseSphere>::stubnew(parameters);
   else if (r<base+27*step) 
-    return FunctionNodeUsing<FunctionChooseFrom3InCubeMesh>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionChooseRect>::stubnew(parameters);
   else if (r<base+28*step) 
-    return FunctionNodeUsing<FunctionChooseFrom2InSquareGrid>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionChooseFrom2InCubeMesh>::stubnew(parameters);
   else if (r<base+29*step) 
-    return FunctionNodeUsing<FunctionChooseFrom3InSquareGrid>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionChooseFrom3InCubeMesh>::stubnew(parameters);
   else if (r<base+30*step) 
-    return FunctionNodeUsing<FunctionChooseFrom2InTriangleGrid>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionChooseFrom2InSquareGrid>::stubnew(parameters);
   else if (r<base+31*step) 
-    return FunctionNodeUsing<FunctionChooseFrom3InTriangleGrid>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionChooseFrom3InSquareGrid>::stubnew(parameters);
   else if (r<base+32*step) 
-    return FunctionNodeUsing<FunctionChooseFrom3InDiamondGrid>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionChooseFrom2InTriangleGrid>::stubnew(parameters);
   else if (r<base+33*step) 
-    return FunctionNodeUsing<FunctionChooseFrom3InHexagonGrid>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionChooseFrom3InTriangleGrid>::stubnew(parameters);
   else if (r<base+34*step) 
-    return FunctionNodeUsing<FunctionChooseFrom2InBorderedHexagonGrid>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionChooseFrom3InDiamondGrid>::stubnew(parameters);
   else if (r<base+35*step) 
-    return FunctionNodeUsing<FunctionOrthoSphereShaded>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionChooseFrom3InHexagonGrid>::stubnew(parameters);
   else if (r<base+36*step) 
-    return FunctionNodeUsing<FunctionOrthoSphereShadedBumpMapped>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionChooseFrom2InBorderedHexagonGrid>::stubnew(parameters);
   else if (r<base+37*step) 
-    return FunctionNodeUsing<FunctionOrthoSphereReflect>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionOrthoSphereShaded>::stubnew(parameters);
   else if (r<base+38*step) 
+    return FunctionNodeUsing<FunctionOrthoSphereShadedBumpMapped>::stubnew(parameters);
+  else if (r<base+39*step) 
+    return FunctionNodeUsing<FunctionOrthoSphereReflect>::stubnew(parameters);
+  else if (r<base+40*step) 
     return FunctionNodeUsing<FunctionOrthoSphereReflectBumpMapped>::stubnew(parameters);
-  else if (r<base+39*step)
-    return FunctionNodeUsing<FunctionTransformGeneralised>::stubnew(parameters);
-  else if (r<base+40*step)
-    return FunctionNodeUsing<FunctionPreTransform>::stubnew(parameters);
   else if (r<base+41*step)
-    return FunctionNodeUsing<FunctionPreTransformGeneralised>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionTransformGeneralised>::stubnew(parameters);
   else if (r<base+42*step)
-    return FunctionNodeUsing<FunctionPostTransform>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionPreTransform>::stubnew(parameters);
   else if (r<base+43*step)
-    return FunctionNodeUsing<FunctionPostTransformGeneralised>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionPreTransformGeneralised>::stubnew(parameters);
   else if (r<base+44*step)
-    return FunctionNodeUsing<FunctionFilter2D>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionPostTransform>::stubnew(parameters);
   else if (r<base+45*step)
-    return FunctionNodeUsing<FunctionFilter3D>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionPostTransformGeneralised>::stubnew(parameters);
   else if (r<base+46*step)
-    return FunctionNodeUsing<FunctionShadow>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionFilter2D>::stubnew(parameters);
   else if (r<base+47*step)
-    return FunctionNodeUsing<FunctionShadowGeneralised>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionFilter3D>::stubnew(parameters);
   else if (r<base+48*step)
-    return FunctionNodeUsing<FunctionCone>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionShadow>::stubnew(parameters);
   else if (r<base+49*step)
-    return FunctionNodeUsing<FunctionExpCone>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionShadowGeneralised>::stubnew(parameters);
   else if (r<base+50*step)
-    return FunctionNodeUsing<FunctionNoiseOneChannel>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionCone>::stubnew(parameters);
   else if (r<base+51*step)
-    return FunctionNodeUsing<FunctionNoiseThreeChannel>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionExpCone>::stubnew(parameters);
   else if (r<base+52*step)
-    return FunctionNodeUsing<FunctionMultiscaleNoiseOneChannel>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionNoiseOneChannel>::stubnew(parameters);
   else if (r<base+53*step)
-    return FunctionNodeUsing<FunctionMultiscaleNoiseThreeChannel>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionNoiseThreeChannel>::stubnew(parameters);
   else if (r<base+54*step)
-    return FunctionNodeUsing<FunctionIterate>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionMultiscaleNoiseOneChannel>::stubnew(parameters);
   else if (r<base+55*step)
-    return FunctionNodeUsing<FunctionAverageSamples>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionMultiscaleNoiseThreeChannel>::stubnew(parameters);
   else if (r<base+56*step)
-    return FunctionNodeUsing<FunctionConvolveSamples>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionIterate>::stubnew(parameters);
   else if (r<base+57*step)
-    return FunctionNodeUsing<FunctionAccumulateOctaves>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionAverageSamples>::stubnew(parameters);
   else if (r<base+58*step)
-    return FunctionNodeUsing<FunctionMandelbrotChoose>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionConvolveSamples>::stubnew(parameters);
   else if (r<base+59*step)
-    return FunctionNodeUsing<FunctionMandelbrotContour>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionAccumulateOctaves>::stubnew(parameters);
   else if (r<base+60*step)
+    return FunctionNodeUsing<FunctionMandelbrotChoose>::stubnew(parameters);
+  else if (r<base+61*step)
+    return FunctionNodeUsing<FunctionMandelbrotContour>::stubnew(parameters);
+  else if (r<base+62*step)
     return FunctionNodeUsing<FunctionJuliaChoose>::stubnew(parameters);
-  else //if (r<base+61*step)
+  else //if (r<base+63*step)
     return FunctionNodeUsing<FunctionJuliaContour>::stubnew(parameters);
 }
 
