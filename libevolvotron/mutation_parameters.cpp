@@ -172,8 +172,11 @@ void MutationParameters::randomize_function_weightings_for_classifications(uint 
        it++
        )
     {
-      const int i=static_cast<int>(floor(11.0f*r01()));
-      (*it).second=pow(2,-i);
+      if ((*it).first->classification() & classification_mask)
+	{
+	  const int i=static_cast<int>(floor(11.0f*r01()));
+	  (*it).second=pow(2,-i);
+	}
     }
 
   recalculate_function_stuff();
