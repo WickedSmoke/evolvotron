@@ -45,6 +45,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
   ,_offscreen_buffer(0)
   ,_image(0)
   ,_menu(0)
+  ,_menu_big(0)
 {
   _offscreen_buffer=new QPixmap();
 
@@ -65,7 +66,11 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       _menu->insertSeparator();
       _menu_item_number_lock =_menu->insertItem("&Lock",this,SLOT(menupick_lock()));
       _menu->insertSeparator();
-      _menu_item_number_big  =_menu->insertItem("&Big",this,SLOT(menupick_bigwin()));
+      
+      _menu_big=new QPopupMenu(this);
+      _menu_big_item_number_resizable  =_menu_big->insertItem("&Resizable",this,SLOT(menupick_big_resizable()));
+
+      _menu_item_number_big  =_menu->insertItem("&Big",_menu_big);
     }
 
   _menu_item_number_save =_menu->insertItem("&Save");
@@ -220,22 +225,6 @@ void MutatableImageDisplay::menupick_spawn_warped()
   main()->spawn_warped(this);
 }
 
-/*! This slot is called by selecting the "Big" context menu item.
-  It creates an independent top level display area with its own copy of the image.
-  \todo: There should be an option to make a bigwin with scrollbars.
- */
-void MutatableImageDisplay::menupick_bigwin()
-{
-  // Create an image display with no parent: becomes a top level window 
-  // Disable full menu functionality because there's less we can do with a single image (e.g no spawn_target)
-  MutatableImageDisplay* window=new MutatableImageDisplay(0,main(),false);
-
-  window->resize(800,800);
-  window->show();
-
-  window->image(_image->deepclone());
-}
-
 /*! This slot is called by selecting the "Lock" context menu item.
   It stops the image from being overwritten by a new image.
  */
@@ -245,3 +234,20 @@ void MutatableImageDisplay::menupick_lock()
 
   _menu->setItemChecked(_menu_item_number_lock,_locked);
 }
+
+/*! This slot is called by selecting the "Big/Resizable" context menu item.
+  It creates an independent top level display area with its own copy of the image.
+  \todo: There should be an option to make a bigwin with scrollbars.
+ */
+void MutatableImageDisplay::menupick_big_resizable()
+{
+  // Create an image display with no parent: becomes a top level window 
+  // Disable full menu functionality because there's less we can do with a single image (e.g no spawn_target)
+  MutatableImageDisplay* window=new MutatableImageDisplay(0,main(),false);
+
+  window->resize(512,512);
+  window->show();
+
+  window->image(_image->deepclone());
+}
+

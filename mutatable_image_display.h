@@ -71,6 +71,9 @@ class MutatableImageDisplay : public QWidget
   //! Context (right-click) menu.
   QPopupMenu* _menu;
 
+  //! Submenu for Big image options.
+  QPopupMenu* _menu_big;
+
   //@{
   //! Position of item in menu.
   uint _menu_item_number_spawn;
@@ -79,6 +82,11 @@ class MutatableImageDisplay : public QWidget
   uint _menu_item_number_lock;
   uint _menu_item_number_big;
   uint _menu_item_number_save;
+  //@}
+
+  //@{
+  //! Position of item in menu_big.
+  uint _menu_big_item_number_resizable;
   //@}
 
  public:
@@ -134,10 +142,10 @@ class MutatableImageDisplay : public QWidget
   void menupick_spawn_warped();
 
   //! Called from context menu.
-  void menupick_bigwin();
-
-  //! Called from context menu.
   void menupick_lock();
+
+  //! Called from "Big" submenu of context menu.
+  void menupick_big_resizable();
 };
 
 #endif
