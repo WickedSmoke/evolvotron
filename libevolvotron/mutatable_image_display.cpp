@@ -813,7 +813,7 @@ void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
   top_level_widget->show();
 
   //Try this:
-  //top_level_widget->showFullScreen();
+  //if (main()->isFullScreen()) top_level_widget->showFullScreen();
 
   display->image(_image->deepclone());
 }

@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image.h"
 #include "function_node_info.h"
 #include "function_null.h"
-
+#include "mutatable_image_display_big.h"
 
 MutatableImage*const MutatableImage::mutated(const MutationParameters& p) const
 {

@@ -381,7 +381,7 @@ KEYBOARD CONTROL
 ================
 Ctrl-f toggles full-screen mode (on X11, Qt does this by asking the
 window manager for a screen-filling undecorated window, and the
-documentation contains dire warnings about problems with broken
+documentation contains some dire warnings about problems with broken
 window managers).  See also "-F" command line option.
 NB The application may completely disappear from the screen for 
 a brief interval while switching mode.
