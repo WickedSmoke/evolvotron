@@ -66,6 +66,14 @@ SOURCES += \
 	useful.cpp \
 	xyz.cpp
 
+
+#######################################
+# Version numbering.  This is ENTIRELY controlled by what is echoed by the VERSION script
+#
+VERSION_NUMBER = $$system(./VERSION)
+QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_VERSION_STRING="$$VERSION_NUMBER (release build)"'
+QMAKE_CXXFLAGS_DEBUG   += '-DEVOLVOTRON_VERSION_STRING="$$VERSION_NUMBER (debug build)"'
+
 #######################################
 # Disable assertions in release version
 #
@@ -89,11 +97,11 @@ INSTALLS += executable
 #######################################
 # Make a .tar.gz
 # This is build from the parent directory so it will unpack tidily
-TGZ_FILES = README BUILD LICENSE TODO CHANGES configure evolvotron.pro doxygen.cfg $$HEADERS $$SOURCES
+TGZ_FILES = README BUILD LICENSE TODO CHANGES VERSION configure evolvotron.pro doxygen.cfg $$HEADERS $$SOURCES
 TGZ_FILES_PREFIXED = $$join(TGZ_FILES," evolvotron/","evolvotron/") 
 tgz.target = evolvotron.tar.gz
 tgz.depends = $$TGZ_FILES
-tgz.commands = cd .. ; tar cvfz evolvotron/evolvotron.tar.gz $$TGZ_FILES_PREFIXED
+tgz.commands = cd .. ; tar cvfz evolvotron/evolvotron.tar.gz $$TGZ_FILES_PREFIXED ; echo "*** Suggestion: mv evolvotron.tar.gz evolvotron-$${VERSION_NUMBER}.tar.gz"
 QMAKE_EXTRA_UNIX_TARGETS += tgz
 
 #####################################
