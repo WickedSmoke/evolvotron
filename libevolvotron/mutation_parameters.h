@@ -56,6 +56,9 @@ class MutationParameters
   //! Specifies the probability of a random stub being inserted before a child.
   float _probability_insert;
 
+  //! Specifies the probability of a node being replaced with an alternate type.
+  float _probability_substitute;
+
   //! Specifies the proportion of Constant nodes vs Position type nodes.
   float _proportion_constant;
 
@@ -163,6 +166,17 @@ class MutationParameters
   void probability_insert(float v)
     {
       _probability_insert=v;
+    }
+
+  //! Accessor.
+  const float probability_substitute() const
+    {
+      return _probability_substitute;
+    }
+  //! Accessor.
+  void probability_substitute(float v)
+    {
+      _probability_substitute=v;
     }
 
   //! Accessor.

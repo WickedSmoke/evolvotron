@@ -79,6 +79,7 @@ class DialogMutationParameters : public QDialog
   QSpinBox* _spinbox_glitch;
   QSpinBox* _spinbox_shuffle;
   QSpinBox* _spinbox_insert;
+  QSpinBox* _spinbox_substitute;
   //@}
 
   //! Holder for slider decoration
@@ -148,6 +149,7 @@ class DialogMutationParameters : public QDialog
   void changed_glitch(int v);
   void changed_shuffle(int v);
   void changed_insert(int v);
+  void changed_substitute(int v);
   //@}
   
   //@{

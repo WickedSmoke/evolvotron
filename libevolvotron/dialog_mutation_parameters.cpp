@@ -78,6 +78,11 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent)
   _spinbox_insert->setSuffix(QString("/%1").arg(_scale));
   QToolTip::add(_spinbox_insert,"Probability of function branch having random stub inserted");
 
+  new QLabel("p(Substitute)",_grid_parameters);
+  _spinbox_substitute=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
+  _spinbox_substitute->setSuffix(QString("/%1").arg(_scale));
+  QToolTip::add(_spinbox_substitute,"Probability of function node's type being changed");
+
   new QLabel("Proportion constant",_grid_parameters);
   _hbox_proportion_constant=new QHBox(_grid_parameters);
   new QLabel("0.0",_hbox_proportion_constant);
@@ -106,6 +111,7 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent)
   connect(_spinbox_glitch,SIGNAL(valueChanged(int)),this,SLOT(changed_glitch(int)));
   connect(_spinbox_shuffle,SIGNAL(valueChanged(int)),this,SLOT(changed_shuffle(int)));
   connect(_spinbox_insert,SIGNAL(valueChanged(int)),this,SLOT(changed_insert(int)));
+  connect(_spinbox_substitute,SIGNAL(valueChanged(int)),this,SLOT(changed_substitute(int)));
  
   connect(_slider_proportion_constant,SIGNAL(valueChanged(int)),this,SLOT(changed_proportion_constant(int)));
   connect(_slider_identity_supression,SIGNAL(valueChanged(int)),this,SLOT(changed_identity_supression(int)));
@@ -133,10 +139,11 @@ void DialogMutationParameters::setup_from_mutation_parameters()
   _checkbox_iterative->setChecked(mutation_parameters().allow_iterative_nodes());
   _checkbox_fractal  ->setChecked(mutation_parameters().allow_fractal_nodes());
 
-  _spinbox_magnitude->setValue(static_cast<int>(0.5+_scale*mutation_parameters().magnitude()));
-  _spinbox_glitch   ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_glitch()));
-  _spinbox_shuffle  ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_shuffle()));
-  _spinbox_insert   ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_insert()));
+  _spinbox_magnitude ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().magnitude()));
+  _spinbox_glitch    ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_glitch()));
+  _spinbox_shuffle   ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_shuffle()));
+  _spinbox_insert    ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_insert()));
+  _spinbox_substitute->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_substitute()));
 
   _slider_proportion_constant->setValue(static_cast<int>(0.5+100*mutation_parameters().proportion_constant()));
   _slider_identity_supression->setValue(static_cast<int>(0.5+100*mutation_parameters().identity_supression()));
@@ -147,11 +154,13 @@ void DialogMutationParameters::setup_from_mutation_parameters()
 void DialogMutationParameters::parameters_changed()
 {
   QString message
-    =QString("%1/%2/%3/%4")
+    =QString("%1/%2/%3/%4/%5")
     .arg(_spinbox_magnitude->value())
     .arg(_spinbox_glitch->value())
     .arg(_spinbox_shuffle->value())
-    .arg(_spinbox_insert->value());
+    .arg(_spinbox_insert->value())
+    .arg(_spinbox_substitute->value())
+    ;
 
   _parent->statusBar()->message(message,2000);
 }
@@ -177,6 +186,7 @@ void DialogMutationParameters::irradiate()
   _spinbox_glitch->stepUp();
   _spinbox_shuffle->stepUp();
   _spinbox_insert->stepUp();
+  _spinbox_substitute->stepUp();
 }
 
 void DialogMutationParameters::shield()
@@ -184,6 +194,7 @@ void DialogMutationParameters::shield()
   _spinbox_glitch->stepDown();
   _spinbox_shuffle->stepDown();
   _spinbox_insert->stepDown();
+  _spinbox_substitute->stepDown();
 }
 
 
@@ -208,6 +219,12 @@ void DialogMutationParameters::changed_shuffle(int v)
 void DialogMutationParameters::changed_insert(int v)
 {
   mutation_parameters().probability_insert(v/static_cast<float>(_scale));
+  parameters_changed();
+}
+
+void DialogMutationParameters::changed_substitute(int v)
+{
+  mutation_parameters().probability_substitute(v/static_cast<float>(_scale));
   parameters_changed();
 }
 

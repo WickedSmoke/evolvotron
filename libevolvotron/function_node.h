@@ -132,7 +132,7 @@ class FunctionNode
       return params()[n];
     }
 
-  //! Accessor
+  //! Accessor.
   const uint iterations() const
     {
       return _iterations;
@@ -163,6 +163,9 @@ class FunctionNode
   //! Return an clone of this image node and all its children.
   virtual FunctionNode*const deepclone() const
     =0;
+
+  //! Return a deepcloned copy of the node's arguments
+  virtual const std::vector<FunctionNode*> deepclone_args() const;
   
   //! Convenience wrapper for evaluate (actually, evaluate is protected so can't be called externally anyway)
   const XYZ operator()(const XYZ& p) const
@@ -178,12 +181,15 @@ class FunctionNode
 
  protected:
 
+  //! Impose a new set of parameters and arguments on the node.  Existing arguments are cleaned up.
+  void impose(std::vector<float>& p,std::vector<FunctionNode*>& a);
+
   //! Accessor (non-const version is protected, required internally to obtain non-const iterators).
   std::vector<float>& params()
     {
       return _params;
     }
-
+  
   //! Accessor (non-const version is protected, required internally to obtain non-const iterators).
   std::vector<FunctionNode*>& args()
     {

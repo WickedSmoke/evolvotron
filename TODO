@@ -9,6 +9,7 @@ imply it will be done sooner or later than other items!
   - Classification scheme for function types (basic, smooth, chooser, complex, expensive).
 - More types of mutation
   - Substitute a node for a different type, retaining it's settings (expand/cull as necessary)
+  - Nodes near top level should have more chance of mutation ?
 - evolvotron_mutate standalone exe should provide more control
   (heat/cool/irradiate/shield options, recolour/warp options).
 - Combining/breeding image pairs.

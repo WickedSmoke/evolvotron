@@ -61,7 +61,7 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
 {
   // Base mutations are Constant or Identity types.  
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
-  const float base=0.5;
+  const float base=0.7;
 
   uint steps=61;
 
@@ -191,9 +191,9 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   else if (r<base+50*step)
     return FunctionNodeUsing<FunctionNoiseOneChannel>::stubnew(parameters);
   else if (r<base+51*step)
-    return FunctionNodeUsing<FunctionMultiscaleNoiseOneChannel>::stubnew(parameters);
-  else if (r<base+52*step)
     return FunctionNodeUsing<FunctionNoiseThreeChannel>::stubnew(parameters);
+  else if (r<base+52*step)
+    return FunctionNodeUsing<FunctionMultiscaleNoiseOneChannel>::stubnew(parameters);
   else if (r<base+53*step)
     return FunctionNodeUsing<FunctionMultiscaleNoiseThreeChannel>::stubnew(parameters);
   else if (r<base+54*step)
@@ -425,10 +425,58 @@ void FunctionNode::mutate(const MutationParameters& parameters)
 	}
     }
 
+  // Think about substituting some nodes.
+  //! \todo Substitution might make more sense if it was for a node with the same/similar number of arguments.
+  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
+    {
+      if (parameters.r01()<parameters.probability_substitute())
+	{
+	  // Take a copy of the nodes parameters and arguments
+	  std::vector<FunctionNode*> a((*it)->deepclone_args());
+	  std::vector<float> p((*it)->params());
+	  
+	  // Replace the node with something interesting (maybe this should depend on how complex the original node was)
+	  delete (*it);
+	  (*it)=stub(parameters,true);
+
+	  // Do we need some extra arguments ?
+	  if (a.size()<(*it)->args().size())
+	    {
+	      const std::vector<FunctionNode*> xa(stubargs(parameters,(*it)->args().size()-a.size()));
+	      a.insert(a.end(),xa.begin(),xa.end());
+	    }
+	  // Shuffle them
+	  std::random_shuffle(a.begin(),a.end());
+	  // Have we go too many arguments ?
+	  while (a.size()>(*it)->args().size())
+	    {
+	      delete (a.back());
+	      a.pop_back();
+	    }
+	  
+	  // Do we need some extra parameters ?
+	  if (p.size()<(*it)->params().size())
+	    {
+	      const std::vector<float> xp(stubparams(parameters,(*it)->params().size()-p.size()));
+	      p.insert(p.end(),xp.begin(),xp.end());
+	    }
+	  // Shuffle them
+	  std::random_shuffle(p.begin(),p.end());
+	  // Have we go too many arguments ?
+	  while (p.size()>(*it)->params().size())
+	    {
+	      p.pop_back();
+	    }
+
+	  // Impose the new parameters and arguments on the new node (iterations not touched)
+	  (*it)->impose(p,a);
+	}
+    }
+  
   // Think about randomising child order
   if (parameters.r01()<parameters.probability_shuffle())
     {
-      // This uses rand() (would rather use our one).
+      // This uses rand() (would rather use our own one).
       // This bit of STL seems a bit up in the air (at least in GNU implementation), but it works so who cares.
       std::random_shuffle(args().begin(),args().end());
     }
@@ -448,6 +496,28 @@ void FunctionNode::mutate(const MutationParameters& parameters)
 	}
     }
 }
+
+
+const std::vector<FunctionNode*> FunctionNode::deepclone_args() const
+{
+  std::vector<FunctionNode*> ret;
+  for (std::vector<FunctionNode*>::const_iterator it=args().begin();it!=args().end();it++)
+    ret.push_back((*it)->deepclone());
+  return ret;
+}
+
+void FunctionNode::impose(std::vector<float>& p,std::vector<FunctionNode*>& a)
+{
+  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
+    delete (*it);
+  args().clear();
+
+  args()=a;
+  params()=p;
+
+  assert(ok());
+}
+
 
 const FunctionNodeUsing<FunctionPreTransform>*const FunctionNode::is_a_FunctionNodeUsingFunctionPreTransform() const
 {

@@ -1,5 +1,11 @@
 [Most recent at top]
 
+From release 0.1.3:
+ - Bump version to 0.1.4 
+ - Function tree growth rate restored to pre-0.1.2 rates
+ - Both multiscale noise types counted as iterative as originally intended.
+ - "Substitute" mutation type added.
+  
 From release 0.1.2:
  - Bump version to 0.1.3 
  - Build lib and separate executables.  Use qmake "subdirs" at top level, move code into subdirs.
