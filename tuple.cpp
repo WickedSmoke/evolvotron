@@ -24,12 +24,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "tuple.h"
 
+//! Test code
 void testtuple_eliminate(Tuple<2,float>& m_to,const Tuple<3,float>& m_from)
 {
   // Skip middle element of m_from
   TupleHelperCopyEliminate<1,1,2,float>::execute(m_to,m_from);
 }
 
+//! Test code
 void testtuple_doubleeliminate(Tuple<2,Tuple<2,float> >& m_to,const Tuple<3,Tuple<3,float> >& m_from)
 {
   TupleHelperDoubleCopyEliminate<1,1,1,2,2,float>::execute(m_to,m_from);

@@ -27,10 +27,11 @@
 
 #include "useful.h"
 #include "xyz.h"
+#include "transform.h"
 
 #include "mutation_parameters.h"
 
-class MutatableImageNodePreTransform;
+class MutatableImageNodeTransformWrapper;
 
 //! Abstract base class for all kinds of mutatable image node.
 class MutatableImageNode
@@ -78,10 +79,13 @@ class MutatableImageNode
   virtual const bool is_constant() const
     =0;
 
+  //@{
   //! Query the node as to whether it is a MutatableImageNodePostTransform (return null if not).
   /*! This is useful for accumulating view transforms at the front end of a function tree without creating a new transform each time.
    */
-  virtual MutatableImageNodePreTransform*const is_a_MutatableImageNodePreTransform();
+  virtual const MutatableImageNodeTransformWrapper*const is_a_MutatableImageNodeTransformWrapper() const;
+  virtual MutatableImageNodeTransformWrapper*const is_a_MutatableImageNodeTransformWrapper();
+  //@}
 
   //! This returns a new random bit of tree.  Setting the "exciting" avoids basic node types, but only at the top level of the stub tree.
   static MutatableImageNode* stub(const MutationParameters& parameters,bool exciting=false);
@@ -194,12 +198,57 @@ class MutatableImageNodePositionTransformed : public MutatableImageNode
   //! Destructor.
   virtual ~MutatableImageNodePositionTransformed();
 
-  //! Change it a bit (except there's nothing to change in this case).
+  //! Change it a bit.
   virtual void mutate(const MutationParameters&);
 
   //! Returns a clone.
   virtual MutatableImageNode*const deepclone() const;
 };
+
+//! This node type is intended to wrap the image at the top level.  It has extra stuff to allow transform concatenation, which avoids repeated warp operations creating too many nodes.
+class MutatableImageNodeTransformWrapper : public MutatableImageNode
+{
+ private:
+  Transform _transform;
+  
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Returns true if the function is independent of it's position argument.
+  virtual const bool is_constant() const;
+
+  //@{
+  //! Query the node as to whether it is a MutatableImageNodeTransformWrapper (in this case it is).
+  virtual const MutatableImageNodeTransformWrapper*const is_a_MutatableImageNodeTransformWrapper() const;
+  virtual MutatableImageNodeTransformWrapper*const is_a_MutatableImageNodeTransformWrapper();
+  //@}
+
+  //! Constructor.
+  MutatableImageNodeTransformWrapper(const std::vector<MutatableImageNode*>& a,const Transform& transform);
+  //! Destructor.
+  virtual ~MutatableImageNodeTransformWrapper();
+
+  //! Change it a bit.
+  virtual void mutate(const MutationParameters&);
+
+  //! Returns a clone.
+  virtual MutatableImageNode*const deepclone() const;
+
+  //@{
+  //! Accessor.
+  const Transform& transform() const
+    {
+      return _transform;
+    }
+  Transform& transform()
+    {
+      return _transform;
+    }
+  //@}
+};
+
 
 //! This node type is intended as a substitute for MutatableImageNodePositionTransformed.  
 class MutatableImageNodePositionTransformedQuadratic : public MutatableImageNode
@@ -787,11 +836,6 @@ class MutatableImageNodePreTransform : public MutatableImageNode
  public:
   //! Query whether node value is independent of position argument.
   virtual const bool is_constant() const;
-
-  //! Query the node as to whether it is a MutatableImageNodePostTransform (return null if not).
-  /*! This is useful for accumulating view transforms at the front end of a function tree without creating a new transform each time.
-   */
-  virtual MutatableImageNodePreTransform*const is_a_MutatableImageNodePreTransform();
 
   //! Constructor.
   MutatableImageNodePreTransform(const std::vector<MutatableImageNode*>& a);

@@ -272,24 +272,31 @@ void EvolvotronMain::spawn_recoloured(const MutatableImageNode* image,MutatableI
 
 void EvolvotronMain::spawn_warped(const MutatableImageNode* image,MutatableImageDisplay* display)
 {
-  std::vector<MutatableImageNode*> args;
-
-  //! \todo: Should check for a pre-transform class instance at the head of the image (query the dieplay) and if possible apply a transform to it without creating a new node.
-  
+  // We shouldn't be here unless transform_factory has been set to something.
   assert(transform_factory()!=0);
 
-  const Transform t=transform_factory()(mutation_parameters().rng01());
+  // Get the transform from whatever factory is currently set
+  const Transform transform(transform_factory()(mutation_parameters().rng01()));
 
-  //! \todo Have WarpTransform which is used entirely for warps. 
-  args.push_back(new MutatableImageNodeConstant(t.translate()));
-  args.push_back(new MutatableImageNodeConstant(t.basis_x()));
-  args.push_back(new MutatableImageNodeConstant(t.basis_y()));
-  args.push_back(new MutatableImageNodeConstant(t.basis_z()));
+  MutatableImageNode* new_image;
+  if (image->is_a_MutatableImageNodeTransformWrapper())
+    {
+      // If the image root is a transform wrapper then we can just concatentate transforms.
+      new_image=image->deepclone();
 
-  args.push_back(image->deepclone());
+      MutatableImageNodeTransformWrapper* root=new_image->is_a_MutatableImageNodeTransformWrapper();
+      assert(root!=0);
 
-  MutatableImageNode*const new_image=new MutatableImageNodePreTransform(args);
-
+      root->transform().concatenate_on_right(transform);
+    }
+  else
+    {
+      // Otherwise have to create a new wrapper for the transform
+      std::vector<MutatableImageNode*> args;
+      args.push_back(image->deepclone());
+      new_image=new MutatableImageNodeTransformWrapper(args,transform);
+    }
+  
   history().replacing(display);
   display->image(new_image);
 }

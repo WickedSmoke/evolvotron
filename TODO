@@ -1,15 +1,11 @@
 - Generalise "parameters" along with "args".
 - Make tar files unpack to subdirectory.
-- More specific warp options: zoom, pan, rotate.
-  Should recognize a top-level pre-transform node type and modify it rather
-  than adding yet another node
-  (NB make sure recolour's post-transform is "inside").
 - Maybe add view menu like warp but just applying to current image
 - Should be a single position transform under user control attached to top level of every image.
   Use to zoom in/out, rotate/translate etc repeatedly without accumulating loads of extra nodes.
 - Add control over MutatableImageNodePositionTransformedQuadratic vs MutatableImageNodePositionTransformed proportions
   (part of rationalising all of function selection)
-- Warp should maybe scale differently in different directions.
+- Non-isotropic scaling & shear warp options.
 - Add "standard" configure step.
 - Command line option to enable/disable fractal and iterative types.
 - Replace "Lock" with a "save" or "put-aside" window (could make history/undo simpler).

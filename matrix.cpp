@@ -27,31 +27,37 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <iostream>
 
+//! Test code
 void testmatrix_extract_runtime(Matrix<2,2,float>& m_out,const Matrix<3,3,float>& m_in)
 {
   m_in.extract_minor(1,1,m_out);
 }
 
+//! Test code
 void testmatrix_extract_compiletime(Matrix<2,2,float>& m_out,const Matrix<3,3,float>& m_in)
 {
   m_in.extract_minor<1,1>(m_out);
 }
 
+//! Test code
 float testmatrix_across(const Matrix<3,3,float>& m_in)
 {
   return MatrixHelperSumCofactorDeterminantProducts<2,3,3,float>::execute(m_in);
 }
 
+//! Test code
 void testmatrix_inverse(Matrix<3,3,float>& m_out,const Matrix<3,3,float>& m_in)
 {
   m_out=m_in.inverted();
 }
 
+//! Test code
 float testmatrix_determinant(const Matrix<3,3,float>& m_in)
 {
   return m_in.determinant();
 }
 
+//! Test code (uncomment out call from main to use)
 void testmatrix()
 {
   std::cout << "Testing matrix class:\n";

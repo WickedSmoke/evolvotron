@@ -30,6 +30,13 @@ Transform::Transform()
    ,_basis_z(0.0f,0.0f,1.0f)
 {}
 
+Transform::Transform(const Transform& t)
+  :_translate(t.translate())
+   ,_basis_x(t.basis_x())
+   ,_basis_y(t.basis_y())
+   ,_basis_z(t.basis_z())
+{}
+
 Transform::Transform(const XYZ& t,const XYZ& x,const XYZ& y,const XYZ& z)
   :_translate(t)
    ,_basis_x(x)

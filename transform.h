@@ -33,8 +33,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 class Transform 
 {
  public:
-  //! Default constructor sets up identity;
+  //! Default constructor sets up identity.
   Transform();
+
+  //! Copy constructor.
+  Transform(const Transform&);
 
   //! Constructor specifying column vectors.
   Transform(const XYZ& t,const XYZ& x,const XYZ& y,const XYZ& z);
@@ -58,6 +61,49 @@ class Transform
   void basis_z(const XYZ &z)
      {_basis_z=z;}
   //@}
+
+  //! Transform a point
+  const XYZ transformed(const XYZ& p) const
+    {
+      return _translate+_basis_x*p.x()+_basis_y*p.y()+_basis_z*p.z();
+    }
+
+  //! Transform a point with no translation
+  const XYZ transformed_no_translate(const XYZ& p) const
+    {
+      return _basis_x*p.x()+_basis_y*p.y()+_basis_z*p.z();
+    }
+
+  //! Concatenate transforms
+  Transform& concatenate_on_right(const Transform& t)
+    {
+      const XYZ bx(transformed_no_translate(t.basis_x()));
+      const XYZ by(transformed_no_translate(t.basis_y()));
+      const XYZ bz(transformed_no_translate(t.basis_z()));
+      const XYZ tr(transformed(t.translate()));
+
+      translate(tr);
+      basis_x(bx);
+      basis_y(by);
+      basis_z(bz);
+
+      return *this;
+    }
+
+  Transform& concatenate_on_left(const Transform& t)
+    {
+      const XYZ bx(t.transformed_no_translate(basis_x()));
+      const XYZ by(t.transformed_no_translate(basis_y()));
+      const XYZ bz(t.transformed_no_translate(basis_z()));
+      const XYZ tr(t.transformed(translate()));
+
+      translate(tr);
+      basis_x(bx);
+      basis_y(by);
+      basis_z(bz);
+
+      return *this;
+    }
 
  protected:
   //@{

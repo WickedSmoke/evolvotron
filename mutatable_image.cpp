@@ -237,7 +237,12 @@ void MutatableImageNode::mutate(const MutationParameters& parameters)
     }
 }
 
-MutatableImageNodePreTransform*const MutatableImageNode::is_a_MutatableImageNodePreTransform()
+const MutatableImageNodeTransformWrapper*const MutatableImageNode::is_a_MutatableImageNodeTransformWrapper() const
+{
+  return 0;
+}
+
+MutatableImageNodeTransformWrapper*const MutatableImageNode::is_a_MutatableImageNodeTransformWrapper()
 {
   return 0;
 }
@@ -339,6 +344,53 @@ void MutatableImageNodePositionTransformed::mutate(const MutationParameters& par
 MutatableImageNode*const MutatableImageNodePositionTransformed::deepclone() const
 {
   return new MutatableImageNodePositionTransformed(_translate,_basis_x,_basis_y,_basis_z);
+}
+
+/*******************************************/
+
+const XYZ MutatableImageNodeTransformWrapper::evaluate(const XYZ& p) const
+{
+  return arg(0)(_transform.transformed(p));
+}
+
+const bool MutatableImageNodeTransformWrapper::is_constant() const
+{
+  return arg(0).is_constant();
+}
+
+const MutatableImageNodeTransformWrapper*const MutatableImageNodeTransformWrapper::is_a_MutatableImageNodeTransformWrapper() const
+{
+  return this;
+}
+
+MutatableImageNodeTransformWrapper*const MutatableImageNodeTransformWrapper::is_a_MutatableImageNodeTransformWrapper()
+{
+  return this;
+}
+
+MutatableImageNodeTransformWrapper::MutatableImageNodeTransformWrapper(const std::vector<MutatableImageNode*>& a,const Transform& transform)
+:MutatableImageNode(a)
+,_transform(transform)
+{
+  assert(args().size()==1);
+}
+
+MutatableImageNodeTransformWrapper::~MutatableImageNodeTransformWrapper()
+{}
+
+void MutatableImageNodeTransformWrapper::mutate(const MutationParameters& parameters)
+{
+  MutatableImageNode::mutate(parameters);
+
+  _transform.translate(_transform.translate()+RandomXYZInSphere(parameters.rng01(),parameters.magnitude()));
+  _transform.basis_x(_transform.basis_x()+RandomXYZInSphere(parameters.rng01(),parameters.magnitude()));
+  _transform.basis_y(_transform.basis_y()+RandomXYZInSphere(parameters.rng01(),parameters.magnitude()));
+  _transform.basis_z(_transform.basis_z()+RandomXYZInSphere(parameters.rng01(),parameters.magnitude()));
+}
+
+MutatableImageNode*const MutatableImageNodeTransformWrapper::deepclone() const
+{
+  return new MutatableImageNodeTransformWrapper(cloneargs(),_transform);
 }
 
 /*******************************************/
@@ -1125,11 +1177,6 @@ const XYZ MutatableImageNodePreTransform::evaluate(const XYZ& p) const
 const bool MutatableImageNodePreTransform::is_constant() const
 {
   return arg(4).is_constant();
-}
-
-MutatableImageNodePreTransform*const MutatableImageNodePreTransform::is_a_MutatableImageNodePreTransform()
-{
-  return this;
 }
 
 MutatableImageNodePreTransform::MutatableImageNodePreTransform(const std::vector<MutatableImageNode*>& a)
