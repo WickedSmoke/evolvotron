@@ -3,11 +3,18 @@ TEMPLATE = app
 # append debug or release
 CONFIG+= qt thread release
 
+#########
+# Better optimisations than qmake defaults IF you have the right processor.
+# These two lines do appear to generate SSE instructions on the authors setup.
+QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
+QMAKE_CXXFLAGS_RELEASE += -march=i686 -O3 -mfpmath=sse -msse2 -fomit-frame-pointer -ffast-math
+
 # Input
 HEADERS += \
         args.h \
 	dialog_about.h \
 	dialog_mutation_parameters.h \
+	evolvotron_main.h \
 	license.h \
 	mutatable_image.h \
 	mutatable_image_computer.h \
@@ -16,7 +23,7 @@ HEADERS += \
 	mutatable_image_display.h \
 	mutation_parameters.h \
 	random.h \
-	evolvotron_main.h \
+        tuple.h \
 	useful.h \
 	xyz.h
 
@@ -24,6 +31,8 @@ SOURCES += \
         args.cpp \
 	dialog_about.cpp \
 	dialog_mutation_parameters.cpp \
+	evolvotron.cpp \
+	evolvotron_main.cpp \
 	license.cpp \
 	mutatable_image.cpp \
 	mutatable_image_computer.cpp \
@@ -32,8 +41,7 @@ SOURCES += \
 	mutatable_image_display.cpp \
 	mutation_parameters.cpp \
 	random.cpp \
-	evolvotron.cpp \
-	evolvotron_main.cpp \
+        tuple.cpp \
 	useful.cpp \
 	xyz.cpp
 

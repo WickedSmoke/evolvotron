@@ -19,3 +19,7 @@ From release 0.0.2:
  - "Respawn" regenerates a single display area using spawn/recolour/warp as appropriate.
  - "Cancel" in file save dialog obeyed.
  - "Insert" mutation type.
+ - "Undo" functionality.
+
+From release 0.0.3:
+ - Bump version to 0.0.4

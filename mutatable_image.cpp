@@ -218,7 +218,7 @@ MutatableImageNode*const MutatableImageNodePosition::deepclone() const
 const XYZ MutatableImageNodeSin::evaluate(const XYZ& p) const
 {
   const XYZ v(arg(0)(p));
-  return XYZ(sin(v.x),sin(v.y),sin(v.z));
+  return XYZ(sin(v.x()),sin(v.y()),sin(v.z()));
 }
 
 MutatableImageNodeSin::MutatableImageNodeSin(const std::vector<MutatableImageNode*>& a)
@@ -240,7 +240,7 @@ MutatableImageNode*const MutatableImageNodeSin::deepclone() const
 const XYZ MutatableImageNodeCos::evaluate(const XYZ& p) const
 {
   const XYZ v(arg(0)(p));
-  return XYZ(cos(v.x),cos(v.y),cos(v.z));
+  return XYZ(cos(v.x()),cos(v.y()),cos(v.z()));
 }
 
 MutatableImageNodeCos::MutatableImageNodeCos(const std::vector<MutatableImageNode*>& a)
@@ -354,9 +354,9 @@ const XYZ MutatableImageNodeDivide::evaluate(const XYZ& p) const
   const XYZ v1(arg(1)(p));
 
   return XYZ(
-	     (v1.x==0.0 ? 0.0 : v0.x/v1.x),
-	     (v1.y==0.0 ? 0.0 : v0.y/v1.y),
-	     (v1.z==0.0 ? 0.0 : v0.z/v1.z)
+	     (v1.x()==0.0 ? 0.0 : v0.x()/v1.x()),
+	     (v1.y()==0.0 ? 0.0 : v0.y()/v1.y()),
+	     (v1.z()==0.0 ? 0.0 : v0.z()/v1.z())
 	     );
 }
 
@@ -401,7 +401,7 @@ const XYZ MutatableImageNodeMax::evaluate(const XYZ& p) const
 {
   const XYZ v0(arg(0)(p));
   const XYZ v1(arg(1)(p));
-  return XYZ(maximum(v0.x,v1.x),maximum(v0.y,v1.y),maximum(v0.z,v1.z));
+  return XYZ(maximum(v0.x(),v1.x()),maximum(v0.y(),v1.y()),maximum(v0.z(),v1.z()));
 }
 
 MutatableImageNodeMax::MutatableImageNodeMax(const std::vector<MutatableImageNode*>& a)
@@ -424,7 +424,7 @@ const XYZ MutatableImageNodeMin::evaluate(const XYZ& p) const
 {
   const XYZ v0(arg(0)(p));
   const XYZ v1(arg(1)(p));
-  return XYZ(minimum(v0.x,v1.x),minimum(v0.y,v1.y),minimum(v0.z,v1.z));
+  return XYZ(minimum(v0.x(),v1.x()),minimum(v0.y(),v1.y()),minimum(v0.z(),v1.z()));
 }
 
 MutatableImageNodeMin::MutatableImageNodeMin(const std::vector<MutatableImageNode*>& a)
@@ -448,7 +448,7 @@ const XYZ MutatableImageNodeMod::evaluate(const XYZ& p) const
   const XYZ a(arg(0)(p));
   const XYZ b(arg(1)(p));
   
-  return XYZ(fmod(a.x,b.x),fmod(a.y,b.y),fmod(a.z,b.z));
+  return XYZ(fmod(a.x(),b.x()),fmod(a.y(),b.y()),fmod(a.z(),b.z()));
 }
 
 MutatableImageNodeMod::MutatableImageNodeMod(const std::vector<MutatableImageNode*>& a)
@@ -579,7 +579,7 @@ const XYZ MutatableImageNodePreTransform::evaluate(const XYZ& p) const
   const XYZ basis_y(arg(2)(p));
   const XYZ basis_z(arg(3)(p));
 
-  const XYZ pt(offset+basis_x*p.x+basis_y*p.y+basis_z*p.z);
+  const XYZ pt(offset+basis_x*p.x()+basis_y*p.y()+basis_z*p.z());
 
   return arg(4)(pt);
 }
@@ -611,7 +611,7 @@ const XYZ MutatableImageNodePostTransform::evaluate(const XYZ& p) const
 
   const XYZ pt(arg(4)(p));
 
-  return offset+basis_x*pt.x+basis_y*pt.y+basis_z*pt.z;
+  return offset+basis_x*pt.x()+basis_y*pt.y()+basis_z*pt.z();
 }
 
 MutatableImageNodePostTransform::MutatableImageNodePostTransform(const std::vector<MutatableImageNode*>& a)

@@ -91,13 +91,13 @@ void MutatableImageComputer::run()
 		  XYZ v(127.5*((*(task()->image()))(p)+XYZ(1.0,1.0,1.0)));
 		  
 		  // Clamp out of range values.
-		  clamp(v.x,0.0f,255.0f);
-		  clamp(v.y,0.0f,255.0f);
-		  clamp(v.z,0.0f,255.0f);
+		  v.x(clamped(v.x(),0.0f,255.0f));
+		  v.y(clamped(v.y(),0.0f,255.0f));
+		  v.z(clamped(v.z(),0.0f,255.0f));
 		  
-		  const uint red  =(uint)floor(v.x);
-		  const uint blue =(uint)floor(v.y);
-		  const uint green=(uint)floor(v.z);
+		  const uint red  =(uint)floor(v.x());
+		  const uint blue =(uint)floor(v.y());
+		  const uint green=(uint)floor(v.z());
 		  
 		  task()->image_data()[task()->pixel()]=((red<<16)|(green<<8)|(blue));
 

@@ -101,8 +101,10 @@ class EvolvotronMain : public QMainWindow
       void undo();
     };
 
+  //! Instance of History object to track activity.
   History _history;
 
+  //! Convenience typedef for pointer to member function implementing a kind of spawn.
   typedef void (EvolvotronMain::* SpawnMemberFn)(const MutatableImageNode* image,MutatableImageDisplay* display);
 
   //! Somewhere to report what's going on

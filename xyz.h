@@ -25,20 +25,56 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "useful.h"
 #include "random.h"
+#include "tuple.h"
 
 //! Class to hold vectors in 3D cartesian co-ordinates.
 /*! Direct access to the x,y,z members is permitted.
     There is a general assumption that the co-ordinate system will be right handed,
     and that for terrain type applications x and y will be plan position and z will be height.
  */
-class XYZ
+class XYZ : public Tuple<3,float>
 {
  public:
-  //@{ 
-  //! Component of vector.
-  float x;
-  float y;
-  float z;
+
+  //@{
+  //! Access to underlying tuple representation.  Needed to avoid infinite recursion in symetric binary operators.
+  Tuple<3,float>& rep()
+    {
+      return static_cast<Tuple<3,float>& > (*this);
+    }
+  const Tuple<3,float>& rep() const
+    {
+      return static_cast<const Tuple<3,float>& > (*this);
+    }
+  //@}
+
+  //@{
+  //! Accessor.
+  float x() const
+    {
+      return (*this)[0];
+    }
+  float y() const
+    {
+      return (*this)[1];
+    }
+  float z() const
+    {
+      return (*this)[2];
+    }
+
+  void x(float v)
+    {
+      (*this)[0]=v;
+    }
+  void y(float v)
+    {
+      (*this)[1]=v;
+    }
+  void z(float v)
+    {
+      (*this)[2]=v;
+    }
   //@}
 
   //! Null constructor.
@@ -49,23 +85,26 @@ class XYZ
 
   //! Copy constructor.
   XYZ(const XYZ& v)
-    :x(v.x),y(v.y),z(v.z){}
+    :Tuple<3,float>(v.rep())
+    {}
+  
+  //! Construct from base tuple class, but only when explicit.
+  explicit XYZ(const Tuple<3,float>& v)
+    :Tuple<3,float>(v)
+    {}
 
   //! Initialise from separate components.
   XYZ(float vx,float vy,float vz)
-    :x(vx),y(vy),z(vz){}
+    :Tuple<3,float>()
+    {
+      x(vx);
+      y(vy);
+      z(vz);
+    }
 
   //! Trivial destructor.
   ~XYZ()
     {}
-
-  //! Multiply by scalar.
-  void operator*=(float k)
-    {
-      x*=k;
-      y*=k;
-      z*=k;
-    }
 
   //! Divide by scalar.
   /*! Implemented assuming one divide and three multiplies is faster than three divides.
@@ -73,45 +112,27 @@ class XYZ
   void operator/=(float k)
     {
       const float ik(1.0/k);
-      x*=ik;
-      y*=ik;
-      z*=ik;
-    }
-
-  //! Vector addition.
-  void operator+=(const XYZ& v)
-    {
-      x+=v.x;
-      y+=v.y;
-      z+=v.z;
-    }
-
-  //! Vector subtraction.
-  void operator-=(const XYZ& v)
-    {
-      x-=v.x;
-      y-=v.y;
-      z-=v.z;
+      (*this)*=ik;
     }
 
   //! Assignment. 
   void assign(const XYZ& v)
     {
-      x=v.x;
-      y=v.y;
-      z=v.z;
+      x(v.x());
+      y(v.y());
+      z(v.z());
     }
 
   //! Negation.
   const XYZ operator-() const
     {
-      return XYZ(-x,-y,-z);
+      return XYZ(-x(),-y(),-z());
     }
 
   //! Return the square of the magnitude.
   const float magnitude2() const
     {
-      return x*x+y*y+z*z;
+      return x()*x()+y()*y()+z()*z();
     }
 
   //! Return the magnitude.
@@ -134,9 +155,9 @@ class XYZ
 inline const XYZ operator*(const XYZ& a,const XYZ& b)
 {
   return XYZ(
-	     a.y*b.z-a.z*b.y,
-	     a.z*b.x-a.x*b.z,
-	     a.x*b.y-a.y*b.x
+	     a.y()*b.z()-a.z()*b.y(),
+	     a.z()*b.x()-a.x()*b.z(),
+	     a.x()*b.y()-a.y()*b.x()
 	     );
 } 
 
@@ -145,49 +166,41 @@ inline const XYZ operator*(const XYZ& a,const XYZ& b)
  */
 inline const float operator%(const XYZ& a,const XYZ& b)
 {
-  return a.x*b.x+a.y*b.y+a.z*b.z;
+  return a.x()*b.x()+a.y()*b.y()+a.z()*b.z();
 } 
 
 //! Vector addition.
 inline const XYZ operator+(const XYZ& a,const XYZ& b)
 {
-  return XYZ(a.x+b.x,a.y+b.y,a.z+b.z);
+  return XYZ(a.rep()+b.rep());
 }
 
 //! Vector subtraction.
 inline const XYZ operator-(const XYZ& a,const XYZ& b)
 {
-  return XYZ(a.x-b.x,a.y-b.y,a.z-b.z);
+  return XYZ(a.rep()-b.rep());
 }
 
 //! Multiplication by scalar.
 inline const XYZ operator*(float k,const XYZ& v)
 {  
-  return XYZ(k*v.x,k*v.y,k*v.z);
+  XYZ ret(v);
+  ret*=k;
+  return ret;
 }
 
 //! Multiplication by scalar.
 inline const XYZ operator*(const XYZ& v,float k)
 {
-  return XYZ(k*v.x,k*v.y,k*v.z);
+  XYZ ret(v);
+  ret*=k;
+  return ret;
 }
 
 //! Division by scalar.
 inline const XYZ operator/(const XYZ& v,float k)
 {
   return (1.0/k)*v;
-}
-
-//! Equality operator.
-inline const bool operator==(const XYZ& a,const XYZ& b)
-{
-  return (a.x==b.x && a.y==b.y && a.z==b.z);
-}
-
-//! Inequality operator.
-inline const bool operator!=(const XYZ& a,const XYZ& b)
-{
-  return (a.x!=b.x || a.y!=b.y || a.z!=b.z);
 }
 
 /*! If magnitude is zero we return zero vector.
@@ -198,8 +211,6 @@ inline const XYZ XYZ::normalised() const
   return (m==0.0 ? XYZ(0.0,0.0,0.0) : (*this)/m);
 }
 
-/*! Will fail assertion if the co-ordinate has zero magnitude.
- */
 inline void XYZ::normalise()
 {
   (*this)=normalised();

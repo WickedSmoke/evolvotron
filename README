@@ -43,6 +43,11 @@ This should give you a "evolvotron" executable which you can run with
   ./evolvotron
 or install where you like.
 
+Note that qmake's default optimisation settings are pretty conservative.
+IF you have a chip with sse instuctions or similar, you may want uncomment
+and edit the couple of lines modifying QMAKE_CXXFLAGS_RELEASE near the 
+start of evolvotron.pro.
+
 USAGE
 =====
 You will need a fast machine, or patience.
