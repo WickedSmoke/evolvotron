@@ -1,7 +1,7 @@
 [Most recent at top]
 
 From release 0.0.4
- - Bump version to "development for 0.0.5" ***CHANGE FOR RELEASE*** also .pro file to release
+ - Bump version to "development for 0.0.5"
  - configure script #!/bin/* changed to sh from csh
  - Release tar files now unpack to a ./evolvotron directory
  - More "Big" size options

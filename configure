@@ -1,13 +1,9 @@
 #!/bin/sh
 
-# Don't run qmake -project again!!! (It clears evolvotron.pro)
+# Don't run qmake -project again!!! (It wipes evolvotron.pro)
 
-#########################
-# Some users report problems with QMAKESPEC not being defined.
-# If you're one of them try uncommenting the line below
-# (obviously, if you're not on a linux machine you may need to change the
-# value; consult the qmake documentation for allowed values).
-#export QMAKESPEC=linux-g++
+# qmake probably requires a QTDIR (and perhaps QMAKESPEC) environmental variable defined
+# See Qt/qmake docs for your system and Evolvotron README if you have any problems.
 
 qmake evolvotron.pro
 

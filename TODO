@@ -10,6 +10,8 @@ imply it will be done sooner or later than other items!
 - Undo needs to save more state to work properly (e.g state for respawn)
 - Have a function type which can suck in random images from directories of images
   (specify by environmental variable ?)
+- Check spew of tasks from drag-adjust can't get out of order in multithread compute farm and come back in wrong order
+  (associate tasks with an original image instance/serial number as well as an originating display ?)
 - Optimise drag: just recompute new area (needs image subregions for tasks).
 - Option (default on) to automatitcally respawn boring constant images as soon
   as they've been computed to a certain resolution.
