@@ -26,6 +26,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "useful.h"
 
 //! Class to hold a fixed size tuple of elements
+/*! Maybe Array would have been a better name
+ */
 template <uint N,class T> class Tuple
 {
  protected:
@@ -36,7 +38,7 @@ template <uint N,class T> class Tuple
  public:
   
   //! Null constructor.
-  Tuple()
+  Tuple<N,T>()
     {}
   
   //! Copy constructor.
@@ -46,9 +48,9 @@ template <uint N,class T> class Tuple
 	_element[i]=t[i];
     }
 
-  //! Destructor.
-  ~Tuple()
-    {}
+  ////! Destructor.
+  //~Tuple<N,T>()
+  //  {}
 
   //! Accessor.
   T& operator[](uint i)
@@ -84,6 +86,18 @@ template <uint N,class T> class Tuple
       for (uint i=0;i<N;i++)
 	_element[i]*=k;
     }
+
+  std::ostream& write(std::ostream& out) const
+    {
+      out << "{";
+      for (uint i=0;i<N;i++)
+	{
+	  out<< _element[i] << " ";
+	}
+      out << "}";
+      return out;
+    }
+
 };
 
 //! Equality operator.
@@ -117,6 +131,54 @@ template <uint N,class T> inline const Tuple<N,T> operator-(const Tuple<N,T>& a,
   r-=b;
   return r;
 }
+
+//! Test whether this will expand to sensible straight-through code.
+/*! Call TupleHelperCopyEliminate<N-1,SKIP,N,T>::compute(Tuple<N,T>& m_to,const Tuple<N+1,T>& m_from);
+  This _does_ seem to generate a nice straight-through run of move instructions. 
+ */
+template<uint I,uint SKIP,uint N,class T> class TupleHelperCopyEliminate
+{
+ public:
+  static void execute(Tuple<N,T>& m_to,const Tuple<N+1,T>& m_from)
+    {
+      m_to[I]=m_from[(I>=SKIP ? I+1 : I)];
+      TupleHelperCopyEliminate<I-1,SKIP,N,T>::execute(m_to,m_from);
+    }
+};
+
+//! Specialisation to end recursion
+template<uint SKIP,uint N,class T> class TupleHelperCopyEliminate<0,SKIP,N,T>
+{
+ public:
+  static void execute(Tuple<N,T>& m_to,const Tuple<N+1,T>& m_from)
+    {
+      m_to[0]=m_from[(SKIP==0 ? 1 : 0)];
+    }
+};
+
+//! Development of class TupleHelperCopyEliminate to provide elimination of a row and column.
+/*! Used by matrix class to generate minor matrices efficiently
+ */
+template<uint I,uint SKIP_R,uint SKIP_C,uint N_R,uint N_C,class T> class TupleHelperDoubleCopyEliminate
+{
+ public:
+  static void execute(Tuple<N_R,Tuple<N_C,T> >& m_to,const Tuple<N_R+1,Tuple<N_C+1,T> >& m_from)
+    {
+      TupleHelperCopyEliminate<N_R-1,SKIP_C,N_C,T>::execute(m_to[I],m_from[(I>=SKIP_R ? I+1 : I)]);
+      
+      TupleHelperDoubleCopyEliminate<I-1,SKIP_R,SKIP_C,N_R,N_C,T>::execute(m_to,m_from);
+    }
+};
+
+//! Specialisation to end recursion
+template<uint SKIP_R,uint SKIP_C,uint N_R,uint N_C,class T> class TupleHelperDoubleCopyEliminate<0,SKIP_R,SKIP_C,N_R,N_C,T>
+{
+ public:
+  static void execute(Tuple<N_R,Tuple<N_C,T> >& m_to,const Tuple<N_R+1,Tuple<N_C+1,T> >& m_from)
+    {
+      TupleHelperCopyEliminate<N_R-1,SKIP_C,N_C,T>::execute(m_to[0],m_from[(SKIP_R==0 ? 1 : 0)]);
+    }
+};
 
 #endif
 

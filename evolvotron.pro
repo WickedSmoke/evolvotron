@@ -5,10 +5,14 @@ CONFIG+= qt thread release
 
 ##################
 # Better optimisations than qmake defaults IF you have the right processor.
-# These two lines do appear to generate SSE instructions on the authors setup.
-#
-#QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
-#QMAKE_CXXFLAGS_RELEASE += -march=i686 -O3 -mfpmath=sse -msse2 -fomit-frame-pointer -ffast-math
+# The -mfpmath=sse -msse2 options _do_ appear to generate SSE instructions on the authors setup.
+# The larger inline limit helps with template generated code.
+QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
+QMAKE_CXXFLAGS_RELEASE += -march=i686 -O3 -mfpmath=sse -msse2 -fomit-frame-pointer -ffast-math -funroll-loops -finline-limit=4000 
+
+##################
+# Other optimisation options but these don't seem to produce any improvement in the assembler code I've looked at.
+#QMAKE_CXXFLAGS_RELEASE += -fstrength-reduce -frerun-loop-opt -frerun-cse-after-loop -fexpensive-optimizations -fschedule-insns2 
 
 # Input
 HEADERS += \
@@ -17,6 +21,7 @@ HEADERS += \
 	dialog_mutation_parameters.h \
 	evolvotron_main.h \
 	license.h \
+        matrix.h \
 	mutatable_image.h \
 	mutatable_image_computer.h \
 	mutatable_image_computer_farm.h \
@@ -35,6 +40,7 @@ SOURCES += \
 	evolvotron.cpp \
 	evolvotron_main.cpp \
 	license.cpp \
+        matrix.cpp \
 	mutatable_image.cpp \
 	mutatable_image_computer.cpp \
 	mutatable_image_computer_farm.cpp \

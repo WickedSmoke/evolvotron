@@ -1,3 +1,7 @@
+- "Unlock all" on edit menu
+- "Move all locked to start" on edit menu
+  (or move them to a "safe area", or save them in reloadable form).
+- Restart should honour lock (2 kinds of restart ?  Dialog choice ?)
 - Save whole grid as a single image (from File menu).
 - More functions 
 - Option to reduce/elimintate position (identity) nodes to avoid blatantly centred images.
