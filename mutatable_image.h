@@ -24,6 +24,8 @@
 #define _mutatable_image_h_
 
 #include <vector>
+#include <map>
+#include <iostream>
 
 #include "useful.h"
 #include "xyz.h"
@@ -160,12 +162,49 @@ class MutatableImageNode
     {
       return _args;
     }
-
 };
 
-//! Template class to generate boilerplate for virtual methods
+class Registration
+{
+ public:
+  std::string _name;
+  
+  Registration(const std::string& n)
+    :_name(n)
+    {
+      std::cerr << "Register: " << _name << "\n";
+    }
+};
+
+class Registry
+{
+ public:
+  std::map<std::string,const Registration*> _registry;
+
+  Registry()
+    {}
+
+  void add(const Registration* reg)
+    {
+      _registry[reg->_name]=reg;
+    }
+
+  static const Registration* add(const std::string& name,const Registration* reg)
+  {
+    std::cerr << "Registry: " << name << "\n";
+    return reg;
+  }
+};
+
+
+//! Template class to generate boilerplate for virtual methods.
 template <typename F> class MutatableImageNodeUsing : public MutatableImageNode
 {
+ public:
+
+  //! Registration member encapsulates class meta-information needed to 
+  static Registration registration;
+  
  protected:
   
   //! Evaluation supplied by the wrapped class.
@@ -241,6 +280,13 @@ template <> inline MutatableImageNodeUsing<FunctionPreTransform>*const Mutatable
 {
   return this;
 }
+
+//! You'd expect this to live in the .cpp, but instantiation should only be triggered once by REGISTER macros in function.cpp.
+/*! There is the possibility of associating a name with the association using typeid(F).name()
+  but it's not very useful as it has name mangling stuff attached.
+ */
+template <typename F> Registration MutatableImageNodeUsing<F>::registration(typeid(F).name());
+
 
 //----------------------------------------------------------------------------------------
 
@@ -1018,6 +1064,75 @@ class MutatableImageNodeIterativeJuliaContour : public MutatableImageNodeIterati
 
   //! Return a clone.
   virtual MutatableImageNode*const deepclone() const;
+};
+
+//! Class to hold the base FunctionNode of an image.
+/*! \todo Do reference counting on this object.
+ */
+class MutatableImage
+{
+ protected:
+  //! The top level FunctionNode of the image.
+  /*! Set at image construction time and can't be changed.
+   */
+  MutatableImageNode*const _root;
+ public:
+
+  //! Take ownership of the image tree with the specified root node.
+  MutatableImage(MutatableImageNode* r)
+    :_root(r)
+    {
+      assert(_root!=0);
+    }
+
+  //! Create a new random image tree.
+  MutatableImage(const MutationParameters& parameters,bool exciting=false)
+    :_root(MutatableImageNode::stub(parameters,exciting))
+    {
+      assert(_root!=0);
+    }
+
+  //! Destructor.  NB Deletes owned image function tree.
+  ~MutatableImage()
+    {
+      delete _root;
+    }
+
+  //! Accessor.
+  const MutatableImageNode*const root() const
+    {
+      return _root;
+    }
+  //! Accessor.
+  MutatableImageNode*const root()
+    {
+      return _root;
+    }
+
+  //! Clone this image.
+  MutatableImage*const deepclone() const
+    {
+      return new MutatableImage(_root->deepclone()); 
+    }
+
+  //! Mutate this image
+  void mutate(const MutationParameters& p)
+    {
+      root()->mutate(p);
+    }
+
+  //! Evaluate the image at specified coordinate.
+  const XYZ operator()(const XYZ& p) const
+    {
+      assert(root()!=0);
+      return (*root())(p);
+    }
+
+  const bool is_constant() const
+    {
+      return root()->is_constant();
+    }
+
 };
 
 #endif

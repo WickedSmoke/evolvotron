@@ -85,12 +85,12 @@ void MutatableImageComputer::run()
 			      0.0
 			      );
 		  
+		  const MutatableImage*const image=task()->image();
+
 		  // Actually calculate a pixel value from the image.
+		  const XYZ pv((*image)(p));
+
 		  // Scale nominal -1.0 to 1.0 range to 0-255
-
-		  const MutatableImageNode*const image_root=task()->image();
-		  const XYZ pv((*image_root)(p));
-
 		  XYZ v(127.5*(pv+XYZ(1.0,1.0,1.0)));
 		  
 		  // Clamp out of range values.

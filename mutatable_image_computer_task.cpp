@@ -22,7 +22,7 @@
 
 #include "mutatable_image_computer_task.h"
 
-MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImageNode* img,const QSize& s,uint lev)
+MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImage* img,const QSize& s,uint lev)
   :_aborted(false)
    ,_display(disp)
    ,_image(img)

@@ -70,7 +70,7 @@ class EvolvotronMain : public QMainWindow
       //! Each deque slot contains the collection of display-image pairs replaced by an single action (and a string naming that action).
       /*! We use a deque rather than a stack because we want to clean up the tail end (limited number of Undos).
        */
-      std::deque<std::pair<std::string,std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> > > > _history;
+      std::deque<std::pair<std::string,std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> > > > _history;
 
       //! Number of slots retained for history.
       uint max_slots;
@@ -109,7 +109,7 @@ class EvolvotronMain : public QMainWindow
   History _history;
 
   //! Convenience typedef for pointer to member function implementing a kind of spawn.
-  typedef void (EvolvotronMain::* SpawnMemberFn)(const MutatableImageNode* image,MutatableImageDisplay* display);
+  typedef void (EvolvotronMain::* SpawnMemberFn)(const MutatableImage* image,MutatableImageDisplay* display);
 
   //! Somewhere to report what's going on
   QStatusBar* _statusbar;
@@ -170,7 +170,7 @@ class EvolvotronMain : public QMainWindow
   std::set<const MutatableImageDisplay*> _resizing;
 
   //! An owned deepclone of the last image spawned (used to regenerate single displays).
-  MutatableImageNode* _last_spawned_image;
+  MutatableImage* _last_spawned_image;
 
   //! Pointer to member function used for last spawn.
   SpawnMemberFn _last_spawn_method;
@@ -179,7 +179,7 @@ class EvolvotronMain : public QMainWindow
   TransformFactory* _transform_factory;
 
   //! Accessor.
-  const MutatableImageNode*const last_spawned_image() const
+  const MutatableImage*const last_spawned_image() const
     {
       return _last_spawned_image;
     }
@@ -191,7 +191,7 @@ class EvolvotronMain : public QMainWindow
     }
 
   //! Not just an accessor.  Takes a deepclone and deletes it when replaced.
-  void last_spawned_image(const MutatableImageNode* image,SpawnMemberFn method);
+  void last_spawned_image(const MutatableImage* image,SpawnMemberFn method);
 
   //! Accessor
   const TransformFactory& transform_factory() const
@@ -211,9 +211,9 @@ class EvolvotronMain : public QMainWindow
 
   //@{
   //! Perform a particular type of spawn from an individiual image to an individual display.  (Locking not checked).
-  void spawn_normal(const MutatableImageNode* image,MutatableImageDisplay* display);
-  void spawn_recoloured(const MutatableImageNode* image,MutatableImageDisplay* display);
-  void spawn_warped(const MutatableImageNode* image,MutatableImageDisplay* display);
+  void spawn_normal(const MutatableImage* image,MutatableImageDisplay* display);
+  void spawn_recoloured(const MutatableImage* image,MutatableImageDisplay* display);
+  void spawn_warped(const MutatableImage* image,MutatableImageDisplay* display);
   //@}
 
   //! Spawn the specified display using the specified method.
@@ -252,7 +252,7 @@ class EvolvotronMain : public QMainWindow
     }
 
   //! Called by History when performing undo.
-  void restore(MutatableImageDisplay* display,MutatableImageNode* image);
+  void restore(MutatableImageDisplay* display,MutatableImage* image);
 
   //! Called by History to change undo menu status.
   void set_undoable(bool v,const std::string& name);

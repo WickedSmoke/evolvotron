@@ -258,6 +258,8 @@ const bool MutatableImageNode::ok() const
   return true;
 }
 
+static Registry registry;
+
 /*******************************************/
 
 const XYZ MutatableImageNodePositionTransformedQuadratic::evaluate(const XYZ& p) const

@@ -34,8 +34,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 class EvolvotronMain;
 class MutatableImageComputerTask;
 
-//! Widget responsible for displaying a MutatableImage (which is the same as a MutatableImageNode currently).
-/*! A MutatableImageDisplay is responsible for displaying the image computed from the MutatableImageNode it owns.
+//! Widget responsible for displaying a MutatableImage.
+/*! A MutatableImageDisplay is responsible for displaying the image computed from the MutatableImage it owns.
   Computations are split off into separate threads to take advantage of multiprocessor machines.
  */
 class MutatableImageDisplay : public QWidget
@@ -78,7 +78,7 @@ class MutatableImageDisplay : public QWidget
   std::vector<uint>* _offscreen_image_data;
 
   //! The image being displayed (its root node).
-  MutatableImageNode* _image;
+  MutatableImage* _image;
 
   //! Context (right-click) menu.
   QPopupMenu* _menu;
@@ -122,7 +122,7 @@ class MutatableImageDisplay : public QWidget
   virtual ~MutatableImageDisplay();
 
   //! Accessor.
-  MutatableImageNode*const image()
+  MutatableImage*const image()
     {
       return _image;
     }
@@ -153,7 +153,7 @@ class MutatableImageDisplay : public QWidget
     }
 
   //! Load a new image (clears up old image, starts new compute tasks).
-  void image(MutatableImageNode* image);
+  void image(MutatableImage* image);
 
   //! Evolvotron main calls this with completed (but possibly aborted) tasks.
   void deliver(MutatableImageComputerTask* task);

@@ -37,7 +37,7 @@ void EvolvotronMain::History::purge()
     {
       // Clean up any images at back end of queue
       for (
-	   std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> >::iterator it=_history.back().second.begin();
+	   std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> >::iterator it=_history.back().second.begin();
 	   it!=_history.back().second.end();
 	   it++
 	   )
@@ -69,12 +69,12 @@ void EvolvotronMain::History::goodbye(const MutatableImageDisplay* display)
 {
   // First pass to delete any individual items 
   for (
-       std::deque<std::pair<std::string,std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> > > >::iterator it_out=_history.begin();
+       std::deque<std::pair<std::string,std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> > > >::iterator it_out=_history.begin();
        it_out!=_history.end();
        it_out++
        )
     {
-      std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> >::iterator it_in=(*it_out).second.begin();
+      std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> >::iterator it_in=(*it_out).second.begin();
       while (it_in!=(*it_out).second.end())
 	{
 	  if ((*it_in).first==display)
@@ -90,7 +90,7 @@ void EvolvotronMain::History::goodbye(const MutatableImageDisplay* display)
     }
 
   // Second pass to delete any undo items which are now empty
-  std::deque<std::pair<std::string,std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> > > >::iterator it=_history.begin();
+  std::deque<std::pair<std::string,std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> > > >::iterator it=_history.begin();
   while (it!=_history.end())
     {
       if ((*it).second.empty())
@@ -115,11 +115,11 @@ void EvolvotronMain::History::replacing(MutatableImageDisplay* display)
       begin_action("");
     }
   
-  MutatableImageNode*const image=display->image();
+  MutatableImage*const image=display->image();
 
   if (image!=0)
     {
-      _history.front().second.push_back(std::pair<MutatableImageDisplay*,MutatableImageNode*>(display,image->deepclone()));
+      _history.front().second.push_back(std::pair<MutatableImageDisplay*,MutatableImage*>(display,image->deepclone()));
     }
 }
 
@@ -129,7 +129,7 @@ void EvolvotronMain::History::begin_action(const std::string& action_name)
 {
   if (_history.size()==0 || _history.front().second.size()!=0)
     {
-      _history.push_front(std::pair<std::string,std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> > >());
+      _history.push_front(std::pair<std::string,std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> > >());
 
       assert(_history.front().second.size()==0);
     }
@@ -180,7 +180,7 @@ void EvolvotronMain::History::undo()
   else
     {
       for (
-	   std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> >::iterator it=_history.front().second.begin();
+	   std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> >::iterator it=_history.front().second.begin();
 	   it!=_history.front().second.end();
 	   it++
 	   )
@@ -194,7 +194,7 @@ void EvolvotronMain::History::undo()
   _main->set_undoable(undoable(),action_name);
 }
 
-void EvolvotronMain::last_spawned_image(const MutatableImageNode* image,SpawnMemberFn method)
+void EvolvotronMain::last_spawned_image(const MutatableImage* image,SpawnMemberFn method)
 {
   delete _last_spawned_image;
   _last_spawned_image=(image==0 ? 0 : image->deepclone());
@@ -312,9 +312,9 @@ EvolvotronMain::~EvolvotronMain()
   std::cerr << "...completed Evolvotron shutdown\n";  
 }
 
-void EvolvotronMain::spawn_normal(const MutatableImageNode* image,MutatableImageDisplay* display)
+void EvolvotronMain::spawn_normal(const MutatableImage* image,MutatableImageDisplay* display)
 {
-  MutatableImageNode* new_image;
+  MutatableImage* new_image;
   bool new_image_is_constant;
 
   do
@@ -335,7 +335,7 @@ void EvolvotronMain::spawn_normal(const MutatableImageNode* image,MutatableImage
   display->image(new_image);
 }
 
-void EvolvotronMain::spawn_recoloured(const MutatableImageNode* image,MutatableImageDisplay* display)
+void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImageDisplay* display)
 {
   std::vector<float> params;
 
@@ -344,46 +344,46 @@ void EvolvotronMain::spawn_recoloured(const MutatableImageNode* image,MutatableI
   args.push_back(new MutatableImageNodeUsing<FunctionConstant>(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
   args.push_back(new MutatableImageNodeUsing<FunctionConstant>(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
   args.push_back(new MutatableImageNodeUsing<FunctionConstant>(MutatableImageNode::stubparams(mutation_parameters(),3),MutatableImageNode::stubargs(mutation_parameters(),0)));
-  args.push_back(image->deepclone());
+  args.push_back(image->root()->deepclone());
   
   history().replacing(display);
-  display->image(new MutatableImageNodePostTransform(params,args));
+  display->image(new MutatableImage(new MutatableImageNodePostTransform(params,args)));
 }
 
-void EvolvotronMain::spawn_warped(const MutatableImageNode* image,MutatableImageDisplay* display)
+void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisplay* display)
 {
   // Get the transform from whatever factory is currently set
   const Transform transform(transform_factory()(mutation_parameters().rng01()));
 
-  MutatableImageNode* new_image;
-  if (image->is_a_MutatableImageNodeUsingFunctionPreTransform())
+  MutatableImageNode* new_root;
+  if (image->root()->is_a_MutatableImageNodeUsingFunctionPreTransform())
     {
       // If the image root is a transform wrapper then we can just concatentate transforms.
-      new_image=image->deepclone();
+      new_root=image->root()->deepclone();
 
-      MutatableImageNodeUsing<FunctionPreTransform>*const root=new_image->is_a_MutatableImageNodeUsingFunctionPreTransform();
-      assert(root!=0);
+      MutatableImageNodeUsing<FunctionPreTransform>*const new_root_as_transform=new_root->is_a_MutatableImageNodeUsingFunctionPreTransform();
+      assert(new_root_as_transfrom!=0);
 
       // Have to access params() through this to avoid protected scope of non-const version creating an error.
-      const MutatableImageNodeUsing<FunctionPreTransform>*const croot=root;
+      const MutatableImageNodeUsing<FunctionPreTransform>*const const_new_root_as_transform=new_root_as_transform;
 
-      Transform current_transform(croot->params());
+      Transform current_transform(const_new_root_as_transform->params());
       current_transform.concatenate_on_right(transform);
-      root->params(current_transform.get_columns());
+      new_root_as_transform->params(current_transform.get_columns());
     }
   else
     {
       // Otherwise have to create a new wrapper for the transform
       std::vector<MutatableImageNode*> args;
-      args.push_back(image->deepclone());
-      new_image=new MutatableImageNodeUsing<FunctionPreTransform>(transform.get_columns(),args);
+      args.push_back(image->root()->deepclone());
+      new_root=new MutatableImageNodeUsing<FunctionPreTransform>(transform.get_columns(),args);
     }
   
   history().replacing(display);
-  display->image(new_image);
+  display->image(new MutatableImage(new_root));
 }
 
-void EvolvotronMain::restore(MutatableImageDisplay* display,MutatableImageNode* image)
+void EvolvotronMain::restore(MutatableImageDisplay* display,MutatableImage* image)
 {
   if (is_known(display))
     {
@@ -433,7 +433,7 @@ void EvolvotronMain::spawn_all(MutatableImageDisplay* spawning_display,SpawnMemb
 
   // Issue new images (except to locked displays and to originator)
   // This will cause them to abort any running tasks
-  const MutatableImageNode*const spawning_image=spawning_display->image();
+  const MutatableImage*const spawning_image=spawning_display->image();
 
   last_spawned_image(spawning_image,method);
   
@@ -566,7 +566,7 @@ void EvolvotronMain::tick()
  */
 void EvolvotronMain::reset(MutatableImageDisplay* display)
 {
-  MutatableImageNode* image;
+  MutatableImageNode* root;
   bool image_is_constant;
 
   do
@@ -594,23 +594,23 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
       args_out.push_back(new MutatableImageNodeUsing<FunctionIdentity>(MutatableImageNode::stubparams(mutation_parameters(),0),MutatableImageNode::stubargs(mutation_parameters(),0)));
       args_toplevel.push_back(new MutatableImageNodePostTransform(params_out,args_out));
 
-      image=new MutatableImageNodeConcatenateTriple(params_toplevel,args_toplevel);
+      root=new MutatableImageNodeConcatenateTriple(params_toplevel,args_toplevel);
 
-      assert(image->ok());
+      assert(root->ok());
 
-      image_is_constant=image->is_constant();
+      image_is_constant=root->is_constant();
 
       if (image_is_constant)
 	{
-	  delete image;
+	  delete root;
 	}
     }
   while (image_is_constant);
 
-  assert(image->ok());
+  assert(root->ok());
 
   history().replacing(display);
-  display->image(image);
+  display->image(new MutatableImage(root));
 }
 
 void EvolvotronMain::undo()

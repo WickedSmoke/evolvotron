@@ -25,7 +25,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "matrix.h"
 #include "transform.h"
 
+//! Macro to force instantiation of static registration members.
+/*! Not declared static because that generates "unused" message.
+ */
+#define REGISTER(F) const Registration* force_ ## F = Registry::add(#F,&MutatableImageNodeUsing<F>::registration)
+
+
 //------------------------------------------------------------------------------------------
+
+REGISTER(FunctionConstant);
 
 const XYZ FunctionConstant::evaluate(const MutatableImageNode& our,const XYZ&)
 {
@@ -39,6 +47,8 @@ const bool FunctionConstant::is_constant(const MutatableImageNode&)
 
 //------------------------------------------------------------------------------------------
 
+REGISTER(FunctionIdentity);
+
 const XYZ FunctionIdentity::evaluate(const MutatableImageNode&,const XYZ& p)
 {
   return p;
@@ -50,6 +60,8 @@ const bool FunctionIdentity::is_constant(const MutatableImageNode&)
 }
 
 //------------------------------------------------------------------------------------------
+
+REGISTER(FunctionTransform);
 
 const XYZ FunctionTransform::evaluate(const MutatableImageNode& our,const XYZ& p)
 {
@@ -63,6 +75,8 @@ const bool FunctionTransform::is_constant(const MutatableImageNode&)
 }
 
 //------------------------------------------------------------------------------------------
+
+REGISTER(FunctionPreTransform);
 
 const XYZ FunctionPreTransform::evaluate(const MutatableImageNode& our,const XYZ& p)
 {
