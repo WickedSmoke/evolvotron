@@ -1,22 +1,25 @@
 - Save whole grid as a single image (from File menu).
 - More functions 
-- Undo on File menu (for inaccurate clicking)
-- Context menu option to regenerate a particular cell 
-  (means keeping a copy of the spawning image)
+- Undo/Revert on Mutate menu (to recover from sloppy clicking)
 - Context menu option to bring up info about an image
   (in particular number of nodes and max depth)
 - Use hourglass cursor over displays which haven't got final high resolution yet ?
   (Need combined hourglass/pointer but Qt doesn't have one built in).
-- Computing zero co-ordinate sometimes gives unusual output (black lines across images).  Avoid by jittering co-ordinate, or just avoid exact zero ?
-  (Would break up jaggies).  
-- Antialiasing by super-sampling.
-- Have a function type which can suck in random images from directories of images (specify by environmental variable ?)
-- Separate tool to evolve images towards a given image.  How close would it get ?  Would the process of getting there be interesting ?
+- Computing zero co-ordinate sometimes gives unusual output (black lines across images).
+  Avoid by jittering co-ordinate (would break up jaggies), or just avoid exact zero ?
+- Why stop at screen resolution ? Antialiasing by supersampling.
+- Have a function type which can suck in random images from directories of images
+  (specify by environmental variable ?)
+- Separate tool (?) to evolve images towards a given image.
+  How close would it get and how quickly ?  
+  Would the process of getting there be interesting (e.g as an animation) ?
 - Compute farms on multiple remote machines.
 - Tasks should be a tile of an image.
 - Menu options to add/remove rows/columns from display grid
 - Proper progress bar based on number of pixels to be computed
 - Autocool of mutation parameters
-  (probably shouldn't be on by default, so control from command line).
-- Heat/cool etc should act in proportion to current values.
+  (probably shouldn't be on by default; control from command line).
+- Heat/cool etc should act in proportion to current values
+  (probably wanted for autocool).
+
 

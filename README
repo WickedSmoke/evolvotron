@@ -62,8 +62,10 @@ Repeat the following until bored:
    detail that you can decide which one you like best again.
 
 Right clicking on an image gets you a few more options:
- - "Respawn" regenerates just the current image from whatever was last spawned
-   (note that "recolour" or "warp" don't count as a spawn).
+ - "Respawn" regenerates just the current image from whatever it was spawned from
+   (and using recolour or warp, if that's what was used to produce it).
+   The main use of this is to make your grid of images look nice
+   by regenerating any which aren't up to scratch.
  - "Spawn" is the same as clicking an image.  It generates mutated images to all
    unlocked images in the grid.
  - "Recolour" to produce different coloured variants of the selected image
@@ -73,8 +75,9 @@ Right clicking on an image gets you a few more options:
  - "Big" to produce a blow-up of the image in a single window.
    (either a scrollable view of a fixed size image, or in a freely resizable window)
  - "Save" to save the image in a file (.ppm or .png format).
-   Note that this is most useful on a "Big" blown-up image,
-   and that the save won't be allowed until the full resolution image has been generated.
+   Note that this is most useful on a "Big" blown-up image: if you save a small grid image,
+   the size you see on the screen is the size you get in the file.
+   Note that the save won't be allowed until the full resolution image has been generated.
 
 IMPORTANT: Initially you should select images with some sort of variation.
 It can take quite a few generations before you get something more interesting

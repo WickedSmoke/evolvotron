@@ -58,6 +58,8 @@ class EvolvotronMain : public QMainWindow
     
  protected:
 
+  typedef void (EvolvotronMain::* SpawnMemberFn)(const MutatableImageNode* image,MutatableImageDisplay* display);
+
   //! Somewhere to report what's going on
   QStatusBar* _statusbar;
 
@@ -103,7 +105,7 @@ class EvolvotronMain : public QMainWindow
   MutatableImageComputerFarm* _farm;
 
   //! All the displays in the grid.
-  std::vector<MutatableImageDisplay*> _display;
+  std::vector<MutatableImageDisplay*> _displays;
 
   //! Keeps track of which displays are still available for display (they might have been destroyed while an image was computing).
   std::set<MutatableImageDisplay*> _known_displays;
@@ -114,23 +116,42 @@ class EvolvotronMain : public QMainWindow
   //! An owned deepclone of the last image spawned (used to regenerate single displays).
   MutatableImageNode* _last_spawned;
 
+  //! Pointer to member function used for last spawn.
+  SpawnMemberFn _last_spawn_method;
+
   //! Accessor.
   const MutatableImageNode*const last_spawned() const
     {
       return _last_spawned;
     }
   
+  //! Accessor.
+  const SpawnMemberFn last_spawn_method() const
+    {
+      return _last_spawn_method;
+    }
+
   //! Not just an accessor.  Takes a deepclone and deletes it when replaced.
-  void last_spawned(const MutatableImageNode* image);
+  void last_spawned(const MutatableImageNode* image,SpawnMemberFn method);
       
+  //@{
+  //! Perform a particular type of spawn from an individiual image to an individual display.  (Locking not checked).
+  void spawn_normal(const MutatableImageNode* image,MutatableImageDisplay* display);
+  void spawn_recoloured(const MutatableImageNode* image,MutatableImageDisplay* display);
+  void spawn_warped(const MutatableImageNode* image,MutatableImageDisplay* display);
+  //@}
+
+  //! Spawn the specified display using the specified method.
+  void spawn_all(MutatableImageDisplay* display,SpawnMemberFn method);
+
  public:
   //! Constructor.
   EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_threads);
 
   //! Accessor.
-  std::vector<MutatableImageDisplay*>& display()
+  std::vector<MutatableImageDisplay*>& displays()
     {
-      return _display;
+      return _displays;
     }
 
   //! Accessor.
@@ -146,11 +167,11 @@ class EvolvotronMain : public QMainWindow
       return _farm;
     }
 
-  //! Mutates the image held by the given display to all the other displays owned.
-  void spawn(MutatableImageDisplay* spawning_display);
-
   //! Regenerates a single display.
   void respawn(MutatableImageDisplay* display);
+
+  //! Mutates the image held by the given display to all the other displays owned.
+  void spawn_normal(MutatableImageDisplay* spawning_display);
 
   //! Similar to spawn except just changes the colouration of the image.
   void spawn_recoloured(MutatableImageDisplay* spawning_display);
