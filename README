@@ -318,8 +318,8 @@ TIPS
 ANIMATION
 =========
 As of version 0.2.0 evolvotron contains some experimental support
-for animation (although so far the results have been pretty
-disappointing IMHO).
+for generation of animations (although so far the results have been
+pretty disappointing IMHO, but it's still early days).
 
 NB THIS IS EVEN MORE COMPUTATIONALLY AND MEMORY INTENSIVE THAN
 THE CONVENTIONAL STATIC IMAGE MODE.

@@ -254,7 +254,11 @@ void MutatableImageDisplay::image(MutatableImage* i)
 
 void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
 {
-  // Ignore tasks which were aborted or which have somehow got out of order (not impossible with multiple compute threads).
+  // Ignore tasks which were aborted or which have somehow got out of order 
+  // (not impossible with multiple compute threads).
+  /*! \todo Not entirely sure the level check is sufficient in all possible situations,
+      would be best to have a serial number incremented for each recompute.
+   */
   if (!task->aborted() && task->level()<_current_display_level)
     {
       for (uint f=0;f<_offscreen_image.size();f++)

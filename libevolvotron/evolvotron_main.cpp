@@ -558,7 +558,8 @@ void EvolvotronMain::tick()
 	}
       else
 	{
-	  // If we don't know who owns it we just have to trash it (probably a top level window which was closed with incomplete tasks).
+	  // If we don't know who owns it we just have to trash it 
+	  // (probably a top level window which was closed with incomplete tasks).
 	  delete task;
 	}
 

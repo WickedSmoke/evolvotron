@@ -43,7 +43,7 @@ class MutatableImageComputerFarm
  protected:
   
   //! Comparison class for STL template.
-  class CompareTaskPriority : public std::binary_function<const MutatableImageComputerTask*,const MutatableImageComputerTask*,bool> 
+  class CompareTaskPriorityLoResFirst : public std::binary_function<const MutatableImageComputerTask*,const MutatableImageComputerTask*,bool> 
     {
     public:
       //! Compare task priorities.
@@ -53,17 +53,33 @@ class MutatableImageComputerFarm
 	}
     };
 
+  //! Comparison class for STL template.
+  class CompareTaskPriorityHiResFirst : public std::binary_function<const MutatableImageComputerTask*,const MutatableImageComputerTask*,bool> 
+    {
+    public:
+      //! Compare task priorities.
+      bool operator()(const MutatableImageComputerTask* t0,const MutatableImageComputerTask* t1) 
+	{ 
+	  return (t0->priority() > t1->priority());
+	}
+    };
+
   //! Mutex for locking.  This is the ONLY thing the compute threads should ever block on.
   mutable QMutex _mutex;
 
   //! The compute threads
   std::vector<MutatableImageComputer*> _computers;
 
-  //! Queue of tasks to be performed.
-  std::multiset<MutatableImageComputerTask*,CompareTaskPriority> _todo;
+  //! Queue of tasks to be performed, lowest resolution first
+  std::multiset<MutatableImageComputerTask*,CompareTaskPriorityLoResFirst> _todo;
 
   //! Queue of tasks completed awaiting display.
-  std::multiset<MutatableImageComputerTask*,CompareTaskPriority> _done;
+  /*! We reverse the compute priority so that highest resolution images get displayed first.
+      Lower resolution ones arriving later should be discarded by the displays.
+      This mainly makes a difference for animation where enlarging multiple low resolution 
+      images to screen res takes a lot of time.
+   */
+  std::multiset<MutatableImageComputerTask*,CompareTaskPriorityHiResFirst> _done;
 
  public:
 

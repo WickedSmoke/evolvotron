@@ -1,5 +1,8 @@
 [Most recent at top]
 
+From release 0.2.0:
+ - Bump version to 0.2.1-devel
+
 From release 0.1.4:
  - Bump version to 0.2.0 
  - Filenames converted to/from QString using Qt's "local8Bit" codec.
