@@ -639,7 +639,7 @@ void MutatableImageDisplay::menupick_save_image()
     }
   else
     {
-      QString save_filename=QFileDialog::getSaveFileName(".","Images (*.ppm *.png *.mng)",this,"Save image","Save image to a PPM, PNG or MNG file");
+      QString save_filename=QFileDialog::getSaveFileName(".","Images (*.ppm *.png *.qt-mng)",this,"Save image","Save image to a PPM, PNG or QT-MNG file");
       if (!save_filename.isEmpty())
 	{
 	  const char* save_format="PPM";
@@ -651,9 +651,9 @@ void MutatableImageDisplay::menupick_save_image()
 	    {
 	      save_format="PNG";
 	    }
-	  else if (save_filename.upper().endsWith(".MNG"))
+	  else if (save_filename.upper().endsWith(".QT-MNG"))
 	    {
-	      save_format="MNG";
+	      save_format="QT-MNG";
 	    }
 	  else
 	    {
@@ -668,7 +668,7 @@ void MutatableImageDisplay::menupick_save_image()
 	  if (!save_filename.isEmpty())
 	    {
 	      QFile* mng_file=0;
-	      if (save_format=="MNG")
+	      if (save_format=="QT-MNG")
 		{
 		  mng_file=new QFile(save_filename);
 		  if (!mng_file->open(IO_WriteOnly|IO_Truncate))
