@@ -32,6 +32,7 @@ extern "C"
 #include <math.h>
 #include <iosfwd>
 #include <string>
+#include <sstream>
 
 //! Convenience typedef.
 typedef unsigned int uint;

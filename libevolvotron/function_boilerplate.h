@@ -17,20 +17,20 @@
 */
 
 /*! \file 
-  \brief Interface for class FunctionNodeUsing.
+  \brief Interface for abstract base class FunctionBoilerplate.
   And implementation given that it's a template.
 */
 
-#ifndef _function_node_using_h_
-#define _function_node_using_h_
+#ifndef _function_boilerplate_h_
+#define _function_boilerplate_h_
 
+#include "useful.h"
 #include "function_node.h"
 #include "function_node_info.h"
 #include "margin.h"
-#include <sstream>
 
 //! Template class to generate boilerplate for virtual methods.
-template <typename F> class FunctionNodeUsing : public FunctionNode
+template <typename F,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class FunctionBoilerplate : public FunctionNode
 {
  public:
   typedef FunctionNode Superclass;
@@ -38,48 +38,38 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
   //! Registration member returns a pointer to class meta-information.
   static FunctionRegistration*const get_registration();
   
- protected:
-  
-  //! Evaluation supplied by the wrapped class.
-  /*! It would be nice if the wrapped function was included right here to avoid
-    the function call overhead.  But it isn't.
-   */
+  //! Evaluation is supplied by the specific class.
   virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return F::evaluate(*this,p);
-    }
+    =0;
   
- public:
-  
-  //! Constant-ness supplied by the wrapped class.
+  //! Constant-ness is supplied by the specific class.
   virtual const bool is_constant() const
-    {
-      return F::is_constant(*this);
-    }
-  
+    =0;
+
   //! Constructor
   /*! \warning Careful to pass an appropriate initial iteration count for iterative functions.
    */
-  FunctionNodeUsing(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter)
+  FunctionBoilerplate(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter)
     :FunctionNode(p,a,iter)
     {
-      assert(params().size()==F::parameters());
-      assert(args().size()==F::arguments());
-      assert((iter==0 && !F::iterative()) || (iter!=0 && F::iterative()));
+      assert(params().size()==PARAMETERS);
+      assert(args().size()==ARGUMENTS);
+      assert((iter==0 && !ITERATIVE) || (iter!=0 && ITERATIVE));
     }
   
   //! Destructor.
-  virtual ~FunctionNodeUsing()
+  virtual ~FunctionBoilerplate()
     {}
 
   //! Factory method to create a stub node for this type
-  static FunctionNode*const stubnew(const MutationParameters& parameters)
+  static FunctionNode*const stubnew(const MutationParameters& mutation_parameters)
     {
-      return new FunctionNodeUsing<F>
+      //! \todo Needs attention.  Will need to create then assign.
+      return new F
 	(
-	 stubparams(parameters,F::parameters()),
-	 stubargs(parameters,F::arguments()),
-	 (F::iterative() ? stubiterations(parameters) : 0)
+	 stubparams(mutation_parameters,PARAMETERS),
+	 stubargs(mutation_parameters,ARGUMENTS),
+	 (ITERATIVE ? stubiterations(mutation_parameters) : 0)
 	 );
     }
 
@@ -89,28 +79,28 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
    */
   static FunctionNode*const create(const FunctionNodeInfo* info,std::string& report)
     {
-      if (info->params().size()!=F::parameters())
+      if (info->params().size()!=PARAMETERS)
 	{
 	  std::stringstream msg;
-	  msg << "Error: For function " << info->type() << ": expected " << F::parameters() << " parameters, but found " << info->params().size() << "\n";
+	  msg << "Error: For function " << info->type() << ": expected " << PARAMETERS << " parameters, but found " << info->params().size() << "\n";
 	  report+=msg.str();
 	  return 0;
 	}
-      if (info->args().size()!=F::arguments())
+      if (info->args().size()!=ARGUMENTS)
 	{
 	  std::stringstream msg;
-	  msg << "Error: For function " << info->type() << ": expected " << F::arguments() << " arguments, but found " << info->args().size() << "\n";
+	  msg << "Error: For function " << info->type() << ": expected " << ARGUMENTS << " arguments, but found " << info->args().size() << "\n";
 	  report+=msg.str();
 	  return 0;
 	}
-      if (info->iterations()!=0 && !F::iterative())
+      if (info->iterations()!=0 && !ITERATIVE)
 	{
 	  std::stringstream msg;
 	  msg << "Error: For function " << info->type() << ": unexpected iteration count\n";
 	  report+=msg.str();
 	  return 0;
 	}
-      if (info->iterations()==0 && F::iterative())
+      if (info->iterations()==0 && ITERATIVE)
 	{
 	  std::stringstream msg;
 	  msg << "Error: For function " << info->type() << ": expected iteration count but none found\n";
@@ -137,13 +127,13 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
 	    }
 	}
 
-      return new FunctionNodeUsing<F>(info->params(),args,info->iterations());
+      return new F(info->params(),args,info->iterations());
     }
   
   //! Return a deeploned copy.
   virtual FunctionNode*const deepclone() const
     {
-      return new FunctionNodeUsing<F>(cloneparams(),cloneargs(),iterations());
+      return new F(cloneparams(),cloneargs(),iterations());
     }
   
   //! Internal self-consistency check.  We can add some extra checks.
@@ -151,11 +141,11 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
     {
       return 
 	(
-	 params().size()==F::parameters()
+	 params().size()==PARAMETERS
 	 &&
-	 args().size()==F::arguments() 
+	 args().size()==ARGUMENTS 
 	 &&
-	 ((iterations()==0 && !F::iterative()) || (iterations()!=0 && F::iterative()))
+	 ((iterations()==0 && !ITERATIVE) || (iterations()!=0 && ITERATIVE))
 	 &&
 	 FunctionNode::ok()
 	 );
@@ -170,37 +160,7 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
       out << Margin(indent) << "</f>\n";
       return out;
     }
-
-  //! Implementation depends on template parameter
-  virtual const FunctionNodeUsing<FunctionPreTransform>*const is_a_FunctionNodeUsingFunctionPreTransform() const;
-
-  //! Implementation depends on template parameter
-  virtual FunctionNodeUsing<FunctionPreTransform>*const is_a_FunctionNodeUsingFunctionPreTransform();
 };
-
-//! In the general case this still returns 0
-template <typename F> inline const FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsing<F>::is_a_FunctionNodeUsingFunctionPreTransform() const
-{
-  return 0;
-}
-
-//! In the general case this still returns 0
-template <typename F> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsing<F>::is_a_FunctionNodeUsingFunctionPreTransform()
-{
-  return 0;
-}
-
-//! Specialisation for FunctionPreTransform
-template <> inline const FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsing<FunctionPreTransform>::is_a_FunctionNodeUsingFunctionPreTransform() const
-{
-  return this;
-}
-
-//! Specialisation for FunctionPreTransform
-template <> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsing<FunctionPreTransform>::is_a_FunctionNodeUsingFunctionPreTransform()
-{
-  return this;
-}
 
 //! You'd expect this to live in the .cpp, but instantiation should only be triggered ONCE by REGISTER macros in function.h which is only included in function_node.cpp.
 /*! We could obtain a type name obtained from typeid BUT:
@@ -209,19 +169,30 @@ template <> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsi
   So we use the no-name registration and the programmer-friendly name gets filled in by the REGISTER macro later.
   We could declare r as a static class member instead, but the static initializer fiasco strikes again.
  */
-template <typename F> FunctionRegistration*const FunctionNodeUsing<F>::get_registration()
+template <typename F,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> FunctionRegistration*const FunctionBoilerplate<F,PARAMETERS,ARGUMENTS,ITERATIVE>::get_registration()
 {
   static FunctionRegistration r
     (
      /*typeid(F).name(),*/
-     &FunctionNodeUsing<F>::stubnew,
-     &FunctionNodeUsing<F>::create,
-     F::parameters(),
-     F::arguments(),
-     F::iterative()
+     &FunctionBoilerplate<F,PARAMETERS,ARGUMENTS,ITERATIVE>::stubnew,
+     &FunctionBoilerplate<F,PARAMETERS,ARGUMENTS,ITERATIVE>::create,
+     PARAMETERS,
+     ARGUMENTS,
+     ITERATIVE
      );
   return &r;
 }
+
+#define FUNCTION_BEGIN(FN,NP,NA,IT) \
+   class FN : public FunctionBoilerplate<FN,NP,NA,IT> \
+   {public: \
+     FN(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter) \
+       :FunctionBoilerplate<FN,NP,NA,IT>(p,a,iter){} \
+     virtual ~FN() {}
+
+#define FUNCTION_END(FN) \
+   }; \
+   REGISTER(FN);
 
 #endif
 

@@ -17,10 +17,8 @@
 */
 
 /*! \file
-  \brief Interfaces and implementation for specific (non-base) Function classes
-  NB There is no proper class heirarchy here as all virtualisation and boilerplate
-  services are supplied when the functions are plugged into the FunctionNode template
-  (rather than being inherited).
+  \brief Interfaces and implementation for specific Function classes.
+  As much as possible of the implementation should be pushed into the FunctionBoilerplate template.
   \warning This file should ONLY be included in function_node.cpp, which instantiates everything.
   The two functions allowed to escape "into the wild" are FunctionPreTransform and FunctionPostTransform 
   which have their own header file.
@@ -32,6 +30,7 @@
 #include <cmath>
 
 #include "useful.h"
+#include "function_boilerplate.h"
 
 //! Sane modulus function always returning a number in the range [0,y)
 inline float modulusf(float x,float y)
@@ -62,145 +61,84 @@ inline float trianglef(float x,float y)
   return r;
 }
 
-#include "function.h"
+
 //------------------------------------------------------------------------------------------
 
 //! Function class representing a constant value.
-class FunctionConstant : public Function
-{
- public:
+FUNCTION_BEGIN(FunctionConstant,3,0,false)
   
-  // 3 parameters: one for each component of XYZ
-  static const uint parameters()
-    {
-      return 3;
-    }
-
-  // No leaf arguments
-  static const uint arguments()
-    {
-      return 0;
-    }
-
   //! Returns the constant value
-  static const XYZ evaluate(const FunctionNode& our,const XYZ&)
+  virtual const XYZ evaluate(const XYZ&) const
     {
-      return XYZ(our.param(0),our.param(1),our.param(2));
+      return XYZ(param(0),param(1),param(2));
     }
 
   //! Returns true, obviously.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return true;
     }
-};
 
-REGISTER(FunctionConstant);
+FUNCTION_END(FunctionConstant)
 
 //------------------------------------------------------------------------------------------
 
 //! Function class simply returning the position argument.
-class FunctionIdentity : public Function
-{
- public:
-
-  //! No parameters
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No leaf arguments
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionIdentity,0,0,false)
 
   //! Simply return the position argument.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       return p;
     }
 
   //! Is definitely not constant.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionIdentity);
+FUNCTION_END(FunctionIdentity)
 
 //------------------------------------------------------------------------------------------
 
 //! Function class returning position transfomed by a 12-component linear transform.
-class FunctionTransform : public Function
-{
- public:
-
-  //! 12 parameters
-  static const uint parameters()
-    {
-      return 12;
-    }
-
-  //! No leaf arguments
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionTransform,12,0,false)
 
   //! Return the transformed position argument.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
   {
-    const Transform transform(our.params());
+    const Transform transform(params());
     return transform.transformed(p);
   }
 
   //! Is definitely not constant.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionTransform);
+FUNCTION_END(FunctionTransform)
 
 //------------------------------------------------------------------------------------------
 
 //! Function class returning position transfomed by a 12-component linear transform.
-class FunctionTransformGeneralised : public Function
-{
- public:
-
-  //! 0 parameters
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! 4 leaf arguments providing transform components.
-  static const uint arguments()
-    {
-      return 4;
-    }
+FUNCTION_BEGIN(FunctionTransformGeneralised,0,4,false)
 
   //! Return the transformed position argument.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
   {
-    const Transform transform(our.arg(0)(p),our.arg(1)(p),our.arg(2)(p),our.arg(3)(p));
+    const Transform transform(arg(0)(p),arg(1)(p),arg(2)(p),arg(3)(p));
     return transform.transformed(p);
   }
 
   //! Is almost certainly not constant.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
   {
     return false;
   }
 
-};
-
-REGISTER(FunctionTransformGeneralised);
+FUNCTION_END(FunctionTransformGeneralised)
 
 //------------------------------------------------------------------------------------------
 
@@ -213,37 +151,22 @@ REGISTER(FunctionPreTransform);
 //! Function class returning leaf node evaluated at position transfomed by a 12-component linear transform.
 /*! Unlike FunctionPreTransform, the basis vectors for the transform are not fixed but determined from leaf functions
  */
-class FunctionPreTransformGeneralised : public Function
-{
- public:
-
-  //! 0 parameters
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! 5 leaf arguments
-  static const uint arguments()
-    {
-      return 5;
-    }
+FUNCTION_BEGIN(FunctionPreTransformGeneralised,0,5,false)
 
   //! Return the evaluation of arg(0) at the transformed position argument.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const Transform transform(our.arg(1)(p),our.arg(2)(p),our.arg(3)(p),our.arg(4)(p));
-      return our.arg(0)(transform.transformed(p));
+      const Transform transform(arg(1)(p),arg(2)(p),arg(3)(p),arg(4)(p));
+      return arg(0)(transform.transformed(p));
     }
 
   //! Has the same const-ness as arg(0)
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionPreTransformGeneralised);
+FUNCTION_END(FunctionPreTransformGeneralised)
 
 //------------------------------------------------------------------------------------------
 
@@ -256,76 +179,47 @@ REGISTER(FunctionPostTransform);
 //! Function class returning leaf node evaluated at given position; result is then transfomed by a 12-component linear transform.
 /*! Unlike FunctionPostTransform, the basis vectors for the transform are not fixed but determined from leaf functions
  */
-class FunctionPostTransformGeneralised : public Function
-{
- public:
-
-  //! 0 parameters
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! 1 function leaf argument, and 4 for the transform.
-  static const uint arguments()
-    {
-      return 5;
-    }
+FUNCTION_BEGIN(FunctionPostTransformGeneralised,0,5,false)
 
   //! Return the evaluation of arg(0) at the transformed position argument.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const Transform transform(our.arg(1)(p),our.arg(2)(p),our.arg(3)(p),our.arg(4)(p));
-      return transform.transformed(our.arg(0)(p));
+      const Transform transform(arg(1)(p),arg(2)(p),arg(3)(p),arg(4)(p));
+      return transform.transformed(arg(0)(p));
     }
 
   //! Only constant if all the leaf functions are constant.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
       return (
-	      our.arg(0).is_constant()
-	      && our.arg(1).is_constant()
-	      && our.arg(2).is_constant()
-	      && our.arg(3).is_constant()
-	      && our.arg(4).is_constant()
+	      arg(0).is_constant()
+	      && arg(1).is_constant()
+	      && arg(2).is_constant()
+	      && arg(3).is_constant()
+	      && arg(4).is_constant()
 	      );
     }
-};
 
-REGISTER(FunctionPostTransformGeneralised);
+FUNCTION_END(FunctionPostTransformGeneralised)
 
 //------------------------------------------------------------------------------------------
 
 //! Transforms position transformed by a 30 paramter quadratic transform.
-class FunctionTransformQuadratic : public Function
-{
- public:
-
-  //! 30 parameters: 12 linear plus 9 cross terms plus 9 squared terms.
-  static const uint parameters()
-    {
-      return 30;
-    }
-
-  //! 0 leaf arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionTransformQuadratic,30,0,false)
 
   //! Return p transformed.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ translate(our.param( 0),our.param( 1),our.param( 2));
-      const XYZ basis_x  (our.param( 3),our.param( 4),our.param( 5));
-      const XYZ basis_y  (our.param( 6),our.param( 7),our.param( 8));
-      const XYZ basis_z  (our.param( 9),our.param(10),our.param(11));
-      const XYZ basis_xy (our.param(12),our.param(13),our.param(14));
-      const XYZ basis_xz (our.param(15),our.param(16),our.param(17));
-      const XYZ basis_yz (our.param(18),our.param(19),our.param(20));
-      const XYZ basis_xx (our.param(21),our.param(22),our.param(23));
-      const XYZ basis_yy (our.param(24),our.param(25),our.param(26));
-      const XYZ basis_zz (our.param(27),our.param(28),our.param(29));
+      const XYZ translate(param( 0),param( 1),param( 2));
+      const XYZ basis_x  (param( 3),param( 4),param( 5));
+      const XYZ basis_y  (param( 6),param( 7),param( 8));
+      const XYZ basis_z  (param( 9),param(10),param(11));
+      const XYZ basis_xy (param(12),param(13),param(14));
+      const XYZ basis_xz (param(15),param(16),param(17));
+      const XYZ basis_yz (param(18),param(19),param(20));
+      const XYZ basis_xx (param(21),param(22),param(23));
+      const XYZ basis_yy (param(24),param(25),param(26));
+      const XYZ basis_zz (param(27),param(28),param(29));
 
       return 
 	translate
@@ -335,35 +229,20 @@ class FunctionTransformQuadratic : public Function
     }
 
   //! Unlikely to ever be constant (requires all parameters zero).
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionTransformQuadratic);
+FUNCTION_END(FunctionTransformQuadratic)
 
 //------------------------------------------------------------------------------------------
 
 //! Transforms cartesian coordinates to spherical
-class FunctionCartesianToSpherical : public Function
-{
- public:
-
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No leaf arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionCartesianToSpherical,0,0,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
   {
     const float r=p.magnitude();
     
@@ -375,36 +254,20 @@ class FunctionCartesianToSpherical : public Function
   }
 
   //! Not constant.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
 
-};
-
-REGISTER(FunctionCartesianToSpherical);
+FUNCTION_END(FunctionCartesianToSpherical)
 
 //------------------------------------------------------------------------------------------
 
 //! Transforms spherical coordinates to cartesian 
-class FunctionSphericalToCartesian : public Function
-{
- public:
-
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No leaf arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionSphericalToCartesian,0,0,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
   {
     const float r=p.x();
     const float theta=M_PI*p.y();
@@ -418,40 +281,26 @@ class FunctionSphericalToCartesian : public Function
   }
 
   //! Not constant.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
   {
     return false;
   }
-};
 
-REGISTER(FunctionSphericalToCartesian);
+FUNCTION_END(FunctionSphericalToCartesian)
 
 //------------------------------------------------------------------------------------------
 
 // Converts the position argument to spherical coords, pass these through the leaf node, and convert the result back to cartesian.
-class FunctionEvaluateInSpherical : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! 1 leaf argument.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionEvaluateInSpherical,0,1,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const float in_r=p.magnitude();
       const float in_theta=atan2(p.y(),p.x())*(1.0f/M_PI);
       const float in_phi=(in_r== 0.0f ? 0.0f : asin(p.z()/in_r)*(1.0f/(0.5f*M_PI)));
       
-      const XYZ v(our.arg(0)(XYZ(in_r,in_theta,in_phi)));
+      const XYZ v(arg(0)(XYZ(in_r,in_theta,in_phi)));
       
       const float out_r=v.x();
       const float out_theta=M_PI*v.y();
@@ -465,36 +314,21 @@ class FunctionEvaluateInSpherical : public Function
     }
   
   //! Is constant if leaf node is.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
   {
-    return our.arg(0).is_constant();
+    return arg(0).is_constant();
   }
 
-};
-
-REGISTER(FunctionEvaluateInSpherical);
+FUNCTION_END(FunctionEvaluateInSpherical)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionRotate : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! 1 leaf argument supplying rotation angles
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionRotate,0,1,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ a(our.arg(0)(p)*M_PI);
+      const XYZ a(arg(0)(p)*M_PI);
   
       Matrix33RotateX rx(a.x());
       Matrix33RotateY ry(a.y());
@@ -504,99 +338,55 @@ class FunctionRotate : public Function
     }
   
   //! Is constant if leaf node is.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
   {
-    return our.arg(0).is_constant();
+    return arg(0).is_constant();
   }
 
-};
-
-REGISTER(FunctionRotate);
+FUNCTION_END(FunctionRotate)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionSin : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionSin,0,0,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       return XYZ(sin(p.x()),sin(p.y()),sin(p.z()));
     }
   
   //! Isn't constant
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
   {
     return false;
   }
 
-};
-
-REGISTER(FunctionSin);
+FUNCTION_END(FunctionSin)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionCos : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionCos,0,0,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       return XYZ(cos(p.x()),cos(p.y()),cos(p.z()));
     }
   
   //! Isn't constant
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
   {
     return false;
   }
-};
 
-REGISTER(FunctionCos);
+FUNCTION_END(FunctionCos)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionSpiralLinear : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! One argument.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionSpiralLinear,0,1,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const float r=p.magnitude();
       float theta=atan2(p.y(),p.x());
@@ -606,38 +396,23 @@ class FunctionSpiralLinear : public Function
       const float x=2.0f*winding+theta/M_PI;
       const float y=2.0f*r-x;
       
-      return our.arg(0)(XYZ(x,y,p.z()));
+      return arg(0)(XYZ(x,y,p.z()));
     }
   
   //! Is constant if the function being spiral-ed is.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
 
-};
-
-REGISTER(FunctionSpiralLinear);
+FUNCTION_END(FunctionSpiralLinear)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionSpiralLogarithmic : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! One argument.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionSpiralLogarithmic,0,1,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const float r=p.magnitude();
       float theta=atan2(p.y(),p.x());
@@ -648,207 +423,123 @@ class FunctionSpiralLogarithmic : public Function
       const float x=2.0f*winding+theta/M_PI;
       const float y=2.0f*lnr-x;
       
-      return our.arg(0)(XYZ(x,y,p.z()));
+      return arg(0)(XYZ(x,y,p.z()));
     }
   
   //! Is constant if the function being spiral-ed is.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionSpiralLogarithmic);
+FUNCTION_END(FunctionSpiralLogarithmic)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionGradient : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! One argument.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionGradient,0,1,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const float epsilon=1e-4;
       const XYZ vepsilon(epsilon,epsilon,epsilon);
       
-      const XYZ v0(our.arg(0)(p-vepsilon));
-      const XYZ v1(our.arg(0)(p+vepsilon));
+      const XYZ v0(arg(0)(p-vepsilon));
+      const XYZ v1(arg(0)(p+vepsilon));
       return (v1-v0)/(2.0*epsilon);
     }
   
   //! Is constant if the function being gradient-ed is.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionGradient);
+FUNCTION_END(FunctionGradient)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionComposePair : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionComposePair,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      return our.arg(1)(our.arg(0)(p));
+      return arg(1)(arg(0)(p));
     }
   
   //! Is constant if either function is.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return (our.arg(0).is_constant() || our.arg(1).is_constant());
+      return (arg(0).is_constant() || arg(1).is_constant());
     }
-};
 
-REGISTER(FunctionComposePair);
+FUNCTION_END(FunctionComposePair)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionComposeTriple : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Three arguments.
-  static const uint arguments()
-    {
-      return 3;
-    }
-
+FUNCTION_BEGIN(FunctionComposeTriple,0,3,false)
+  
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      return our.arg(2)(our.arg(1)(our.arg(0)(p)));
+      return arg(2)(arg(1)(arg(0)(p)));
     }
   
   //! Is constant if any function is.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return (our.arg(0).is_constant() || our.arg(1).is_constant() || our.arg(2).is_constant());
+      return (arg(0).is_constant() || arg(1).is_constant() || arg(2).is_constant());
     }
-};
 
-REGISTER(FunctionComposeTriple);
+FUNCTION_END(FunctionComposeTriple)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionAdd : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionAdd,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      return our.arg(0)(p)+our.arg(1)(p);
+      return arg(0)(p)+arg(1)(p);
     }
   
   //! Is constant if both leaf functions are.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+      return (arg(0).is_constant() && arg(1).is_constant());
     }
-};
 
-REGISTER(FunctionAdd);
+FUNCTION_END(FunctionAdd)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionMultiply : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionMultiply,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ v0(our.arg(0)(p));
-      const XYZ v1(our.arg(1)(p));
+      const XYZ v0(arg(0)(p));
+      const XYZ v1(arg(1)(p));
       return XYZ(v0.x()*v1.x(),v0.y()*v1.y(),v0.z()*v1.z());
     }
   
   //! Is constant if both leaf functions are.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+      return (arg(0).is_constant() && arg(1).is_constant());
     }
-};
 
-REGISTER(FunctionMultiply);
+FUNCTION_END(FunctionMultiply)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionDivide : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionDivide,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ v0(our.arg(0)(p));
-      const XYZ v1(our.arg(1)(p));
+      const XYZ v0(arg(0)(p));
+      const XYZ v1(arg(1)(p));
 
       return XYZ(
 		 (v1.x()==0.0 ? 0.0 : v0.x()/v1.x()),
@@ -859,70 +550,42 @@ class FunctionDivide : public Function
     }
   
   //! Is constant if both leaf functions are.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+      return (arg(0).is_constant() && arg(1).is_constant());
     }
-};
 
-REGISTER(FunctionDivide);
+FUNCTION_END(FunctionDivide)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionCross : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionCross,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ v0(our.arg(0)(p));
-      const XYZ v1(our.arg(1)(p));
+      const XYZ v0(arg(0)(p));
+      const XYZ v1(arg(1)(p));
       return v0*v1;
     }
   
   //! Is constant if both leaf functions are.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+      return (arg(0).is_constant() && arg(1).is_constant());
     }
-};
 
-REGISTER(FunctionCross);
+FUNCTION_END(FunctionCross)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionMax : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionMax,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ v0(our.arg(0)(p));
-      const XYZ v1(our.arg(1)(p));
+      const XYZ v0(arg(0)(p));
+      const XYZ v1(arg(1)(p));
       return XYZ(
 		 std::max(v0.x(),v1.x()),
 		 std::max(v0.y(),v1.y()),
@@ -931,36 +594,22 @@ class FunctionMax : public Function
     }
   
   //! Is constant if both leaf functions are.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+      return (arg(0).is_constant() && arg(1).is_constant());
     }
-};
 
-REGISTER(FunctionMax);
+FUNCTION_END(FunctionMax)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionMin : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionMin,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ v0(our.arg(0)(p));
-      const XYZ v1(our.arg(1)(p));
+      const XYZ v0(arg(0)(p));
+      const XYZ v1(arg(1)(p));
       return XYZ(
 		 std::min(v0.x(),v1.x()),
 		 std::min(v0.y(),v1.y()),
@@ -969,39 +618,25 @@ class FunctionMin : public Function
     }
   
   //! Is constant if both leaf functions are.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+      return (arg(0).is_constant() && arg(1).is_constant());
     }
-};
 
-REGISTER(FunctionMin);
+FUNCTION_END(FunctionMin)
 
 //------------------------------------------------------------------------------------------
 
 //! Function returning components of one function modulus thos of another.
 /*! Sane always-positive modulus used to avoid funny business at zero.
  */
-class FunctionModulus : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionModulus,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ v0(our.arg(0)(p));
-      const XYZ v1(our.arg(1)(p));
+      const XYZ v0(arg(0)(p));
+      const XYZ v1(arg(1)(p));
       return XYZ(
 		 modulusf(v0.x(),fabs(v1.x())),
 		 modulusf(v0.y(),fabs(v1.y())),
@@ -1010,107 +645,65 @@ class FunctionModulus : public Function
     }
   
   //! Is constant if both leaf functions are.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return (our.arg(0).is_constant() && our.arg(1).is_constant());
+      return (arg(0).is_constant() && arg(1).is_constant());
     }
-};
 
-REGISTER(FunctionModulus);
+FUNCTION_END(FunctionModulus)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionExp : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionExp,0,0,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       return XYZ(exp(p.x()),exp(p.y()),exp(p.z()));
     }
   
   //! Is not constant.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionExp);
+FUNCTION_END(FunctionExp)
 
 //------------------------------------------------------------------------------------------
 
 //! Invert the leaf function using a radius-one origin centred sphere.
-class FunctionGeometricInversion : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionGeometricInversion,0,1,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const float radius2=p.magnitude2();
       const XYZ ip(p/radius2);
 
-      return our.arg(0)(ip);
+      return arg(0)(ip);
     }
   
   //! Is constant if leaf function is.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionGeometricInversion);
+FUNCTION_END(FunctionGeometricInversion)
 
 //------------------------------------------------------------------------------------------
 
 //! Implements reflection of sampling point about a plane
-class FunctionReflect : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 3;
-    }
+FUNCTION_BEGIN(FunctionReflect,0,3,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ pt_in_plane(our.arg(0)(p));
-      const XYZ normal(our.arg(1)(p).normalised());
+      const XYZ pt_in_plane(arg(0)(p));
+      const XYZ normal(arg(1)(p).normalised());
       
-      XYZ pos(our.arg(2)(p));
+      XYZ pos(arg(2)(p));
       
       const float distance_from_plane=(pos-pt_in_plane)%normal;
       
@@ -1125,36 +718,22 @@ class FunctionReflect : public Function
     }
   
   //! Is constant if sampled function is
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(2).is_constant();
+      return arg(2).is_constant();
     }
-};
 
-REGISTER(FunctionReflect);
+FUNCTION_END(FunctionReflect)
 
 //------------------------------------------------------------------------------------------
 
 //! Implements reflection of sampling point about multiple planes
-class FunctionKaleidoscope : public Function
-{
- public:
-  //! One parameter.
-  static const uint parameters()
-    {
-      return 1;
-    }
-
-  //! One argument.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionKaleidoscope,1,1,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint n=2+static_cast<uint>(floor(8.0f*fabs(our.param(0))));
+      const uint n=2+static_cast<uint>(floor(8.0f*fabs(param(0))));
 
       const float a=atan2(p.x(),p.y());
       const float r=sqrt(p.x()*p.x()+p.y()*p.y());
@@ -1162,40 +741,26 @@ class FunctionKaleidoscope : public Function
       const float sa=trianglef(a,M_PI/n);
 
       const XYZ s(r*sin(sa),r*cos(sa),p.z());
-      return our.arg(0)(s);
+      return arg(0)(s);
     }
   
   //! Is constant if sampled function is
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionKaleidoscope);
+FUNCTION_END(FunctionKaleidoscope)
 
 //------------------------------------------------------------------------------------------
 
 //! Implements reflection of sampling point about multiple planes
-class FunctionWindmill : public Function
-{
- public:
-  //! One parameter.
-  static const uint parameters()
-    {
-      return 1;
-    }
-
-  //! One argument.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionWindmill,1,1,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint n=1+static_cast<uint>(floor(8.0f*fabs(our.param(0))));
+      const uint n=1+static_cast<uint>(floor(8.0f*fabs(param(0))));
 
       const float a=atan2(p.x(),p.y());
       const float r=sqrt(p.x()*p.x()+p.y()*p.y());
@@ -1203,336 +768,210 @@ class FunctionWindmill : public Function
       const float sa=modulusf(a,M_PI/n);
 
       const XYZ s(r*sin(sa),r*cos(sa),p.z());
-      return our.arg(0)(s);
+      return arg(0)(s);
     }
   
   //! Is constant if sampled function is
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionWindmill);
+FUNCTION_END(FunctionWindmill)
 
 //------------------------------------------------------------------------------------------
 
 //! Function returns a value comprising the magnitude of three leaf functions.
-class FunctionMagnitudes : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 3;
-    }
+FUNCTION_BEGIN(FunctionMagnitudes,0,3,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       return XYZ(
-		 our.arg(0)(p).magnitude(),
-		 our.arg(1)(p).magnitude(),
-		 our.arg(2)(p).magnitude()
+		 arg(0)(p).magnitude(),
+		 arg(1)(p).magnitude(),
+		 arg(2)(p).magnitude()
 		 );
     }
   
   //! Is constant if all leaf functions are
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return (our.arg(0).is_constant() && our.arg(1).is_constant() && our.arg(2).is_constant());
+      return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant());
     }
-};
 
-REGISTER(FunctionMagnitudes);
+FUNCTION_END(FunctionMagnitudes)
 
 //------------------------------------------------------------------------------------------
 
 //! Function returns position magnitude.
-class FunctionMagnitude : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionMagnitude,0,0,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const float m=p.magnitude();
       return XYZ(m,m,m);
     }
   
   //! Is not constant.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionMagnitude);
+FUNCTION_END(FunctionMagnitude)
 
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on the relative magnitudes of 2 other functions
-class FunctionChooseSphere : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 4;
-    }
+FUNCTION_BEGIN(FunctionChooseSphere,0,4,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      if ((our.arg(0)(p)).magnitude2()<(our.arg(1)(p)).magnitude2())
-	return our.arg(2)(p);
+      if ((arg(0)(p)).magnitude2()<(arg(1)(p)).magnitude2())
+	return arg(2)(p);
       else
-	return our.arg(3)(p);
+	return arg(3)(p);
     }
   
   //! Is constant if all leaf functions are
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return (our.arg(0).is_constant() && our.arg(1).is_constant() && our.arg(2).is_constant() && our.arg(3).is_constant());
+      return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant() && arg(3).is_constant());
     }
-};
 
-REGISTER(FunctionChooseSphere);
+FUNCTION_END(FunctionChooseSphere)
 
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on whether a rectangle contains a point
-class FunctionChooseRect : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 4;
-    }
+FUNCTION_BEGIN(FunctionChooseRect,0,4,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ p0(our.arg(0)(p));
-      const XYZ p1(our.arg(1)(p));
+      const XYZ p0(arg(0)(p));
+      const XYZ p1(arg(1)(p));
       
       if (p1.origin_centred_rect_contains(p0))
-	return our.arg(2)(p);
+	return arg(2)(p);
       else
-	return our.arg(3)(p);
+	return arg(3)(p);
     }
   
   //! Is constant if all leaf functions are
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return (our.arg(0).is_constant() && our.arg(1).is_constant() && our.arg(2).is_constant() && our.arg(3).is_constant());
+      return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant() && arg(3).is_constant());
     }
-};
 
-REGISTER(FunctionChooseRect);
+FUNCTION_END(FunctionChooseRect)
 
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in 3d mesh
-class FunctionChooseFrom2InCubeMesh : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionChooseFrom2InCubeMesh,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const int x=static_cast<int>(floorf(p.x()));
       const int y=static_cast<int>(floorf(p.y()));
       const int z=static_cast<int>(floorf(p.z()));
 
       if ((x+y+z)&1)
-	return our.arg(0)(p);
+	return arg(0)(p);
       else
-	return our.arg(1)(p);
+	return arg(1)(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionChooseFrom2InCubeMesh);
+FUNCTION_END(FunctionChooseFrom2InCubeMesh);
 
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in 3d mesh
-class FunctionChooseFrom3InCubeMesh : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Three arguments.
-  static const uint arguments()
-    {
-      return 3;
-    }
+FUNCTION_BEGIN(FunctionChooseFrom3InCubeMesh,0,3,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const int x=static_cast<int>(floorf(p.x()));
       const int y=static_cast<int>(floorf(p.y()));
       const int z=static_cast<int>(floorf(p.z()));
 
-      return our.arg(modulusi(x+y+z,3))(p);
+      return arg(modulusi(x+y+z,3))(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionChooseFrom3InCubeMesh);
+FUNCTION_END(FunctionChooseFrom3InCubeMesh)
 
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in 2d grid
-class FunctionChooseFrom2InSquareGrid : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionChooseFrom2InSquareGrid,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const int x=static_cast<int>(floorf(p.x()));
       const int y=static_cast<int>(floorf(p.y()));
 
       if ((x+y)&1)
-	return our.arg(0)(p);
+	return arg(0)(p);
       else
-	return our.arg(1)(p);
+	return arg(1)(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionChooseFrom2InSquareGrid);
+FUNCTION_END(FunctionChooseFrom2InSquareGrid)
 
 //------------------------------------------------------------------------------------------
 
-//! Function implements selection between 2 functions based on position in 2d grid
-class FunctionChooseFrom3InSquareGrid : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Three arguments.
-  static const uint arguments()
-    {
-      return 3;
-    }
+//! Function implements selection between 3 functions based on position in 2d grid
+FUNCTION_BEGIN(FunctionChooseFrom3InSquareGrid,0,3,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const int x=static_cast<int>(floorf(p.x()));
       const int y=static_cast<int>(floorf(p.y()));
 
-      return our.arg(modulusi(x+y,3))(p);
+      return arg(modulusi(x+y,3))(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionChooseFrom3InSquareGrid);
+FUNCTION_END(FunctionChooseFrom3InSquareGrid)
 
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in grid of triangles 
-class FunctionChooseFrom2InTriangleGrid : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionChooseFrom2InTriangleGrid,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       static const XYZ d0(1.0f         ,0.0f         ,0.0f);
       static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0f);
@@ -1543,42 +982,28 @@ class FunctionChooseFrom2InTriangleGrid : public Function
       const int c=static_cast<int>(floorf(p%d2));
 
       if ((a+b+c)&1)
-	return our.arg(0)(p);
+	return arg(0)(p);
       else
-	return our.arg(1)(p);
+	return arg(1)(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionChooseFrom2InTriangleGrid);
+FUNCTION_END(FunctionChooseFrom2InTriangleGrid)
 
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in grid of triangles 
 /*! Not entirely sure this one produces a sensible pattern.  Needs explicitly testing.
  */
-class FunctionChooseFrom3InTriangleGrid : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Three arguments.
-  static const uint arguments()
-    {
-      return 3;
-    }
+FUNCTION_BEGIN(FunctionChooseFrom3InTriangleGrid,0,3,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       static const XYZ d0(1.0f         ,0.0f         ,0.0f);
       static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0f);
@@ -1588,40 +1013,26 @@ class FunctionChooseFrom3InTriangleGrid : public Function
       const int b=static_cast<int>(floorf(p%d1));
       const int c=static_cast<int>(floorf(p%d2));
 
-      return our.arg(modulusi(a+b+c,3))(p);
+      return arg(modulusi(a+b+c,3))(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionChooseFrom3InTriangleGrid);
+FUNCTION_END(FunctionChooseFrom3InTriangleGrid)
 
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 3 functions based on position in grid of hexagons
 /*! Don't entirely understand how this works, but it looks nice.
  */
-class FunctionChooseFrom3InDiamondGrid : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 3;
-    }
+FUNCTION_BEGIN(FunctionChooseFrom3InDiamondGrid,0,3,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       // Basis vectors for hex grid
       static const XYZ d0(1.0f         ,0.0f         ,0.0f);
@@ -1645,39 +1056,25 @@ class FunctionChooseFrom3InDiamondGrid : public Function
 
       // Closest one decides which function
       if (m0<=m1 && m0<=m2)
-	return our.arg(0)(p);
+	return arg(0)(p);
       else if (m1<=m0 && m1<=m2)
-	return our.arg(1)(p);
+	return arg(1)(p);
       else 
-	return our.arg(2)(p);
+	return arg(2)(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionChooseFrom3InDiamondGrid);
+FUNCTION_END(FunctionChooseFrom3InDiamondGrid)
 
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 3 functions based on position in grid of hexagons
-class FunctionChooseFrom3InHexagonGrid : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Three arguments.
-  static const uint arguments()
-    {
-      return 3;
-    }
+FUNCTION_BEGIN(FunctionChooseFrom3InHexagonGrid,0,3,false)
 
   //! Co-ordinates of hexagon with given hex-grid coords
   static const XYZ hex(int x,int y)
@@ -1725,41 +1122,27 @@ class FunctionChooseFrom3InHexagonGrid : public Function
     } 
   
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       int hx;
       int hy;
       nearest_hex(p.x(),p.y(),hx,hy);
       const uint which=hy+((hx&1)? 2 : 0);
-      return our.arg(modulusi(which,3))(p);
+      return arg(modulusi(which,3))(p);
     }
     
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionChooseFrom3InHexagonGrid);
+FUNCTION_END(FunctionChooseFrom3InHexagonGrid)
 
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on position in grid of hexagons
-class FunctionChooseFrom2InBorderedHexagonGrid : public Function
-{
- public:
-  //! One parameter controlling border width
-  static const uint parameters()
-    {
-      return 1;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionChooseFrom2InBorderedHexagonGrid,1,2,false)
 
   //! Co-ordinates of hexagon with given hex-grid coords
   static const XYZ hex(int x,int y)
@@ -1807,7 +1190,7 @@ class FunctionChooseFrom2InBorderedHexagonGrid : public Function
     } 
   
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       int hx;
       int hy;
@@ -1816,7 +1199,7 @@ class FunctionChooseFrom2InBorderedHexagonGrid : public Function
       bool in_border=false;
 
       // Hex centres are separated by 1.0 so limit border size
-      const float b=modulusf(our.param(0),0.5f);
+      const float b=modulusf(param(0),0.5f);
 
       // Step along grid co-ordinates in various directions.  If there's a nearer point, we're in the border.
       for (uint a=0;a<6;a++)
@@ -1835,17 +1218,16 @@ class FunctionChooseFrom2InBorderedHexagonGrid : public Function
 	    }
 	}
 
-      return our.arg(in_border)(p);
+      return arg(in_border)(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionChooseFrom2InBorderedHexagonGrid);
+FUNCTION_END(FunctionChooseFrom2InBorderedHexagonGrid)
 
 //------------------------------------------------------------------------------------------
 
@@ -1855,23 +1237,10 @@ REGISTER(FunctionChooseFrom2InBorderedHexagonGrid);
   param(0,1,2) is light source direction
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-class FunctionOrthoSphereShaded : public Function
-{
- public:
-  //! Three parameters.
-  static const uint parameters()
-    {
-      return 3;
-    }
-
-  //! Two argument.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionOrthoSphereShaded,3,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const float pr2=p.x()*p.x()+p.y()*p.y();
       if (pr2<1.0f)
@@ -1879,25 +1248,25 @@ class FunctionOrthoSphereShaded : public Function
 	  const float z=-sqrt(1.0f-pr2);
 	  const XYZ n(p.x(),p.y(),z);
 
-	  const XYZ l(XYZ(our.param(0),our.param(1),our.param(2)).normalised());
+	  const XYZ lu(param(0),param(1),param(2));
+	  const XYZ l(lu.normalised());
 
 	  const float i=0.5*(1.0+l%n); // In range 0-1
-	  return i*our.arg(1)(n);
+	  return i*arg(1)(n);
 	}
       else
 	{
-	  return our.arg(0)(p);
+	  return arg(0)(p);
 	}
     }
   
   //! Can't be constant unless args are constant and equal (unlikely).
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionOrthoSphereShaded);
+FUNCTION_END(FunctionOrthoSphereShaded)
 
 //------------------------------------------------------------------------------------------
 
@@ -1908,23 +1277,10 @@ REGISTER(FunctionOrthoSphereShaded);
   param(0,1,2) is light source direction
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-class FunctionOrthoSphereShadedBumpMapped : public Function
-{
- public:
-  //! Three parameters.
-  static const uint parameters()
-    {
-      return 3;
-    }
-
-  //! Three arguments.
-  static const uint arguments()
-    {
-      return 3;
-    }
+FUNCTION_BEGIN(FunctionOrthoSphereShadedBumpMapped,3,3,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const float pr2=p.x()*p.x()+p.y()*p.y();
       if (pr2<1.0f)
@@ -1938,35 +1294,35 @@ class FunctionOrthoSphereShadedBumpMapped : public Function
 
 	  const float epsilon=1e-4;
 
-	  const float e0=(our.arg(2)(n-epsilon*east)).magnitude2();
-	  const float e1=(our.arg(2)(n+epsilon*east)).magnitude2();
-	  const float n0=(our.arg(2)(n-epsilon*north)).magnitude2();
-	  const float n1=(our.arg(2)(n+epsilon*north)).magnitude2();
+	  const float e0=(arg(2)(n-epsilon*east)).magnitude2();
+	  const float e1=(arg(2)(n+epsilon*east)).magnitude2();
+	  const float n0=(arg(2)(n-epsilon*north)).magnitude2();
+	  const float n1=(arg(2)(n+epsilon*north)).magnitude2();
 
 	  const float de=(e1-e0)/(2.0f*epsilon);
 	  const float dn=(n1-n0)/(2.0f*epsilon);
 
 	  const XYZ perturbed_n((n-east*de-north*dn).normalised());
 
-	  const XYZ l(XYZ(our.param(0),our.param(1),our.param(2)).normalised());
+	  const XYZ lu(param(0),param(1),param(2));
+	  const XYZ l(lu.normalised());
 
 	  const float i=0.5*(1.0+l%perturbed_n); // In range 0-1
-	  return i*our.arg(1)(n);
+	  return i*arg(1)(n);
 	}
       else
 	{
-	  return our.arg(0)(p);
+	  return arg(0)(p);
 	}
     }
   
   //! Unlikely to be constant.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionOrthoSphereShadedBumpMapped);
+FUNCTION_END(FunctionOrthoSphereShadedBumpMapped)
 
 
 //------------------------------------------------------------------------------------------
@@ -1976,23 +1332,10 @@ REGISTER(FunctionOrthoSphereShadedBumpMapped);
     arg(1) sampled using a normalised vector defines an environment for reflected rays
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-class FunctionOrthoSphereReflect : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two argument.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionOrthoSphereReflect,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const float pr2=p.x()*p.x()+p.y()*p.y();
       if (pr2<1.0f)
@@ -2008,22 +1351,21 @@ class FunctionOrthoSphereReflect : public Function
 	  // The reflected ray is (2n.v)n-v
 	  const XYZ reflected((2.0f*(n%v))*n-v);
 
-	  return our.arg(1)(reflected);
+	  return arg(1)(reflected);
 	}
       else
 	{
-	  return our.arg(0)(p);
+	  return arg(0)(p);
 	}
     }
   
   //! Can't be constant unless args are constant and equal (unlikely).
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionOrthoSphereReflect);
+FUNCTION_END(FunctionOrthoSphereReflect)
 
 //------------------------------------------------------------------------------------------
 
@@ -2033,23 +1375,10 @@ REGISTER(FunctionOrthoSphereReflect);
     arg(2) is bump map
   p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
 */
-class FunctionOrthoSphereReflectBumpMapped : public Function
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Three arguments.
-  static const uint arguments()
-    {
-      return 3;
-    }
+FUNCTION_BEGIN(FunctionOrthoSphereReflectBumpMapped,0,3,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const float pr2=p.x()*p.x()+p.y()*p.y();
       if (pr2<1.0f)
@@ -2065,10 +1394,10 @@ class FunctionOrthoSphereReflectBumpMapped : public Function
 
 	  const float epsilon=1e-4;
 
-	  const float e0=(our.arg(2)(n-epsilon*east)).magnitude2();
-	  const float e1=(our.arg(2)(n+epsilon*east)).magnitude2();
-	  const float n0=(our.arg(2)(n-epsilon*north)).magnitude2();
-	  const float n1=(our.arg(2)(n+epsilon*north)).magnitude2();
+	  const float e0=(arg(2)(n-epsilon*east)).magnitude2();
+	  const float e1=(arg(2)(n+epsilon*east)).magnitude2();
+	  const float n0=(arg(2)(n-epsilon*north)).magnitude2();
+	  const float n1=(arg(2)(n+epsilon*north)).magnitude2();
 
 	  const float de=(e1-e0)/(2.0f*epsilon);
 	  const float dn=(n1-n0)/(2.0f*epsilon);
@@ -2081,274 +1410,175 @@ class FunctionOrthoSphereReflectBumpMapped : public Function
 	  // The reflected ray is (2n.v)n-v
 	  const XYZ reflected((2.0f*(perturbed_n%v))*perturbed_n-v);
 
-	  return our.arg(1)(reflected);
+	  return arg(1)(reflected);
 	}
       else
 	{
-	  return our.arg(0)(p);
+	  return arg(0)(p);
 	}
     }
   
   //! Can't be constant unless args are constant and equal (unlikely).
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionOrthoSphereReflectBumpMapped);
+FUNCTION_END(FunctionOrthoSphereReflectBumpMapped)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionFilter2D : public Function
-{
- public:
-  //! Two parameters.
-  static const uint parameters()
-    {
-      return 2;
-    }
-
-  //! One arguments.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionFilter2D,2,1,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       return
-	our.arg(0)(p)
+	arg(0)(p)
 	-(
-	  our.arg(0)(p+XYZ(our.param(0),0.0f,0.0f))
-	  +our.arg(0)(p+XYZ(-our.param(0),0.0f,0.0f))
-	  +our.arg(0)(p+XYZ(0.0f,our.param(1),0.0f))
-	  +our.arg(0)(p+XYZ(0.0f,-our.param(1),0.0f))
+	  arg(0)(p+XYZ(param(0),0.0f,0.0f))
+	  +arg(0)(p+XYZ(-param(0),0.0f,0.0f))
+	  +arg(0)(p+XYZ(0.0f,param(1),0.0f))
+	  +arg(0)(p+XYZ(0.0f,-param(1),0.0f))
 	  )/4.0f;
     }
   
   //! Is constant if arg is
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionFilter2D);
+FUNCTION_END(FunctionFilter2D)
 
 //------------------------------------------------------------------------------------------
 
-class FunctionFilter3D : public Function
-{
- public:
-  //! Two parameters.
-  static const uint parameters()
-    {
-      return 3;
-    }
-
-  //! One arguments.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionFilter3D,3,1,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       return
-	our.arg(0)(p)
+	arg(0)(p)
 	-(
-	  our.arg(0)(p+XYZ(our.param(0),0.0f,0.0f))
-	  +our.arg(0)(p+XYZ(-our.param(0),0.0f,0.0f))
-	  +our.arg(0)(p+XYZ(0.0f,our.param(1),0.0f))
-	  +our.arg(0)(p+XYZ(0.0f,-our.param(1),0.0f))
-	  +our.arg(0)(p+XYZ(0.0f,0.0f,our.param(1)))
-	  +our.arg(0)(p+XYZ(0.0f,0.0f,-our.param(1)))
+	  arg(0)(p+XYZ(param(0),0.0f,0.0f))
+	  +arg(0)(p+XYZ(-param(0),0.0f,0.0f))
+	  +arg(0)(p+XYZ(0.0f,param(1),0.0f))
+	  +arg(0)(p+XYZ(0.0f,-param(1),0.0f))
+	  +arg(0)(p+XYZ(0.0f,0.0f,param(1)))
+	  +arg(0)(p+XYZ(0.0f,0.0f,-param(1)))
 	  )/6.0f;
     }
   
   //! Is constant if arg is
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionFilter3D);
+FUNCTION_END(FunctionFilter3D)
 
 //------------------------------------------------------------------------------------------
 
 //! Sum of two evaluations of a function, one sampled at an offset and weighted.
-class FunctionShadow : public Function
-{
- public:
-  //! Four parameters : offset and scale
-  static const uint parameters()
-    {
-      return 4;
-    }
-
-  //! One arguments.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionShadow,4,1,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       return
-	our.arg(0)(p)+our.param(3)*our.arg(0)(p+XYZ(our.param(0),our.param(1),our.param(2)));
+	arg(0)(p)+param(3)*arg(0)(p+XYZ(param(0),param(1),param(2)));
     }
   
   //! Is constant if arg is
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionShadow);
+FUNCTION_END(FunctionShadow)
 
 
 //------------------------------------------------------------------------------------------
 
 //! Like FunctionShadow but the offset is obtained from a function.
-class FunctionShadowGeneralised : public Function
-{
- public:
-  //! One parameter.
-  static const uint parameters()
-    {
-      return 1;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionShadowGeneralised,1,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       return
-	our.arg(0)(p)+our.param(0)*our.arg(0)(p+our.arg(1)(p));
+	arg(0)(p)+param(0)*arg(0)(p+arg(1)(p));
     }
   
   //! Is constant if arg(0) is
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionShadowGeneralised);
+FUNCTION_END(FunctionShadowGeneralised)
 
 //------------------------------------------------------------------------------------------
 
 //! Multiply x and y by z
-class FunctionCone : public Function
-{
- public:
-  //! No parameters
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionCone,0,0,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       return XYZ(p.x()*p.z(),p.y()*p.z(),p.z());
     }
   
   //! Not constant
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionCone);
+FUNCTION_END(FunctionCone)
 
 //------------------------------------------------------------------------------------------
 
 //! Multiply x and y by exp(z)
-class FunctionExpCone : public Function
-{
- public:
-  //! No parameters
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionExpCone,0,0,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       const float k=exp(p.z());
       return XYZ(p.x()*k,p.y()*k,p.z());
     }
   
   //! Not constant
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionExpCone);
+FUNCTION_END(FunctionExpCone)
 
 //------------------------------------------------------------------------------------------
 
 //! Separate influence of z co-ordinate.
 /*! Interesting as a top level node for animations as structure will tend to be fixed, with only colour map changing
  */
-class FunctionSeparateZ : public Function
-{
- public:
-  //! Three parameters
-  static const uint parameters()
-    {
-      return 3;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionSeparateZ,3,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ v=our.arg(0)(XYZ(p.x(),p.y(),0.0f));
-      return our.arg(1)(v+p.z()*XYZ(our.param(0),our.param(1),our.param(2)));
+      const XYZ v=arg(0)(XYZ(p.x(),p.y(),0.0f));
+      return arg(1)(v+p.z()*XYZ(param(0),param(1),param(2)));
     }
   
   //! Constant if arg(1) is
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(1).is_constant();
+      return arg(1).is_constant();
     }
-};
 
-REGISTER(FunctionSeparateZ);
+FUNCTION_END(FunctionSeparateZ)
 
 //------------------------------------------------------------------------------------------
 
@@ -2357,23 +1587,10 @@ REGISTER(FunctionSeparateZ);
 //! Perlin noise function.
 /*! Returns a single value replicated into all three channels
 */
-class FunctionNoiseOneChannel : public Function
-{
- public:
-  //! No parameters
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionNoiseOneChannel,0,0,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       // Crank up the frequency a bit otherwise don't see much variation in base case
       const float v=_noise(2.0f*p);
@@ -2381,16 +1598,15 @@ class FunctionNoiseOneChannel : public Function
     }
   
   //! Not constant
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
 
  protected:
   static Noise _noise;
-};
 
-REGISTER(FunctionNoiseOneChannel);
+FUNCTION_END(FunctionNoiseOneChannel)
 
 //------------------------------------------------------------------------------------------
 
@@ -2398,23 +1614,10 @@ REGISTER(FunctionNoiseOneChannel);
 //! Multiscale noise function.
 /*! Returns a single value replicated into all three channels
 */
-class FunctionMultiscaleNoiseOneChannel : public Function
-{
- public:
-  //! No parameters
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionMultiscaleNoiseOneChannel,0,0,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       float t=0.0f;
       float tm=0.0f;
@@ -2430,45 +1633,31 @@ class FunctionMultiscaleNoiseOneChannel : public Function
     }
   
   //! Not constant
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
 
  protected:
   static Noise _noise;
-};
 
-REGISTER(FunctionMultiscaleNoiseOneChannel);
+FUNCTION_END(FunctionMultiscaleNoiseOneChannel)
 
 //------------------------------------------------------------------------------------------
 
 //! Perlin noise function.
 /*! Returns three independent channels
 */
-class FunctionNoiseThreeChannel : public Function
-{
- public:
-  //! No parameters
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionNoiseThreeChannel,0,0,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       return XYZ(_noise0(p),_noise1(p),_noise2(p));
     }
   
   //! Not constant
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
@@ -2477,32 +1666,18 @@ class FunctionNoiseThreeChannel : public Function
   static Noise _noise0;
   static Noise _noise1;
   static Noise _noise2;
-};
 
-REGISTER(FunctionNoiseThreeChannel);
+FUNCTION_END(FunctionNoiseThreeChannel)
 
 //------------------------------------------------------------------------------------------
 
 //! Perlin multiscale noise function.
 /*! Returns three independent channels
 */
-class FunctionMultiscaleNoiseThreeChannel : public Function
-{
- public:
-  //! No parameters
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionMultiscaleNoiseThreeChannel,0,0,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       XYZ t(0.0f,0.0f,0.0f);
       float tm=0.0f;
@@ -2518,7 +1693,7 @@ class FunctionMultiscaleNoiseThreeChannel : public Function
     }
   
   //! Not constant
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
@@ -2527,75 +1702,47 @@ class FunctionMultiscaleNoiseThreeChannel : public Function
   static Noise _noise0;
   static Noise _noise1;
   static Noise _noise2;
-};
 
-REGISTER(FunctionMultiscaleNoiseThreeChannel);
+FUNCTION_END(FunctionMultiscaleNoiseThreeChannel)
 
 
 //------------------------------------------------------------------------------------------
 
 //! Function repeatedly applying it's leaf function to the argument
-class FunctionIterate : public FunctionIterative
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! One argument.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionIterate,0,1,true)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       XYZ ret(p);
-      for (uint i=0;i<our.iterations();i++)
-	ret=our.arg(0)(ret);
+      for (uint i=0;i<iterations();i++)
+	ret=arg(0)(ret);
       return ret;
     }
   
   //! Is constant if leaf function is.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionIterate);
+FUNCTION_END(FunctionIterate)
 
 //------------------------------------------------------------------------------------------
 
 //! Function returning average value of evenly spaced samples between two points
-class FunctionAverageSamples : public FunctionIterative
-{
- public:
-  //! Three parameters.
-  static const uint parameters()
-    {
-      return 3;
-    }
-
-  //! One argument.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionAverageSamples,3,1,true)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ baseline(our.param(0),our.param(1),our.param(2));
+      const XYZ baseline(param(0),param(1),param(2));
      
       XYZ p0;
       XYZ p1;
       XYZ delta;
       
-      if (our.iterations()==1)
+      if (iterations()==1)
 	{
 	  p0=p;
 	  p1=p;
@@ -2606,58 +1753,44 @@ class FunctionAverageSamples : public FunctionIterative
 	  // In the case of two iterations the samples will be at p0 and p1
 	  p0=p-baseline;
 	  p1=p+baseline;
-	  delta=(p1-p0)/(our.iterations()-1);
+	  delta=(p1-p0)/(iterations()-1);
 	}
 
       XYZ ret(0.0f,0.0f,0.0f);
       XYZ ps=p0;
 
-      for (uint i=0;i<our.iterations();i++)
+      for (uint i=0;i<iterations();i++)
 	{
-	  ret+=our.arg(0)(ps);
+	  ret+=arg(0)(ps);
 	  ps+=delta;
 	}
-      ret/=our.iterations();
+      ret/=iterations();
       return ret;
     }
   
   //! Is constant if sampled leaf function is.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionAverageSamples);
+FUNCTION_END(FunctionAverageSamples)
 
 //------------------------------------------------------------------------------------------
 
 //! Similar to average samples except one end has a higher weighting
-class FunctionStreak : public FunctionIterative
-{
- public:
-  //! Three parameters.
-  static const uint parameters()
-    {
-      return 3;
-    }
-
-  //! One argument.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionStreak,3,1,true)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ baseline(our.param(0),our.param(1),our.param(2));
+      const XYZ baseline(param(0),param(1),param(2));
      
       XYZ p0;
       XYZ p1;
       XYZ delta;
       
-      if (our.iterations()==1)
+      if (iterations()==1)
 	{
 	  p0=p;
 	  p1=p;
@@ -2667,17 +1800,17 @@ class FunctionStreak : public FunctionIterative
 	{
 	  p0=p;
 	  p1=p+baseline;
-	  delta=(p1-p0)/(our.iterations()-1);
+	  delta=(p1-p0)/(iterations()-1);
 	}
 
       XYZ ret(0.0f,0.0f,0.0f);
       XYZ ps=p0;
       float w=0.0f;
 
-      for (uint i=0;i<our.iterations();i++)
+      for (uint i=0;i<iterations();i++)
 	{
-	  const float k=1.0f-static_cast<float>(i)/our.iterations();
-	  ret+=k*our.arg(0)(ps);
+	  const float k=1.0f-static_cast<float>(i)/iterations();
+	  ret+=k*arg(0)(ps);
 	  w+=k;
 	  ps+=delta;
 	}
@@ -2686,42 +1819,28 @@ class FunctionStreak : public FunctionIterative
     }
   
   //! Is constant if sampled leaf function is.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionStreak);
+FUNCTION_END(FunctionStreak)
 
 //------------------------------------------------------------------------------------------
 
 //! Function similar to FunctionAverageSamples but doing convolution
-class FunctionConvolveSamples : public FunctionIterative
-{
- public:
-  //! Three parameters.
-  static const uint parameters()
-    {
-      return 3;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionConvolveSamples,3,2,true)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ baseline(our.param(0),our.param(1),our.param(2));
+      const XYZ baseline(param(0),param(1),param(2));
      
       XYZ p0;
       XYZ p1;
       XYZ delta;
       
-      if (our.iterations()==1)
+      if (iterations()==1)
 	{
 	  p0=p;
 	  p1=p;
@@ -2731,58 +1850,44 @@ class FunctionConvolveSamples : public FunctionIterative
 	{
 	  p0=p-baseline;
 	  p1=p+baseline;
-	  delta=(p1-p0)/(our.iterations()-1);
+	  delta=(p1-p0)/(iterations()-1);
 	}
 
       XYZ ret(0.0f,0.0f,0.0f);
       XYZ pd(0.0f,0.0f,0.0f);
 
-      for (uint i=0;i<our.iterations();i++)
+      for (uint i=0;i<iterations();i++)
 	{
-	  ret+=(our.arg(0)(p+pd)*our.arg(1)(pd));
+	  ret+=(arg(0)(p+pd)*arg(1)(pd));
 	  pd+=delta;
 	}
-      ret/=our.iterations();
+      ret/=iterations();
       return ret;
     }
   
   //! Is constant if arg(0) is
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionConvolveSamples);
+FUNCTION_END(FunctionConvolveSamples)
 
 //------------------------------------------------------------------------------------------
 
 //! Function summing decreasing amounts of higher frequency versions of image
-class FunctionAccumulateOctaves : public FunctionIterative
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! One argument.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionAccumulateOctaves,0,1,true)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
       XYZ ret(0.0f,0.0f,0.0f);
       float k=0.0f;
-      for (uint i=0;i<our.iterations();i++)
+      for (uint i=0;i<iterations();i++)
 	{
 	  const float scale=(1<<i);
 	  const float iscale=1.0f/scale;
-	  ret+=iscale*(our.arg(0)(scale*p));
+	  ret+=iscale*(arg(0)(scale*p));
 	  k+=iscale;
 	}
       ret/=k;
@@ -2790,13 +1895,12 @@ class FunctionAccumulateOctaves : public FunctionIterative
     }
   
   //! Is constant if sampled leaf function is.
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
     {
-      return our.arg(0).is_constant();
+      return arg(0).is_constant();
     }
-};
 
-REGISTER(FunctionAccumulateOctaves);
+FUNCTION_END(FunctionAccumulateOctaves)
 
 
 //------------------------------------------------------------------------------------------
@@ -2831,136 +1935,80 @@ inline const uint brot(const XYZ& z0,const XYZ& c,const uint iterations)
 //------------------------------------------------------------------------------------------
 
 //! Function selects arg to evaluate based on test for point in Mandelbrot set.
-class FunctionMandelbrotChoose : public FunctionIterative
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Two arguments.
-  static const uint arguments()
-    {
-      return 2;
-    }
+FUNCTION_BEGIN(FunctionMandelbrotChoose,0,2,false)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      return (brot(XYZ(0.0f,0.0f,0.0f),p,our.iterations())==our.iterations() ? our.arg(0)(p) : our.arg(1)(p));
+      return (brot(XYZ(0.0f,0.0f,0.0f),p,iterations())==iterations() ? arg(0)(p) : arg(1)(p));
     }
   
   //! Can't be constant unless functions are the same.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionMandelbrotChoose);
+FUNCTION_END(FunctionMandelbrotChoose)
 
 //-----------------------------------------------------------------------------------------
 
 //! Function returns -1 for points in set, 0-1 for escaped points
-class FunctionMandelbrotContour : public FunctionIterative
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! No arguments.
-  static const uint arguments()
-    {
-      return 0;
-    }
+FUNCTION_BEGIN(FunctionMandelbrotContour,0,0,true)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint i=brot(XYZ(0.0f,0.0f,0.0f),p,our.iterations());
-      return (i==our.iterations() ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/our.iterations()));
+      const uint i=brot(XYZ(0.0f,0.0f,0.0f),p,iterations());
+      return (i==iterations() ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/iterations()));
     }
   
   //! Not constant.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionMandelbrotContour);
+FUNCTION_END(FunctionMandelbrotContour)
 
 //------------------------------------------------------------------------------------------
 
 //! Function selects arg to evaluate based on test for point in Julia set.
-class FunctionJuliaChoose : public FunctionIterative
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! Three arguments.
-  static const uint arguments()
-    {
-      return 3;
-    }
+FUNCTION_BEGIN(FunctionJuliaChoose,0,3,true)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      return (brot(p,our.arg(2)(p),our.iterations())==our.iterations() ? our.arg(0)(p) : our.arg(1)(p));
+      return (brot(p,arg(2)(p),iterations())==iterations() ? arg(0)(p) : arg(1)(p));
     }
   
   //! Can't be constant unless functions are the same.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionJuliaChoose);
+FUNCTION_END(FunctionJuliaChoose)
 
 //------------------------------------------------------------------------------------------
 
 //! Function returns -1 for points in set, 0-1 for escaped points
-class FunctionJuliaContour : public FunctionIterative
-{
- public:
-  //! No paramters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! One argument.
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionJuliaContour,0,1,true)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint i=brot(p,our.arg(0)(p),our.iterations());
-      return (i==our.iterations() ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/our.iterations()));
+      const uint i=brot(p,arg(0)(p),iterations());
+      return (i==iterations() ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/iterations()));
     }
   
   //! Not constant.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant() const
     {
       return false;
     }
-};
 
-REGISTER(FunctionJuliaContour);
+FUNCTION_END(FunctionJuliaContour)
 
 //------------------------------------------------------------------------------------------
 
@@ -2971,37 +2019,25 @@ REGISTER(FunctionJuliaContour);
   Maybe the whole static thing was a mistake.
   Should derive Function classes from FunctionBoilerplate<T> to provide Clone etc.
  */
-class FunctionCellular : public FunctionIterative
-{
- public:
-  //! No parameters.
-  static const uint parameters()
-    {
-      return 0;
-    }
-
-  //! One arguments giving initial seed
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionCellular,0,1,true)
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p)
     {
       return XYZ(0.0f,0.0f,0.0f);
     }
   
   //! Not constant.
-  static const bool is_constant(const FunctionNode&)
+  virtual const bool is_constant()
     {
       return false;
     }
 
  protected:
-};
 
-REGISTER(FunctionCellular);
+};
+// Not done yet.
+//REGISTER(FunctionCellular);
 
 //------------------------------------------------------------------------------------------
 

@@ -10,11 +10,10 @@ HEADERS += \
 	dialog_about.h \
 	dialog_mutation_parameters.h \
 	evolvotron_main.h \
-        function.h \
+        function_boilerplate.h \
         functions.h \
         function_node.h \
         function_node_info.h \
-        function_node_using.h \
         function_pre_transform.h \
         function_post_transform.h \
         function_registration.h \
@@ -41,11 +40,10 @@ SOURCES += \
 	dialog_about.cpp \
 	dialog_mutation_parameters.cpp \
 	evolvotron_main.cpp \
-        function.cpp \
+        function_boilerplate.cpp \
         functions.cpp \
         function_node.cpp \
         function_node_info.cpp \
-        function_node_using.cpp \
         function_pre_transform.cpp \
         function_post_transform.cpp \
         function_registration.cpp \

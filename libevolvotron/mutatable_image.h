@@ -79,6 +79,7 @@ class MutatableImage
   //! Mutate this image
   void mutate(const MutationParameters& p)
     {
+      //! \todo There should be a chance of a glitch or insert or substitute type mutation here.
       root()->mutate(p);
     }
 

@@ -18,7 +18,7 @@
 
 /*! \file 
   \brief Interfaces for class FunctionPreTransform 
-  This class would normally live in function.h (and is included and registered there), 
+  This class would normally live in functions.h (and is included and registered there), 
   but is split out so it can be efficiently used by MutatableImageDisplay and EvolvotronMain.
   NB There is no class heirarchy here as all virtualisation and boilerplate services are supplied when the functions are plugged into the FunctionNode template.
 */
@@ -27,38 +27,38 @@
 #define _function_pre_transform_h_
 
 #include "xyz.h"
-#include "function.h"
 #include "function_node.h"
+#include "function_boilerplate.h"
 
 //! Function class returning leaf node evaluated at position transfomed by a 12-component linear transform.
-class FunctionPreTransform : public Function
-{
- public:
-
-  //! 12 parameters
-  static const uint parameters()
-    {
-      return 12;
-    }
-
-  //! Single leaf arguments
-  static const uint arguments()
-    {
-      return 1;
-    }
+FUNCTION_BEGIN(FunctionPreTransform,12,1,false)
 
   //! Return the evaluation of arg(0) at the transformed position argument.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  virtual const XYZ evaluate(const XYZ& p) const
   {
-    const Transform transform(our.params());
-    return our.arg(0)(transform.transformed(p));
+    const Transform transform(params());
+    return arg(0)(transform.transformed(p));
   }
 
   //! Has the same const-ness as arg(0)
-  static const bool is_constant(const FunctionNode& our)
+  virtual const bool is_constant() const
   {
-    return our.arg(0).is_constant();
+    return arg(0).is_constant();
   }
+
+  //! Override in specific class
+  virtual const FunctionPreTransform*const is_a_FunctionPreTransform() const
+    {
+      return this;
+    }
+
+  //! Override in specific class
+  virtual FunctionPreTransform*const is_a_FunctionPreTransform()
+    {
+      return this;
+    }
+
+// Don't use FUNCTION_END because we don't want to REGISTER here
 };
 
 #endif

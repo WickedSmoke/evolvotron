@@ -31,7 +31,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "evolvotron_main.h"
 #include "xyz.h"
 #include "function_node.h"
-#include "function_node_using.h"
 #include "function_pre_transform.h"
 #include "function_post_transform.h"
 
@@ -364,7 +363,7 @@ void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImage
     (
      new MutatableImage
      (
-      new FunctionNodeUsing<FunctionPostTransform>
+      new FunctionPostTransform
       (
        FunctionNode::stubparams(mutation_parameters(),12),
        args,
@@ -380,16 +379,16 @@ void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisp
   const Transform transform(transform_factory()(mutation_parameters().rng01()));
 
   FunctionNode* new_root;
-  if (image->root()->is_a_FunctionNodeUsingFunctionPreTransform())
+  if (image->root()->is_a_FunctionPreTransform())
     {
       // If the image root is a transform wrapper then we can just concatentate transforms.
       new_root=image->root()->deepclone();
 
-      FunctionNodeUsing<FunctionPreTransform>*const new_root_as_transform=new_root->is_a_FunctionNodeUsingFunctionPreTransform();
+      FunctionPreTransform*const new_root_as_transform=new_root->is_a_FunctionPreTransform();
       assert(new_root_as_transform!=0);
 
       // Have to access params() through this to avoid protected scope of non-const version creating an error.
-      const FunctionNodeUsing<FunctionPreTransform>*const const_new_root_as_transform=new_root_as_transform;
+      const FunctionPreTransform*const const_new_root_as_transform=new_root_as_transform;
 
       Transform current_transform(const_new_root_as_transform->params());
       current_transform.concatenate_on_right(transform);
@@ -400,7 +399,7 @@ void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisp
       // Otherwise have to create a new wrapper for the transform
       std::vector<FunctionNode*> args;
       args.push_back(image->root()->deepclone());
-      new_root=new FunctionNodeUsing<FunctionPreTransform>(transform.get_columns(),args,0);
+      new_root=new FunctionPreTransform(transform.get_columns(),args,0);
     }
   
   history().replacing(display);

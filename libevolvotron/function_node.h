@@ -39,7 +39,7 @@
 class FunctionNodeInfo;
 
 class FunctionPreTransform;
-template <typename F> class FunctionNodeUsing;
+class FunctionPostTransform;
 
 //! Abstract base class for all kinds of mutatable image node.
 class FunctionNode
@@ -80,12 +80,24 @@ class FunctionNode
     =0;
 
   //@{
-  //! Query the node as to whether it is a MutatableImageUsing<FunctionPreTransform> (return null if not).
+  //! Query the node as to whether it is a FunctionPreTransform (return null if not).
   /*! This is useful for accumulating view transforms at the front end of a function tree without creating a new transform each time.
    */
-  virtual const FunctionNodeUsing<FunctionPreTransform>*const is_a_FunctionNodeUsingFunctionPreTransform() const;
-  virtual FunctionNodeUsing<FunctionPreTransform>*const is_a_FunctionNodeUsingFunctionPreTransform();
+  virtual const FunctionPreTransform*const is_a_FunctionPreTransform() const;
+  virtual FunctionPreTransform*const is_a_FunctionPreTransform();
   //@}
+
+
+  //@{
+  //! Query the node as to whether it is a FunctionPostTransform (return null if not).
+  /*! This is useful for accumulating colour transforms at the back end of a function tree without creating a new transform each time.
+    This isn't actually used currently.
+   */
+  virtual const FunctionPostTransform*const is_a_FunctionPostTransform() const;
+  virtual FunctionPostTransform*const is_a_FunctionPostTransform();
+  //@}
+
+
 
   //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
   static FunctionNode*const stub(const MutationParameters& parameters,bool exciting);
