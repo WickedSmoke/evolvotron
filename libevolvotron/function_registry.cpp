@@ -57,8 +57,10 @@ std::ostream& FunctionRegistry::status(std::ostream& out) const
   return out;
 }
 
-const bool FunctionRegistry::reg(const char* n,const FunctionRegistration& r)
+const bool FunctionRegistry::name_and_register(const char* n,FunctionRegistration& r)
 {
+  r.name(n);
+
   //std::clog << "Registering " << n << ": ";
   const std::string ns(n);
   if (_registry_by_name.find(ns)!=_registry_by_name.end())

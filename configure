@@ -5,7 +5,7 @@
 if [ -z "$QTDIR" ] ; then
   echo "QTDIR not defined"
   echo "You almost certainly need QTDIR defined and pointing at your QT installation"
-  echo "If you know different, edit ./qconfigure and remove this test."
+  echo "If you know different, edit ./configure and remove this test."
   exit 1
 fi
 

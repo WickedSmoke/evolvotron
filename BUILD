@@ -3,5 +3,4 @@
 PATH=$QTDIR/bin:$PATH
 export PATH
 
-./qconfigure $@
-make
+./configure $@ && make

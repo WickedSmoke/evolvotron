@@ -55,12 +55,18 @@ void MutationParameters::reset()
   _probability_iterations_change_step=0.25;
   _probability_iterations_change_jump=0.02;
 
+  _function_weighting.clear();
   for (
        std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
        it!=FunctionRegistry::get()->registrations().end();
        it++
        )
-    _function_weighting.insert(std::make_pair(*it,1.0f));
+    {
+      float initial_weight=1.0f;
+      if ((*it)->classification() & FnIterative) initial_weight=1.0f/1024.0f;  // Ouch iterative functions are expensive
+      if ((*it)->classification() & FnFractal) initial_weight=1.0f/1024.0f;  // Yuk fractals are ugly
+      _function_weighting.insert(std::make_pair(*it,initial_weight));
+    }
 
   recalculate_function_stuff();
 

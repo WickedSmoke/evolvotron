@@ -36,8 +36,10 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class
  public:
   typedef FunctionNode Superclass;
   
-  //! Registration member returns a pointer to class meta-information.
-  static const FunctionRegistration get_registration();
+  //! Registration member returns a reference to class meta-information.
+  /*! Must be hit by the REGISTER macro if it is to have it's name filled in
+   */
+  static FunctionRegistration& get_registration();
   
   //! Evaluation is supplied by the specific class.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -131,9 +133,9 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class
   but should only be being called once if REGISTER is used correctly (once for each class).
 */
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> 
-	     const FunctionRegistration FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE>::get_registration()
+	     FunctionRegistration& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE>::get_registration()
 {
-  return FunctionRegistration
+  static FunctionRegistration reg
     (
      /*typeid(FUNCTION).name(),*/
      &FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE>::stubnew,
@@ -143,6 +145,7 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE>
      ITERATIVE,
      FUNCTION::type_classification()
      );
+  return reg;
 }
 
 #define FUNCTION_BEGIN(FN,NP,NA,IT,CL) \
@@ -163,7 +166,7 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE>
   a function has visibility and let the registry ignore duplicates.
   (a NiftyCounter would work in much the same way, discarding duplicates using it's counter).
 */
-#define REGISTER(FN) static const bool registered_ ## FN =FunctionRegistry::get()->reg(#FN,FN::get_registration());
+#define REGISTER(FN) static const bool registered_ ## FN =FunctionRegistry::get()->name_and_register(#FN,FN::get_registration());
 
 #define FUNCTION_END(FN) };REGISTER(FN)
 

@@ -4,6 +4,9 @@
 # (especially to get revision numbers acting sensibly)
 # Could be made more general using envs like DEBFULLNAME (and requiring user to set them)
 
+echo "BROKEN: Needs to do something about configure (deb thinks it's autobuild)"
+exit
+
 VERSION=`../../VERSION`
 SRC=evolvotron-$VERSION
 SRCTAR=$SRC.tar.gz

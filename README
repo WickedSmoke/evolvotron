@@ -1,11 +1,11 @@
 NOTE
 ====
-Looking for a ./configure or a Makefile ?
-Try 
-  ./qconfigure ; make
-or
-  ./BUILD
-instead.
+There is a ./configure script here, but it's NOT autoconf generated.
+evolvotron is built using the qmake utility which is part of Qt.
+However, most users should be able to 
+  ./configure ; make
+PROVIDED their environment is set up correctly.
+Page down to the BUILDING section for more info.
 
 INTRODUCTION
 ============
@@ -68,11 +68,6 @@ or just have both done for you by doing
 
   ./BUILD
 
-[Note that qconfigure was formerly named configure; however this
-was causing some confusion as it is NOT an autoconf generated configure
-script and doesn't support any of the usual configure options.
-Edit the qconfigure script or the .pro files instead.]
-
 [Note that BUILD also adds $QTDIR/bin to the path while it runs the 
 commands, and is probably the easiest way to build if your PATH doesn't 
 include a directory containing qmake and you like it that way.]
@@ -86,7 +81,7 @@ executable which you can run immediately with
   ./evolvotron/evolvotron
 and/or copy where you like (see INSTALL section).
 
-See the USAGE file for instructions.
+See the USAGE file (or in-app manual) for instructions.
 
 BUILD PROBLEMS
 ==============
@@ -96,10 +91,10 @@ Short story
 
 1. Check you have your QTDIR environment variable defined correctly.
 2. Check your PATH will find qmake (i.e do "which qmake") 
-   (adding $QTDIR/bin to your path will fix this on most distros; note that
-   the BUILD script does this when it runs).
+   (adding $QTDIR/bin to your path will fix this on many distros;
+   note that the BUILD script does this when it runs).
 3. If your system appears to have some qt libraries, but not qmake,
-   you probably need to install a qt development tools package
+   you probably need to install a Qt development tools package
    of some sort before you can build evolvotron.
 
 Long story
@@ -111,7 +106,7 @@ might be /usr/lib/qt3-gcc3.2, who knows), containing some or all
 of the subdirectories bin, doc, etc, include, lib, mkspecs, plugins.
 
 NB you might have more than one qt installation (e.g on Debian
-testing there is both /usr/share/qt and /usr/share/qt3).
+testing there is/was both /usr/share/qt and /usr/share/qt3).
 You probably want qt3 if there's a choice.
 
 RedHat defines QTDIR for the normal user environment,
@@ -138,8 +133,8 @@ The author develops on
   RedHat 8 (gcc 3.2, qt 3.0.5),
   RedHat 9 (gcc 3.2.2, qt 3.1.1)
   Debian testing
-and sometimes (infrequently) also tests things on Debian stable
-and RedHat 7.3.  (So the closer your system is to one of these,
+and sometimes (infrequently) also tests things on Debian stable,
+and Mandrake.  (So the closer your system is to one of these,
 the less likely you are to have problems).
 
 If you have gcc/c++ compile problems problems:
@@ -247,7 +242,7 @@ Linc Davis reports:
 
 Paolo Greppi built it on OSX like this:
  - get qt for osx http://www.trolltech.com/download/qt/mac.html
- - qconfigure qt with -thread to compile threading support
+ - configure qt with -thread to compile threading support
    (takes a lot of time)
  - remember to:
         sudo ln -sf /usr/local/qt/lib/libqt-mt.3.dylib /usr/lib
@@ -277,7 +272,8 @@ install" of evolvotron assuming you have such a directory in your PATH).
 If you change INSTALLPATH to /usr/local/bin then you'll need to "su" before
 the make install.
 
-There are some man pages in ./man/man1 (not copied anywhere by make install).  
+There are some man pages in ./man/man1 which are not currently
+copied anywhere by make install.  
 
 Also of possible interest is an evolvotron.html file prepared from the USAGE
 file during the qconfigure step.
@@ -294,14 +290,16 @@ If you'd rather just do it by hand, all you need to do is copy the executables
   ./evolvotron/evolvotron
   ./evolvotron_render/evolvotron_render
   ./evolvotron_mutate/evolvotron_mutate
+  ./evolvotron_match/evolvotron_match
 to wherever you like (e.g ~/bin, /usr/local/bin).
-There are no extra supporting files which need to be in special places
-for the software to work.
+There are NO extra supporting files (e.g libraries, config files)
+which need to be in special places for the software to work.
 
 BUILDING CODE DOCUMENTATION
 ===========================
 If you have doxygen (and graphviz too) and want to build
 the source code documentation, execute 
   ./mkdoc
-at the top level.  The code documentation then appears in ./doc/html/
-
+at the top level.
+The code documentation then appears in ./doc/html/
+This hasn't been tested in a while.

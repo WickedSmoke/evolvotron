@@ -289,10 +289,12 @@ MAIN MENU BAR
   (See "advanced usage" below.)
   "Functions" brings up a dialog to modify the relative probability
   of functions being used.  By default all functions are equally
-  likely, but if you think there are too many spirals, grids or fractals
-  then this is the place to reduce their occurrence.
+  likely except for iterative functions (and fractals), which are
+  almost but not completely supressed.  But if you think there
+  are too many spirals or grids (or not enough fractals) then this
+  is the place to adjust the frequency with which they appear.
   If the software was built with the fullscreen option,
-  that can also be controlled from here.
+  that can also be controlled from this menu.
 - Help menu:
   Items to bring up documentation, and the usual "About" box
   (which includes the license).
@@ -321,9 +323,11 @@ TIPS
   adjustments every iteration... use those tools for final
   polishing of your masterpiece.
 - You can quickly cycle through a lot of initial images (until
-  you find one with real potential) by bashing on the menu
-  accelerator keys Alt-f,Alt-r to repeatedly restart.
-  (ctrl-r also does this now).
+  you find one with real potential) by bashing on Ctrl-r to
+  repeatedly restart. 
+- To add variety to an image's mutations, nudge it with a small
+  middle-mouse drag.  This introduces a top level transform, and
+  therefore more parameters to be varied.
 
 ANIMATION
 =========

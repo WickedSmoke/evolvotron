@@ -64,6 +64,28 @@ signals:
   void valueChanged(QSlider*,int);
 };
 
+//! Similar to SignalExpanderQSlider except attaches an integer argument to the clicked signal
+/*
+class SignalExpanderQButton : public QObject
+{
+ private:
+  Q_OBJECT
+
+  uint _arg;
+ public:
+  SignalExpanderQButton(QObject* parent,uint arg)
+    :QObject(parent)
+    ,_arg(arg)
+    {}
+ public slots:
+  void clicked()
+    {
+      emit clicked(arg);
+    }
+ signals:
+ void clicked(uint);
+}
+*/
 
 //! Provides a dialog for controlling which functions are available.
 class DialogFunctions : public QDialog

@@ -1,7 +1,7 @@
 [Most recent at top]
 
 From release 0.2.3:
- - Version to 0.2.4-devel
+ - Version to 0.3.0-devel
  - Get rid of troublesome system call to ../VERSION 
    in common.pro and pass settings from configure script instead
  - Add not-very-useful .qt-mng image file output format
@@ -10,15 +10,15 @@ From release 0.2.3:
  - Don't use True and False in doc-building python script
    (seems to be quite new thing, not in 2.1.x ?).  Use 0 and 1 instead.
  - Internal changes
- - New dialog for function weightings (not fully implemented)
  - configure renamed to qconfigure to avoid confusion with autconf
- - Add pkg/debian .deb builder script
+ - Add pkg/debian .deb builder script (still under development)
  - Fix buggy Y rotation matrix
  - Eliminate template-tastic Tuple and Matrix classes.
    Fix XYZ and Transform to not require them.
  - evolvotron_mutate - -g option more likely to generate insteresting functions
  - -linz and -spheremap options where appropriate
  - evolvotron_match utility.
+ - New dialog for function weightings (not fully implemented)
 
 From release 0.2.2:
  - Version to 0.2.3

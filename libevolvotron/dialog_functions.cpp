@@ -49,10 +49,31 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
     
   for (int c=-1;c<FnClassifications;c++)
     {
-      VBoxScrollView* scrollview=new VBoxScrollView(this);
-      tabs->addTab(scrollview,(c==-1 ? "All" : function_classification_name[c]));
+      QVBox*const tab_content=new QVBox(_dialog_content);
+      tabs->addTab(tab_content,(c==-1 ? "All" : function_classification_name[c]));
 
-      //! \todo Add buttons to affect all items in group
+      QHBox*const buttons=new QHBox(tab_content);
+      QPushButton*const button_less=new QPushButton("Less",buttons);
+      QPushButton*const button_rand=new QPushButton("Randomize",buttons);
+      QPushButton*const button_more=new QPushButton("More",buttons);
+
+      
+
+      /*
+      SignalExpanderQPushButton*const bx_less=new SignalExpanderQPushButton(this,(c==-1 : 0xffffffff ? (1<<c)));
+      SignalExpanderQPushButton*const bx_rand=new SignalExpanderQPushButton(this,(c==-1 : 0xffffffff ? (1<<c)));
+      SignalExpanderQPushButton*const bx_more=new SignalExpanderQPushButton(this,(c==-1 : 0xffffffff ? (1<<c)));
+
+      connect(button_less,SIGNAL(clicked()),bx_less,SLOT(clicked()));
+      connect(button_rand,SIGNAL(clicked()),bx_rand,SLOT(clicked()));
+      connect(button_more,SIGNAL(clicked()),bx_more,SLOT(clicked()));
+      connect(bx_less,SIGNAL(clicked(uint)),this,SLOT(clicked_less(uint)));
+      connect(bx_rand,SIGNAL(clicked(uint)),this,SLOT(clicked_rand(uint)));
+      connect(bx_more,SIGNAL(clicked(uint)),this,SLOT(clicked_more(uint)));
+      */
+
+      VBoxScrollView* scrollview=new VBoxScrollView(tab_content);
+      tab_content->setStretchFactor(scrollview,1);
 
       for (std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
 	   it!=FunctionRegistry::get()->registrations().end();
@@ -81,6 +102,15 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 	      connect(
 		      sx,SIGNAL(valueChanged(QSlider*,int)),
 		      this,SLOT(changed_function_weighting(QSlider*,int))
+		      );
+
+	      // Wire up buttons
+	      connect(
+		      button_less,SIGNAL(clicked()),
+		      s,SLOT(subtractStep())
+		      );
+	      connect(button_more,SIGNAL(clicked()),
+		      s,SLOT(addStep())
 		      );
 	    }
 	}
@@ -230,3 +260,4 @@ void DialogFunctions::mutation_parameters_changed()
   std::clog << "[DialogFunctions::mutation_parameters_changed()]\n";
   setup_from_mutation_parameters();  
 }
+

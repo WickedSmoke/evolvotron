@@ -58,8 +58,9 @@ class FunctionRegistry : public Singleton<FunctionRegistry>
   //! Dump list of registered functions
   std::ostream& status(std::ostream& out) const;
 
-  //! Register a function.  Handle duplicates gracefully.  A copy is taken.
-  const bool reg(const char* n,const FunctionRegistration& r);
+  //! Register a function.  Handle duplicates gracefully. 
+  /*! A copy is taken, but we fill in the name field of the supplied registration, which will be empty.*/
+  const bool name_and_register(const char* n,FunctionRegistration& r);
 
  protected:
   //! Dictionary from names to Registration objects
