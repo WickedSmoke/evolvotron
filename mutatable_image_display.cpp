@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image_display.h"
 #include "evolvotron_main.h"
 #include "mutatable_image_computer_task.h"
+#include "transform_factory.h"
 
 /*! The constructor is passed:
     - the owning widget (probably either a QGrid or null if top-level),
@@ -84,15 +85,15 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       _menu->insertItem("Spawn re&coloured",this,SLOT(menupick_spawn_recoloured()));
 
       _menu_warped=new QPopupMenu(this);
-      _menu_warped->insertItem("&Random",this,SLOT(menupick_spawn_warped_random()));
+      _menu_warped->insertItem("Random &Mix",this,SLOT(menupick_spawn_warped_random()));
       _menu_warped->insertItem("Zoom &In",this,SLOT(menupick_spawn_warped_zoom_in()));
       _menu_warped->insertItem("Zoom &Out",this,SLOT(menupick_spawn_warped_zoom_out()));
-      _menu_warped->insertItem("R&otate",this,SLOT(menupick_spawn_warped_rotate()));
+      _menu_warped->insertItem("&Rotate",this,SLOT(menupick_spawn_warped_rotate()));
       _menu_warped->insertItem("&Pan XY",this,SLOT(menupick_spawn_warped_pan_xy()));
-      _menu_warped->insertItem("&Pan X",this,SLOT(menupick_spawn_warped_pan_x()));
-      _menu_warped->insertItem("&Pan Y",this,SLOT(menupick_spawn_warped_pan_y()));
+      _menu_warped->insertItem("Pan &X",this,SLOT(menupick_spawn_warped_pan_x()));
+      _menu_warped->insertItem("Pan &Y",this,SLOT(menupick_spawn_warped_pan_y()));
 
-      _menu->insertItem("&Spawn &warped",_menu_warped);
+      _menu->insertItem("Spawn &warped",_menu_warped);
 
       _menu->insertSeparator();
 
@@ -296,29 +297,52 @@ void MutatableImageDisplay::menupick_spawn_recoloured()
  */
 void MutatableImageDisplay::menupick_spawn_warped_random()
 {
-  main()->spawn_warped(this);
+  TransformFactoryRandomWarpXY transform_factory;
+  
+  main()->spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_zoom_in()
 {
-  //! \todo: Implement.
-  // Should pass a pointer to a TransformFactoryRandomZoomIn to spawn_warped which can call it with a random number generator.
+  TransformFactoryRandomScaleXY transform_factory(-2.0f,0.0f);
+
+  main()->spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_zoom_out()
-{}
+{
+  TransformFactoryRandomScaleXY transform_factory(0.0f,2.0f);
+
+  main()->spawn_warped(this,transform_factory);
+}
 
 void MutatableImageDisplay::menupick_spawn_warped_rotate()
-{}
+{
+  TransformFactoryRandomRotateZ transform_factory;
+
+  main()->spawn_warped(this,transform_factory);
+}
 
 void MutatableImageDisplay::menupick_spawn_warped_pan_xy()
-{}
+{
+  TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0f,0.0f,0.0f),XYZ(1.0f,1.0f,0.0f));
+
+  main()->spawn_warped(this,transform_factory);
+}
 
 void MutatableImageDisplay::menupick_spawn_warped_pan_x()
-{}
+{
+  TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0f,0.0f,0.0f),XYZ(1.0f,0.0f,0.0f));
+
+  main()->spawn_warped(this,transform_factory);
+}
 
 void MutatableImageDisplay::menupick_spawn_warped_pan_y()
-{}
+{
+  TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0f,0.0f,0.0f),XYZ(0.0f,1.0f,0.0f));
+
+  main()->spawn_warped(this,transform_factory);
+}
 
 /*! This slot is called by selecting the "Lock" context menu item.
   It stops the image from being overwritten by a new image.

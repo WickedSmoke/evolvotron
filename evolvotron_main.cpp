@@ -135,10 +135,10 @@ void EvolvotronMain::History::undo()
   _main->set_undoable(undoable());
 }
 
-void EvolvotronMain::last_spawned(const MutatableImageNode* image,SpawnMemberFn method)
+void EvolvotronMain::last_spawned_image(const MutatableImageNode* image,SpawnMemberFn method)
 {
-  delete _last_spawned;
-  _last_spawned=(image==0 ? 0 : image->deepclone());
+  delete _last_spawned_image;
+  _last_spawned_image=(image==0 ? 0 : image->deepclone());
   _last_spawn_method=method;
 }
 
@@ -149,8 +149,9 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
   :QMainWindow(parent,0,Qt::WType_TopLevel|Qt::WDestructiveClose)
    ,_history(this)
    ,_statusbar_tasks(0)
-   ,_last_spawned(0)
+   ,_last_spawned_image(0)
    ,_last_spawn_method(&EvolvotronMain::spawn_normal)
+   ,_transform_factory(0)
 {
   setMinimumSize(600,400);
 
@@ -275,29 +276,15 @@ void EvolvotronMain::spawn_warped(const MutatableImageNode* image,MutatableImage
 
   //! \todo: Should check for a pre-transform class instance at the head of the image (query the dieplay) and if possible apply a transform to it without creating a new node.
   
-  // NB We don't generate any z co-ordinates (except z identity) so the random transform remains in the image plane.
-  // (completely random transforms mostly look too dissimilar; they are different slices of the 3D image volume)
-  // For now we're not generating shears either.
-  // ... or translations.  There's something funny going on here.
+  assert(transform_factory()!=0);
 
-  // Gives a scale between 0.5 and 2, average 1.
-  const float r=pow(2.0f,2.0f*mutation_parameters().r01()-1.0f);
+  const Transform t=transform_factory()(mutation_parameters().rng01());
 
-  // Random rotation  
-  const float a=(2.0f*M_PI)*mutation_parameters().r01();
-
-  const XYZ basis_x( r*cos(a), r*sin(a),0.0f);
-  const XYZ basis_y(-r*sin(a), r*cos(a),0.0f);
-  const XYZ basis_z(0.0f,0.0f,1.0f);
-
-  const float ox=2.0f*mutation_parameters().r01()-1.0f;
-  const float oy=2.0f*mutation_parameters().r01()-1.0f;
-  const XYZ offset(ox,oy,0.0f);
-
-  args.push_back(new MutatableImageNodeConstant(offset));
-  args.push_back(new MutatableImageNodeConstant(basis_x));
-  args.push_back(new MutatableImageNodeConstant(basis_y));
-  args.push_back(new MutatableImageNodeConstant(basis_z));
+  //! \todo Have WarpTransform which is used entirely for warps. 
+  args.push_back(new MutatableImageNodeConstant(t.translate()));
+  args.push_back(new MutatableImageNodeConstant(t.basis_x()));
+  args.push_back(new MutatableImageNodeConstant(t.basis_y()));
+  args.push_back(new MutatableImageNodeConstant(t.basis_z()));
 
   args.push_back(image->deepclone());
 
@@ -330,17 +317,17 @@ void EvolvotronMain::respawn(MutatableImageDisplay* display)
     {
       QMessageBox::warning(this,"Evolvotron","Cannot respawn a locked image.\nUnlock and try again.");
     }
-  else if (last_spawned()==0)
+  else if (last_spawned_image()==0)
     {
       reset(display);
     }
   else
     {
-      (this->*last_spawn_method())(last_spawned(),display);
+      (this->*last_spawn_method())(last_spawned_image(),display);
     }
 }
 
-void EvolvotronMain::spawn_all(MutatableImageDisplay* display,SpawnMemberFn method)
+void EvolvotronMain::spawn_all(MutatableImageDisplay* spawning_display,SpawnMemberFn method)
 {
   // Spawn potentially a bit sluggish so set the hourglass cursor.
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -349,13 +336,13 @@ void EvolvotronMain::spawn_all(MutatableImageDisplay* display,SpawnMemberFn meth
 
   // Issue new images (except to locked displays and to originator)
   // This will cause them to abort any running tasks
-  const MutatableImageNode*const spawning_image=display->image();
+  const MutatableImageNode*const spawning_image=spawning_display->image();
 
-  last_spawned(spawning_image,method);
+  last_spawned_image(spawning_image,method);
   
   for (std::vector<MutatableImageDisplay*>::iterator it=displays().begin();it!=displays().end();it++)
     {
-      if ((*it)!=display && !(*it)->locked())
+      if ((*it)!=spawning_display && !(*it)->locked())
 	{
 	  (this->*method)(spawning_image,(*it));
 	}
@@ -388,10 +375,12 @@ void EvolvotronMain::spawn_recoloured(MutatableImageDisplay* spawning_display)
 	    );
 }
 
-/*! This is the similar to spawn_normal, except images ARE NOT MUTATED after deepclone and have an initial transform applied to spatially warp them.
+/*! This is the similar to spawn_normal, except images ARE NOT MUTATED after deepclone 
+  and have an initial transform (obtained from the supplied TransformFactory) applied to spatially warp them.
  */
-void EvolvotronMain::spawn_warped(MutatableImageDisplay* spawning_display)
+void EvolvotronMain::spawn_warped(MutatableImageDisplay* spawning_display,const TransformFactory& tfactory)
 {
+  transform_factory(tfactory);
   spawn_all(
 	    spawning_display,
 	    &EvolvotronMain::spawn_warped
@@ -536,7 +525,7 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
       _dialog_mutation_parameters->reset();
     }
 
-  last_spawned(0,&EvolvotronMain::spawn_normal);
+  last_spawned_image(0,&EvolvotronMain::spawn_normal);
 
   history().end_action();
 }

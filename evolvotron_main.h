@@ -42,6 +42,7 @@ extern "C"
 #include <qlabel.h>
 
 #include "useful.h"
+#include "transform_factory.h"
 
 #include "mutatable_image.h"
 #include "mutatable_image_display.h"
@@ -164,10 +165,13 @@ class EvolvotronMain : public QMainWindow
   std::set<const MutatableImageDisplay*> _resizing;
 
   //! An owned deepclone of the last image spawned (used to regenerate single displays).
-  MutatableImageNode* _last_spawned;
+  MutatableImageNode* _last_spawned_image;
 
   //! Pointer to member function used for last spawn.
   SpawnMemberFn _last_spawn_method;
+
+  //! An owned pointer to the current transform factory (needed for Respawn).
+  TransformFactory* _transform_factory;
 
   //! Accessor.
   History& history()
@@ -176,9 +180,9 @@ class EvolvotronMain : public QMainWindow
     }
 
   //! Accessor.
-  const MutatableImageNode*const last_spawned() const
+  const MutatableImageNode*const last_spawned_image() const
     {
-      return _last_spawned;
+      return _last_spawned_image;
     }
   
   //! Accessor.
@@ -188,8 +192,21 @@ class EvolvotronMain : public QMainWindow
     }
 
   //! Not just an accessor.  Takes a deepclone and deletes it when replaced.
-  void last_spawned(const MutatableImageNode* image,SpawnMemberFn method);
-      
+  void last_spawned_image(const MutatableImageNode* image,SpawnMemberFn method);
+
+  //! Accessor
+  const TransformFactory& transform_factory() const
+    {
+      return *_transform_factory;
+    }
+
+  //! Not just an accessor.  Takes a deepclone and deletes it when replaced.
+  void transform_factory(const TransformFactory& tfactory)
+    {
+      delete _transform_factory;
+      _transform_factory=tfactory.clone();
+    }
+
   //@{
   //! Perform a particular type of spawn from an individiual image to an individual display.  (Locking not checked).
   void spawn_normal(const MutatableImageNode* image,MutatableImageDisplay* display);
@@ -239,7 +256,7 @@ class EvolvotronMain : public QMainWindow
   void spawn_recoloured(MutatableImageDisplay* spawning_display);
 
   //! Similar to spawn except just changes the input co-ordinates to the image.
-  void spawn_warped(MutatableImageDisplay* spawning_display);
+  void spawn_warped(MutatableImageDisplay* spawning_display,const TransformFactory& tfactory);
 
   //! Called from display constructor to indicate the display is available for the disposal of its completed tasks.
   void hello(MutatableImageDisplay*);
@@ -261,7 +278,7 @@ class EvolvotronMain : public QMainWindow
   //! Signalled by menu item.  Forwards to History object.
   void undo();
 
- public slots:
+  public slots:
    
   //! Signalled by menu item.  Public because called from evolvotron app wrapper.
   void reset(bool reset_mutation_parameters,bool reset_locks);

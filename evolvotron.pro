@@ -32,6 +32,7 @@ HEADERS += \
 	mutation_parameters.h \
 	random.h \
         transform.h \
+        transform_factory.h \
         tuple.h \
 	useful.h \
 	xyz.h
@@ -52,6 +53,7 @@ SOURCES += \
 	mutation_parameters.cpp \
 	random.cpp \
         transform.cpp \
+        transform_factory.cpp \
         tuple.cpp \
 	useful.cpp \
 	xyz.cpp
