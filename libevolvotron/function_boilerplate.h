@@ -32,9 +32,10 @@
 //! Enum for classification bits
 enum
   {
-    FnCore=1,
-    FnIterative=2,
-    FnFractal=4
+    FnCore=1,           // Constant, Identity or Transform: the 3 zero-child diluting functions
+    FnStructure=2,      // Functions which give rise to a lot of structure e.g spirals and grids
+    FnIterative=4,      // Iterative functions
+    FnFractal=8         // Fractal functions
   };
 
 //! Template class to generate boilerplate for virtual methods.

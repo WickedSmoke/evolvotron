@@ -255,7 +255,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   // We want to use a checkmark on some items
   _popupmenu_settings->setCheckable(true);
 
-  _popupmenu_settings->insertItem("Mutation &parameters...",_dialog_mutation_parameters,SLOT(show()));
+  _popupmenu_settings->insertItem("&Mutations...",_dialog_mutation_parameters,SLOT(show()));
   _popupmenu_settings->insertItem("&Functions...",_dialog_functions,SLOT(show()));
 
 #ifdef FULLSCREEN

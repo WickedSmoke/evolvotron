@@ -24,7 +24,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <qtooltip.h>
 #include <qgroupbox.h>
+
 #include "dialog_functions.h"
+#include "function_registry.h"
 
 /*! About dialog displays author info, web addresses and license info.
  */
@@ -47,25 +49,39 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
   QToolTip::add(_slider_target_branching_ratio,"The branching ratio is diluted to <1.0 to prevent new function-trees being infinitely large.");
   new QLabel("0.9",c0);
 
-  QGroupBox* c1=new QGroupBox(3,Qt::Horizontal,"Dilution by constant nodes",_vbox);
+  QGroupBox* c1=new QGroupBox(3,Qt::Horizontal,"Diluting nodes: proportion constant",_vbox);
   new QLabel("0.0",c1);
   _slider_proportion_constant=new QSlider(0,100,1,50,Qt::Horizontal,c1);
   new QLabel("1.0",c1);
   QToolTip::add(_slider_proportion_constant,"This specifies the proportion of diluting nodes which will be constant.");
 
-  QGroupBox* c2=new QGroupBox(3,Qt::Horizontal,"Dilution by transforming nodes",_vbox);
+  QGroupBox* c2=new QGroupBox(3,Qt::Horizontal,"Non-constant diluting nodes: proportion transformed",_vbox);
   new QLabel("0.0",c2);
   _slider_identity_supression=new QSlider(0,100,1,50,Qt::Horizontal,c2);
   QToolTip::add(_slider_identity_supression,"This specifies the proportion of non-constant diluting nodes which will be transforms (c.f identity nodes).");
   new QLabel("1.0",c2);
   
-  QLabel* pad=new QLabel(_vbox);
-  _vbox->setStretchFactor(pad,1);
-
   setup_from_mutation_parameters();
 
-  _ok=new QPushButton("OK",_vbox);
+  _scrollview=new QScrollView(_vbox);
+  //_scrollview->enableClipper(true);
+  _scrollview_vbox=new QVBox(_scrollview->viewport());
+  _scrollview->addChild(_scrollview_vbox);
 
+  for (std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
+       it!=FunctionRegistry::get()->registrations().end();
+       it++)
+    {
+      QGroupBox* g=new QGroupBox(3,Qt::Horizontal,(*it)->name(),_scrollview_vbox);
+      new QLabel("2^-12",g);
+      new QSlider(-12,0,1,12,Qt::Horizontal,g);
+      new QLabel("1",g);
+    }
+  
+  _vbox->setStretchFactor(_scrollview,1);
+  
+  _ok=new QPushButton("OK",_vbox);
+  
   connect(
 	  _slider_target_branching_ratio,SIGNAL(valueChanged(int)),
 	  this,SLOT(changed_target_branching_ratio(int))
@@ -84,7 +100,6 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 	  _slider_identity_supression,SIGNAL(valueChanged(int)),
 	  this,SLOT(changed_identity_supression(int))
 	  );
-
 
 }
 

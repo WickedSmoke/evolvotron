@@ -1,0 +1,127 @@
+.TH EVOLVOTRON 1 "24 Feb 2004" "www.timday.com" "Evolvotron"
+
+.SH NAME
+evolvotron \- Interactively create evolutionary generative art
+
+.SH SYNOPSIS
+.B evolvotron
+[\-
+.I QtOption
+]
+[\-g
+.I <cols>
+.I <rows>
+]
+[\-t
+.I <threads>
+]
+[\-F]
+[\-M]
+[-f 
+.I <frames>
+]
+[-r
+.I <framerate>
+]
+[-v]
+[-x
+.I <functionname>
+|
+-X
+.I <functionname>
+]
+
+.SH DESCRIPTION
+
+.B evolvotron
+is interactive "generative art" software to evolve
+images/textures/patterns through an iterative process of random
+mutation and user-selection driven evolution.
+Basically it displays a grid of random images, you click
+on one you like and the rest of the grid is refilled with
+variants of the one you picked.
+
+This man page describes only the command line options.
+A more complete manual fully describing usage via the application's GUI
+is accessible from the applications "Help" menu once it is running.
+
+.SH COMMON OPTIONS
+
+.TP 0.5i
+.B -<QtOption>
+Standard options recognised by the Qt toolkit (for example
+.B -geometry
+.I <width>x<height>
+)
+
+.TP 0.5i
+.B -g
+.I <cols>
+.I <rows>
+Number of image display cells (defaults to 6 by 5).
+
+.TP 0.5i
+.B -t
+.I <threads>
+Number of compute threads (defaults to 2)
+
+.TP 0.5i
+.B -F
+Start in "fullscreen" mode (window manager permitting).
+[Press "Esc" key to revert to normal windowed mode].
+
+.TP
+.B -M
+Start with menu and status bars supressed.
+[Press "Esc" key to display them].
+
+.SH ANIMATION OPTIONS
+
+.TP 0.5i
+.B -f
+.I <frames>
+Number of frames to animate (defaults to 1 i.e no animaton)
+
+.TP 0.5i
+.B -r
+.I <framerate>
+Specify rate at which animations are displayed
+(as an integer number of frames per second).
+
+.SH POWER-USER / DEBUG OPTIONS
+
+.TP 0.5i
+.B -v
+Verbose mode.
+Probably most useful for getting a list of supported
+function names for use with the -x/-X options.
+
+.TP 0.5i
+.B -x
+.I <functionname>
+Force a specific function type to be used at the top level of
+all new image function trees (wrapped by random colour and
+spatial transforms).
+
+.TP 0.5i
+.B -X
+.I <functionname>
+Similar to
+.B -x
+but with no wrapper functions.
+
+.SH EXAMPLES
+
+evolvotron -x FunctionSpiralLinear
+
+evolvotron -X FunctionKaleidoscope
+
+.SH AUTHOR
+.B evolvotron
+was written by Tim Day (www.timday.com) and is released
+under the conditions of the GNU General Public License. See the file
+COPYING and notes in the source code for details.
+
+.SH SEE ALSO
+
+evolvotron_mutate(1), evolvotron_render(1)

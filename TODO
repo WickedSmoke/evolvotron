@@ -1,9 +1,14 @@
+For next release
+----------------
+- Finish shuffling stuff between dialogs.
+- Per-function weighting.
+- Autocool.
+
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
 Animation
 ---------
-- Why aren't Qt-generated MNG's displayable ?
 - More warp types (rotate time into space etc)
 - More control over animation (frames & framerate) from edit/options menu
   (or on a display by display basis ?  Then "big" images could have

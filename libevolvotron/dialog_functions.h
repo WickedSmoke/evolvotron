@@ -33,6 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qcheckbox.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
+#include <qscrollview.h>
 
 #include "useful.h"
 #include "mutation_parameters.h"
@@ -67,6 +68,11 @@ class DialogFunctions : public QDialog
   //! Proportion of non-constant nodes which are 12-parameter transforms
   QSlider* _slider_identity_supression;
 
+  //! Scrolling area for per-function controls
+  QScrollView* _scrollview;
+
+  //! Vbox for layout within scroll area
+  QVBox* _scrollview_vbox;
 
   //! Button to close dialog.
   QPushButton* _ok;
