@@ -49,6 +49,12 @@ class MutatableImageDisplay : public QWidget
   //! Flag for whether context menu should display all options.
   bool _full_functionality;
 
+  //! Flag for whether the offscreen buffer has fixed size
+  bool _fixed_size;
+
+  //! Size of offscreen buffer
+  QSize _image_size;
+
   //! Flag indicating resize is in progress (between resizeEvent and subsequent paintEvent).
   /*! Used to supress unnecessary task spawning.
    */
@@ -87,11 +93,12 @@ class MutatableImageDisplay : public QWidget
   //@{
   //! Position of item in menu_big.
   uint _menu_big_item_number_resizable;
+  uint _menu_big_item_number_1280x960;
   //@}
 
  public:
   //! Constructor.
-  MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full);
+  MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full,bool fixed_size,const QSize& image_size);
 
   //! Destructor.
   virtual ~MutatableImageDisplay();
@@ -112,6 +119,12 @@ class MutatableImageDisplay : public QWidget
   EvolvotronMain*const main() const
     {
       return _main;
+    }
+
+  //! Accessor.
+  const QSize& image_size() const
+    {
+      return _image_size;
     }
 
   //! Load a new image (clears up old image, starts new compute tasks).
@@ -146,6 +159,9 @@ class MutatableImageDisplay : public QWidget
 
   //! Called from "Big" submenu of context menu.
   void menupick_big_resizable();
+
+  //! Called from "Big" submenu of context menu.
+  void menupick_big_1280x960();
 };
 
 #endif

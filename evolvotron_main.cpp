@@ -70,7 +70,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
   for (int r=0;r<grid_size.height();r++)
     for (int c=0;c<grid_size.width();c++)
       {
-	display().push_back(new MutatableImageDisplay(_grid,this,true));
+	display().push_back(new MutatableImageDisplay(_grid,this,true,false,QSize(0,0)));
       }
 
   // Run tick() at 100Hz

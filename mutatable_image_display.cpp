@@ -26,31 +26,41 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qimage.h>
 #include <qcursor.h>
 #include <qapplication.h>
+#include <qscrollview.h>
 
 #include "mutatable_image_display.h"
 #include "evolvotron_main.h"
 #include "mutatable_image_computer_task.h"
 
-/*! The constructor is passed the owning widget (probably either a QGrid or null if top-level),
-  the EvolvotronMain providing spawn and farm services, and a flag to specify whether this is
-  a fully functional display or a restricted one (e.g no spawning for a single top pleve display).
+/*! The constructor is passed:
+      the owning widget (probably either a QGrid or null if top-level),
+      the EvolvotronMain providing spawn and farm services, 
+      a flag to specify whether this is a fully functional display or a restricted one (e.g no spawning for a single top pleve display),
+      a flag to specify whether the offscreen buffer has fixed size (in which case scrollbars are used),
+      and the size of the offscreen buffer (only used if fixed_size is true).
  */
-MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full)
+MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full,bool fixed_size,const QSize& sz)
   :QWidget(parent)
-  ,_main(mn)
-  ,_full_functionality(full)
-  ,_resize_in_progress(false)
-  ,_locked(false)
-  ,_current_display_level(0)
-  ,_offscreen_buffer(0)
-  ,_image(0)
-  ,_menu(0)
-  ,_menu_big(0)
+   ,_main(mn)
+   ,_full_functionality(full)
+   ,_fixed_size(fixed_size)
+   ,_image_size(sz)
+   ,_resize_in_progress(false)
+   ,_locked(false)
+   ,_current_display_level(0)
+   ,_offscreen_buffer(0)
+   ,_image(0)
+   ,_menu(0)
+   ,_menu_big(0)
 {
   _offscreen_buffer=new QPixmap();
 
-  // This will stop the widget being cleared to grey before paintEvent is called (supposed to reduce flicker; not 100% though).
-  setBackgroundMode(Qt::NoBackground);
+  // We DO want background drawn for fixed size because window could be bigger than image (not entirely satisfactory however: flickers)
+  if (!fixed_size)
+    {
+      // This will stop the widget being cleared to grey before paintEvent is called (supposed to reduce flicker; not 100% though).
+      setBackgroundMode(Qt::NoBackground);
+    }
 
   _menu=new QPopupMenu(this);  
 
@@ -69,6 +79,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       
       _menu_big=new QPopupMenu(this);
       _menu_big_item_number_resizable  =_menu_big->insertItem("&Resizable",this,SLOT(menupick_big_resizable()));
+      _menu_big_item_number_1280x960   =_menu_big->insertItem("1280x&960",this,SLOT(menupick_big_1280x960()));
 
       _menu_item_number_big  =_menu->insertItem("&Big",_menu_big);
     }
@@ -79,6 +90,11 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
   _menu->setItemEnabled(_menu_item_number_save,false);
 
   main()->hello(this);
+
+  if (_fixed_size)
+    {
+      setGeometry(0,0,image_size().width(),image_size().height());
+    }
 }
 
 /*! Destructor signs off from EvolvotronMain to prevent further attempts at completed task delivery.
@@ -113,7 +129,7 @@ void MutatableImageDisplay::image(MutatableImageNode* i)
 	{
 	  const int s=(1<<level);
 	  
-	  if (size().width()>=s && size().height()>=s)
+	  if (image_size().width()>=s && image_size().height()>=s)
 	    {
 	      /*! \todo The image tree has no pixel or task specific state, so deepcloning is way overkill.
 		Would just need some referencing counting wrapper
@@ -121,7 +137,7 @@ void MutatableImageDisplay::image(MutatableImageNode* i)
 		to avoid having to deepclone.
 		On the other hand this seems to work very robustly for now and isn't a killer.
 		*/
-	      main()->farm()->push_todo(new MutatableImageComputerTask(this,_image->deepclone(),size()/s,level));
+	      main()->farm()->push_todo(new MutatableImageComputerTask(this,_image->deepclone(),image_size()/s,level));
 	    }
 	}
     }
@@ -144,7 +160,7 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
 	 );
 		  
       //! \todo Pick a scaling mode: smooth or not (or put it under GUI control).  Curiously, although smoothscale seems to be noticeably slower but doesn't look any better.
-      _offscreen_buffer->convertFromImage(new_image.scale(size()));
+      _offscreen_buffer->convertFromImage(new_image.scale(image_size()));
 		  
       //! Note the resolution we've displayed so out-of-order low resolution images are dropped
       _current_display_level=task->level();
@@ -175,18 +191,25 @@ void MutatableImageDisplay::paintEvent(QPaintEvent*)
 /*! In the resize event we just focus on shutting down existing compute threads
   because they'll all have to be restarted.
   NB Multiple resize events can be received before a repaint occurs.
+  NB There's nothing to be done for fixed size images (not even setting _resize_in_progress).
  */
 void MutatableImageDisplay::resizeEvent(QResizeEvent* event)
 {
-  // Resize and reset our offscreen buffer (something to do while we wait)
-  _offscreen_buffer->resize(event->size());
-  _offscreen_buffer->fill(black);
-
-  // Abort all current tasks because they'll be the wrong size.
-  main()->farm()->abort_for(this);
-
-  // Flag for the next paintEvent to tell it a recompute can be started now.
-  _resize_in_progress=true;
+  // Fixed size images don't need anything doing here.  We don't even set _resize_in_progress.
+  if (!_fixed_size)
+    {
+      _image_size=event->size();
+      
+      // Resize and reset our offscreen buffer (something to do while we wait)
+      _offscreen_buffer->resize(image_size());
+      _offscreen_buffer->fill(black);
+      
+      // Abort all current tasks because they'll be the wrong size.
+      main()->farm()->abort_for(this);
+      
+      // Flag for the next paintEvent to tell it a recompute can be started now.
+      _resize_in_progress=true;
+    }
 }
 
 void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
@@ -237,17 +260,32 @@ void MutatableImageDisplay::menupick_lock()
 
 /*! This slot is called by selecting the "Big/Resizable" context menu item.
   It creates an independent top level display area with its own copy of the image.
-  \todo: There should be an option to make a bigwin with scrollbars.
  */
 void MutatableImageDisplay::menupick_big_resizable()
 {
   // Create an image display with no parent: becomes a top level window 
   // Disable full menu functionality because there's less we can do with a single image (e.g no spawn_target)
-  MutatableImageDisplay* window=new MutatableImageDisplay(0,main(),false);
+  MutatableImageDisplay* window=new MutatableImageDisplay(0,main(),false,false,QSize(0,0));
 
   window->resize(512,512);
   window->show();
 
   window->image(_image->deepclone());
+}
+
+/*! This slot is called by selecting the "Big/1280x960" context menu item.
+  It creates an independent top level display area with its own copy of the image.
+ */
+void MutatableImageDisplay::menupick_big_1280x960()
+{
+  QScrollView* window=new QScrollView(0);
+  window->resize(512,512);
+
+  MutatableImageDisplay* display=new MutatableImageDisplay(window->viewport(),main(),false,true,QSize(1280,960));
+
+  window->addChild(display);
+  window->show();
+
+  display->image(_image->deepclone());
 }
 
