@@ -17,7 +17,7 @@
 */
 
 /*! \file 
-  \brief Interfaces for class FunctionRegistry and associated classes.
+  \brief Interfaces for class FunctionRegistry.
 */
 
 #ifndef _function_registry_h_
@@ -28,112 +28,42 @@
 #include <deque>
 #include <iostream>
 #include "useful.h"
-
-class FunctionNode;
-class MutationParameters;
+#include "function_registration.h"
 
 //! Macro to force instantiation of static registration members, and register them with Registry.
 #define REGISTER(F) static const FunctionRegistration* force_ ## F = FunctionRegistry::pre_reg(#F,&FunctionNodeUsing<F>::registration)
 
-
-
-//! Define FunctionNodeStubNewFnPtr to be type of a pointer to 
-typedef FunctionNode*const (*FunctionNodeStubNewFnPtr)(const MutationParameters&);
-
-//! Class for meta information about functions.
-class FunctionRegistration
-{
- public:
-  
-  //! Constructor.
-  FunctionRegistration(const char* n,FunctionNodeStubNewFnPtr s)
-    :_name(n)
-    ,_stubnew(s)
-    {}
-
-  //! Constructor (no name version)
-  FunctionRegistration(FunctionNodeStubNewFnPtr s)
-    :_name(0)
-    ,_stubnew(s)
-    {}
-
-  //! Accessor.
-  const char*const name() const
-    {
-       return _name;
-    }
-
-  //! Accessor.
-  void name(const char* name)
-    {
-      _name=name;
-    }
-
- protected:
-
-  //! Name of the function.
-  const char* _name;
-
-  //! The function's FunctionNodeUsing's stubnew function.
-  FunctionNodeStubNewFnPtr _stubnew;
-};
-
+//! Class acting as a dictionary from function name to registration info.
+/*! Singleton pattern.  Instance is obtained using get() method.
+ */
 class FunctionRegistry
 {
  public:
-  static FunctionRegistry& get()
-    {
-      if (!_instance)
-	_instance=new FunctionRegistry();
-      
-      while (!_preregister.empty())
-	{
-	  _instance->_registry[_preregister.front()->name()]=_preregister.front();
-	  _preregister.pop_front();
-	}
+  
+  //! Return the singleton instance of the FunctionRegistry
+  static FunctionRegistry& get();
 
-      return *_instance;
-    }
-
-  std::ostream& status(std::ostream& out) const
-    {
-      out << "Registered functions:\n";
-      for (std::map<std::string,const FunctionRegistration*>::const_iterator it=_registry.begin();it!=_registry.end();it++)
-	{
-	  out << "  " << (*it).first << "\n";
-	}
-      return out;
-    }
+  //! Dump list of registered functions
+  std::ostream& status(std::ostream& out) const;
 
   //! Probably not used as everything should be pre_registered by static initialisers
-  FunctionRegistration* reg(const char* n,FunctionRegistration* r)
-    {
-      r->name(n);
-      _registry[n]=r;
-      return r;
-    }
+  FunctionRegistration*const reg(const char* n,FunctionRegistration* r);
 
-  //! Register the function type (but change it's name first because the default one is obtained from typeid and seems to be slightly mangled).
-  static const FunctionRegistration*const pre_reg(const char* n,FunctionRegistration* r)
-  {
-    if (_instance)
-      {
-	get().reg(n,r);
-      }
-    else
-      {
-	r->name(n);
-	_preregister.push_back(r);
-      }
-    return r;
-  }
+  //! Register the function type (but change it's name first because the default one is probably obtained from typeid and seems to be slightly mangled).
+  static const FunctionRegistration*const pre_reg(const char* n,FunctionRegistration* r);
 
  protected:
-      std::map<std::string,const FunctionRegistration*> _registry;
+  //! Dictionary from names to Registration objects
+  std::map<std::string,const FunctionRegistration*> _registry;
 
+  //! Singleton instance, created on first call to static FunctionRegistry::get() method
   static FunctionRegistry* _instance;
 
-  static std::deque<const FunctionRegistration*> _preregister;
+  //! Queue of registrations awaiting registration on creation of the singleton instance.
+  /*! This exists because we want to use std::string in the registration std::map,
+    but std::string seems to have real problems when used dusing static initialisation.
+  */
+  static std::deque<FunctionRegistration*> _preregister;
 };
 
 #endif

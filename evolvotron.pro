@@ -32,6 +32,7 @@ HEADERS += \
         function_node_using.h \
         function_pre_transform.h \
         function_post_transform.h \
+        function_registration.h \
         function_registry.h \
 	license.h \
         matrix.h \
@@ -60,6 +61,7 @@ SOURCES += \
         function_node_using.cpp \
         function_pre_transform.cpp \
         function_post_transform.cpp \
+        function_registration.cpp \
         function_registry.cpp \
 	license.cpp \
         matrix.cpp \

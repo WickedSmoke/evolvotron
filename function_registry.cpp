@@ -22,7 +22,57 @@
 
 #include "function_registry.h"
 
+
+/*! If there are any entries queued up, register them now.
+  This is to avoid any headaches with std::string during static initialisation.
+*/
+FunctionRegistry& FunctionRegistry::get()
+{
+  if (!_instance)
+    _instance=new FunctionRegistry();
+  
+  while (!_preregister.empty())
+    {
+      FunctionRegistration* r=_preregister.front();
+      _instance->_registry[r->name()]=r;
+      _preregister.pop_front();
+    }
+  
+  return *_instance;
+}
+
+std::ostream& FunctionRegistry::status(std::ostream& out) const
+{
+  out << "Registered functions:\n";
+  for (std::map<std::string,const FunctionRegistration*>::const_iterator it=_registry.begin();it!=_registry.end();it++)
+    {
+      out << "  " << (*it).first << "\n";
+    }
+  return out;
+}
+
+FunctionRegistration*const FunctionRegistry::reg(const char* n,FunctionRegistration* r)
+{
+  r->name(n);
+  _registry[n]=r;
+  return r;
+}
+
+const FunctionRegistration*const FunctionRegistry::pre_reg(const char* n,FunctionRegistration* r)
+{
+  if (_instance)
+    {
+      get().reg(n,r);
+    }
+  else
+    {
+      r->name(n);
+      _preregister.push_back(r);
+    }
+  return r;
+}
+
 FunctionRegistry* FunctionRegistry::_instance=0;
 
-std::deque<const FunctionRegistration*> FunctionRegistry::_preregister;
+std::deque<FunctionRegistration*> FunctionRegistry::_preregister;
 

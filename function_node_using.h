@@ -129,7 +129,11 @@ template <> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsi
   - the strings returned from it seem to bomb if you try and do anything with them during static initialisation.
   So we use the no-name registration and it gets filled in by the REGISTER macro later.
  */
-template <typename F> FunctionRegistration FunctionNodeUsing<F>::registration(/*typeid(F).name(),*/&FunctionNodeUsing::stubnew);
+template <typename F> FunctionRegistration FunctionNodeUsing<F>::registration
+(
+ /*typeid(F).name(),*/
+ &FunctionNodeUsing::stubnew
+);
 
 #endif
 
