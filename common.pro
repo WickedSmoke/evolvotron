@@ -44,7 +44,7 @@ INSTALLPATH = /home/$(USER)/bin
 #######################################
 # Version numbering.  This is ENTIRELY controlled by what is echoed by the VERSION script
 #
-VERSION_NUMBER = $$system(../VERSION)
+VERSION_NUMBER = $${system(../VERSION)}
 QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_VERSION="$$VERSION_NUMBER"'
 QMAKE_CXXFLAGS_DEBUG   += '-DEVOLVOTRON_VERSION="$$VERSION_NUMBER"'
 QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_BUILD="$$VERSION_NUMBER (release build)"'
