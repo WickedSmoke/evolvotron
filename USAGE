@@ -286,7 +286,7 @@ MAIN MENU BAR
   (See "advanced usage" below.)
   "Functions" brings up a dialog to modify the relative probability
   of functions being used.  By default all functions are equally
-  likely except for iterative functions (and fractals), which are
+  likely except for iterative functions and fractals, which are
   almost but not completely supressed.  But if you think there
   are too many spirals or grids (or not enough fractals) then this
   is the place to adjust the frequency with which they appear.
@@ -419,13 +419,18 @@ are two slider controls to affect things related to these:
 
 There is also a dialog accessible from "Functions..." on the "Settings" menu.
 This allows control over the relative proportions in which functions occur.
-It also allows the average function-tree branching ratio to be controlled
-(by changing the proportion of trivial zero-branch functions used): note that
-using a high branching ratio results in very complex images which will take
-a long time to compute, while reducing the ratio results in simple, boring images.
-(Note that Evolvotron no longer disables iterative and fractal functions by
-default; use the appropriate tab on the "Functions..." dialog to do this
-if required).
+There is a tab showing the relative weighting of all functions (log-2 scale: each
+tick halves the probability of the function occurring), and additional tabs
+for various classifications of function for quicker access.  The most useful
+thing you can do here is hit the "Randomize" button on the "All" functions tab:
+this assigns random weightings and helps increase the uniqueness of your
+session.
+
+There is also a "Dilution" tab which allows the average function-tree branching
+ratio to be controlled (by changing the proportion of trivial zero-branch
+functions added): note that using a high branching ratio results in very
+complex images which will take a long time to compute, while reducing the
+ratio results in simple, boring images.  
 
 OTHER EXECUTABLES
 =================
