@@ -63,18 +63,20 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
   
   setup_from_mutation_parameters();
 
-  _scrollview=new QScrollView(_vbox);
-  //_scrollview->enableClipper(true);
-  _scrollview_vbox=new QVBox(_scrollview->viewport());
-  _scrollview->addChild(_scrollview_vbox);
+  _scrollview=new CustomScrollView(_vbox);
 
   for (std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
        it!=FunctionRegistry::get()->registrations().end();
        it++)
     {
-      QGroupBox* g=new QGroupBox(3,Qt::Horizontal,(*it)->name(),_scrollview_vbox);
+      QGroupBox* g=new QGroupBox(3,Qt::Horizontal,(*it)->name(),_scrollview->contentParent());
+
+      QSizePolicy spx(QSizePolicy::Expanding,QSizePolicy::Preferred);
+      g->setSizePolicy(spx);
+
       new QLabel("2^-12",g);
-      new QSlider(-12,0,1,12,Qt::Horizontal,g);
+      QSlider* s=new QSlider(-12,0,1,12,Qt::Horizontal,g);
+      s->setSizePolicy(spx);
       new QLabel("1",g);
     }
   
@@ -100,14 +102,14 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 	  _slider_identity_supression,SIGNAL(valueChanged(int)),
 	  this,SLOT(changed_identity_supression(int))
 	  );
-
 }
 
 DialogFunctions::~DialogFunctions()
 {}
 
-void DialogFunctions::resizeEvent(QResizeEvent*)
+void DialogFunctions::resizeEvent(QResizeEvent* e)
 {
+  Superclass::resizeEvent(e);
   _vbox->resize(size());
 }
 
