@@ -63,7 +63,7 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
   
   setup_from_mutation_parameters();
 
-  _scrollview=new CustomScrollView(_vbox);
+  _scrollview=new VBoxScrollView(_vbox);
 
   for (std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
        it!=FunctionRegistry::get()->registrations().end();
@@ -74,10 +74,10 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
       QSizePolicy spx(QSizePolicy::Expanding,QSizePolicy::Preferred);
       g->setSizePolicy(spx);
 
-      new QLabel("2^-12",g);
-      QSlider* s=new QSlider(-12,0,1,12,Qt::Horizontal,g);
+      new QLabel("2^-10",g);
+      QSlider* s=new QSlider(-8,8,1,0,Qt::Horizontal,g);
       s->setSizePolicy(spx);
-      new QLabel("1",g);
+      new QLabel("2^10",g);
     }
   
   _vbox->setStretchFactor(_scrollview,1);

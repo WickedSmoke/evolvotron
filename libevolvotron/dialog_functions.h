@@ -35,59 +35,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qcheckbox.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
-#include <qscrollview.h>
-
-#include <qobjectlist.h>
 
 #include "useful.h"
 #include "mutation_parameters.h"
 
-
-class CustomScrollView : public QScrollView
-{
-  typedef QScrollView Superclass;
- public:
-
-  CustomScrollView(QWidget* parent)
-    :QScrollView(parent)
-    {
-      setHScrollBarMode(QScrollView::AlwaysOff);
-      enableClipper(true);
-
-      QSizePolicy spx(QSizePolicy::Expanding,QSizePolicy::Preferred);
-      setSizePolicy(spx);
-
-      _vbox=new QVBox(viewport());
-      _vbox->setSizePolicy(spx);
-      
-      addChild(_vbox);
-    }
-
-  virtual void resizeEvent(QResizeEvent* e)
-    {
-      Superclass::resizeEvent(e);
-
-      std::clog 
-	<< "CustomScrollView::ResizeEvent : with size " 
-	<< size().width() << "x" << size().height() 
-	<< " and contents size "
-	<< contentsWidth() << "x" << contentsHeight()
-	<< "\n";
-      
-      //const int reduce=(verticalScrollBar() ? verticalScrollBar()->frameSize().width() : 0);
-      //_vbox->resize(size().width()-reduce,_vbox->size().height());
-
-      _vbox->resize(visibleWidth(),_vbox->size().height());
-    }
-
-  QWidget*const contentParent()
-    {
-      return _vbox;
-    }
- protected:
-  //! Vbox for layout within scroll area
-  QVBox* _vbox;
-};
+#include "vbox_scrollview.h"
 
 //! Provides a dialog for controlling which functions are available.
 class DialogFunctions : public QDialog
@@ -122,7 +74,7 @@ class DialogFunctions : public QDialog
   QSlider* _slider_identity_supression;
 
   //! Scrolling area for per-function controls
-  CustomScrollView* _scrollview;
+  VBoxScrollView* _scrollview;
 
   //! Button to close dialog.
   QPushButton* _ok;

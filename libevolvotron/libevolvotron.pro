@@ -40,6 +40,7 @@ HEADERS += \
         tuple.h \
 	useful.h \
         usage_text.h \
+        vbox_scrollview.h \
 	xyz.h
 
 SOURCES += \
@@ -76,6 +77,7 @@ SOURCES += \
         transform_factory.cpp \
         tuple.cpp \
 	useful.cpp \
+        vbox_scrollview.cpp \
 	xyz.cpp
 
 #########################
