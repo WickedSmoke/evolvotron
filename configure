@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# QMAKESPEC is possibly also required on some systems
+# See Qt/qmake docs for your system and Evolvotron README if you have any problems.
 if [ -z "$QTDIR" ] ; then
   echo "QTDIR not defined"
   echo "You almost certainly need QTDIR defined and pointing at your QT installation"
@@ -7,13 +9,8 @@ if [ -z "$QTDIR" ] ; then
   exit 1
 fi
 
-# QMAKESPEC is possibly also required on some systems
-# See Qt/qmake docs for your system and Evolvotron README if you have any problems.
-
-# NB Don't run "qmake -project" again!!! (It wipes evolvotron.pro)
-
-# TODO: Should test "which qmake" here.  If not found, add $(QTDIR)/bin to path
-
+# TODO?: Should perhaps test "which qmake" here.
+# If not found, add $(QTDIR)/bin to path.  But the ./BUILD script does that.
 echo "Your qmake version is:"
 qmake --version 
 
@@ -21,8 +18,16 @@ echo
 echo "Your gcc version is (unless qmake is set up to use a different one):"
 gcc --version
 
+echo
+echo "Building documentation..."
+./text_to_markup.py -html < USAGE > evolvotron.html
+./text_to_markup.py -qml -s < USAGE > libevolvotron/usage_text.h
+if ! test -s libevolvotron/usage_text.h ; then echo "\"Full online documentation not available due to problem during build configuration\"" > libevolvotron/usage_text.h ; echo "Something went wrong, used documentation fallback plan"; fi
+echo "...built documentation"
+
 CONFIG_OPTS="$@"
 
+echo
 echo "Running qmake..."
 
 qmake "CONFIG_OPTS=$CONFIG_OPTS" main.pro 

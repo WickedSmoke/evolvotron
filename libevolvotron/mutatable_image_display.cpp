@@ -126,7 +126,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
   _menu_big->insertItem("1280x&960",this,SLOT(menupick_big_1280x960()));
   _menu_big->insertItem("1&600x1200",this,SLOT(menupick_big_1600x1200()));
 
-  _menu->insertItem("&Big",_menu_big);
+  _menu->insertItem("&Enlarge",_menu_big);
 
   _menu->insertSeparator();
   

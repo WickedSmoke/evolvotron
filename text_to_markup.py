@@ -9,9 +9,9 @@
 # - Other text to p, blank lines break a p
 # - Lines beginning with "- " (NB space) to ul/li (bulleted)
 # - Lines beginning with "-?" (no space) to ul/li (?) with <br> at end of first line
-# - Lines ending with ":" or with different amount of indent on next line add <br> 
+# - Lines ending with ":" <br> 
 # - Words delim <xxx> to <i>xxx</i>
-# "$ " at start of line indicates one line of code
+# "$ " at start of line indicates one line of code (add <br> too)
 
 import sys
 import string
@@ -31,7 +31,7 @@ def line_of_equals(n):
 
 class TextToMarkup:
 
-    def __init__(self,m):        
+    def __init__(self,m,s):        
         self.startup=True
         self.scope_p=False
         self.scope_ul=False
@@ -39,6 +39,19 @@ class TextToMarkup:
         self.done_title=False
         self.skipnextline=False
         self.mode=m
+        self.stringify=s
+
+    def dispose(self,l):
+        if self.stringify:
+            self.output.write("\"")       # Actually, they should all have been &quot;-ed anyway
+            for c in l:
+                if c=="\"":
+                    self.output.write("\\\"")
+                else:
+                    self.output.write(c)
+            self.output.write("\\n\"\n")
+        else:
+            self.output.write(l+"\n")
 
     def process_word(self,w):
         r=""
@@ -67,7 +80,7 @@ class TextToMarkup:
     def process_paragraph_text(self,txt):
 
         is_code=False
-        specialbreak=txt[len(txt)-1]==":" or self.currline_indent!=self.nextline_indent
+        specialbreak=txt[len(txt)-1]==":" 
         r="  "
 
         if txt[0]=="-":
@@ -100,9 +113,12 @@ class TextToMarkup:
             r+="<br>"
         return r
 
-    def process(self,in_stream):
+    def process(self,in_stream,out_stream):
+        self.output=out_stream
+        self.input=in_stream
+
         if self.mode=="html":
-            print "<html>"
+            self.dispose("<html>")
 
         while True:
 
@@ -125,57 +141,65 @@ class TextToMarkup:
             self.currline=self.currline_raw.strip()
             self.nextline=self.nextline_raw.strip()
 
-            self.currline_indent=len(self.currline)-len(self.currline.lstrip())
-            self.nextline_indent=len(self.nextline)-len(self.nextline.lstrip())
-
             if len(self.currline)>2 and self.nextline==line_of_equals(len(self.currline)):
                 if self.done_title:
-                    print "<h2>"+string.capwords(self.currline)+"</h2>"
+                    self.dispose("<h2>"+string.capwords(self.currline)+"</h2>")
                     self.skipnextline=True
                     continue
                 else:
                     if (self.mode=="html"):
-                        print "<head>"
-                        print "<title>"+string.capwords(self.currline)+"</title>"
-                        print "</head>"
-                        print "<body>"
+                        self.dispose("<head>")
+                        self.dispose("<!--- AUTOMATICALLY GENERATED FILE : DO NOT EDIT --->")
+                        self.dispose("<title>"+string.capwords(self.currline)+"</title>")
+                        self.dispose("</head>")
+                        self.dispose("<body>")
                     elif (self.mode=="qml"):
-                        print "<qt title='"+string.capwords(self.currline)+"'>"
-                    print "<h1>"+string.capwords(self.currline)+"</h1>"
+                        self.dispose("<qt title='"+string.capwords(self.currline)+"'>")
+                    self.dispose("<h1>"+string.capwords(self.currline)+"</h1>")
                     self.done_title=True
                     self.skipnextline=True
                     continue
             elif len(self.currline)>2 and self.nextline==line_of_dashes(len(self.currline)):
-                print "<h3>"+string.capwords(self.currline)+"</h3>"
+                self.dispose("<h3>"+string.capwords(self.currline)+"</h3>")
                 self.skipnextline=True
                 continue
             elif self.scope_p:
                 if (len(self.currline)):
-                    print self.process_paragraph_text(self.currline)
+                    self.dispose(self.process_paragraph_text(self.currline))
                 else:
                     if self.scope_li:
-                        print "</li>"
+                        self.dispose("</li>")
                         self.scope_li=False
                     if self.scope_ul:
-                        print "</ul>"
+                        self.dispose("</ul>")
                         self.scope_ul=False                        
-                    print "</p>"
+                    self.dispose("</p>")
                     self.scope_p=False
             elif len(self.currline):
-                print "<p>"
-                print self.process_paragraph_text(self.currline)
+                self.dispose("<p>")
+                self.dispose(self.process_paragraph_text(self.currline))
                 self.scope_p=True
             else:
-                print
+                self.dispose("")
 
         if self.mode=="html":
-            print "</body>"
-            print "</html>"
+            self.dispose("</body>")
+            self.dispose("</html>")
 
 #########################################
         
 if __name__=='__main__':
 
-    t2m=TextToMarkup("html")    # "html" and "qml" are alternatives.  Should be stringify option.
-    t2m.process(sys.stdin)
+    mode=None
+    stringify=False
+    for i in xrange(1,len(sys.argv)):
+        if sys.argv[i]=="-qml":
+            mode="qml"
+        if sys.argv[i]=="-html":
+            mode="html"
+        elif sys.argv[i]=="-s":
+            stringify=True
+            
+    t2m=TextToMarkup(mode,stringify)    # "html" and "qml" are alternatives.  Should be stringify option.
+    t2m.process(sys.stdin,sys.stdout)
 

@@ -124,8 +124,11 @@ class EvolvotronMain : public QMainWindow
   //! The "About" dialog widget.
   DialogAbout* _dialog_about;
 
-  //! The "Help" dialog widget.
-  DialogHelp* _dialog_help;
+  //! The "Help" dialog widget (quick reference text)
+  DialogHelp* _dialog_help_short;
+
+  //! The "Help" dialog widget (full manual text)
+  DialogHelp* _dialog_help_long;
 
   //! The dialog for adjusting MutationParameters.
   DialogMutationParameters* _dialog_mutation_parameters;

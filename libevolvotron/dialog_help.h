@@ -41,7 +41,7 @@ class DialogHelp : public QDialog
 
  public:
   //! Constructor.
-  DialogHelp(QWidget* parent);
+  DialogHelp(QWidget* parent,bool full);
 
   //! Destructor.
   virtual ~DialogHelp()

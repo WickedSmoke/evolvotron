@@ -37,6 +37,7 @@ HEADERS += \
         transform_factory.h \
         tuple.h \
 	useful.h \
+        usage_text.h \
 	xyz.h
 
 SOURCES += \

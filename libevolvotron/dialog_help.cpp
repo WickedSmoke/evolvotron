@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //! The text to be displayed
 /*! \todo Should obtain this from processing external (X)HTML docs, if there were any.
  */
-static const char*const helptext=
+static const char*const helptext_short=
 "<qt title='Evolvotron Quick Reference'>"
 "<h1>Evolvotron Quick Reference</h1>"
 "<h2>Keyboard</h2>"
@@ -113,16 +113,20 @@ static const char*const helptext=
 "</qt>"
 ;
 
-DialogHelp::DialogHelp(QWidget* parent)
+static const char*const helptext_long=
+#include "usage_text.h"
+;
+
+DialogHelp::DialogHelp(QWidget* parent,bool full)
   :QDialog(parent)
 {
-  setCaption("Evolvotron Help");
+  setCaption(full ? "Evolvotron User Manual" : "Evolvotron Quick Reference");
   setMinimumSize(300,200);
 
   _vbox=new QVBox(this);
   
   _browser=new QTextBrowser(_vbox);
-  _browser->setText(helptext);
+  _browser->setText(full ? helptext_long : helptext_short);
 
   _ok=new QPushButton("OK",_vbox);
 

@@ -2,6 +2,9 @@
 
 From release 0.2.2:
  - Version to 0.2.3-dev
+ - Break out USAGE file from README
+ - Add text_to_markup.py script to prettify USAGE file, used from configure
+ - Add quick reference and user manual accessible from help menu
 
 From release 0.2.1:
  - Version to 0.2.2

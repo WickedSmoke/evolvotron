@@ -6,9 +6,10 @@ VERSION=`./VERSION`
 
 cd ..
 
-FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,CHANGES,VERSION,USAGE,configure,doxygen.cfg,mktgz,mkdoc}`
+FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,CHANGES,VERSION,USAGE,configure,doxygen.cfg,mktgz,mkdoc,text_to_markup.py}`
 
-FILES_H=`find evolvotron -name moc -prune -o -name '*.h' -print`
+# NB Don't ship automatically generated .h file
+FILES_H=`find evolvotron -name moc -prune -o name usage_text.h -prune -o -name '*.h' -print`
 FILES_CPP=`find evolvotron -name moc -prune -o -name '*.cpp' -print`
 FILES_PRO=`find evolvotron -name moc -prune -o -name '*.pro' -print`
 

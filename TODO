@@ -17,6 +17,9 @@ Animation
 
 Conventional
 ------------
+- More detail under GUI Elements section of docs
+- Proper dependency and generation by qmake of libevolvotron/usage_text.h
+- -h & --help option.  Print version and functions supported.
 - Get USAGE file into qml and app.  Don't worry about HTML or being too pretty.
 - man pages ?  Knock off something simple.
 - Window ordering (and whether fullscreen) should be an input to

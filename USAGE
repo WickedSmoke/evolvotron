@@ -1,5 +1,5 @@
-EVOLVOTRON USAGE
-================
+EVOLVOTRON USER MANUAL
+======================
 
 For the default 2D image mode, you will need a fast machine or patience.
 For the optional animation mode, you will need both.
@@ -19,7 +19,7 @@ If you select a uniform image, you may get stuck in a degenerate zone with
 little to mutate and therefore little chance of escape to a more interesting
 area.  You can always reset/restart from the "File" menu (the difference is
 that "reset" also resets the mutation parameters to their default values).
-Selecting one of the "warp" options from the contect menu (right-click on
+Selecting one of the "warp" options from a context menu (right-click on
 an image) can also help by introducing an additional opportunity for
 mutation on subsequent spawns.
 
@@ -53,7 +53,7 @@ USER OPTIONS
 	cooperative with this (in which case sorry, you're on your own).  
 	evolvotron actions which bring up dialog boxes (e.g save) seem
 	to generally behave fairly sensibly but child windows 
-	(e.g from "Big") can show some "interesting" behaviour.  
+	(e.g enlargements or dialogs) can show some "interesting" behaviour.  
 	Fullscreen mode can be toggled within the application using ctrl-f.  
 	The Esc key will also exit it.
 
@@ -133,17 +133,17 @@ Right clicking on an image gets you a few more options:
  - "Lock" to prevent an image from being overwritten by spawns from other
    images (select again to toggle).
 
- - "Big" to produce a blow-up of the image in a single window.
+ - "Enlarge" to produce a blow-up of the image in a single window.
    Submenu items select either a freely resizable window or
    a scrollable view of a fixed size image.
    If the application is running in fullscreen mode (NB this is
    NOT the same as "Maximised": see the -F command line option)
-   then the "Big" image will also be fullscreen (the "Resizeable" 
+   then the enlarged image will also be fullscreen (the "Resizeable" 
    mode is probably what you want in this case as the image will
    automatically be rendered at the correct resolution). 
 
  - "Save image" to save the image in a file (.ppm or .png format).
-   Note that this is most useful on a "Big" blown-up image: if you
+   Note that this is most useful on a enlarged image: if you
    save a small grid image, the size you see on the screen is the size
    you get in the file.  Note that the save won't be allowed until the
    full resolution image has been generated.
@@ -168,7 +168,7 @@ This is useful for "final composition" type tweaks, e.g centering an
 image's most interesting feature, or just for satisfying your curiosity 
 about what's off the edge of the image.
 
-It also works on "Big" images, although it's virtually unusable without
+It also works on enlarged images, although it's virtually unusable without
 a bit of practice on smaller, faster ones (just boldly make the adjustment
 you want, release the button... and wait).
 
@@ -209,7 +209,7 @@ full-screen mode (on X11, Qt does this by asking the
 window manager for a screen-filling undecorated window, and the
 documentation contains some dire warnings about problems with broken
 window managers).  See also "-F" command line option.
-Fullscreen mode propagates to "Big" image display windows.
+Fullscreen mode propagates to enlarged image display windows.
 NB The application may completely disappear from the screen for 
 a brief interval while switching mode.
 
@@ -229,7 +229,7 @@ is hidden, because this is such a common operation).
 
 ENLARGEMENT WINDOWS
 -------------------
-The image display windows created by selecting "Big" from a
+The image display windows created by selecting "Enlarge" from a
 context menu also have a couple of keyboard operations:
 
 - Ctrl-f [NB only available with fullscreen build option] toggles 
@@ -237,30 +237,41 @@ full-screen mode.  When returning to normal mode, if the main app
 window was fullscreen then it will also drop back to normal mode.
 
 - Esc [NB only available with fullscreen build option]
-completely closes a fullscreen-mode "big" window.
+completely closes a fullscreen-mode enlargement window.
 
 GUI ELEMENTS
 ============
 
 MAIN MENU BAR
 -------------
-On the application's main menu-bar, the Edit menu lets you undo
-previous full-grid spawns and middle-button adjustments.
-There is a large but limited number of levels of undo; note that
-locking is overriden, and that locking/unlocking a display is
-not currently recorded in the undo history), and bring
-up a dialog to modify the mutation parameters (see "useful tips"
-and "advanced usage" below).
+- File menu:
+  Items to restart, reset and quit the application.
+  The difference between restart and reset is that reset 
+  sets the mutation parameters back the their default values.
+- Edit menu:
+  Undo lets you undo previous full-grid spawns and middle-button
+  adjustments.  There is a large but limited number of levels of
+  undo (note that locking is overriden, and that locking/unlocking 
+  a display is not currently recorded in the undo history)
+- Settings menu:
+  "Mutation parameters" brings up a dialog to modify the amount
+  of change spawned images are subject to.  
+  (See "advanced usage" below.)
+  If the software was built with the fullscreen option,
+  that can also be controlled from here.
+- Help menu:
+  Items to bring up documentation, and the usual "About" box
+  (which includes the license).
 
 STATUS BAR
 ----------
 An area on the status bar shows how many "tasks" are outstanding.  
 Each "task" is the recomputation of an image at some resolution.
-Tasks are prioritised by their number of pixels  (small image =>higher
-priority).  This is why, if the main grid is still recomputing,
-recalculationa of a "big" image will appear to freeze after it
-has reached a certain resolution, at least until other lower
-resolution tasks have completed. 
+Tasks are prioritised by their number of pixels  (small image
+implies higher priority).  This is why, if the main grid is still
+recomputing, recalculations of enlargements will appear to freeze 
+after they have reached a certain resolution, at least until other 
+lower resolution tasks have completed. 
 
 TIPS
 ====
@@ -308,7 +319,7 @@ For example, if you enter foo.ppm as the filename to save,
 files foo.f000000.ppm, foo.f000001.ppm... will be saved.
 You can convert these to a MNG (a multi-frame PNG) playing at
 approx. 8 frames per second with: 
-  convert -delay 12 foo.f??????.ppm foo.mng
+  $  convert -delay 12 foo.f??????.ppm foo.mng
 (I have had some problems with .mng format; try .gif instead if this is the case).
 
 ADVANCED USAGE
@@ -334,10 +345,12 @@ Edit->Mutation Parameters... menu, and also from buttons on the status bar).
 There are two kinds of mutation: perturbations to the magnitude of constants, 
 and structural mutations which rearrage the function tree of an image.  
 Four types of structural mutations are currently implemented:
-replacement of a function branch by a new random stub (a "Glitch" mutation),
-a random shuffle of a node's arguments, the insertion of random nodes
-between a node and it's children and the substitution of a node with one
-of a different type (but with child nodes unaffected where possible).
+  - replacement of a function branch by a new random stub (a "Glitch" mutation).
+  - a random shuffle of a node's sub-nodes
+  - insertion of random nodes between a node and it's sub-nodes
+  - and the substitution of a node with one of a different type, 
+    with sub-nodes unaffected where possible).
+
 The probability (per function node) of these mutations is controlled
 from spinboxes on the dialog (expressed as chances-in-a-million), 
 as is the size of perturbations to constants.
@@ -391,7 +404,7 @@ This release also builds two other executables:
    Use the -v option to monitor the progress of a long animation run.
    [NB This app does not use multiple compute threads].
 
- $ evolvotron_mutate [-g | < <file.xml>] > <file.xml>
+ $ evolvotron_mutate [-g | < <file_in.xml>] > <file_out.xml>
    With the -g (generate, genesis?) option, creates a new random
    evolvotron function and writes its XML description to standard out.
    Without the -g option, reads an XML function description from
@@ -408,7 +421,7 @@ $ evolvotron_mutate -g | tee fn.xml | evolvotron_render /tmp/xxx.ppm ; display /
   
 $ cat fn.xml | evolvotron_mutate | evolvotron_render /tmp/xxx.ppm ; display /tmp/xxx.ppm
 
-Animating a function ani.xml produced from evolvotron in animation mode:
+Animating a function ani.xml saved from evolvotron in animation mode:
     
 $ cat ani.xml | evolvotron_render -f 100 -v -s 256 256 ani.ppm ; animate ani.f??????.ppm
 
@@ -418,7 +431,7 @@ Check the TODO file first before you send me suggestions!
 
 Please don't ask me to port evolvotron to proprietary platforms.
 You are of course Free under the terms of the GPL to do so yourself, 
-but please reed
+but please read
   http://www.fefe.de/nowindows/ 
 first.
 
@@ -451,5 +464,4 @@ and the ability to write working code (well, sometimes).  If you like
 an image it produces, then as far as I'm concerned that's as satisfying 
 a result as if you liked something I'd drawn myself.
 
-Tim Day
-
+Tim
