@@ -12,7 +12,7 @@ fi
 
 # NB Don't run "qmake -project" again!!! (It wipes evolvotron.pro)
 
-echo "You will be using gcc version:"
+echo "Your gcc version is (unless qmake is set up to use a different one):"
 gcc --version
 
 echo "Running qmake..."

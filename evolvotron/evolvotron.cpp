@@ -81,6 +81,14 @@ int main(int argc,char* argv[])
     << threads 
     << " compute threads\n";
 
+  // Test random number generator
+  if (false)
+    {
+      Random01 r01(time(0));
+      for (uint i=0;i<20;i++)
+	std::clog << r01() << "\n";
+    }
+
   FunctionRegistry::get()->status(std::clog);
 
   if (threads<1)

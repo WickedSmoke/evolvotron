@@ -29,77 +29,96 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 class Random
 {
 protected:
-  //! Generator state.
-  uint current;
 public:
   
-  //! Constructor just initialises seed.
-  Random(uint s=0)
-    :current(s){}
+  //! Constructor (nothing to do in base class)
+  Random()
+    {}
 
   //! Trivial destructor.
   virtual ~Random()
     {}
   
-  //! Set seed value.
-  void seed(uint n);
-
   //! Return a random number.
   /*! \warning Returns double instead of float because suspect NegExp can return Inf otherwise.
    */
-  virtual double operator()()
+  virtual const double operator()()
     =0;
 };
 
 //! Generates random numbers in the range [0,1).
+/*! Code lifted from 1999/10/28 version of MT19937 (Mersenne Twister)
+  at http://www.math.keio.ac.jp/~nisimura/random/int/mt19937int.c
+  (which is LGPL-ed code)
+ */
 class Random01 : public Random   
 {
 protected:
-  //! Trivial and undoubtedly statistically flawed random number generator.  Good enough for me though.
-  /*! Code straight out of Stroustrup C++ 3rd ed.
-    Use this instead of rand() 'cos some platforms only return 16 bits.
-  */
-  uint next()
-    {
-      current=current*1103515245+12345;
-      return (current&0x7fffffff);
-    }
-  
-public:
-  //! Constructor just passes seed to base.
-  Random01(uint s=0)
-    :Random(s){}
+  static const unsigned long N=624;
+  static const unsigned long M=397;
 
-  //! Trivial destructor.
-  virtual ~Random01()
-    {}
+  //! Constant vector a
+  static const unsigned long MATRIX_A=0x9908b0df;   
+
+  //! Most significant w-r bits
+  static const unsigned long UPPER_MASK=0x80000000; 
+
+  //! Least significant r bits
+  static const unsigned long LOWER_MASK=0x7fffffff; 
+
+  static const unsigned long TEMPERING_MASK_B=0x9d2c5680;
+  static const unsigned long TEMPERING_MASK_C=0xefc60000;
+
+  static const unsigned long TEMPERING_SHIFT_U(unsigned long y) {return (y >> 11);}
+  static const unsigned long TEMPERING_SHIFT_S(unsigned long y) {return (y << 7);}
+  static const unsigned long TEMPERING_SHIFT_T(unsigned long y) {return (y << 15);}
+  static const unsigned long TEMPERING_SHIFT_L(unsigned long y) {return (y >> 18);}
+
+  //! the array for the state vector  */
+  unsigned long mt[N]; 
+
+  //! mti==N+1 means mt[N] is not initialized 
+  uint mti; 
+
+public:
+  //! Constructor
+  Random01(uint seed);
+
+  //! Trivial destructor
+  virtual ~Random01();
   
   //! Return next number in sequence.
-  virtual double operator()()
-    {return ((1.0/2147483648.0)*next());}
+  virtual const double operator()();
 };
 
 //! Return negative-exponentially distributed random numbers.
-/*! \todo RandomNegExp shouldn't be derived from Random01 because there is no IS-A relation.
- */
-class RandomNegExp : public Random01
+class RandomNegExp : public Random
 {
 protected:
+
+  //! Underlying generator.
+  Random01 _generator;
+
   //! Mean value of distribution.
-  double mean;
+  double _mean;
+
 public:
   
   //! Construct generator of numbers with mean value m.
-  RandomNegExp(double m,uint s=0)
-    :Random01(s),mean(m){}
+  RandomNegExp(uint seed,double m)
+    :_generator(seed)
+    ,_mean(m)
+    {}
 
   //! Trivial destructor.
   virtual ~RandomNegExp()
     {}
   
   //! Return next number in sequence.
-  virtual double operator()()
-    {return -mean*log(1.0-Random01::operator()());}  
+  virtual const double operator()()
+    {
+      return -_mean*log(1.0-_generator());
+    }  
 };
 
 #endif

@@ -1781,16 +1781,15 @@ class FunctionOrthoSphereShaded : public Function
   //! Evaluate function.
   static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
     {
-      const float pr2=p.x()*p.x()+p.y()+p.y();
+      const float pr2=p.x()*p.x()+p.y()*p.y();
       if (pr2<1.0f)
 	{
 	  const float z=-sqrt(1.0f-pr2);
 	  const XYZ n(p.x(),p.y(),z);
 
-	  const XYZ l(XYZ(our.param(1),our.param(2),our.param(3)).normalised());
+	  const XYZ l(XYZ(our.param(0),our.param(1),our.param(2)).normalised());
 
-	  float i=l%n;
-	  if (i<0.0f) i=0.0f;
+	  const float i=0.5*(1.0+l%n); // In range 0-1
 	  return i*our.arg(1)(n);
 	}
       else
@@ -1833,7 +1832,7 @@ class FunctionOrthoSphereReflect : public Function
   //! Evaluate function.
   static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
     {
-      const float pr2=p.x()*p.x()+p.y()+p.y();
+      const float pr2=p.x()*p.x()+p.y()*p.y();
       if (pr2<1.0f)
 	{
 	  const float z=-sqrt(1.0f-pr2);

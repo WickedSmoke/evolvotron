@@ -200,8 +200,7 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
       std::vector<float> params_toplevel;
       std::vector<FunctionNode*> args_toplevel;
       
-      // 50/50 general transform vs more restricted 12-parameter version
-      if (parameters.r01()<0.5f)
+      if (parameters.r01()<1.0f/3.0f)
 	{
 	  std::vector<float> params_in;
 	  std::vector<FunctionNode*> args_in;
@@ -211,16 +210,22 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
 	  args_in.push_back(FunctionNode::stub(parameters,false));
 	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_in,args_in,0));
 	}
-      else
+      else if (parameters.r01()<0.5f)
 	{
 	  args_toplevel.push_back(FunctionNodeUsing<FunctionTransform>::stubnew(parameters));
+	}
+      else
+	{
+	  args_toplevel.push_back(FunctionNodeUsing<FunctionIdentity>::stubnew(parameters));
 	}
       
       // This one is crucial: we REALLY want something interesting to happen within here.
       args_toplevel.push_back(FunctionNode::stub(parameters,true));
       
-      // 50/50 general transform vs more restricted 12-parameter version
-      if (parameters.r01()<0.5f)
+      // This is how to test a speciifc function
+      //args_toplevel.push_back(FunctionNodeUsing<FunctionOrthoSphereShaded>::stubnew(parameters));
+
+      if (parameters.r01()<1.0f/3.0f)
 	{
 	  std::vector<float> params_out;
 	  std::vector<FunctionNode*> args_out;
@@ -230,11 +235,15 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
 	  args_out.push_back(FunctionNode::stub(parameters,false));
 	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_out,args_out,0));
 	}
-      else
+      else if (parameters.r01()<0.5f)
 	{
 	  args_toplevel.push_back(FunctionNodeUsing<FunctionTransform>::stubnew(parameters));
 	}
-	
+      else
+	{
+	  args_toplevel.push_back(FunctionNodeUsing<FunctionIdentity>::stubnew(parameters));
+	}
+      	
       root=new FunctionNodeUsing<FunctionComposeTriple>(params_toplevel,args_toplevel,0);
       
       assert(root->ok());
