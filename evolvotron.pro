@@ -27,6 +27,7 @@ HEADERS += \
 	dialog_mutation_parameters.h \
 	evolvotron_main.h \
         function.h \
+        function_node.h \
 	license.h \
         matrix.h \
 	mutatable_image.h \
@@ -48,7 +49,8 @@ SOURCES += \
 	dialog_mutation_parameters.cpp \
 	evolvotron.cpp \
 	evolvotron_main.cpp \
-        function.h \
+        function.cpp \
+        function_node.cpp \
 	license.cpp \
         matrix.cpp \
 	mutatable_image.cpp \
@@ -135,6 +137,10 @@ MOC_DIR = moc
 
 ###################
 # OPTION: Use this to link vs ccmalloc library
-# This isn't particularly useful though
+# (This hasn't been particularly useful though;
+# the only memory leaks so far have been related
+# to inter-thread comms and timing dependent.
+# Linking vs ccmalloc (or using vgrind) changed timings
+# and caused the leak to disappear.)
 #
 #QMAKE_LINK=ccmalloc g++
