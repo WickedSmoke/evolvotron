@@ -2024,28 +2024,27 @@ FUNCTION_END(FunctionAccumulateOctaves)
 
 //------------------------------------------------------------------------------------------
 
-//! Generalised (3D) Mandelbrot iterator for fractal functions.
-/*! Returns i in 0 to _iterations inclusive.  i==_iterations implies "in" set.
+//! Mandelbrot iterator for fractal functions.
+/*! Returns i in 0 to iterations inclusive.  i==iterations implies "in" set.
  */
-inline const uint brot(const XYZ& z0,const XYZ& c,const uint iterations)
+inline const uint brot(const float z0r,const float z0i,const float cr,const float ci,const uint iterations)
 {
-  XYZ z(z0);
+  float zr=z0r;
+  float zi=z0i;
   uint i;
   for (i=0;i<iterations;i++)
     {
-      const float x2=z.x()*z.x();
-      const float y2=z.y()*z.y();
-      const float z2=z.z()*z.z();
+      const float zr2=zr*zr;
+      const float zi2=zi*zi;
       
-      if (x2+y2+z2>4.0f)
+      if (zr2+zi2>4.0f)
 	break;
       
-      XYZ nz;
-      nz.x(x2-y2-z2+c.x());
-      nz.y(2.0f*z.x()*z.y()+c.y());
-      nz.z(2.0f*z.x()*z.z()+c.z());
-      
-      z=nz;
+      const float nzr=zr2-zi2+cr;
+      const float nzi=2.0f*zr*zi+ci;
+
+      zr=nzr;
+      zi=nzi;
     }
 
   return i;
@@ -2059,7 +2058,7 @@ FUNCTION_BEGIN(FunctionMandelbrotChoose,0,2,true,FnIterative|FnFractal)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return (brot(XYZ(0.0f,0.0f,0.0f),p,iterations())==iterations() ? arg(0)(p) : arg(1)(p));
+      return (brot(0.0f,0.0f,p.x(),p.y(),iterations())==iterations() ? arg(0)(p) : arg(1)(p));
     }
   
   //! Can't be constant unless functions are the same.
@@ -2078,7 +2077,7 @@ FUNCTION_BEGIN(FunctionMandelbrotContour,0,0,true,FnIterative|FnFractal)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint i=brot(XYZ(0.0f,0.0f,0.0f),p,iterations());
+      const uint i=brot(0.0f,0.0f,p.x(),p.y(),iterations());
       return (i==iterations() ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/iterations()));
     }
   
@@ -2093,12 +2092,12 @@ FUNCTION_END(FunctionMandelbrotContour)
 //------------------------------------------------------------------------------------------
 
 //! Function selects arg to evaluate based on test for point in Julia set.
-FUNCTION_BEGIN(FunctionJuliaChoose,0,3,true,FnIterative|FnFractal)
+FUNCTION_BEGIN(FunctionJuliaChoose,2,2,true,FnIterative|FnFractal)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return (brot(p,arg(2)(p),iterations())==iterations() ? arg(0)(p) : arg(1)(p));
+      return (brot(p.x(),p.y(),param(0),param(1),iterations())==iterations() ? arg(0)(p) : arg(1)(p));
     }
   
   //! Can't be constant unless functions are the same.
@@ -2112,12 +2111,12 @@ FUNCTION_END(FunctionJuliaChoose)
 //------------------------------------------------------------------------------------------
 
 //! Function returns -1 for points in set, 0-1 for escaped points
-FUNCTION_BEGIN(FunctionJuliaContour,0,1,true,FnIterative|FnFractal)
+FUNCTION_BEGIN(FunctionJuliaContour,2,0,true,FnIterative|FnFractal)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const uint i=brot(p,arg(0)(p),iterations());
+      const uint i=brot(p.x(),p.y(),param(0),param(1),iterations());
       return (i==iterations() ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/iterations()));
     }
   
@@ -2128,6 +2127,60 @@ FUNCTION_BEGIN(FunctionJuliaContour,0,1,true,FnIterative|FnFractal)
     }
 
 FUNCTION_END(FunctionJuliaContour)
+
+//------------------------------------------------------------------------------------------
+
+//! Function selects arg to evaluate based on test for point in Juliabrot set.
+/*! Juliabrot is 4 dimensional, but we only have 3 incoming parameters,
+  so have 4 4d-basis vector parameters.
+ */
+FUNCTION_BEGIN(FunctionJuliabrotChoose,16,2,true,FnIterative|FnFractal)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const float zr=p.x()*param( 0)+p.y()*param( 1)+p.z()*param( 2)+param( 3);
+      const float zi=p.x()*param( 4)+p.y()*param( 5)+p.z()*param( 6)+param( 7);
+      const float cr=p.x()*param( 8)+p.y()*param( 9)+p.z()*param(10)+param(11);
+      const float ci=p.x()*param(12)+p.y()*param(13)+p.z()*param(14)+param(15);
+      return (brot(zr,zi,cr,ci,iterations())==iterations() ? arg(0)(p) : arg(1)(p));
+    }
+  
+  //! Can't be constant unless functions are the same.
+  virtual const bool is_constant() const
+    {
+      return false;
+    }
+
+FUNCTION_END(FunctionJuliabrotChoose)
+
+//------------------------------------------------------------------------------------------
+
+//! Function returns -1 for points in set, 0-1 for escaped points
+/*! Juliabrot is 4 dimensional, but we only have 3 incoming parameters,
+  so have 4 4d-basis vector parameters.
+ */
+FUNCTION_BEGIN(FunctionJuliabrotContour,16,0,true,FnIterative|FnFractal)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const float zr=p.x()*param( 0)+p.y()*param( 1)+p.z()*param( 2)+param( 3);
+      const float zi=p.x()*param( 4)+p.y()*param( 5)+p.z()*param( 6)+param( 7);
+      const float cr=p.x()*param( 8)+p.y()*param( 9)+p.z()*param(10)+param(11);
+      const float ci=p.x()*param(12)+p.y()*param(13)+p.z()*param(14)+param(15);
+      const uint i=brot(zr,zi,cr,ci,iterations());
+      return (i==iterations() ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/iterations()));
+    }
+  
+  //! Can't be constant unless functions are the same.
+  virtual const bool is_constant() const
+    {
+      return false;
+    }
+
+FUNCTION_END(FunctionJuliabrotContour)
+
 
 //------------------------------------------------------------------------------------------
 

@@ -1,8 +1,10 @@
 [Most recent at top]
 
 From release 0.3.1:
- - Version to 0.3.1-devel
+ - Version to 0.3.2-devel
  - Lock state moved to mutatable image so is stored in undo history
+ - Mandelbrot & Julia set only in x,y plane.  Julia set uses fixed parameters.
+ - Add Juliabrot.
 
 From release 0.3.0:
  - Version to 0.3.1
