@@ -28,6 +28,7 @@ HEADERS += \
 	mutatable_image_computer_task.h \
 	mutatable_image_display.h \
 	mutation_parameters.h \
+        noise.h \
 	random.h \
         transform.h \
         transform_factory.h \
@@ -58,6 +59,7 @@ SOURCES += \
 	mutatable_image_computer_task.cpp \
 	mutatable_image_display.cpp \
 	mutation_parameters.cpp \
+        noise.cpp \
 	random.cpp \
         transform.cpp \
         transform_factory.cpp \

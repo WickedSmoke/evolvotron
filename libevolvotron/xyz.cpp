@@ -47,19 +47,33 @@ RandomXYZInBox::RandomXYZInBox(Random01& rng,const XYZ& bounds)
 }
 
 RandomXYZInSphere::RandomXYZInSphere(Random01& rng,float radius)
-:XYZ(0.0,0.0,0.0)
+:XYZ(0.0f,0.0f,0.0f)
 {
   if (radius!=0.0)
     {
       do
 	{
-	  x(2.0*rng()-1.0);
-	  y(2.0*rng()-1.0);
-	  z(2.0*rng()-1.0);
+	  x(2.0f*rng()-1.0f);
+	  y(2.0f*rng()-1.0f);
+	  z(2.0f*rng()-1.0f);
 	}
-      while (magnitude2()>1.0);
+      while (magnitude2()>1.0f);
       (*this)*=radius;
     }
+}
+
+RandomXYZSphereNormal::RandomXYZSphereNormal(Random01& rng)
+:XYZ(0.0f,0.0f,0.0f)
+{
+  float m2;
+  do
+    {
+      assign(RandomXYZInSphere(rng,1.0f));
+      m2=magnitude2();
+    }
+  while (m2==0.0f);
+  
+  (*this)/=sqrt(m2);
 }
 
 /*! Must handle case of individual axes being zero.

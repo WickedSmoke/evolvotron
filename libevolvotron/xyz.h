@@ -259,6 +259,15 @@ class RandomXYZInSphere : public XYZ
   RandomXYZInSphere(Random01& rng,float radius);
 };
 
+//! Generates a random point on the surface of a unit-radius sphere
+class RandomXYZSphereNormal : public XYZ
+{
+ public:
+  //! Constructor.
+  RandomXYZSphereNormal(Random01& rng);
+};
+
+
 //! Generates a random point in or on an origin-centred ellipsoid with semi-axes of the specified size.
 class RandomXYZInEllipsoid : public XYZ
 {

@@ -17,21 +17,34 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 /*! \file
-  \brief Implementation of specific Function classes.
-  Except there's nothing here because it's all in the header.
+  \brief Interface to Noise class.
 */
 
-#include "functions.h"
+#ifndef _noise_h_
+#define _noise_h_
 
-Noise FunctionNoiseOneChannel::_noise(100);
+#include "useful.h"
+#include "xyz.h"
 
-Noise FunctionMultiscaleNoiseOneChannel::_noise(101);
+//! Perlin noise generator.
+class Noise
+{
+public:
+  //! Constructor.
+  Noise(uint seed);
 
-Noise FunctionNoiseThreeChannel::_noise0(200);
-Noise FunctionNoiseThreeChannel::_noise1(300);
-Noise FunctionNoiseThreeChannel::_noise2(400);
+  //! Return noise value at a point.
+  const float operator()(const XYZ& p) const;
 
-Noise FunctionMultiscaleNoiseThreeChannel::_noise0(201);
-Noise FunctionMultiscaleNoiseThreeChannel::_noise1(202);
-Noise FunctionMultiscaleNoiseThreeChannel::_noise2(203);
+protected:
+  //! Number of table entries.
+  enum {N=256};
+  
+  int _p[N+N+2];
+  XYZ _g[N+N+2];
+  
+  void setup(const XYZ&,int,int&,int&,float&,float&);
+};
+
+#endif
 

@@ -61,18 +61,18 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
 {
   // Base mutations are Constant or Identity types.  
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
-  const float base=0.7;
+  const float base=0.5;
 
-  uint steps=53;
+  uint steps=61;
 
   if (!parameters.allow_fractal_nodes())
     {
-      steps=minimum(steps,49u);     // Currently 4 fractal types
+      steps=minimum(steps,57u);     // Currently 4 fractal types
     }
 
   if (!parameters.allow_iterative_nodes())
     {
-      steps=minimum(steps,45u);     // Currently 4 non-fractal iterative types
+      steps=minimum(steps,53u);     // Currently 4 non-fractal iterative types
     }
 
   const float step=(1.0-base)/steps;
@@ -181,20 +181,36 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   else if (r<base+45*step)
     return FunctionNodeUsing<FunctionFilter3D>::stubnew(parameters);
   else if (r<base+46*step)
-    return FunctionNodeUsing<FunctionIterate>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionShadow>::stubnew(parameters);
   else if (r<base+47*step)
-    return FunctionNodeUsing<FunctionAverageSamples>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionShadowGeneralised>::stubnew(parameters);
   else if (r<base+48*step)
-    return FunctionNodeUsing<FunctionConvolveSamples>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionCone>::stubnew(parameters);
   else if (r<base+49*step)
-    return FunctionNodeUsing<FunctionAccumulateOctaves>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionExpCone>::stubnew(parameters);
   else if (r<base+50*step)
-    return FunctionNodeUsing<FunctionMandelbrotChoose>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionNoiseOneChannel>::stubnew(parameters);
   else if (r<base+51*step)
-    return FunctionNodeUsing<FunctionMandelbrotContour>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionMultiscaleNoiseOneChannel>::stubnew(parameters);
   else if (r<base+52*step)
+    return FunctionNodeUsing<FunctionNoiseThreeChannel>::stubnew(parameters);
+  else if (r<base+53*step)
+    return FunctionNodeUsing<FunctionMultiscaleNoiseThreeChannel>::stubnew(parameters);
+  else if (r<base+54*step)
+    return FunctionNodeUsing<FunctionIterate>::stubnew(parameters);
+  else if (r<base+55*step)
+    return FunctionNodeUsing<FunctionAverageSamples>::stubnew(parameters);
+  else if (r<base+56*step)
+    return FunctionNodeUsing<FunctionConvolveSamples>::stubnew(parameters);
+  else if (r<base+57*step)
+    return FunctionNodeUsing<FunctionAccumulateOctaves>::stubnew(parameters);
+  else if (r<base+58*step)
+    return FunctionNodeUsing<FunctionMandelbrotChoose>::stubnew(parameters);
+  else if (r<base+59*step)
+    return FunctionNodeUsing<FunctionMandelbrotContour>::stubnew(parameters);
+  else if (r<base+60*step)
     return FunctionNodeUsing<FunctionJuliaChoose>::stubnew(parameters);
-  else //if (r<base+53*step)
+  else //if (r<base+61*step)
     return FunctionNodeUsing<FunctionJuliaContour>::stubnew(parameters);
 }
 
@@ -212,11 +228,11 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
       
       {
 	const float which=parameters.r01();
-	if (which<0.3f)
+	if (which<0.4f)
 	  {
 	    args_toplevel.push_back(FunctionNodeUsing<FunctionTransformGeneralised>::stubnew(parameters));
 	  }
-	else if (which<0.6f)
+	else if (which<0.8f)
 	  {
 	    args_toplevel.push_back(FunctionNodeUsing<FunctionTransform>::stubnew(parameters));
 	  }
@@ -240,17 +256,17 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
 	  args_toplevel.push_back(FunctionNode::stub(parameters,true));
 
 	  //Debug: Test specific functions here like this:
-	  //args_toplevel.push_back(FunctionNodeUsing<FunctionFilter2D>::stubnew(parameters));
+	  //args_toplevel.push_back(FunctionNodeUsing<FunctionMultiscaleNoiseThreeChannel>::stubnew(parameters));
 	}
       
       {
 	const float which=parameters.r01();
 
-	if (which<0.3f)
+	if (which<0.4f)
 	  {
 	    args_toplevel.push_back(FunctionNodeUsing<FunctionTransformGeneralised>::stubnew(parameters));
 	  }
-	else if (which<0.6f)
+	else if (which<0.8f)
 	  {
 	    args_toplevel.push_back(FunctionNodeUsing<FunctionTransform>::stubnew(parameters));
 	  }

@@ -64,20 +64,21 @@ and/or copy where you like (see INSTALL section).
 
 BUILD OPTIONS
 =============
-Note that qmake's default optimisation settings are pretty conservative
-(-O2 -march=i386).  IF you have a chip with SSE instuctions or similar, 
-then (once you have it working with the default options) you might
-want to consider uncommenting and/or editing some of the lines modifying
-QMAKE_CXXFLAGS_RELEASE near the start of "common.pro" and rebuilding
-(make clean and ./BUILD).
+qmake's default optimisation settings are pretty conservative (-O2 -march=i386).
+IF you have a chip with SSE instuctions or similar, then (once you have it working
+with the default options) you might want to consider uncommenting and/or editing
+some of the lines modifying QMAKE_CXXFLAGS_RELEASE near the start of "common.pro"
+and rebuilding (make clean and ./BUILD).
 
 [To get some perspective on this (ie don't get too obsessed by it!),
-here's the times for a 2.4GHz P4 to run a 4096x4096 evolvotron_render
-on a benchmark image.
-  Qt defaults:          2m 36s
-  Better optimisations: 2m 12s
-  +SSE2 instructions:   2m  8s
-  +bigger inline limit: 2m  8s
+here's the times for a 2.4GHz P4 to run a 2048x2048 evolvotron_render
+on a benchmark image.  
+  Qt defaults:                     30.6s
+  Better optimisations:
+   without -funroll-loops:         40.2s (yes, it gets slower!)
+   with    -funroll-loops:         27.3s        
+  +SSE2 instructions:              25.9s
+  +bigger inline limit (4000):     
 ]
 
 BUILD PROBLEMS

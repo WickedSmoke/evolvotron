@@ -26,7 +26,6 @@
   which have their own header file.
 */
 
-
 #ifndef _functions_h_
 #define _functions_h_
 
@@ -2085,6 +2084,325 @@ class FunctionFilter3D : public Function
 };
 
 REGISTER(FunctionFilter3D);
+
+//------------------------------------------------------------------------------------------
+
+//! Sum of two evaluations of a function, one sampled at an offset and weighted.
+class FunctionShadow : public Function
+{
+ public:
+  //! Four parameters : offset and scale
+  static const uint parameters()
+    {
+      return 4;
+    }
+
+  //! One arguments.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      return
+	our.arg(0)(p)+our.param(3)*our.arg(0)(p+XYZ(our.param(0),our.param(1),our.param(2)));
+    }
+  
+  //! Is constant if arg is
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionShadow);
+
+
+//------------------------------------------------------------------------------------------
+
+//! Like FunctionShadow but the offset is obtained from a function.
+class FunctionShadowGeneralised : public Function
+{
+ public:
+  //! One parameter.
+  static const uint parameters()
+    {
+      return 1;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      return
+	our.arg(0)(p)+our.param(0)*our.arg(0)(p+our.arg(1)(p));
+    }
+  
+  //! Is constant if arg(0) is
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionShadowGeneralised);
+
+//------------------------------------------------------------------------------------------
+
+//! Multiply x and y by z
+class FunctionCone : public Function
+{
+ public:
+  //! No parameters
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+    {
+      return XYZ(p.x()*p.z(),p.y()*p.z(),p.z());
+    }
+  
+  //! Not constant
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionCone);
+
+//------------------------------------------------------------------------------------------
+
+//! Multiply x and y by exp(z)
+class FunctionExpCone : public Function
+{
+ public:
+  //! No parameters
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+    {
+      const float k=exp(p.z());
+      return XYZ(p.x()*k,p.y()*k,p.z());
+    }
+  
+  //! Not constant
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionExpCone);
+
+
+//------------------------------------------------------------------------------------------
+
+#include "noise.h"
+
+//! Perlin noise function.
+/*! Returns a single value replicated into all three channels
+*/
+class FunctionNoiseOneChannel : public Function
+{
+ public:
+  //! No parameters
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+    {
+      // Crank up the frequency a bit otherwise don't see much variation in base case
+      const float v=_noise(2.0f*p);
+      return XYZ(v,v,v);
+    }
+  
+  //! Not constant
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+
+ protected:
+  static Noise _noise;
+};
+
+REGISTER(FunctionNoiseOneChannel);
+
+//------------------------------------------------------------------------------------------
+
+
+//! Multiscale noise function.
+/*! Returns a single value replicated into all three channels
+*/
+class FunctionMultiscaleNoiseOneChannel : public Function
+{
+ public:
+  //! No parameters
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+    {
+      float t=0.0f;
+      float tm=0.0f;
+      for (uint i=0;i<8;i++)
+	{
+	  const float k=(1<<i);
+	  const float ik=1.0f/k;
+	  t+=ik*_noise(k*p);
+	  tm+=ik;
+	}
+      const float v=t/tm;
+      return XYZ(v,v,v);
+    }
+  
+  //! Not constant
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+
+ protected:
+  static Noise _noise;
+};
+
+REGISTER(FunctionMultiscaleNoiseOneChannel);
+
+//------------------------------------------------------------------------------------------
+
+//! Perlin noise function.
+/*! Returns three independent channels
+*/
+class FunctionNoiseThreeChannel : public Function
+{
+ public:
+  //! No parameters
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+    {
+      return XYZ(_noise0(p),_noise1(p),_noise2(p));
+    }
+  
+  //! Not constant
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+
+ protected:
+  static Noise _noise0;
+  static Noise _noise1;
+  static Noise _noise2;
+};
+
+REGISTER(FunctionNoiseThreeChannel);
+
+//------------------------------------------------------------------------------------------
+
+//! Perlin multiscale noise function.
+/*! Returns three independent channels
+*/
+class FunctionMultiscaleNoiseThreeChannel : public Function
+{
+ public:
+  //! No parameters
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No arguments.
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
+    {
+      XYZ t(0.0f,0.0f,0.0f);
+      float tm=0.0f;
+      for (uint i=0;i<8;i++)
+	{
+	  const float k=(1<<i);
+	  const float ik=1.0f/k;
+	  const XYZ kp(k*p);
+	  t+=ik*XYZ(_noise0(kp),_noise1(kp),_noise2(kp));
+	  tm+=ik;
+	}
+      return t/tm;
+    }
+  
+  //! Not constant
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+
+ protected:
+  static Noise _noise0;
+  static Noise _noise1;
+  static Noise _noise2;
+};
+
+REGISTER(FunctionMultiscaleNoiseThreeChannel);
+
 
 //------------------------------------------------------------------------------------------
 

@@ -12,13 +12,14 @@ CONFIG+= qt thread release
 # Now leaving these ON for general distribution as they DO have a bigger effect than the others,
 # and should be portable.
 QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer -funroll-loops
+QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer
+QMAKE_CXXFLAGS_RELEASE += -funroll-loops
 #
 # The rest don't have a huge effect - see README file.
 #
 # Use the next two lines ONLY IF you have the right processor (P4)
-#QMAKE_CXXFLAGS_RELEASE -= -march=i386
-#QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
+QMAKE_CXXFLAGS_RELEASE -= -march=i386
+QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
 #
 # Here's the same thing (UNTESTED) for P3 
 #QMAKE_CXXFLAGS_RELEASE -= -march=i386
