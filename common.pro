@@ -28,9 +28,9 @@ contains(CONFIG_OPTS, fs ){
 # Use the next two lines for slight improvement
 # Now leaving these ON for general distribution as they DO have SOME effect 
 # (or at least they have in the past... see the README), and should be portable.
-
+# NB Switching on -funroll-loops causes some versions of gcc to segv
 QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O3 -fomit-frame-pointer -funroll-loops -ffast-math 
+QMAKE_CXXFLAGS_RELEASE += -O3 -fomit-frame-pointer -ffast-math 
 
 ##################
 # Architecture specific optimisations
@@ -60,9 +60,9 @@ contains(CONFIG_OPTS, xp ){
 # Optimisation insanity
 # The next line seems to generate nicer assembler (with better SSE register usage) from some templated code.
 # WARNING: gcc grows HUGE (>500MB!!!) and it takes AGES (30mins!!!) with this option.
-# Of curiosity value for the hardcore only.
+# Of curiosity value for the hardcore only.  (Untested since templated tuple implemention was dropped).
 
-# QMAKE_CXXFLAGS_RELEASE += -finline-limit=4000
+# QMAKE_CXXFLAGS_RELEASE += -funroll-loops -finline-limit=4000
 
 #######################################
 # Version numbering.  VERSION_NUMBER should have been set on the qmake command line (see .configure script)

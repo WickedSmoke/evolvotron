@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "useful.h"
 #include "xyz.h"
-#include "matrix.h"
 #include <vector>
 
 //! Class representing 3d linear transforms.
@@ -119,6 +118,53 @@ class Transform
   XYZ _basis_x;
   XYZ _basis_y;
   XYZ _basis_z;
+};
+
+inline const XYZ operator*(const Transform& t,const XYZ& p)
+{
+  return t.basis_x()*p.x()+t.basis_y()*p.y()+t.basis_z()*p.z()+t.translate();
+}
+
+class TransformRotateX : public Transform
+{
+ public:
+  TransformRotateX(float a)
+    {
+      const float sa=sin(a);
+      const float ca=cos(a);
+      
+      basis_x(XYZ(1.0f,0.0f,0.0f));
+      basis_y(XYZ(0.0f, ca , sa ));
+      basis_z(XYZ(0.0f,-sa , ca ));
+    }
+};
+
+class TransformRotateY : public Transform
+{
+ public:
+  TransformRotateY(float a)
+    {
+      const float sa=sin(a);
+      const float ca=cos(a);
+      
+      basis_x(XYZ( ca ,0.0f,-sa ));
+      basis_y(XYZ(0.0f,1.0f,0.0f));
+      basis_z(XYZ( sa ,0.0f, ca ));
+    }
+};
+
+class TransformRotateZ : public Transform
+{
+ public:
+  TransformRotateZ(float a)
+    {
+      const float sa=sin(a);
+      const float ca=cos(a);
+      
+      basis_x(XYZ( ca , sa ,0.0f));
+      basis_y(XYZ(-sa , ca ,0.0f));
+      basis_z(XYZ(0.0f,0.0f,1.0f));
+    }
 };
 
 #endif

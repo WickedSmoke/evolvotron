@@ -39,7 +39,7 @@ enum
   };
 
 //! Template class to generate boilerplate for virtual methods.
-template <typename F,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class FunctionBoilerplate : public FunctionNode
+template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class FunctionBoilerplate : public FunctionNode
 {
  public:
   typedef FunctionNode Superclass;
@@ -78,7 +78,7 @@ template <typename F,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class Functi
   static FunctionNode*const stubnew(const MutationParameters& mutation_parameters,bool exciting)
     {
       //! \todo Needs attention.  Will need to create then assign.
-      return new F
+      return new FUNCTION
 	(
 	 stubparams(mutation_parameters,PARAMETERS),
 	 stubargs(mutation_parameters,ARGUMENTS,exciting),
@@ -88,65 +88,21 @@ template <typename F,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class Functi
 
   //! Factory method to create a node given contents.
   /*! Returns null if there's a problem, in which case explanation is in report
-      \todo Pretty crazy having all this code emitted for every templated class: move common code to base class method.
    */
   static FunctionNode*const create(const FunctionNodeInfo* info,std::string& report)
     {
-      if (info->params().size()!=PARAMETERS)
-	{
-	  std::stringstream msg;
-	  msg << "Error: For function " << info->type() << ": expected " << PARAMETERS << " parameters, but found " << info->params().size() << "\n";
-	  report+=msg.str();
-	  return 0;
-	}
-      if (info->args().size()!=ARGUMENTS)
-	{
-	  std::stringstream msg;
-	  msg << "Error: For function " << info->type() << ": expected " << ARGUMENTS << " arguments, but found " << info->args().size() << "\n";
-	  report+=msg.str();
-	  return 0;
-	}
-      if (info->iterations()!=0 && !ITERATIVE)
-	{
-	  std::stringstream msg;
-	  msg << "Error: For function " << info->type() << ": unexpected iteration count\n";
-	  report+=msg.str();
-	  return 0;
-	}
-      if (info->iterations()==0 && ITERATIVE)
-	{
-	  std::stringstream msg;
-	  msg << "Error: For function " << info->type() << ": expected iteration count but none found\n";
-	  report+=msg.str();
-	  return 0;
-	}
+      if (!verify_info(info,PARAMETERS,ARGUMENTS,ITERATIVE,report)) return 0;
 
       std::vector<FunctionNode*> args;
+      if (!create_args(info,args,report)) return 0;
 
-      for (std::vector<FunctionNodeInfo*>::const_iterator it=info->args().begin();it!=info->args().end();it++)
-	{
-	  args.push_back(FunctionNode::create(*it,report));
-
-	  // Check whether something has gone wrong.  If it has, delete everything allocated so far and return null.
-	  if (args.back()==0)
-	    {
-	      args.pop_back();
-
-	      for (std::vector<FunctionNode*>::iterator dit=args.begin();dit!=args.end();dit++)
-		{
-		  delete (*dit);
-		}
-	      return 0;
-	    }
-	}
-
-      return new F(info->params(),args,info->iterations());
+      return new FUNCTION(info->params(),args,info->iterations());
     }
   
   //! Return a deeploned copy.
   virtual FunctionNode*const deepclone() const
     {
-      return new F(cloneparams(),cloneargs(),iterations());
+      return new FUNCTION(cloneparams(),cloneargs(),iterations());
     }
   
   //! Internal self-consistency check.  We can add some extra checks.
@@ -181,18 +137,19 @@ template <typename F,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class Functi
   - the strings returned from it seem to bomb if you try and do anything with them during static initialisation.
   So we use the no-name registration and the programmer-friendly name gets filled in by the REGISTER macro later.
   We could declare r as a static class member instead, but the static initializer fiasco strikes again.
- */
-template <typename F,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> FunctionRegistration*const FunctionBoilerplate<F,PARAMETERS,ARGUMENTS,ITERATIVE>::get_registration()
+*/
+template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> 
+	     FunctionRegistration*const FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE>::get_registration()
 {
   static FunctionRegistration r
     (
-     /*typeid(F).name(),*/
-     &FunctionBoilerplate<F,PARAMETERS,ARGUMENTS,ITERATIVE>::stubnew,
-     &FunctionBoilerplate<F,PARAMETERS,ARGUMENTS,ITERATIVE>::create,
+     /*typeid(FUNCTION).name(),*/
+     &FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE>::stubnew,
+     &FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE>::create,
      PARAMETERS,
      ARGUMENTS,
      ITERATIVE,
-     F::type_classification()
+     FUNCTION::type_classification()
      );
   return &r;
 }

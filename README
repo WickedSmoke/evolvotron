@@ -230,8 +230,12 @@ here's the times for a 2.4GHz P4 to run a 2048x2048 evolvotron_render
   With modification to common.pro:
     add -finline-limit=4000                                  19.4s
 (but that last one involves a 32m build time (!!!), cf ~2m for the others)
-[NB This was done a while ago; things have probably changed a bit,
-especially after some major changes to the function code around version 0.2.0]
+
+[NB This was done a while ago; things have probably changed a lot,
+especially after some major changes to the function code around version 0.2.0.
+Also around 0.2.4 the implementation of the XYZ vector class was changed to
+no longer use the Tuple template, and -funroll-loops was dropped as this
+was the only obvious reason for using it.]
 
 BUILDING ON OTHER PLATFORMS
 ===========================

@@ -25,7 +25,6 @@ HEADERS += \
         function_registry.h \
 	license.h \
         margin.h \
-        matrix.h \
 	mutatable_image.h \
 	mutatable_image_computer.h \
 	mutatable_image_computer_farm.h \
@@ -37,7 +36,6 @@ HEADERS += \
 	random.h \
         transform.h \
         transform_factory.h \
-        tuple.h \
 	useful.h \
         usage_text.h \
         vbox_scrollview.h \
@@ -63,7 +61,6 @@ SOURCES += \
         function_registry.cpp \
 	license.cpp \
         margin.cpp \
-        matrix.cpp \
 	mutatable_image.cpp \
 	mutatable_image_computer.cpp \
 	mutatable_image_computer_farm.cpp \
@@ -75,7 +72,6 @@ SOURCES += \
 	random.cpp \
         transform.cpp \
         transform_factory.cpp \
-        tuple.cpp \
 	useful.cpp \
         vbox_scrollview.cpp \
 	xyz.cpp

@@ -287,11 +287,11 @@ FUNCTION_BEGIN(FunctionRotate,0,1,false,0)
     {
       const XYZ a(arg(0)(p)*M_PI);
   
-      Matrix33RotateX rx(a.x());
-      Matrix33RotateY ry(a.y());
-      Matrix33RotateZ rz(a.z());
+      const TransformRotateX rx(a.x());
+      const TransformRotateY ry(a.y());
+      const TransformRotateZ rz(a.z());
       
-      return XYZ((rx*ry*rz)*p);
+      return rx*(ry*(rz*p));
     }
   
   //! Is constant if leaf node is.
@@ -477,6 +477,7 @@ FUNCTION_BEGIN(FunctionMultiply,0,2,false,0)
     {
       const XYZ v0(arg(0)(p));
       const XYZ v1(arg(1)(p));
+      // NB Don't use v0*v1 as it would be cross-product.
       return XYZ(v0.x()*v1.x(),v0.y()*v1.y(),v0.z()*v1.z());
     }
   
@@ -1535,8 +1536,8 @@ FUNCTION_BEGIN(FunctionFilter3D,3,1,false,0)
 	  +arg(0)(p+XYZ(-param(0),0.0f,0.0f))
 	  +arg(0)(p+XYZ(0.0f,param(1),0.0f))
 	  +arg(0)(p+XYZ(0.0f,-param(1),0.0f))
-	  +arg(0)(p+XYZ(0.0f,0.0f,param(1)))
-	  +arg(0)(p+XYZ(0.0f,0.0f,-param(1)))
+	  +arg(0)(p+XYZ(0.0f,0.0f,param(2)))
+	  +arg(0)(p+XYZ(0.0f,0.0f,-param(2)))
 	  )/6.0f;
     }
   
@@ -2142,7 +2143,7 @@ FUNCTION_END(FunctionJuliaContour)
 //------------------------------------------------------------------------------------------
 
 //! \todo Something like Conway's Game of Life or a reaction-diffusion system, seeded from an initial function.
-/*! Probably operate on an iteration()xiterations()xiterations() grid.
+/*! Probably operate on an iterations()xiterations()xiterations() grid.
   Need ability to cache state at a particular time by identity (address-of?) of "our".
   WILL cause slow start-up due to precompute, although compute-on-demand should help a bit.
   Maybe the whole static thing was a mistake.

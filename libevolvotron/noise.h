@@ -43,7 +43,7 @@ protected:
   int _p[N+N+2];
   XYZ _g[N+N+2];
   
-  void setup(const XYZ&,int,int&,int&,float&,float&);
+  //void setup(const XYZ&,int,int&,int&,float&,float&);
 };
 
 #endif

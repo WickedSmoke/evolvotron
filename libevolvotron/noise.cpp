@@ -57,17 +57,6 @@ Noise::Noise(uint seed)
     }
 }
 
-void Noise::setup(const XYZ& vec,int i,int& b0,int& b1,float& r0,float& r1)
-{
-  const float t=vec[i]+10000.0f;
-
-  b0=(((int)t) & (N-1));
-  b1=((b0+1)   & (N-1));
-  
-  r0=t-(int)t;
-  r1=r0-1.0f;
-}
-
 inline const float value(const XYZ& q,float rx,float ry,float rz)
 {
   return rx*q.x()+ry*q.y()+rz*q.z();

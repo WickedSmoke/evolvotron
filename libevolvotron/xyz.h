@@ -25,53 +25,43 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "useful.h"
 #include "random.h"
-#include "tuple.h"
 
 //! Class to hold vectors in 3D cartesian co-ordinates.
 /*! Direct access to the x,y,z members is not permitted.
  */
-class XYZ : public Tuple<3,float>
+class XYZ
 {
- public:
+ protected:
+  float rep[3];
 
-  //@{
-  //! Access to underlying tuple representation.  Needed to avoid infinite recursion in symetric binary operators.
-  Tuple<3,float>& rep()
-    {
-      return static_cast<Tuple<3,float>& > (*this);
-    }
-  const Tuple<3,float>& rep() const
-    {
-      return static_cast<const Tuple<3,float>& > (*this);
-    }
-  //@}
+ public:
 
   //@{
   //! Accessor.
   float x() const
     {
-      return (*this)[0];
+      return rep[0];
     }
   float y() const
     {
-      return (*this)[1];
+      return rep[1];
     }
   float z() const
     {
-      return (*this)[2];
+      return rep[2];
     }
 
   void x(float v)
     {
-      (*this)[0]=v;
+      rep[0]=v;
     }
   void y(float v)
     {
-      (*this)[1]=v;
+      rep[1]=v;
     }
   void z(float v)
     {
-      (*this)[2]=v;
+      rep[2]=v;
     }
   //@}
 
@@ -83,33 +73,54 @@ class XYZ : public Tuple<3,float>
 
   //! Copy constructor.
   XYZ(const XYZ& v)
-    :Tuple<3,float>(v.rep())
-    {}
+    {
+      rep[0]=v.rep[0];
+      rep[1]=v.rep[1];
+      rep[2]=v.rep[2];
+    }
   
-  //! Construct from base tuple class, but only when explicit.
-  explicit XYZ(const Tuple<3,float>& v)
-    :Tuple<3,float>(v)
-    {}
-
   //! Initialise from separate components.
   XYZ(float vx,float vy,float vz)
-    :Tuple<3,float>()
     {
-      x(vx);
-      y(vy);
-      z(vz);
+      rep[0]=vx;
+      rep[1]=vy;
+      rep[2]=vz;
     }
 
   //! Trivial destructor.
   ~XYZ()
     {}
 
+  //! Subtract a vector
+  void operator-=(const XYZ& v)
+    {
+      rep[0]-=v.rep[0];
+      rep[1]-=v.rep[1];
+      rep[2]-=v.rep[2];
+    }
+
+  //! Add a vector
+  void operator+=(const XYZ& v)
+    {
+      rep[0]+=v.rep[0];
+      rep[1]+=v.rep[1];
+      rep[2]+=v.rep[2];
+    }
+
+  //! Multiply by scalar
+  void operator*=(float k)
+    {
+      rep[0]*=k;
+      rep[1]*=k;
+      rep[2]*=k;
+    }
+
   //! Divide by scalar.
   /*! Implemented assuming one divide and three multiplies is faster than three divides.
    */
   void operator/=(float k)
     {
-      const float ik(1.0/k);
+      const float ik(1.0f/k);
       (*this)*=ik;
     }
 
@@ -157,7 +168,7 @@ class XYZ : public Tuple<3,float>
   //! Helper for common case of creating an instance filled with a common value.
   static const XYZ fill(float v)
     {
-      return XYZ(Tuple<3,float>::fill(v));
+      return XYZ(v,v,v);
     }
 
 };
@@ -183,13 +194,13 @@ inline const float operator%(const XYZ& a,const XYZ& b)
 //! Vector addition.
 inline const XYZ operator+(const XYZ& a,const XYZ& b)
 {
-  return XYZ(a.rep()+b.rep());
+  return XYZ(a.x()+b.x(),a.y()+a.y(),a.z()+b.z());
 }
 
 //! Vector subtraction.
 inline const XYZ operator-(const XYZ& a,const XYZ& b)
 {
-  return XYZ(a.rep()-b.rep());
+  return XYZ(a.x()-b.x(),a.y()-a.y(),a.z()-b.z());
 }
 
 //! Multiplication by scalar.
@@ -211,7 +222,7 @@ inline const XYZ operator*(const XYZ& v,float k)
 //! Division by scalar.
 inline const XYZ operator/(const XYZ& v,float k)
 {
-  return (1.0/k)*v;
+  return v*(1.0f/k);
 }
 
 /*! If magnitude is zero we return zero vector.
@@ -219,7 +230,7 @@ inline const XYZ operator/(const XYZ& v,float k)
 inline const XYZ XYZ::normalised() const
 {
   const float m=magnitude();
-  return (m==0.0 ? XYZ(0.0,0.0,0.0) : (*this)/m);
+  return (m==0.0f ? XYZ(0.0f,0.0f,0.0f) : (*this)/m);
 }
 
 inline void XYZ::normalise()

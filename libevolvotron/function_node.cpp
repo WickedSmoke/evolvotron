@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_node_info.h"
 
 #include "mutatable_image.h"
-#include "matrix.h"
 
 // This is the ONLY place this should be included as FunctionNode::stub will instantiate everything
 #include "functions.h"
@@ -100,6 +99,60 @@ void FunctionNode::get_stats(uint& total_nodes,uint& total_parameters,uint& dept
     {
       proportion_constant=sub_constants/(1+total_sub_nodes);
     }
+}
+
+const bool FunctionNode::verify_info(const FunctionNodeInfo* info,unsigned int np,unsigned int na,bool it,std::string& report)
+{
+  if (info->params().size()!=np)
+    {
+      std::stringstream msg;
+      msg << "Error: For function " << info->type() << ": expected " << np << " parameters, but found " << info->params().size() << "\n";
+      report+=msg.str();
+      return false;
+    }
+  if (info->args().size()!=na)
+    {
+      std::stringstream msg;
+      msg << "Error: For function " << info->type() << ": expected " << na << " arguments, but found " << info->args().size() << "\n";
+      report+=msg.str();
+      return false;
+    }
+  if (info->iterations()!=0 && !it)
+    {
+      std::stringstream msg;
+      msg << "Error: For function " << info->type() << ": unexpected iteration count\n";
+      report+=msg.str();
+      return false;
+    }
+  if (info->iterations()==0 && it)
+    {
+      std::stringstream msg;
+      msg << "Error: For function " << info->type() << ": expected iteration count but none found\n";
+      report+=msg.str();
+      return false;
+    }
+  return true;
+}
+
+const bool FunctionNode::create_args(const FunctionNodeInfo* info,std::vector<FunctionNode*> args,std::string& report)
+{
+  for (std::vector<FunctionNodeInfo*>::const_iterator it=info->args().begin();it!=info->args().end();it++)
+    {
+      args.push_back(FunctionNode::create(*it,report));
+      
+      // Check whether something has gone wrong.  If it has, delete everything allocated so far and return false.
+      if (args.back()==0)
+	{
+	  args.pop_back();
+	  
+	  for (std::vector<FunctionNode*>::iterator dit=args.begin();dit!=args.end();dit++)
+	    {
+	      delete (*dit);
+	    }
+	  return false;
+	}
+    }
+  return true;
 }
 
 FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool exciting)

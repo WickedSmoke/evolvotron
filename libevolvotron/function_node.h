@@ -76,6 +76,18 @@ class FunctionNode
 
   //! Obtain some statistics about the image function
   void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,float& proportion_constant) const;
+  
+  //! Check function info against given number of parameters/arguments/iterative-flag.
+  /*! Return true on success, false on fail with reasons in report string.
+    Mainly for use by derived FunctionBoilerplate template to avoid duplicate code proliferation.
+   */
+  static const bool verify_info(const FunctionNodeInfo* info,unsigned int np,unsigned int na,bool it,std::string& report);
+
+  //! Build argument list.
+  /*! Return true on success, false on fail with reasons in report string.
+    Mainly for use by derived FunctionBoilerplate template to avoid duplicate code proliferation.
+   */
+  static const bool create_args(const FunctionNodeInfo* info,std::vector<FunctionNode*> args,std::string& report);
 
  public:
 
