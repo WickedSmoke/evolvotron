@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*! Constructor sets up GUI components and fires up QTimer.
  */
 EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_threads)
-  :QMainWindow(parent)
+  :QMainWindow(parent,0,Qt::WType_TopLevel|Qt::WDestructiveClose)
    ,_statusbar_tasks(0)
    ,_mutation_parameters(time(0),0.5,0.05,0.05)
 {

@@ -33,14 +33,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image_computer_task.h"
 
 /*! The constructor is passed:
-      the owning widget (probably either a QGrid or null if top-level),
-      the EvolvotronMain providing spawn and farm services, 
-      a flag to specify whether this is a fully functional display or a restricted one (e.g no spawning for a single top pleve display),
-      a flag to specify whether the offscreen buffer has fixed size (in which case scrollbars are used),
-      and the size of the offscreen buffer (only used if fixed_size is true).
+    - the owning widget (probably either a QGrid or null if top-level),
+    - the EvolvotronMain providing spawn and farm services, 
+    - a flag to specify whether this is a fully functional display or a restricted one (e.g no spawning for a single top pleve display),
+    - a flag to specify whether the offscreen buffer has fixed size (in which case scrollbars are used),
+    - and the size of the offscreen buffer (only used if fixed_size is true).
+    Note that we use Qt's WDestructiveCode flag to ensure the destructor is called on close
  */
 MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full,bool fixed_size,const QSize& sz)
-  :QWidget(parent)
+  :QWidget(parent,0,Qt::WDestructiveClose)
    ,_main(mn)
    ,_full_functionality(full)
    ,_fixed_size(fixed_size)
@@ -79,7 +80,12 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       
       _menu_big=new QPopupMenu(this);
       _menu_big_item_number_resizable  =_menu_big->insertItem("&Resizable",this,SLOT(menupick_big_resizable()));
+      _menu_big_item_number_1024x1024  =_menu_big->insertItem("&1024x1024",this,SLOT(menupick_big_1024x1024()));
+      _menu_big_item_number_2048x2048  =_menu_big->insertItem("&2048x2048",this,SLOT(menupick_big_2048x2048()));
+      _menu_big_item_number_4096x4096  =_menu_big->insertItem("&4096x4096",this,SLOT(menupick_big_4096x4096()));
+      _menu_big->insertSeparator();
       _menu_big_item_number_1280x960   =_menu_big->insertItem("1280x&960",this,SLOT(menupick_big_1280x960()));
+      _menu_big_item_number_1600x1200  =_menu_big->insertItem("1&600x1200",this,SLOT(menupick_big_1600x1200()));
 
       _menu_item_number_big  =_menu->insertItem("&Big",_menu_big);
     }
@@ -258,34 +264,62 @@ void MutatableImageDisplay::menupick_lock()
   _menu->setItemChecked(_menu_item_number_lock,_locked);
 }
 
-/*! This slot is called by selecting the "Big/Resizable" context menu item.
-  It creates an independent top level display area with its own copy of the image.
- */
 void MutatableImageDisplay::menupick_big_resizable()
 {
-  // Create an image display with no parent: becomes a top level window 
-  // Disable full menu functionality because there's less we can do with a single image (e.g no spawn_target)
-  MutatableImageDisplay* window=new MutatableImageDisplay(0,main(),false,false,QSize(0,0));
-
-  window->resize(512,512);
-  window->show();
-
-  window->image(_image->deepclone());
+  spawn_big(false,QSize(0,0));
 }
 
-/*! This slot is called by selecting the "Big/1280x960" context menu item.
-  It creates an independent top level display area with its own copy of the image.
- */
+void MutatableImageDisplay::menupick_big_1024x1024()
+{
+  spawn_big(true,QSize(1280,960));
+}
+
 void MutatableImageDisplay::menupick_big_1280x960()
 {
-  QScrollView* window=new QScrollView(0);
-  window->resize(512,512);
-
-  MutatableImageDisplay* display=new MutatableImageDisplay(window->viewport(),main(),false,true,QSize(1280,960));
-
-  window->addChild(display);
-  window->show();
-
-  display->image(_image->deepclone());
+  spawn_big(true,QSize(1280,960));
 }
 
+void MutatableImageDisplay::menupick_big_1600x1200()
+{
+  spawn_big(true,QSize(1600,1200));
+}
+
+void MutatableImageDisplay::menupick_big_2048x2048()
+{
+  spawn_big(true,QSize(2048,2048));
+}
+
+void MutatableImageDisplay::menupick_big_4096x4096()
+{
+  spawn_big(true,QSize(4096,4096));
+}
+
+/*! Create an image display with no parent: becomes a top level window 
+  Disable full menu functionality because there's less we can do with a single image (e.g no spawn_target)
+*/
+void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
+{
+  QWidget* top_level_widget=0;
+  MutatableImageDisplay* display;
+
+  if (scrollable)
+    {
+      QScrollView* scrollview=new QScrollView(0,0,Qt::WDestructiveClose);
+
+      top_level_widget=scrollview;
+
+      display=new MutatableImageDisplay(scrollview->viewport(),main(),false,true,sz);
+      scrollview->addChild(display);
+    }
+  else
+    {
+      display=new MutatableImageDisplay(0,main(),false,false,QSize(0,0));
+      
+      top_level_widget=display;
+    }
+  
+  top_level_widget->resize(512,512);
+  top_level_widget->show();
+      
+  display->image(_image->deepclone());
+}

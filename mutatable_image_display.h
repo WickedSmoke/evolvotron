@@ -93,7 +93,11 @@ class MutatableImageDisplay : public QWidget
   //@{
   //! Position of item in menu_big.
   uint _menu_big_item_number_resizable;
+  uint _menu_big_item_number_1024x1024;
   uint _menu_big_item_number_1280x960;
+  uint _menu_big_item_number_1600x1200;
+  uint _menu_big_item_number_2048x2048;
+  uint _menu_big_item_number_4096x4096;
   //@}
 
  public:
@@ -161,7 +165,23 @@ class MutatableImageDisplay : public QWidget
   void menupick_big_resizable();
 
   //! Called from "Big" submenu of context menu.
+  void menupick_big_1024x1024();
+
+  //! Called from "Big" submenu of context menu.
   void menupick_big_1280x960();
+
+  //! Called from "Big" submenu of context menu.
+  void menupick_big_1600x1200();
+
+  //! Called from "Big" submenu of context menu.
+  void menupick_big_2048x2048();
+
+  //! Called from "Big" submenu of context menu.
+  void menupick_big_4096x4096();
+
+ protected:
+  //! Common code for big slots.
+  void spawn_big(bool scrollable,const QSize& sz);
 };
 
 #endif
