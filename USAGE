@@ -84,9 +84,9 @@ ANIMATION OPTIONS
 POWER-USER & DEBUG OPTIONS
 --------------------------
   -v 
-	Verbose mode, writes various things to application stderr; this is 
-	primarily intended to assist debugging.
-        This options used to be useful for getting a list of supported function 
+	Verbose mode, writes various things to application stderr. 
+	This is primarily intended to assist debugging.
+        This option used to be useful for getting a list of supported function 
 	names for use with the -x/-X options, but those can now be inspected
         via the Settings/Functions dialog.
 
@@ -284,9 +284,13 @@ MAIN MENU BAR
   branches from images; this may help them recompute faster
   but at the cost of there being less mutatable material.
 - Settings menu:
-  "Mutation parameters" brings up a dialog to modify the amount
+  "Mutations" brings up a dialog to modify the amount
   of change spawned images are subject to.  
   (See "advanced usage" below.)
+  "Functions" brings up a dialog to modify the relative probability
+  of functions being used.  By default all functions are equally
+  likely, but if you think there are too many spirals, grids or fractals
+  then this is the place to reduce their occurrence.
   If the software was built with the fullscreen option,
   that can also be controlled from here.
 - Help menu:
@@ -372,7 +376,7 @@ branches, for example) and the values of the constant embedded
 within it, the image can be changed.
 
 The mutation parameters are under control from the dialog accessible via the
-Settings/Mutation Parameters menu, and also from buttons on the status bar).
+Settings/Mutations menu, and also from buttons on the status bar).
 
 There are two kinds of mutation: perturbations to the magnitude of constants, 
 and structural mutations which rearrage the function tree of an image.  
@@ -412,14 +416,15 @@ are two slider controls to affect things related to these:
    obviously centred on the origin or aligned with the axes.  I think this
    is a good thing, so identity supression is at 1.0 by default.
 
-OTHER OPTIONS
-=============
-On the mutation parameters dialog there are tick boxes to enable two classes of
-function which are disabled by default.  These are "iterative" functions and
-"fractal" functions (Mandelbrot and Julia set type things).  The main reason
-for their being optional is that, in the former case they're expensive, and
-in the latter case they're expensive and ugly.  Note that if fractal functions
-are enabled, then iterative functions are enabled too.
+There is also a dialog accessible from "Functions..." on the "Settings" menu.
+This allows control over the relative proportions in which functions occur.
+It also allows the average function-tree branching ratio to be controlled
+(by changing the proportion of trivial zero-branch functions used): note that
+using a high branching ratio results in very complex images which will take
+a long time to compute, while reducing the ratio results in simple, boring images.
+(Note that Evolvotron no longer disables iterative and fractal functions by
+default; use the appropriate tab on the "Functions..." dialog to do this
+if required).
 
 OTHER EXECUTABLES
 =================
