@@ -25,7 +25,9 @@
 #define _function_node_using_h_
 
 #include "function_node.h"
+#include "function_node_info.h"
 #include "margin.h"
+#include <sstream>
 
 //! Template class to generate boilerplate for virtual methods.
 template <typename F> class FunctionNodeUsing : public FunctionNode
@@ -76,6 +78,63 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
 	 stubargs(parameters,F::arguments()),
 	 (F::iterative() ? stubiterations(parameters) : 0)
 	 );
+    }
+
+  //! Factory method to create a node given contents.
+  /*! Returns null if there's a problem, in which case explanation is in report
+      \todo Pretty crazy having all this code emitted for every templated class: move common code to base class method.
+   */
+  static FunctionNode*const create(const FunctionNodeInfo* info,std::string& report)
+    {
+      if (info->params().size()!=F::parameters())
+	{
+	  std::stringstream msg;
+	  msg << "Error: For function " << info->type() << ": expected " << F::parameters() << " parameters, but found " << info->params().size() << "\n";
+	  report+=msg.str();
+	  return 0;
+	}
+      if (info->args().size()!=F::arguments())
+	{
+	  std::stringstream msg;
+	  msg << "Error: For function " << info->type() << ": expected " << F::arguments() << " arguments, but found " << info->args().size() << "\n";
+	  report+=msg.str();
+	  return 0;
+	}
+      if (info->iterations()!=0 && !F::iterative())
+	{
+	  std::stringstream msg;
+	  msg << "Error: For function " << info->type() << ": unexpected iteration count\n";
+	  report+=msg.str();
+	  return 0;
+	}
+      if (info->iterations()==0 && F::iterative())
+	{
+	  std::stringstream msg;
+	  msg << "Error: For function " << info->type() << ": expected iteration count but none found\n";
+	  report+=msg.str();
+	  return 0;
+	}
+
+      std::vector<FunctionNode*> args;
+
+      for (std::vector<FunctionNodeInfo*>::const_iterator it=info->args().begin();it!=info->args().end();it++)
+	{
+	  args.push_back(FunctionNode::create(*it,report));
+
+	  // Check whether something has gone wrong.  If it has, delete everything allocated so far and return null.
+	  if (args.back()==0)
+	    {
+	      args.pop_back();
+
+	      for (std::vector<FunctionNode*>::iterator dit=args.begin();dit!=args.end();dit++)
+		{
+		  delete (*dit);
+		}
+	      return 0;
+	    }
+	}
+
+      return new FunctionNodeUsing<F>(info->params(),args,info->iterations());
     }
   
   //! Return a deeploned copy.
@@ -144,13 +203,17 @@ template <> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsi
 /*! We could obtain a type name obtained from typeid BUT:
   - it has some strange numbers attached (with gcc 3.2 anyway) although we overwrite them later anyway.
   - the strings returned from it seem to bomb if you try and do anything with them during static initialisation.
-  So we use the no-name registration and it gets filled in by the REGISTER macro later.
+  So we use the no-name registration and the programmer-friendly name gets filled in by the REGISTER macro later.
  */
 template <typename F> FunctionRegistration FunctionNodeUsing<F>::_registration
 (
  /*typeid(F).name(),*/
- &FunctionNodeUsing::stubnew
-);
+ &FunctionNodeUsing<F>::stubnew,
+ &FunctionNodeUsing<F>::create,
+ F::parameters(),
+ F::arguments(),
+ F::iterative()
+ );
 
 #endif
 

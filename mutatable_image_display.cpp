@@ -603,13 +603,13 @@ void MutatableImageDisplay::menupick_load_function()
       MutatableImage*const new_image=MutatableImage::load_function(file,report);
       if (new_image==0)
 	{
-	  QMessageBox::critical(this,"Evolvotron",("File could not be loaded:\n"+report).c_str());
+	  QMessageBox::critical(this,"Evolvotron",("Function not loaded due to errors:\n"+report).c_str());
 	}
       else
 	{
 	  if (!report.empty())
 	    {
-	      QMessageBox::warning(this,"Evolvotron",("File could be read, BUT:\n"+report).c_str(),QMessageBox::Ok,QMessageBox::NoButton);
+	      QMessageBox::warning(this,"Evolvotron",("Function loaded with warnings:\n"+report).c_str(),QMessageBox::Ok,QMessageBox::NoButton);
 	    }
 	  image(new_image);
 	}

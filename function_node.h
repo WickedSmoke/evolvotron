@@ -106,7 +106,10 @@ class FunctionNode
   /*! These MUST be provided; there are no alterative constructors.
    */
   FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter);
-
+  
+  //! Build a MutatableImage given a description
+  static FunctionNode*const create(const FunctionNodeInfo* info,std::string& report);
+  
   //! Destructor.
   virtual ~FunctionNode();
 

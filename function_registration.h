@@ -23,11 +23,17 @@
 #ifndef _function_registration_h_
 #define _function_registration_h_
 
+#include "useful.h"
+
+#include <string>
+
 class FunctionNode;
 class MutationParameters;
+class FunctionNodeInfo;
 
 //! Define FunctionNodeStubNewFnPtr for convenience.
 typedef FunctionNode*const (*FunctionNodeStubNewFnPtr)(const MutationParameters&);
+typedef FunctionNode*const (*FunctionNodeCreateFnPtr)(const FunctionNodeInfo*,std::string&);
 
 //! Class for meta information about functions.
 /*! We use char*'s for the name 'cos they aren't dynamic so might as well use the strings from the object code.
@@ -38,15 +44,23 @@ class FunctionRegistration
  public:
   
   //! Constructor.
-  FunctionRegistration(const char* n,FunctionNodeStubNewFnPtr s)
+  FunctionRegistration(const char* n,FunctionNodeStubNewFnPtr fs,FunctionNodeCreateFnPtr fc,uint np,uint na,bool i)
     :_name(n)
-    ,_stubnew(s)
+    ,_stubnew_fn(fs)
+    ,_create_fn(fc)
+    ,_params(np)
+    ,_args(na)
+    ,_iterative(i)
     {}
 
   //! Constructor (no name version)
-  FunctionRegistration(FunctionNodeStubNewFnPtr s)
+  FunctionRegistration(FunctionNodeStubNewFnPtr s,FunctionNodeCreateFnPtr fc,uint np,uint na,bool i)
     :_name(0)
-    ,_stubnew(s)
+    ,_stubnew_fn(s)
+    ,_create_fn(fc)
+    ,_params(np)
+    ,_args(na)
+    ,_iterative(i)
     {}
 
   //! Accessor.
@@ -61,13 +75,55 @@ class FunctionRegistration
       _name=name;
     }
 
+  //! Accessor.
+  const FunctionNodeStubNewFnPtr stubnew_fn() const
+    {
+      return _stubnew_fn;
+    }
+
+  //! Accessor.
+  const FunctionNodeCreateFnPtr create_fn() const
+    {
+      return _create_fn;
+    }
+
+  //! Accessor.
+  const uint params() const
+    {
+      return _params;
+    }
+
+  //! Accessor.
+  const uint args() const
+    {
+      return _args;
+    }
+
+  //! Accessor.
+  const bool iterative() const
+    {
+      return _iterative;
+    }
+
  protected:
 
   //! Name of the function.
   const char* _name;
 
-  //! The function's FunctionNodeUsing's stubnew function.
-  FunctionNodeStubNewFnPtr _stubnew;
+  //! The FunctionNodeUsing's stubnew function.
+  FunctionNodeStubNewFnPtr _stubnew_fn;
+
+  //! The FunctionNodeUsing's create function.
+  FunctionNodeCreateFnPtr _create_fn;
+
+  //! Number of parameters
+  uint _params;
+
+  //! Number of arguments
+  uint _args;
+
+  //! Whether iterative
+  bool _iterative;
 };
 
 #endif

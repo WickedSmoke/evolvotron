@@ -39,6 +39,8 @@
 class FunctionRegistry
 {
  public:
+  //! Return the registration for the function named (returns 0 if unknown)
+  const FunctionRegistration*const operator()(const std::string& f) const;
   
   //! Return the singleton instance of the FunctionRegistry
   static FunctionRegistry& get();

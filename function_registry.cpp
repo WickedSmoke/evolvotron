@@ -22,6 +22,15 @@
 
 #include "function_registry.h"
 
+//! Return the registration for the function named (returns 0 if unknown)
+const FunctionRegistration*const FunctionRegistry::operator()(const std::string& f) const
+{
+  std::map<std::string,const FunctionRegistration*>::const_iterator it=_registry.find(f);
+  if (it==_registry.end())
+    return 0;
+  else
+    return (*it).second;
+}
 
 /*! If there are any entries queued up, register them now.
   This is to avoid any headaches with std::string during static initialisation.

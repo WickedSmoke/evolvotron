@@ -29,13 +29,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image.h"
 #include "function_node_info.h"
 
-MutatableImage::MutatableImage(const FunctionNodeInfo* info,bool& ok,std::string& report)
-  :_root(0/*new FunctionNode(info,ok)*/)
-{
-  ok=false;
-  report="Initialisation from FunctionNodeInfo not yet implemented";
-}
-
 
 std::ostream& MutatableImage::save_function(std::ostream& out) const
 {
@@ -91,7 +84,7 @@ public:
     std::clog << "...completed document\n";
     if (*_root==0)
       {
-	_report="No root function node found";
+	_report+="Error: No root function node found\n";
 	return false;
       }
     return true;
@@ -104,11 +97,9 @@ public:
   {
     const std::string element(localName);
 
-    //std::clog << "StartElement : " /*<< element*/ << "\n";
-
     if (_expect_characters)
       {
-	_report="Expected character data but got start element \""+element+"\"";
+	_report+="Error: Expected character data but got start element \""+element+"\"\n";
 	return false;
       }
 
@@ -116,13 +107,25 @@ public:
       {
 	if (element=="evolvotron-image-function")
 	  {
-	    //std::clog << "Element: evolvotron-image-function\n";
 	    _expect_top_level_element=false;
-	    //! \todo Check version number attribute
+
+	    int idx;
+	    if ((idx=atts.index("version"))==-1)
+	      {
+		_report+="Warning: File does not include evolvotron version\n";
+	      }
+	    else
+	      {
+		const QString version=atts.value(idx);
+		if (version!=QString(EVOLVOTRON_VERSION))
+		  {
+		    _report+="Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+QString(EVOLVOTRON_VERSION)+")\n";
+		  }
+	      }
 	  }
 	else
 	  {
-	    _report="Expected <evolvotron-image-function> but got \""+element+"\"";
+	    _report+="Error: Expected <evolvotron-image-function> but got \""+element+"\"\n";
 	    return false;
 	  }
       }
@@ -130,7 +133,6 @@ public:
       {
 	if (element=="f")
 	  {
-	    //std::clog << "Element: f\n";
 	    FunctionNodeInfo*const f=new FunctionNodeInfo;
 	    if (_stack.empty())
 	      {
@@ -140,7 +142,7 @@ public:
 		  }
 		else
 		  {
-		    _report="Multiple top level <f> elements encountered";
+		    _report+="Error: Multiple top level <f> elements encountered\n";
 		    return false;
 		  }
 	      }
@@ -152,25 +154,22 @@ public:
 	  }
 	else if (element=="type")
 	  {
-	    //std::clog << "Element: type\n";
 	    _expect_characters=true;
 	    _expect_characters_type=true;
 	  }
 	else if (element=="i")
 	  {
-	    //std::clog << "Element: i\n";
 	    _expect_characters=true;
 	    _expect_characters_iterations=true;
 	  }
 	else if (element=="p")
 	  {
-	    //std::clog << "Element: p\n";
 	    _expect_characters=true;
 	    _expect_characters_parameter=true;
 	  }
 	else 
 	  {
-	    _report="Expected <f>, <type>, <i> or <p> but got \""+element+"\"";
+	    _report+="Error: Expected <f>, <type>, <i> or <p> but got \""+element+"\"\n";
 	    return false;
 	  }
       }
@@ -187,7 +186,7 @@ public:
 
     if (_expect_characters)
       {
-	_report="Expected character data but got end element \""+element+"\"";
+	_report+="Error: Expected character data but got end element \""+element+"\"\n";
 	return false;
       }
 
@@ -212,7 +211,7 @@ public:
       {
 	if (!_expect_characters)
 	  {
-	    _report="Unexpected character data : \""+s+"\"";
+	    _report+="Error: Unexpected character data : \""+s+"\"\n";
 	    return false;
 	  }
       }
@@ -231,7 +230,7 @@ public:
 	_expect_characters_iterations=false;
 	if (!ok)
 	  {
-	    _report="Couldn't parse \""+s+"\" as an integer";
+	    _report+="Error: Couldn't parse \""+s+"\" as an integer\n";
 	    return false;
 	  }	
       }
@@ -242,7 +241,7 @@ public:
 	_expect_characters_parameter=false;
 	if (!ok)
 	  {
-	    _report="Couldn't parse \""+s+"\" as a float";
+	    _report+="Error: Couldn't parse \""+s+"\" as a float\n";
 	    return false;
 	  }
 	
@@ -274,9 +273,9 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
   xml_source.setData(QString(in_data.c_str()));
 
   // The LoadHandler will set this to point at the root node.  We're responsible for deleting it.
-  FunctionNodeInfo* root=0;
+  FunctionNodeInfo* info=0;
 
-  LoadHandler load_handler(&root);
+  LoadHandler load_handler(&info);
 
   QXmlSimpleReader xml_reader;
   xml_reader.setContentHandler(&load_handler);
@@ -285,29 +284,27 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
 
   if (ok)
     {
-      report="Function load not yet implemented\n";
+      // Might be a warning message in there.
+      report=load_handler.errorString();
 
-      bool iok;
-      std::string ireport;
-      MutatableImage*const ret=new MutatableImage(root,iok,ireport);
-      delete root;
-
-      if (iok)
+      FunctionNode*const root=FunctionNode::create(info,report);
+      delete info;
+      
+      if (root)
 	{
-	  return ret;
+	  return new MutatableImage(root);
 	}
       else
 	{
-	  report="Parsed file OK, but encountered problem using it:\n"+ireport;
-	  delete ret;
 	  return 0;
 	}
     }
   else
     {
       report="Parse error: "+load_handler.errorString()+"\n";
-      delete root;
+      delete info;
       return 0;
     }
 }
+
 

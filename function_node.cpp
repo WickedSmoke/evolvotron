@@ -249,7 +249,6 @@ const uint FunctionNode::stubiterations(const MutationParameters& parameters)
   return 1+static_cast<uint>(floor(parameters.r01()*parameters.max_initial_iterations()));
 }
 
-
 FunctionNode::FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter)
   :_args(a)
    ,_params(p)
@@ -257,6 +256,23 @@ FunctionNode::FunctionNode(const std::vector<float>& p,const std::vector<Functio
 {
   assert(ok());
 }
+
+/*! Returns null ptr if there's a problem, in which case there will be an explanation in report.
+ */
+FunctionNode*const FunctionNode::create(const FunctionNodeInfo* info,std::string& report)
+{
+  const FunctionRegistration*const reg=FunctionRegistry::get()(info->type());
+  if (reg)
+    {
+      return (*(reg->create_fn()))(info,report);
+    }
+  else
+    {
+      report+="Error: Unrecognised function name: "+info->type()+"\n";
+      return 0;
+    }
+}
+
 
 /*! Deletes all arguments.  No one else should be referencing nodes except the root node of an image.
  */

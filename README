@@ -156,11 +156,13 @@ Right clicking on an image gets you a few more options:
  - "Big" to produce a blow-up of the image in a single window.
    (submenu selects either a scrollable view of a fixed size image,
    or a freely resizable window)
- - "Save" to save the image in a file (.ppm or .png format).
+ - "Save image" to save the image in a file (.ppm or .png format).
    Note that this is most useful on a "Big" blown-up image: if you
    save a small grid image, the size you see on the screen is the size
    you get in the file.  Note that the save won't be allowed until the
    full resolution image has been generated.
+ - "Save function"
+ - "Load function"
 
 MIDDLE MOUSE BUTTON
 -------------------

@@ -1,12 +1,13 @@
 [Most recent at top]
 
 From release 0.0.5:
- - Bump version to pre-0.0.6
+ - Bump version to 0.1.0-pre0
  - Fix nasty bug in computers where a task could be delivered and deleted while
-   the computer was still setting state in it
+   the compute thread was still setting state in it
    (timing related so it never happened with ccmalloc and valgrind).
  - Massive internal changes necessary for file save/load
    (also makes adding functions easier)
+ - Save/load individual functions to XML
  - configure checks QTDIR defined (biggest cause of build problems)
 
 From release 0.0.4
