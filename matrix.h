@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // Fwd declaration of helper class.
 template <uint FC,uint R,uint C,class T> class MatrixHelperSumCofactorDeterminantProducts;
+template <uint R,uint C,uint ROWS,uint COLS,class T> class MatrixHelperInvert;
 
 
 //! Common base for general and specialised cases.
@@ -176,12 +177,15 @@ template <uint R,uint C,class T> class Matrix : public MatrixBase<R,C,T>
       return ret;
       */
 
+      // Better version uses metaprogramming to expand to straight-line code.
       return MatrixHelperSumCofactorDeterminantProducts<C-1,R,C,T>::execute(*this);
     }
 
   Matrix<R,C,T> inverted() const
     {
       Matrix<C,R,T> ret;
+
+      /* Old code calls runtime minor generator: not efficient code.
       for (uint r=0;r<R;r++)
 	{
 	  for (uint c=0;c<C;c++)
@@ -189,6 +193,10 @@ template <uint R,uint C,class T> class Matrix : public MatrixBase<R,C,T>
 	      ret[c][r]=cofactor_sign(r,c,Matrix<R-1,C-1,T>(r,c,(*this)).determinant());
 	    }
 	}
+      */
+
+      // Better version uses metaprogramming to expand to straight-line code.
+      MatrixHelperInvert<R-1,C-1,R,C,T>::execute(ret,(*this));
       
       ret*=(T(1.0)/determinant());
 
@@ -364,7 +372,7 @@ template <uint FC,uint R,uint C,class T> class MatrixHelperSumCofactorDeterminan
 template <uint R,uint C,class T> class MatrixHelperSumCofactorDeterminantProducts<0,R,C,T>
 {
  public:
-  static float execute(const Matrix<R,C,float>& m)
+  static float execute(const Matrix<R,C,T>& m)
     {
       Matrix<R-1,C-1,T> minor_matrix;
       TupleHelperDoubleCopyEliminate<R-2,0,0,R-1,C-1,T>::execute(minor_matrix,m);
@@ -372,7 +380,41 @@ template <uint R,uint C,class T> class MatrixHelperSumCofactorDeterminantProduct
     }
 };
 
-//! \todo: Add Helper class to do inverse matrix efficiently.
+
+template <uint R,uint C,uint ROWS,uint COLS,class T> class MatrixHelperInvert
+{
+ public:
+  static void execute(Matrix<COLS,ROWS,T>& m_out,const Matrix<ROWS,COLS,T>& m_in)
+    {
+      Matrix<ROWS-1,COLS-1,T> minor_matrix;
+      TupleHelperDoubleCopyEliminate<ROWS-2,R,C,ROWS-1,COLS-1,T>::execute(minor_matrix,m_in);
+      m_out[C][R]=Matrix<ROWS,COLS,T>::cofactor_sign(R,C,minor_matrix.determinant());
+      MatrixHelperInvert<R,C-1,ROWS,COLS,T>::execute(m_out,m_in);
+    }
+};
+
+template <uint R,uint ROWS,uint COLS,class T> class MatrixHelperInvert<R,0,ROWS,COLS,T>
+{
+ public:
+  static void execute(Matrix<COLS,ROWS,T>& m_out,const Matrix<ROWS,COLS,T>& m_in)
+    {
+      Matrix<ROWS-1,COLS-1,T> minor_matrix;
+      TupleHelperDoubleCopyEliminate<ROWS-2,R,0,ROWS-1,COLS-1,T>::execute(minor_matrix,m_in);
+      m_out[0][R]=Matrix<ROWS,COLS,T>::cofactor_sign(R,0,minor_matrix.determinant());
+      MatrixHelperInvert<R-1,COLS-1,ROWS,COLS,T>::execute(m_out,m_in);
+    }
+};
+
+template <uint ROWS,uint COLS,class T> class MatrixHelperInvert<0,0,ROWS,COLS,T>
+{
+ public:
+  static void execute(Matrix<COLS,ROWS,T>& m_out,const Matrix<ROWS,COLS,T>& m_in)
+    {
+      Matrix<ROWS-1,COLS-1,T> minor_matrix;
+      TupleHelperDoubleCopyEliminate<ROWS-2,0,0,ROWS-1,COLS-1,T>::execute(minor_matrix,m_in);
+      m_out[0][0]=Matrix<ROWS,COLS,T>::cofactor_sign(0,0,minor_matrix.determinant());
+    }
+};
 
 //! Tests basic matrix functionality.
 extern void testmatrix();
