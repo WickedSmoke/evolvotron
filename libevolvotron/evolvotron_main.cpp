@@ -205,10 +205,12 @@ void EvolvotronMain::last_spawned_image(const MutatableImage* image,SpawnMemberF
 }
 
 /*! Constructor sets up GUI components and fires up QTimer.
+  Initialises mutation parameters using time, so different every time.
  */
 EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frames,uint framerate,uint n_threads,bool start_fullscreen,bool start_menuhidden)
   :QMainWindow(parent,0,Qt::WType_TopLevel|Qt::WDestructiveClose)
    ,_history(this)
+   ,_mutation_parameters(time(0))
    ,_statusbar_tasks(0)
    ,_last_spawned_image(0)
    ,_last_spawn_method(&EvolvotronMain::spawn_normal)
@@ -229,7 +231,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _dialog_help_short=new DialogHelp(this,false);
   _dialog_help_long=new DialogHelp(this,true);
 
-  _dialog_mutation_parameters=new DialogMutationParameters(this);
+  _dialog_mutation_parameters=new DialogMutationParameters(this,&_mutation_parameters);
 
   _menubar=new QMenuBar(this);
 

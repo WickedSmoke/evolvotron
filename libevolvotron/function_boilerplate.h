@@ -32,7 +32,7 @@
 //! Enum for classification bits
 enum
   {
-    FnBase=1,
+    FnCore=1,
     FnIterative=2,
     FnFractal=4
   };

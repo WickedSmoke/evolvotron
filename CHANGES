@@ -8,6 +8,7 @@ From release 0.2.3:
  - Add function simplification (more useful for debugging than anything)
  - Don't use True and False in doc-building python script
    (seems to be quite new thing, not in 2.1.x ?).  Use 0 and 1 instead.
+ - Internal changes
 
 From release 0.2.2:
  - Version to 0.2.3

@@ -51,9 +51,10 @@ class DialogMutationParameters : public QDialog
   QMainWindow*const _parent;
 
   //! Instance of MutationParameters under dialog control.
-  /*! NB it's fairly important no-one else accesses this except through methods of this class, else GUI compoinents will get out of sync
+  /*! NB it's fairly important no-one modifies this except through methods of this class
+    (or another class responsible for another part), else GUI components will get out of sync
    */
-  MutationParameters _mutation_parameters;
+  MutationParameters*const _mutation_parameters;
 
   //! Vertical layout.
   QVBox* _vbox;
@@ -112,25 +113,13 @@ class DialogMutationParameters : public QDialog
   //! Reload spinboxes from _mutation_parameters.
   void setup_from_mutation_parameters();
 
-  //! Non-const accessor NB protected to limit to internal usage.
-  MutationParameters& mutation_parameters()
-    {
-      return _mutation_parameters;
-    }
-
  public:
   //! Constructor.
-  DialogMutationParameters(QMainWindow* parent);
+  DialogMutationParameters(QMainWindow* parent,MutationParameters* mp);
 
   //! Destructor.
   virtual ~DialogMutationParameters()
     {}
-
-  //! Accessor.  NB No-one else must modify parameters or spinboxes will get out of sync.
-  const MutationParameters& mutation_parameters() const
-    {
-      return _mutation_parameters;
-    }
 
  public slots:
 

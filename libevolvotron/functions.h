@@ -64,72 +64,21 @@ inline float trianglef(float x,float y)
 
 //------------------------------------------------------------------------------------------
 
-//! Function class representing a constant value.
-FUNCTION_BEGIN(FunctionConstant,3,0,false,FnBase)
-  
-  //! Returns the constant value
-  virtual const XYZ evaluate(const XYZ&) const
-    {
-      return XYZ(param(0),param(1),param(2));
-    }
+#include "function_core.h"
 
-  //! Returns true, obviously.
-  virtual const bool is_constant() const
-    {
-      return true;
-    }
-
-FUNCTION_END(FunctionConstant)
-
-//------------------------------------------------------------------------------------------
-
-//! Function class simply returning the position argument.
-FUNCTION_BEGIN(FunctionIdentity,0,0,false,FnBase)
-
-  //! Simply return the position argument.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return p;
-    }
-
-  //! Is definitely not constant.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
-FUNCTION_END(FunctionIdentity)
-
-//------------------------------------------------------------------------------------------
+REGISTER(FunctionConstant);
+REGISTER(FunctionIdentity);
+REGISTER(FunctionTransform);
 
 #include "function_null.h"
 
 REGISTER(FunctionNull);
 
-//------------------------------------------------------------------------------------------
-
-//! Function class returning position transfomed by a 12-component linear transform.
-FUNCTION_BEGIN(FunctionTransform,12,0,false,FnBase)
-
-  //! Return the transformed position argument.
-  virtual const XYZ evaluate(const XYZ& p) const
-  {
-    const Transform transform(params());
-    return transform.transformed(p);
-  }
-
-  //! Is definitely not constant.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
-FUNCTION_END(FunctionTransform)
 
 //------------------------------------------------------------------------------------------
 
 //! Function class returning position transfomed by a 12-component linear transform.
-FUNCTION_BEGIN(FunctionTransformGeneralised,0,4,false,FnBase)
+FUNCTION_BEGIN(FunctionTransformGeneralised,0,4,false,0)
 
   //! Return the transformed position argument.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -211,7 +160,9 @@ FUNCTION_END(FunctionPostTransformGeneralised)
 //------------------------------------------------------------------------------------------
 
 //! Transforms position transformed by a 30 paramter quadratic transform.
-FUNCTION_BEGIN(FunctionTransformQuadratic,30,0,false,FnBase)
+/*! This used to be a core function but it doesn't look that great.
+ */
+FUNCTION_BEGIN(FunctionTransformQuadratic,30,0,false,0)
 
   //! Return p transformed.
   virtual const XYZ evaluate(const XYZ& p) const

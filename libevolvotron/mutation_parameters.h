@@ -26,8 +26,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "useful.h"
 
 #include "random.h"
+#include <map>
 
 class FunctionRegistration;
+class FunctionNode;
 
 //! Class encapsulating mutation parameters.
 /*! For example, magnitude of variations, probability of leaves being dropped.
@@ -75,7 +77,14 @@ class MutationParameters
   
   //! The probability of the number of iterations changing by times or divide 2.
   float _probability_iterations_change_jump;
-  
+
+  //! Individual weighting modifiers for each function type
+  /*! Will only be applied to random functions we're asked for.
+    The bulk of nodes are created by FunctionNode and are boring to keep the branching ratio down.
+    \todo Implement a branching ratio query method.
+   */
+  std::map<const FunctionRegistration*,float> _function_weighting;
+
  public:
   //! Trivial constructor.
   MutationParameters(uint seed);
@@ -101,9 +110,6 @@ class MutationParameters
     {
       return _r01();
     }
-
-  //! Return a random function registration, appropriately biased by current settings
-  const FunctionRegistration*const random_function_registration() const;
 
   //! Accessor.
   const bool allow_iterative_nodes() const
@@ -236,6 +242,22 @@ class MutationParameters
     {
       _probability_iterations_change_jump=v;
     }
+
+    //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
+  FunctionNode*const MutationParameters::random_function_stub(bool exciting) const;
+    
+ protected:
+
+  //! Return a random function appropriately biased by current settings
+  FunctionNode*const MutationParameters::random_function() const;
+
+  //! Return a random function registration, appropriately biased by current settings
+  const FunctionRegistration*const random_function_registration() const;
+
+  //! Calculate branching ratio for above calls
+  /* Call user should be checking this and diluting with boring nodes to keep it under control
+   */
+  const float random_function_branching_ratio() const;
 };
 
 #endif

@@ -102,36 +102,9 @@ void FunctionNode::get_stats(uint& total_nodes,uint& total_parameters,uint& dept
     }
 }
 
-/*! This returns a random bit of image tree.
-  It needs to be capable of generating any sort of node we have.
-  \warning Too much probability of highly branching nodes could result in infinite sized stubs.
-  \todo Compute (statistically) the expected number of nodes in a stub.
-  \todo Don't think FunctionNodeUsing<FunctionPreTransform> appears here ?
- */
 FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool exciting)
 {
-  // Base mutations are Constant or Identity types.  
-  // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
-  const float base=0.7;
-
-  const float r=(exciting ? base+(1.0f-base)*parameters.r01() : parameters.r01());
-
-  if (r<(1.0f-parameters.proportion_constant())*parameters.identity_supression()*base)
-    {
-      if (parameters.r01()<0.5f)
-	return FunctionTransform::stubnew(parameters,false);
-      else
-	return FunctionTransformQuadratic::stubnew(parameters,false);
-    }
-  else if (r<(1.0f-parameters.proportion_constant())*base)
-    return FunctionIdentity::stubnew(parameters,false);
-  else if (r<base)
-    return FunctionConstant::stubnew(parameters,false);
-  else 
-    {
-      const FunctionRegistration*const fn_reg=parameters.random_function_registration();
-      return (*(fn_reg->stubnew_fn()))(parameters,false);    
-    }
+  return parameters.random_function_stub(exciting);
 }
 
 /*! If a specific function's registration (ie meta info) is provided then that will be used as the wrapped function type.

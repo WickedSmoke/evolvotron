@@ -18,6 +18,8 @@ Animation
 
 Conventional
 ------------
+- MutationParameters should be held by EvolvotronMain with pointers passed
+  to dialogs.
 - Display properties dialog should have small copy of image
 - "Evolvotron corpus"; publish mode & viewer app to see other users' creations
    How ?  PHP+SQL somewhere ? IRC ? RSS ? Jabber conference!

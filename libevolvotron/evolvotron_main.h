@@ -106,11 +106,17 @@ class EvolvotronMain : public QMainWindow
       void undo();
     };
 
+ protected:
+  //! Convenience typedef for pointer to member function implementing a kind of spawn.
+  typedef void (EvolvotronMain::* SpawnMemberFn)(const MutatableImage* image,MutatableImageDisplay* display);
   //! Instance of History object to track activity.
   History _history;
 
-  //! Convenience typedef for pointer to member function implementing a kind of spawn.
-  typedef void (EvolvotronMain::* SpawnMemberFn)(const MutatableImage* image,MutatableImageDisplay* display);
+  //! Instance of mutation parameters for the app
+  /*! This used to be held by DialogMutationParameters, but now we want to share it around a bit
+    (although modifications should always be via the dialog slots, to keep the dialogs up to date)
+   */
+  MutationParameters _mutation_parameters;
 
   //! Somewhere to report what's going on
   QStatusBar* _statusbar;
@@ -276,10 +282,12 @@ class EvolvotronMain : public QMainWindow
     }
 
   //! Accessor.
+  /*! NB Only const version made available publicly as modifications should be through an appropriate dialog slot.
+   */
   const MutationParameters& mutation_parameters() const
     {
       // Have to have this cheesy cast to pick up the non-protected version.
-      return ((const DialogMutationParameters*)_dialog_mutation_parameters)->mutation_parameters();
+      return _mutation_parameters;
     }
 
   //! Accessor.

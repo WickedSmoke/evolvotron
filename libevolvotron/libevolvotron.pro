@@ -13,6 +13,7 @@ HEADERS += \
 	dialog_mutation_parameters.h \
 	evolvotron_main.h \
         function_boilerplate.h \
+        function_core.h \
         functions.h \
         function_node.h \
         function_node_info.h \
@@ -48,6 +49,7 @@ SOURCES += \
 	dialog_mutation_parameters.cpp \
 	evolvotron_main.cpp \
         function_boilerplate.cpp \
+        function_core.cpp \
         functions.cpp \
         function_node.cpp \
         function_node_info.cpp \

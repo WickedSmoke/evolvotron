@@ -63,6 +63,11 @@ or just have both done for you by doing
 commands, and is probably the easiest way to build if your PATH doesn't 
 include a directory containing qmake and you like it that way.]
 
+[Note also that the configure script has nothing to do with the GNU
+autoconf tools.  If you're expecting it to support the usual options,
+sorry, you're out of luck.  You'll have to edit the configure script
+or the .pro files instead to change most things.]
+
 Make will recurse into and build the libevolvotron directory
 (which is 99% of the work) and some additional subdirectories with 
 executables.  There may be a couple of "unused variable" warnings.

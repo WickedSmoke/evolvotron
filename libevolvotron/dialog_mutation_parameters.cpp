@@ -25,11 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /*! About dialog displays author info, web addresses and license info.
  */
-DialogMutationParameters::DialogMutationParameters(QMainWindow* parent)
+DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationParameters* mp)
   :QDialog(parent)
   ,_scale(1000000)
   ,_parent(parent)
-  ,_mutation_parameters(time(0))
+  ,_mutation_parameters(mp)
 {
   assert(_parent!=0);
 
@@ -136,17 +136,17 @@ void DialogMutationParameters::resizeEvent(QResizeEvent*)
 
 void DialogMutationParameters::setup_from_mutation_parameters()
 {
-  _checkbox_iterative->setChecked(mutation_parameters().allow_iterative_nodes());
-  _checkbox_fractal  ->setChecked(mutation_parameters().allow_fractal_nodes());
+  _checkbox_iterative->setChecked(_mutation_parameters->allow_iterative_nodes());
+  _checkbox_fractal  ->setChecked(_mutation_parameters->allow_fractal_nodes());
 
-  _spinbox_magnitude ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().magnitude()));
-  _spinbox_glitch    ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_glitch()));
-  _spinbox_shuffle   ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_shuffle()));
-  _spinbox_insert    ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_insert()));
-  _spinbox_substitute->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_substitute()));
+  _spinbox_magnitude ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->magnitude()));
+  _spinbox_glitch    ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_glitch()));
+  _spinbox_shuffle   ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_shuffle()));
+  _spinbox_insert    ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_insert()));
+  _spinbox_substitute->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_substitute()));
 
-  _slider_proportion_constant->setValue(static_cast<int>(0.5+100*mutation_parameters().proportion_constant()));
-  _slider_identity_supression->setValue(static_cast<int>(0.5+100*mutation_parameters().identity_supression()));
+  _slider_proportion_constant->setValue(static_cast<int>(0.5+100*_mutation_parameters->proportion_constant()));
+  _slider_identity_supression->setValue(static_cast<int>(0.5+100*_mutation_parameters->identity_supression()));
 
   parameters_changed();
 }
@@ -167,7 +167,7 @@ void DialogMutationParameters::parameters_changed()
 
 void DialogMutationParameters::reset()
 {
-  mutation_parameters().reset();
+  _mutation_parameters->reset();
   setup_from_mutation_parameters();
 }
 
@@ -200,43 +200,43 @@ void DialogMutationParameters::shield()
 
 void DialogMutationParameters::changed_magnitude(int v)
 {
-  mutation_parameters().magnitude(v/static_cast<float>(_scale));
+  _mutation_parameters->magnitude(v/static_cast<float>(_scale));
   parameters_changed();
 }
 
 void DialogMutationParameters::changed_glitch(int v)
 {
-  mutation_parameters().probability_glitch(v/static_cast<float>(_scale));
+  _mutation_parameters->probability_glitch(v/static_cast<float>(_scale));
   parameters_changed();
 }
 
 void DialogMutationParameters::changed_shuffle(int v)
 {
-  mutation_parameters().probability_shuffle(v/static_cast<float>(_scale));
+  _mutation_parameters->probability_shuffle(v/static_cast<float>(_scale));
   parameters_changed();
 }
 
 void DialogMutationParameters::changed_insert(int v)
 {
-  mutation_parameters().probability_insert(v/static_cast<float>(_scale));
+  _mutation_parameters->probability_insert(v/static_cast<float>(_scale));
   parameters_changed();
 }
 
 void DialogMutationParameters::changed_substitute(int v)
 {
-  mutation_parameters().probability_substitute(v/static_cast<float>(_scale));
+  _mutation_parameters->probability_substitute(v/static_cast<float>(_scale));
   parameters_changed();
 }
 
 void DialogMutationParameters::changed_proportion_constant(int v)
 {
-  mutation_parameters().proportion_constant(v/100.0f);
+  _mutation_parameters->proportion_constant(v/100.0f);
   parameters_changed();
 }
 
 void DialogMutationParameters::changed_identity_supression(int v)
 {
-  mutation_parameters().identity_supression(v/100.0f);
+  _mutation_parameters->identity_supression(v/100.0f);
   parameters_changed();
 }
 
@@ -244,11 +244,11 @@ void DialogMutationParameters::changed_identity_supression(int v)
  */
 void DialogMutationParameters::changed_iterative(int v)
 {
-  mutation_parameters().allow_iterative_nodes(v==2);
+  _mutation_parameters->allow_iterative_nodes(v==2);
 
   if (v!=2)
     {
-      mutation_parameters().allow_fractal_nodes(false);
+      _mutation_parameters->allow_fractal_nodes(false);
       _checkbox_fractal->setChecked(false);
     }
 
@@ -259,11 +259,11 @@ void DialogMutationParameters::changed_iterative(int v)
  */
 void DialogMutationParameters::changed_fractal(int v)
 {
-  mutation_parameters().allow_fractal_nodes(v==2);
+  _mutation_parameters->allow_fractal_nodes(v==2);
 
   if (v==2)
     {
-      mutation_parameters().allow_iterative_nodes(true);
+      _mutation_parameters->allow_iterative_nodes(true);
       _checkbox_iterative->setChecked(true);
     }
   parameters_changed();

@@ -24,11 +24,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_registration.h"
 #include "function_registry.h"
 #include "function_boilerplate.h"
+#include "function_core.h"
 
 MutationParameters::MutationParameters(uint seed)
   :_r01(seed)
 {
   reset();
+
+  for (
+       std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
+       it!=FunctionRegistry::get()->registrations().end();
+       it++
+       )
+    _function_weighting.insert(std::make_pair(*it,1.0f));
 }
 
 MutationParameters::~MutationParameters()
@@ -58,6 +66,43 @@ void MutationParameters::reset()
   _probability_iterations_change_jump=0.02;
 }
 
+/*! This returns a random bit of image tree.
+  It needs to be capable of generating any sort of node we have.
+  \warning Too much probability of highly branching nodes could result in infinite sized stubs.
+  \todo Compute (statistically) the expected number of nodes in a stub.
+ */
+FunctionNode*const MutationParameters::random_function_stub(bool exciting) const
+{
+  // Base mutations are Constant or Identity types.  
+  // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
+  const float base=0.7;
+
+  const float r=(exciting ? base+(1.0f-base)*r01() : r01());
+
+  if (r<(1.0f-proportion_constant())*identity_supression()*base)
+    {
+      return FunctionTransform::stubnew(*this,false);
+    }
+  else if (r<(1.0f-proportion_constant())*base)
+    {
+      return FunctionIdentity::stubnew(*this,false);
+    }
+  else if (r<base)
+    {
+      return FunctionConstant::stubnew(*this,false);
+    }
+  else 
+    {
+      return random_function();
+    }
+}
+
+FunctionNode*const MutationParameters::random_function() const
+{
+  const FunctionRegistration*const fn_reg=random_function_registration();
+  return (*(fn_reg->stubnew_fn()))(*this,false);    
+}
+
 const FunctionRegistration*const MutationParameters::random_function_registration() const
 {
   uint supressed_function_classifications=0;
@@ -78,4 +123,20 @@ const FunctionRegistration*const MutationParameters::random_function_registratio
       fn_reg=FunctionRegistry::get()->lookup(r01());
     }
   while (fn_reg->classification()&supressed_function_classifications);
+
+  return fn_reg;
+}
+
+const float MutationParameters::random_function_branching_ratio() const
+{
+  float t=0.0f;
+  for (
+       std::map<const FunctionRegistration*,float>::const_iterator it=_function_weighting.begin();
+       it!=_function_weighting.end();
+       it++
+       )
+    {
+      t+=(*it).second*(*it).first->params();
+    }
+  return t/_function_weighting.size();
 }
