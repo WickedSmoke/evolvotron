@@ -78,7 +78,7 @@ template <uint N,class T> class Tuple
   void operator-=(const Tuple<N,T>& t)
     {
       for (uint i=0;i<N;i++)
-	_element[i]+=t[i];
+	_element[i]-=t[i];
     }
 
   //! Multiplication by scalar.
