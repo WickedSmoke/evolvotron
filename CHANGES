@@ -16,6 +16,7 @@ From release 0.0.3:
  - Spawn warped made less messy: just generates translate/scale/rotate... no shearing.
  - Reset clears locks / restart doesn't
  - Gratuitously templatized tuple/matrix class added to help geometric transforms.
+ - Add "configure" script 'cos thats how lots of other apps do it.  Apparently.
 
 From release 0.0.2:
  - Bump version to 0.0.3

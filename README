@@ -43,13 +43,17 @@ README]
 BUILDING
 ========
 This has only been tested on RedHat8.0, but there's no reason it shouldn't
-work on any platform with a correctly set up qmake.
+work on any platform with a correctly set up qmake (which is all the
+configure step does, using the specification in evolvotron.pro).
 
-You should just be able to do
+You can do either the "traditional"
+
+  ./configure
+  make
+
+or just have both done for you by doing
 
   ./BUILD
-
-(All this does is a qmake followed by a make!)
 
 [IMPORTANT: Sorry, this version makes more use of C++ templates which in my
 experience are rather prone to breaking between compiler versions.
