@@ -29,17 +29,124 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "evolvotron_main.h"
 #include "xyz.h"
 
+void EvolvotronMain::History::purge()
+{
+  if (_history.size()>0)
+    {
+      // Clean up any images.
+      for (std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> >::iterator it=_history.back().begin();it!=_history.back().end();it++)
+	{
+	  delete (*it).second;
+	}
+      _history.pop_back();
+    }
+}
+
+EvolvotronMain::History::History(EvolvotronMain* m)
+:_main(m)
+ ,max_slots(32)
+{
+  // Don't call _main->set_undoable because menus probably haven't been constructed yet.
+}
+
+EvolvotronMain::History::~History()
+{
+  while (_history.size()>0)
+    {
+      purge();
+    }  
+}
+
+void EvolvotronMain::History::replacing(MutatableImageDisplay* display)
+{
+  if (_history.size()==0)
+    {
+      begin_action();
+    }
+  
+  MutatableImageNode*const image=display->image();
+
+  if (image!=0)
+    {
+      _history.front().push_back(std::pair<MutatableImageDisplay*,MutatableImageNode*>(display,image->deepclone()));
+    }
+}
+
+/*! Only creates a new slot for display-image pairs if the current top one (if any) isn't empty.
+ */
+void EvolvotronMain::History::begin_action()
+{
+  if (_history.size()==0 || _history.front().size()!=0)
+    {
+      _history.push_front(std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> >());
+    }
+
+  while (_history.size()>max_slots)
+    {
+      purge();
+    }
+}
+
+void EvolvotronMain::History::end_action()
+{
+  _main->set_undoable(undoable());
+}
+
+bool EvolvotronMain::History::undoable()
+{
+  if (_history.size()==0)
+    {
+      return false;
+    }
+  else if (_history.front().size()==0)
+    {
+      _history.pop_front();
+      return undoable();
+    }
+  else
+    {
+      return true;
+    }
+}
+
+void EvolvotronMain::History::undo()
+{
+  if (_history.size()==0)
+    {
+      // Shouldn't ever see this if Undo menu item is correctly greyed out.
+      QMessageBox::warning(_main,"Evolvotron","Cannot undo further");
+    }
+  else if (_history.front().size()==0)
+    {
+      _history.pop_front();
+      undo();
+    }
+  else
+    {
+      for (std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> >::iterator it=_history.front().begin();it!=_history.front().end();it++)
+	{
+	  _main->restore((*it).first,(*it).second);
+	}
+      _history.pop_front();
+      begin_action();
+    }
+
+  _main->set_undoable(undoable());
+}
+
 void EvolvotronMain::last_spawned(const MutatableImageNode* image,SpawnMemberFn method)
 {
   delete _last_spawned;
   _last_spawned=(image==0 ? 0 : image->deepclone());
   _last_spawn_method=method;
 }
+
     
 /*! Constructor sets up GUI components and fires up QTimer.
  */
 EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_threads)
   :QMainWindow(parent,0,Qt::WType_TopLevel|Qt::WDestructiveClose)
+   ,_history(this)
    ,_statusbar_tasks(0)
    ,_last_spawned(0)
    ,_last_spawn_method(&EvolvotronMain::spawn_normal)
@@ -66,7 +173,8 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
   _menubar->insertItem("&File",_popupmenu_file);
 
   _popupmenu_edit=new QPopupMenu;
-  _popupmenu_edit->insertItem("&Undo",this,SLOT(undo()));
+  _popupmenu_edit_undo_id=_popupmenu_edit->insertItem("&Undo",this,SLOT(undo()));
+  _popupmenu_edit->setItemEnabled(_popupmenu_edit_undo_id,false);
   _popupmenu_edit->insertSeparator();
   _popupmenu_edit->insertItem("&Mutation parameters...",_dialog_mutation_parameters,SLOT(show()));
   _menubar->insertItem("&Edit",_popupmenu_edit);
@@ -122,6 +230,7 @@ void EvolvotronMain::spawn_normal(const MutatableImageNode* image,MutatableImage
 {
   MutatableImageNode*const new_image=image->deepclone();
   new_image->mutate(mutation_parameters());
+  history().replacing(display);
   display->image(new_image);
 }
 
@@ -134,6 +243,7 @@ void EvolvotronMain::spawn_recoloured(const MutatableImageNode* image,MutatableI
   args.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
   args.push_back(image->deepclone());
   
+  history().replacing(display);
   display->image(new MutatableImageNodePostTransform(args));
 }
 
@@ -149,29 +259,25 @@ void EvolvotronMain::spawn_warped(const MutatableImageNode* image,MutatableImage
   args.push_back(new MutatableImageNodeConstant(XYZ(0.0,0.0,1.0f)));
   args.push_back(image->deepclone());
   
+  history().replacing(display);
   display->image(new MutatableImageNodePreTransform(args));
 }
 
-void EvolvotronMain::spawn_all(MutatableImageDisplay* display,SpawnMemberFn method)
+void EvolvotronMain::restore(MutatableImageDisplay* display,MutatableImageNode* image)
 {
-  // Spawn potentially a bit sluggish so set the hourglass cursor.
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  
-  // Issue new images (except to locked displays and to originator)
-  // This will cause them to abort any running tasks
-  const MutatableImageNode*const spawning_image=display->image();
-
-  last_spawned(spawning_image,method);
-  
-  for (std::vector<MutatableImageDisplay*>::iterator it=displays().begin();it!=displays().end();it++)
+  if (is_known(display))
     {
-      if ((*it)!=display && !(*it)->locked())
-	{
-	  (this->*method)(spawning_image,(*it));
-	}
+      display->image(image);
     }
+  else
+    {
+      delete image;
+    }
+}
 
-  QApplication::restoreOverrideCursor();
+void EvolvotronMain::set_undoable(bool v)
+{
+  _popupmenu_edit->setItemEnabled(_popupmenu_edit_undo_id,v);
 }
 
 void EvolvotronMain::respawn(MutatableImageDisplay* display)
@@ -189,6 +295,33 @@ void EvolvotronMain::respawn(MutatableImageDisplay* display)
       (this->*last_spawn_method())(last_spawned(),display);
     }
 }
+
+void EvolvotronMain::spawn_all(MutatableImageDisplay* display,SpawnMemberFn method)
+{
+  // Spawn potentially a bit sluggish so set the hourglass cursor.
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  
+  history().begin_action();
+
+  // Issue new images (except to locked displays and to originator)
+  // This will cause them to abort any running tasks
+  const MutatableImageNode*const spawning_image=display->image();
+
+  last_spawned(spawning_image,method);
+  
+  for (std::vector<MutatableImageDisplay*>::iterator it=displays().begin();it!=displays().end();it++)
+    {
+      if ((*it)!=display && !(*it)->locked())
+	{
+	  (this->*method)(spawning_image,(*it));
+	}
+    }
+
+  history().end_action();
+
+  QApplication::restoreOverrideCursor();
+}
+
 
 /*! If one of our sub displays has spawned, distribute a mutated copy of its image to the other non-locked images
   in the mutation grid.
@@ -231,6 +364,11 @@ void EvolvotronMain::goodbye(MutatableImageDisplay* disp)
   _known_displays.erase(disp);  
 }
 
+bool EvolvotronMain::is_known(MutatableImageDisplay* disp) const
+{
+  return (_known_displays.find(disp)!=_known_displays.end());
+}
+
 /*! Periodically report number of remaining compute tasks and check farm's done queue for completed tasks.
  */
 void EvolvotronMain::tick()
@@ -258,7 +396,7 @@ void EvolvotronMain::tick()
 
   while ((task=farm()->pop_done())!=0)
     {
-      if (_known_displays.find(task->display())!=_known_displays.end())
+      if (is_known(task->display()))
 	{
 	  task->display()->deliver(task);
 	}
@@ -316,18 +454,21 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
       
   args_toplevel.push_back(new MutatableImageNodePostTransform(args2));
       
+  history().replacing(display);
   display->image(new MutatableImageNodeConcatenateTriple(args_toplevel));
 }
 
 void EvolvotronMain::undo()
 {
-  // Add undo functionality.  Grey out menu item when not available.
+  history().undo();
 }
 
 /*! Reset each image in the grid, and the mutation parameters.
  */
 void EvolvotronMain::reset()
 {
+  history().begin_action();
+
   for (std::vector<MutatableImageDisplay*>::iterator it=displays().begin();it!=displays().end();it++)
     {
       reset(*it);
@@ -336,4 +477,6 @@ void EvolvotronMain::reset()
   _dialog_mutation_parameters->reset();
 
   last_spawned(0,&EvolvotronMain::spawn_normal);
+
+  history().end_action();
 }

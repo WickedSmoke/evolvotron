@@ -28,6 +28,7 @@ extern "C"
 #include <time.h>
 }
 
+#include <deque>
 #include <vector>
 #include <set>
 
@@ -58,6 +59,50 @@ class EvolvotronMain : public QMainWindow
     
  protected:
 
+  //! Class encapsulating everything needed for undo functionality.
+  class History
+    {
+    protected:
+      //! Pointer to main app.
+      EvolvotronMain*const _main;
+
+      //! Each deque slot contains the collection of display-image pairs replaced by an single action.
+      /*! We use a stack rather than a deque because we want to clean up the tail end (limited number of Undos).
+       */
+      std::deque<std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> > > _history;
+
+      //! Number of slots retained for history.
+      uint max_slots;
+
+      //! Clean up the last slot in the queue.
+      void purge();
+
+    public:
+
+      //! Constructor.
+      History(EvolvotronMain*);
+
+      //! Destructor.
+      ~History();
+      
+      //! Record that we are overwriting the given display.
+      void replacing(MutatableImageDisplay* display);
+
+      //! Starts a new action slot
+      void begin_action(); 
+
+      //! Ends an action slot and updates the undoable state.
+      void end_action(); 
+
+      //! Returns true if there is stuff to undo
+      bool undoable();
+
+      //! Implements an undo.
+      void undo();
+    };
+
+  History _history;
+
   typedef void (EvolvotronMain::* SpawnMemberFn)(const MutatableImageNode* image,MutatableImageDisplay* display);
 
   //! Somewhere to report what's going on
@@ -83,6 +128,9 @@ class EvolvotronMain : public QMainWindow
 
   //! The mutate menu.
   QPopupMenu* _popupmenu_edit;
+
+  //! ID for the undo item (so we can disable it).
+  int _popupmenu_edit_undo_id;
 
   //! The help menu.
   QPopupMenu* _popupmenu_help;
@@ -118,6 +166,12 @@ class EvolvotronMain : public QMainWindow
 
   //! Pointer to member function used for last spawn.
   SpawnMemberFn _last_spawn_method;
+
+  //! Accessor.
+  History& history()
+    {
+      return _history;
+    }
 
   //! Accessor.
   const MutatableImageNode*const last_spawned() const
@@ -167,7 +221,13 @@ class EvolvotronMain : public QMainWindow
       return _farm;
     }
 
-  //! Regenerates a single display.
+  //! Called by History when performing undo.
+  void restore(MutatableImageDisplay* display,MutatableImageNode* image);
+
+  //! Called by History to change undo menu status.
+  void set_undoable(bool v);
+
+  //! Regenerates a single display using last spawn method and source.
   void respawn(MutatableImageDisplay* display);
 
   //! Mutates the image held by the given display to all the other displays owned.
@@ -185,6 +245,9 @@ class EvolvotronMain : public QMainWindow
   //! Called from display destructor to indicate the display is no longer available for the disposal of its completed tasks.
   void goodbye(MutatableImageDisplay*);
 
+  //! Returns true if the display is known.
+  bool is_known(MutatableImageDisplay* disp) const;
+
  protected:
   //! Reset the specified display.
   void reset(MutatableImageDisplay* display);
@@ -193,7 +256,7 @@ class EvolvotronMain : public QMainWindow
   //! Signalled by timer.
   void tick();
 
-  //! Signalled by menu item. 
+  //! Signalled by menu item.  Forwards to History object.
   void undo();
 
  public slots:

@@ -1,10 +1,11 @@
 - Save whole grid as a single image (from File menu).
 - More functions 
-- Undo/Revert on Mutate menu (to recover from sloppy clicking)
 - Option to reduce/elimintate position (identity) nodes to avoid blatantly centred images.
   (Introduce an atomic transform type).
 - Context menu option to bring up info about an image
   (in particular number of nodes and max depth)
+- Reference counting for images
+  (far too much deepcloning currently; e.g to tasks and history)
 - Use hourglass cursor over displays which haven't got final high resolution yet ?
   (Need combined hourglass/pointer but Qt doesn't have one built in).
 - Computing zero co-ordinate sometimes gives unusual output (black lines across images).
@@ -24,4 +25,4 @@
 - Heat/cool etc should act in proportion to current values
   (probably wanted for autocool).
 - Evolve other things e.g parameters of celluar automata/reaction diffusion equations/iterated function systems.
-
+- Maybe lock status of a display should be stored in undo history too.

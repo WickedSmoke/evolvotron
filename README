@@ -53,13 +53,20 @@ Command line options:
   -t <threads> : sets number of compute threads (defaults to 2)
 
 On starting the app, a grid of images is displayed.
-(For some reason the default is very small: you'll probably want to resize the window to be larger).
+(For some reason the default is quite small: you'll 
+probably want to resize/fullscreen the window to be larger).
 
 Repeat the following until bored:
  - Click (singleclick) on an image you like to 
-   spawn the generation of its mutant offspring.
+   spawn the next generation of its mutant offspring.
  - Wait until variations on it are regenerated in sufficient 
    detail that you can decide which one you like best again.
+
+IMPORTANT: Initially you should select images with some sort of variation.
+It can take quite a few generations before you get something more interesting
+than a simple gradient.  If you select a uniform image, you may get stuck
+in a degenerate zone with little to mutate and therefore little chance of
+escape to a more interesting area.  You can always restart from the "File" menu.
 
 Right clicking on an image gets you a few more options:
  - "Respawn" regenerates just the current image from whatever it was spawned from
@@ -79,14 +86,9 @@ Right clicking on an image gets you a few more options:
    the size you see on the screen is the size you get in the file.
    Note that the save won't be allowed until the full resolution image has been generated.
 
-The Edit menu lets you undo the last full-grid spawn (limited number of levels of undo),
-and bring up a dialog to edit the mutation parameters (see advanced usage below).
-
-IMPORTANT: Initially you should select images with some sort of variation.
-It can take quite a few generations before you get something more interesting
-than a simple gradient.  If you select a uniform image, you may get stuck
-in a degenerate zone with little to mutate and therefore little chance of
-escape to a more interesting area.  You can always restart from the "File" menu.
+The Edit menu lets you undo previous full-grid spawns (large but limited
+number of levels of undo; note that locking is overriden), and bring up
+a dialog to modify the mutation parameters (see advanced usage below).
 
 An area on the status bar shows how many "tasks" are outstanding.  
 Each "task" is the recomputation of an image at some resolution.
