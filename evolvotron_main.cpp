@@ -353,8 +353,9 @@ void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImage
      (
       new FunctionNodeUsing<FunctionPostTransform>
       (
-       FunctionNode::stubparams(mutation_parameters(),12,false),
-       args
+       FunctionNode::stubparams(mutation_parameters(),12),
+       args,
+       0
        )
       )
      );
@@ -386,7 +387,7 @@ void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisp
       // Otherwise have to create a new wrapper for the transform
       std::vector<FunctionNode*> args;
       args.push_back(image->root()->deepclone());
-      new_root=new FunctionNodeUsing<FunctionPreTransform>(transform.get_columns(),args);
+      new_root=new FunctionNodeUsing<FunctionPreTransform>(transform.get_columns(),args,0);
     }
   
   history().replacing(display);

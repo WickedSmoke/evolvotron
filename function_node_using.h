@@ -51,13 +51,14 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
     }
   
   //! Constructor
-  /*! Caution: the parameters will need to have been created with an appropriate parameter zero if this is an iterative function.
+  /*! \warning Careful to pass an appropriate initial iteration count for iterative functions.
    */
-  FunctionNodeUsing(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
-    :FunctionNode(p,a,F::iterative())
+  FunctionNodeUsing(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter)
+    :FunctionNode(p,a,iter)
     {
       assert(params().size()==F::parameters());
       assert(args().size()==F::arguments());
+      assert((iter==0 && !F::iterative()) || (iter!=0 && F::iterative()));
     }
   
   //! Destructor.
@@ -69,15 +70,16 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
     {
       return new FunctionNodeUsing<F>
 	(
-	 stubparams(parameters,F::parameters(),F::iterative()),
-	 stubargs(parameters,F::arguments())
+	 stubparams(parameters,F::parameters()),
+	 stubargs(parameters,F::arguments()),
+	 (F::iterative() ? stubiterations(parameters) : 0)
 	 );
     }
   
   //! Return a deeploned copy.
   virtual FunctionNode*const deepclone() const
     {
-      return new FunctionNodeUsing<F>(cloneparams(),cloneargs());
+      return new FunctionNodeUsing<F>(cloneparams(),cloneargs(),iterations());
     }
   
   //! Internal self-consistency check.  We can add some extra checks.
@@ -85,9 +87,12 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
     {
       return 
 	(
-	 params().size()==F::parameters() &&
-	 args().size()==F::arguments() &&
-	 (!param0_is_iterations() || (params().size()>0)) &&
+	 params().size()==F::parameters()
+	 &&
+	 args().size()==F::arguments() 
+	 &&
+	 ((iterations()==0 && !F::iterative()) || (iterations()!=0 && F::iterative()))
+	 &&
 	 FunctionNode::ok()
 	 );
     }

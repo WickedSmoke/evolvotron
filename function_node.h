@@ -51,8 +51,10 @@ class FunctionNode
   //! The parameters (ie constant values) for this node.
   std::vector<float> _params;
     
-  //! Flag indicating that parameter zero contains an iteration count and should be treated differently.
-  bool _param0_is_iterations;
+  //! Number of iterations for iterative function types.  If zero, indicates non-iterative function.
+  /*! \todo Perhaps someday push this out into a derived class.
+   */
+  uint _iterations;
 
  protected:
 
@@ -91,13 +93,18 @@ class FunctionNode
   static FunctionNode*const initial(const MutationParameters& parameters);
 
   //! This returns a vector of random parameter values.
-  static const std::vector<float> stubparams(const MutationParameters& parameters,uint n,bool iter);
+  static const std::vector<float> stubparams(const MutationParameters& parameters,uint n);
 
   //! This returns a vector of new random bits of tree.
   static const std::vector<FunctionNode*> stubargs(const MutationParameters& parameters,uint n);
 
-  //! Constructor given an array of params. and args (these MUST be provided; there are no alterative constructors).
-  FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a,bool iter);
+  //! Return a suitable starting value for a node's iteration count (assuming it's iterative).
+  static const uint FunctionNode::stubiterations(const MutationParameters& parameters);
+
+  //! Constructor given an array of params and args and an iteration count.
+  /*! These MUST be provided; there are no alterative constructors.
+   */
+  FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter);
 
   //! Destructor.
   virtual ~FunctionNode();
@@ -121,22 +128,10 @@ class FunctionNode
       return params()[n];
     }
 
-  //! Accessor.
-  const bool param0_is_iterations() const
-    {
-      return _param0_is_iterations;
-    }
-
-  //! Return the number of iterations
-  /*! Should only be invoked for nodes where param(0) is intended to be an iteration count.
-    We don't like zero iterations: some functions become ambiguous
-    (although the code that manipulates functions should prevent this happening).
-  */
+  //! Accessor
   const uint iterations() const
     {
-      assert(_param0_is_iterations);
-      const unsigned int ret=std::max(1,static_cast<int>(floor(param(0))));
-      return ret;
+      return _iterations;
     }
 
   //! Accessor.

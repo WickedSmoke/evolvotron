@@ -1181,10 +1181,10 @@ REGISTER(FunctionChooseRect);
 class FunctionIterate : public FunctionIterative
 {
  public:
-  //! One parameter (the iteration count).
+  //! No parameters.
   static const uint parameters()
     {
-      return 1;
+      return 0;
     }
 
   //! One argument.
@@ -1217,10 +1217,10 @@ REGISTER(FunctionIterate);
 class FunctionAverageSamples : public FunctionIterative
 {
  public:
-  //! One parameter (the iteration count).
+  //! No parameters.
   static const uint parameters()
     {
-      return 1;
+      return 0;
     }
 
   //! Three arguments.
@@ -1290,10 +1290,10 @@ inline const uint brot(const XYZ& z0,const XYZ& c,const uint iterations)
 class FunctionMandelbrotChoose : public FunctionIterative
 {
  public:
-  //! One parameter (the iteration count).
+  //! No parameters.
   static const uint parameters()
     {
-      return 1;
+      return 0;
     }
 
   //! Two arguments.
@@ -1323,13 +1323,13 @@ REGISTER(FunctionMandelbrotChoose);
 class FunctionMandelbrotContour : public FunctionIterative
 {
  public:
-  //! One parameter (the iteration count).
+  //! No parameters.
   static const uint parameters()
     {
-      return 1;
+      return 0;
     }
 
-  //! Two arguments.
+  //! No arguments.
   static const uint arguments()
     {
       return 0;
@@ -1357,10 +1357,10 @@ REGISTER(FunctionMandelbrotContour);
 class FunctionJuliaChoose : public FunctionIterative
 {
  public:
-  //! One parameter (the iteration count).
+  //! No parameters.
   static const uint parameters()
     {
-      return 1;
+      return 0;
     }
 
   //! Three arguments.
@@ -1390,10 +1390,10 @@ REGISTER(FunctionJuliaChoose);
 class FunctionJuliaContour : public FunctionIterative
 {
  public:
-  //! One parameter (the iteration count).
+  //! No paramters.
   static const uint parameters()
     {
-      return 1;
+      return 0;
     }
 
   //! One argument.

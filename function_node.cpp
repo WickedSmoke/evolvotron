@@ -176,7 +176,7 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
 	  args_in.push_back(FunctionNode::stub(parameters,false));
 	  args_in.push_back(FunctionNode::stub(parameters,false));
 	  args_in.push_back(FunctionNode::stub(parameters,false));
-	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_in,args_in));
+	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_in,args_in,0));
 	}
       else
 	{
@@ -195,14 +195,14 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
 	  args_out.push_back(FunctionNode::stub(parameters,false));
 	  args_out.push_back(FunctionNode::stub(parameters,false));
 	  args_out.push_back(FunctionNode::stub(parameters,false));
-	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_out,args_out));
+	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_out,args_out,0));
 	}
       else
 	{
 	  args_toplevel.push_back(FunctionNodeUsing<FunctionTransform>::stubnew(parameters));
 	}
 	
-      root=new FunctionNodeUsing<FunctionComposeTriple>(params_toplevel,args_toplevel);
+      root=new FunctionNodeUsing<FunctionComposeTriple>(params_toplevel,args_toplevel,0);
       
       assert(root->ok());
       
@@ -230,23 +230,27 @@ const std::vector<FunctionNode*> FunctionNode::stubargs(const MutationParameters
   return ret;
 }
 
-const std::vector<float> FunctionNode::stubparams(const MutationParameters& parameters,uint n,bool iter)
+
+const std::vector<float> FunctionNode::stubparams(const MutationParameters& parameters,uint n)
 {
   std::vector<float> ret;
   for (uint i=0;i<n;i++)
     {
-      if (i==0 && iter)
-	ret.push_back(1.0f+floor(parameters.r01()*parameters.max_initial_iterations()));
-      else
-	ret.push_back(-1.0f+2.0f*parameters.r01());
+      ret.push_back(-1.0f+2.0f*parameters.r01());
     }
   return ret;
 }
 
-FunctionNode::FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a,bool iter)
+const uint FunctionNode::stubiterations(const MutationParameters& parameters)
+{
+  return 1+static_cast<uint>(floor(parameters.r01()*parameters.max_initial_iterations()));
+}
+
+
+FunctionNode::FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint iter)
   :_args(a)
-  ,_params(p)
-  ,_param0_is_iterations(iter)
+   ,_params(p)
+   ,_iterations(iter)
 {
   assert(ok());
 }
@@ -281,38 +285,40 @@ void FunctionNode::mutate(const MutationParameters& parameters)
   // Perturb any parameters we have
   for (std::vector<float>::iterator it=params().begin();it!=params().end();it++)
     {
-      if (_param0_is_iterations && it==params().begin())
+      (*it)+=parameters.magnitude()*(-1.0f+2.0f*parameters.r01());
+    }
+
+  // Perturb iteration count if any
+  if (_iterations)
+    {
+      if (parameters.r01()<parameters.probability_iterations_change_step())
 	{
-	  if (parameters.r01()<parameters.probability_iterations_change_step())
+	  if (parameters.r01()<0.5)
 	    {
-	      if (parameters.r01()<0.5)
-		{
-		  if ((*it)>=2.0f) (*it)--;
-		}
-	      else
-		{
-		  (*it)++;
-		}
+	      if (_iterations>=2) _iterations--;
+	    }
+	  else
+	    {
+	      _iterations++;
 	    }
 	  if (parameters.r01()<parameters.probability_iterations_change_jump())
 	    {
 	      if (parameters.r01()<0.5)
 		{
-		  if ((*it)>1.0f) (*it)=floor((*it)/2.0f+0.5f);
+		  if (_iterations>1) _iterations=(_iterations+1)/2;
 		}
 	      else
 		{
-		  (*it)*=2.0f;
+		  _iterations*=2;
 		}
 	    }
-	  if ((*it)<1.0f) (*it)=1.0f;
-	}
-      else
-	{
-	  (*it)+=parameters.magnitude()*(-1.0f+2.0f*parameters.r01());
+	  
+	  // For safety but shouldn't happen
+	  if (_iterations==0) _iterations=1;
 	}
     }
-  
+      
+      
   // Then go to work on the argument structure...
   
   // Think about glitching some nodes.
@@ -344,7 +350,7 @@ void FunctionNode::mutate(const MutationParameters& parameters)
 	  a.push_back((*it));
 	  a.push_back(stub(parameters,false));
 
-	  (*it)=new FunctionNodeUsing<FunctionComposePair>(p,a);
+	  (*it)=new FunctionNodeUsing<FunctionComposePair>(p,a,0);
 	}
     }
 }

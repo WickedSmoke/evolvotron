@@ -431,7 +431,7 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	  std::vector<FunctionNode*> args;	  
 	  args.push_back(image()->root()->deepclone());
 	  
-	  new_root=new FunctionNodeUsing<FunctionPreTransform>(params,args);
+	  new_root=new FunctionNodeUsing<FunctionPreTransform>(params,args,0);
 	}
 
       // Install new image (triggers recompute).
