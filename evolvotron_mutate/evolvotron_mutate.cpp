@@ -66,7 +66,8 @@ int main(int argc,char* argv[])
   if (args.option("-g"))
     {
       FunctionNode*const fn=FunctionNode::initial(mutation_parameters);
-      imagefn=new MutatableImage(fn);
+      //! \todo Should obtain sinusoidalness from command line option.
+      imagefn=new MutatableImage(fn,true);
     }
   else
     {

@@ -70,8 +70,15 @@ void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
 
 std::ostream& MutatableImage::save_function(std::ostream& out) const
 {
-  out << "<?xml version=\"1.0\"?>\n";
-  out << "<evolvotron-image-function version=\"" << EVOLVOTRON_VERSION << "\">\n";
+  out 
+    << "<?xml version=\"1.0\"?>\n"
+    << "<evolvotron-image-function version=\"" 
+    << EVOLVOTRON_VERSION 
+    << "\""
+    << " zsweep=\""
+    << (_sinusoidal_z ? "sinusoidal" : "linear")
+    << "\""
+    << ">\n";
   
   root()->save_function(out,1);
 
@@ -79,7 +86,6 @@ std::ostream& MutatableImage::save_function(std::ostream& out) const
 
   return out;
 }
-
 
 //! LoadHandler class overrides default handler's null methods.
 /*! Expect to see an <evolvotron-image> followed by nested
@@ -92,6 +98,9 @@ protected:
   std::string _report;
 
   FunctionNodeInfo** _root;
+
+  bool* _ret_sinusoidal_z;
+
   std::stack<FunctionNodeInfo*> _stack;
 
   bool _expect_top_level_element;
@@ -99,14 +108,17 @@ protected:
   bool _expect_characters_type;
   bool _expect_characters_iterations;
   bool _expect_characters_parameter;
+
 public:
-  LoadHandler(FunctionNodeInfo** root)
+
+  LoadHandler(FunctionNodeInfo** root,bool* sinz)
     :_root(root)
-    ,_expect_top_level_element(true)
-    ,_expect_characters(false)
-    ,_expect_characters_type(false)
-    ,_expect_characters_iterations(false)
-    ,_expect_characters_parameter(false)
+     ,_ret_sinusoidal_z(sinz)
+     ,_expect_top_level_element(true)
+     ,_expect_characters(false)
+     ,_expect_characters_type(false)
+     ,_expect_characters_iterations(false)
+     ,_expect_characters_parameter(false)
   {
     *_root=0;
   }
@@ -158,10 +170,29 @@ public:
 		const QString version=atts.value(idx);
 		if (version!=QString(EVOLVOTRON_VERSION))
 		  {
-		    //_report+="Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+QString(EVOLVOTRON_VERSION)+")\n";
-            QString tmp;
-		    tmp = "Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+QString(EVOLVOTRON_VERSION)+")\n";
-		    _report += tmp.latin1();
+		    QString tmp;
+		    tmp="Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+QString(EVOLVOTRON_VERSION)+")\n";
+		    _report+=tmp.latin1();
+		  }
+	      }
+	    if ((idx=atts.index("zsweep"))==-1)
+	      {
+		_report+="Warning: zsweep attribute not found\nDefaulting to sinusoidal\n";
+		*_ret_sinusoidal_z=true;
+	      }
+	    else
+	      {
+		const QString zsweep=atts.value(idx);
+		if (zsweep==QString("sinusoidal"))
+		  *_ret_sinusoidal_z=true;
+		else if (zsweep==QString("linear"))
+		  *_ret_sinusoidal_z=false;
+		else
+		  {
+		    QString tmp;
+		    tmp="Error: zsweep attribute expected \"sinusoidal\" or \"linear\", but got \""+zsweep+"\"\n";
+		    _report+=tmp.latin1();
+		    return false;
 		  }
 	      }
 	  }
@@ -324,7 +355,8 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
   // The LoadHandler will set this to point at the root node.  We're responsible for deleting it.
   FunctionNodeInfo* info=0;
 
-  LoadHandler load_handler(&info);
+  bool sinusoidal_z;
+  LoadHandler load_handler(&info,&sinusoidal_z);
 
   QXmlSimpleReader xml_reader;
   xml_reader.setContentHandler(&load_handler);
@@ -341,7 +373,7 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
       
       if (root)
 	{
-	  return new MutatableImage(root);
+	  return new MutatableImage(root,sinusoidal_z);
 	}
       else
 	{

@@ -511,7 +511,7 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	}
 
       // Install new image (triggers recompute).
-      image(new MutatableImage(new_root));
+      image(new MutatableImage(new_root,image()->sinusoidal_z()));
 
       // Finally, record position of this event as last event
       _mid_button_adjust_last_pos=event->pos();

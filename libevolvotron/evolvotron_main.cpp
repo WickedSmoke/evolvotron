@@ -369,6 +369,8 @@ void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImage
        args,
        0
        )
+      ,
+      image->sinusoidal_z()
       )
      );
 }
@@ -403,7 +405,7 @@ void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisp
     }
   
   history().replacing(display);
-  display->image(new MutatableImage(new_root));
+  display->image(new MutatableImage(new_root,image->sinusoidal_z()));
 }
 
 void EvolvotronMain::restore(MutatableImageDisplay* display,MutatableImage* image)
@@ -420,7 +422,7 @@ void EvolvotronMain::restore(MutatableImageDisplay* display,MutatableImage* imag
 
 void EvolvotronMain::set_undoable(bool v,const std::string& action_name)
 {
-  _popupmenu_edit->changeItem(_popupmenu_edit_undo_id,QString(("Undo "+action_name).c_str()));
+  _popupmenu_edit->changeItem(_popupmenu_edit_undo_id,QString(("&Undo "+action_name).c_str()));
   _popupmenu_edit->setItemEnabled(_popupmenu_edit_undo_id,v);
 }
 
@@ -608,7 +610,8 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
     }
 	
   history().replacing(display);
-  display->image(new MutatableImage(root));
+  //! \todo sinz should be obtained from mutation parameters
+  display->image(new MutatableImage(root,true));
 }
 
 void EvolvotronMain::undo()

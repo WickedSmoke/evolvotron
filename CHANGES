@@ -8,7 +8,8 @@ From release 0.2.0:
  - FunctionKaleidoscope, FunctionWindmill, FunctionStreak, FunctionSeparateZ added
  - Added -f <frames> option to evolvotron_render
  - Internals restuctured (avoids FunctionNodeUsing::evaluate wrapper), speed improvement ?
- - Mutations of top-level node can occur
+ - Type of top-level node can mutate
+ - "Undo" keyboard accelerator works 
 
 From release 0.1.4:
  - Bump version to 0.2.0 

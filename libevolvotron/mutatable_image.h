@@ -43,8 +43,9 @@ class MutatableImage
  public:
   
   //! Take ownership of the image tree with the specified root node.
-  MutatableImage(FunctionNode* r)
+  MutatableImage(FunctionNode* r,bool sinz)
     :_root(r)
+    ,_sinusoidal_z(sinz)
     {
       assert(_root!=0);
     }
@@ -69,6 +70,7 @@ class MutatableImage
     {
       return _root;
     }
+
   //! Accessor.
   FunctionNode*const root()
     {
@@ -84,7 +86,7 @@ class MutatableImage
   //! Clone this image.
   MutatableImage*const deepclone() const
     {
-      return new MutatableImage(_root->deepclone()); 
+      return new MutatableImage(_root->deepclone(),_sinusoidal_z); 
     }
 
   //! Mutate this image
