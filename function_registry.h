@@ -25,11 +25,17 @@
 
 #include <string>
 #include <map>
+#include <deque>
 #include <iostream>
 #include "useful.h"
 
 class FunctionNode;
 class MutationParameters;
+
+//! Macro to force instantiation of static registration members, and register them with Registry.
+#define REGISTER(F) static const FunctionRegistration* force_ ## F = FunctionRegistry::pre_reg(#F,&FunctionNodeUsing<F>::registration)
+
+
 
 //! Define FunctionNodeStubNewFnPtr to be type of a pointer to 
 typedef FunctionNode*const (*FunctionNodeStubNewFnPtr)(const MutationParameters&);
@@ -40,25 +46,25 @@ class FunctionRegistration
  public:
   
   //! Constructor.
-  FunctionRegistration(const std::string& n,FunctionNodeStubNewFnPtr s)
+  FunctionRegistration(const char* n,FunctionNodeStubNewFnPtr s)
     :_name(n)
     ,_stubnew(s)
     {}
 
   //! Constructor (no name version)
   FunctionRegistration(FunctionNodeStubNewFnPtr s)
-    :_name()
+    :_name(0)
     ,_stubnew(s)
     {}
 
   //! Accessor.
-  const std::string& name() const
+  const char*const name() const
     {
-      return _name;
+       return _name;
     }
 
   //! Accessor.
-  void name(const std::string& name)
+  void name(const char* name)
     {
       _name=name;
     }
@@ -66,7 +72,7 @@ class FunctionRegistration
  protected:
 
   //! Name of the function.
-  std::string _name;
+  const char* _name;
 
   //! The function's FunctionNodeUsing's stubnew function.
   FunctionNodeStubNewFnPtr _stubnew;
@@ -75,28 +81,59 @@ class FunctionRegistration
 class FunctionRegistry
 {
  public:
-  FunctionRegistry*const get()
+  static FunctionRegistry& get()
     {
       if (!_instance)
 	_instance=new FunctionRegistry();
-      return _instance;
+      
+      while (!_preregister.empty())
+	{
+	  _instance->_registry[_preregister.front()->name()]=_preregister.front();
+	  _preregister.pop_front();
+	}
+
+      return *_instance;
     }
-  
+
+  std::ostream& status(std::ostream& out) const
+    {
+      out << "Registered functions:\n";
+      for (std::map<std::string,const FunctionRegistration*>::const_iterator it=_registry.begin();it!=_registry.end();it++)
+	{
+	  out << "  " << (*it).first << "\n";
+	}
+      return out;
+    }
+
+  //! Probably not used as everything should be pre_registered by static initialisers
+  FunctionRegistration* reg(const char* n,FunctionRegistration* r)
+    {
+      r->name(n);
+      _registry[n]=r;
+      return r;
+    }
+
   //! Register the function type (but change it's name first because the default one is obtained from typeid and seems to be slightly mangled).
-  /*! \todo There is a BIG problem here: any attempt to use std::string in static initialiser code seems to bomb.
-    Workround using Less->strcmp and use char* instead.
-   */
-  static const FunctionRegistration*const add(const char* n,FunctionRegistration* reg)
+  static const FunctionRegistration*const pre_reg(const char* n,FunctionRegistration* r)
   {
-    //reg->name(n);
-    std::clog << "Registry : registered " << n << "\n";
-    //_registry[reg->name()]=reg;
-    return reg;
+    if (_instance)
+      {
+	get().reg(n,r);
+      }
+    else
+      {
+	r->name(n);
+	_preregister.push_back(r);
+      }
+    return r;
   }
 
  protected:
-  std::map<std::string,const FunctionRegistration*> _registry;
+      std::map<std::string,const FunctionRegistration*> _registry;
+
   static FunctionRegistry* _instance;
+
+  static std::deque<const FunctionRegistration*> _preregister;
 };
 
 #endif

@@ -24,3 +24,5 @@
 
 FunctionRegistry* FunctionRegistry::_instance=0;
 
+std::deque<const FunctionRegistration*> FunctionRegistry::_preregister;
+

@@ -80,6 +80,8 @@ int main(int argc,char* argv[])
     << threads 
     << " compute threads\n";
 
+  FunctionRegistry::get().status(std::clog);
+
   if (threads<1)
     {
       std::cerr << "Must specify at least one compute thread (option: -t <threads>)\n";

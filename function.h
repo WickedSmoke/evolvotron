@@ -32,9 +32,6 @@
 #include "matrix.h"
 #include "transform.h"
 
-//! Macro to force instantiation of static registration members, and register them with Registry.
-#define REGISTER(F) static const FunctionRegistration* force_ ## F = FunctionRegistry::add(#F,&FunctionNodeUsing<F>::registration)
-
 
 //! Base function class.
 /*! Doesn't do much because binding into FunctionNode via template instantiation doesn't need virtual

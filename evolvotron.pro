@@ -27,12 +27,12 @@ HEADERS += \
 	dialog_mutation_parameters.h \
 	evolvotron_main.h \
         function.h \
-        function_registry.h \
         functions.h \
         function_node.h \
         function_node_using.h \
         function_pre_transform.h \
         function_post_transform.h \
+        function_registry.h \
 	license.h \
         matrix.h \
 	mutatable_image.h \
@@ -55,12 +55,12 @@ SOURCES += \
 	evolvotron.cpp \
 	evolvotron_main.cpp \
         function.cpp \
-        function_registry.cpp \
         functions.cpp \
         function_node.cpp \
         function_node_using.cpp \
         function_pre_transform.cpp \
         function_post_transform.cpp \
+        function_registry.cpp \
 	license.cpp \
         matrix.cpp \
 	mutatable_image.cpp \
