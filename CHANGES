@@ -12,6 +12,7 @@ From release 0.2.3:
  - Internal changes
  - New dialog for function weightings
  - configure renamed to qconfigure to avoid confusion with autconf
+ - Add pkg/debian .deb builder script
 
 From release 0.2.2:
  - Version to 0.2.3

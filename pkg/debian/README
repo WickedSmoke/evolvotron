@@ -1,0 +1,5 @@
+This directory builds a .deb from the current version .tar.gz
+prepared with mktgz in the top level directory.
+
+Created by following the instructions in Debian New Maintainers Manual.
+

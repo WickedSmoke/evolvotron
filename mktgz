@@ -6,17 +6,20 @@ VERSION=`./VERSION`
 
 cd ..
 
-FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,CHANGES,VERSION,USAGE,qconfigure,doxygen.cfg,mktgz,mkdoc,text_to_markup.py}`
+FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,CHANGES,VERSION,USAGE,BUGS,qconfigure,doxygen.cfg,mktgz,mkdoc,text_to_markup.py}`
 
-# NB Don't ship automatically generated .h file
-FILES_H=`find evolvotron -name moc -prune -o -name usage_text.h -prune -o -name '*.h' -print`
-FILES_CPP=`find evolvotron -name moc -prune -o -name '*.cpp' -print`
-FILES_PRO=`find evolvotron -name moc -prune -o -name '*.pro' -print`
+# NB Don't ship automatically generated .h file or contents of pkg
+FILES_H=`find evolvotron -name pkg -prune -o -name moc -prune -o -name usage_text.h -prune -o -name '*.h' -print`
+FILES_CPP=`find evolvotron -name pkg -prune -o -name moc -prune -o -name '*.cpp' -print`
+FILES_PRO=`find evolvotron -name pkg -prune -o -name moc -prune -o -name '*.pro' -print`
+FILES_MAN=`find evolvotron/man -name '*.1' -print`
 
-FILES="$FILES_MISC $FILES_H $FILES_CPP $FILES_PRO"
+FILES="$FILES_MISC $FILES_H $FILES_CPP $FILES_PRO $FILES_MAN"
 
 tar cvfz evolvotron/evolvotron.tar.gz $FILES
 
 echo "***"
 echo "*** Suggestion: mv evolvotron.tar.gz evolvotron-$VERSION.tar.gz"
 echo "***"
+
+

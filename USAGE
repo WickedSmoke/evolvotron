@@ -1,12 +1,15 @@
 EVOLVOTRON USER MANUAL
 ======================
 
-For the default 2D image mode, you will need a fast machine or patience.
-For the optional animation mode, you will need both.
+Evolvotron is interactive "generative art" software to evolve
+images/textures/patterns through an iterative process of random
+mutation and user-selection driven evolution.
 
 On starting the application, a grid of images is displayed.
-(Resize or maximise the application if you like, but the more
-pixels have to be calculated, the slower it will be.)
+Resize or maximise the application if you like, but the more
+pixels have to be calculated, the slower it will be.
+(For the default 2D image mode, you will need a fast machine or patience.
+For the optional animation mode, you will need both.)
 
 Simply repeat the following until bored:
  - Click (singleclick) on an image you like to 

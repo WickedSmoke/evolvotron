@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# Rebuilding from scratch for new upstream code a bit overkill - perhaps want an alternative using uupdate
+# (especially to get revision numbers acting sensibly)
+# Could be made more general using envs like DEBFULLNAME (and requiring user to set them)
+
+VERSION=`../../VERSION`
+SRC=evolvotron-$VERSION
+SRCTAR=$SRC.tar.gz
+
+rm -r -f $SRC
+
+if [ ! -e ../../$SRCTAR ] ; then echo "Can't find ../../$SRCTAR" ; exit 1 ; fi
+
+cp ../../$SRCTAR .
+tar xvfz $SRCTAR
+mv evolvotron $SRC
+
+cd $SRC
+
+export DEBFULLNAME="Tim Day"
+
+dh_make -s -c gpl --email timday@bottlenose.demon.co.uk
+
+cd debian
+
+# Clean up not needed stuff
+rm -f README.Debian 
+rm -f dirs
+rm -f *.ex
+rm -f *.EX
+
+# Rewrite docs list
+# Don't use LICENSE because debian doesn't like it (provides copyright)
+cat <<EOF > docs
+README
+BUGS
+CHANGES
+TODO
+USAGE
+evolvotron.html
+EOF
+
+# Replace some files
+cp ../../control .
+cp ../../rules .
+cp ../../menu .
+
+# Edit copyright file
+sed -i 's!<fill in ftp site>!CVS repository at http://sourceforge.net/projects/evolvotron/!' copyright
+sed -i 's!Author(s):!Author!' copyright
+sed -i 's!<put author(s) name and email here>!Tim Day - timday@bottlenose.demon.co.uk!' copyright
+
+# Build the package
+
+cd ..
+dpkg-buildpackage -rfakeroot
+
+echo "***"
+echo "*** Now run 'lintian -i' on the .changes file" 
+echo "***"
+
+
+
+
+
+
+
+
