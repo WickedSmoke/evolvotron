@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2004 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -87,7 +87,7 @@ class FunctionNode
   /*! Return true on success, false on fail with reasons in report string.
     Mainly for use by derived FunctionBoilerplate template to avoid duplicate code proliferation.
    */
-  static const bool create_args(const FunctionNodeInfo* info,std::vector<FunctionNode*> args,std::string& report);
+  static const bool create_args(const FunctionNodeInfo* info,std::vector<FunctionNode*>& args,std::string& report);
 
  public:
 

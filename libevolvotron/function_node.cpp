@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2004 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -134,7 +134,7 @@ const bool FunctionNode::verify_info(const FunctionNodeInfo* info,unsigned int n
   return true;
 }
 
-const bool FunctionNode::create_args(const FunctionNodeInfo* info,std::vector<FunctionNode*> args,std::string& report)
+const bool FunctionNode::create_args(const FunctionNodeInfo* info,std::vector<FunctionNode*>& args,std::string& report)
 {
   for (std::vector<FunctionNodeInfo*>::const_iterator it=info->args().begin();it!=info->args().end();it++)
     {

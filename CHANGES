@@ -16,6 +16,7 @@ From release 0.2.3:
  - Fix buggy Y rotation matrix
  - Eliminate template-tastic Tuple and Matrix classes.
    Fix XYZ and Transform to not require them.
+ - evolvotron_mutate - -g option more likely to generate insteresting functions
 
 From release 0.2.2:
  - Version to 0.2.3

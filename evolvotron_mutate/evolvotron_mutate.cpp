@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2004 Tim Day
 /*! \page License License
 
 This program is free software; you can redistribute it and/or
@@ -66,8 +66,17 @@ int main(int argc,char* argv[])
 
   if (args.option("-g"))
     {
-      FunctionNode*const fn=FunctionNode::initial(mutation_parameters);
-      //! \todo Should obtain sinusoidalness from command line option.
+      
+      FunctionNode* fn=0;
+      do
+	{
+	  if (fn) delete fn;
+	  fn=FunctionNode::stub(mutation_parameters,true);
+	}
+      while (fn->is_constant());
+
+
+      //! \todo Should obtain sinusoidalness (2nd arg) from command line option.
       imagefn_out=new MutatableImage(fn,true);
     }
   else
