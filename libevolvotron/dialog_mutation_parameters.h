@@ -83,18 +83,6 @@ class DialogMutationParameters : public QDialog
   QSpinBox* _spinbox_substitute;
   //@}
 
-  //! Holder for slider decoration
-  //@{
-  QHBox* _hbox_proportion_constant;
-  QHBox* _hbox_identity_supression;
-  //@}
-
-  //! Slider for controlling indentity_supression
-  //@{
-  QSlider* _slider_proportion_constant;
-  QSlider* _slider_identity_supression;
-  //@}
-
   //@{
   //! Checkbox to supress certain function node types
   QCheckBox* _checkbox_iterative;
@@ -141,12 +129,6 @@ class DialogMutationParameters : public QDialog
   void changed_substitute(int v);
   //@}
   
-  //@{
-  //! Signalled by slider.
-  void changed_proportion_constant(int v);
-  void changed_identity_supression(int v);
-  //@}
-
   //@{
   //! Signalled by checkbox.
   void changed_iterative(int v);

@@ -47,6 +47,21 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
   QToolTip::add(_slider_target_branching_ratio,"The branching ratio is diluted to <1.0 to prevent new function-trees being infinitely large.");
   new QLabel("0.9",c0);
 
+  QGroupBox* c1=new QGroupBox(3,Qt::Horizontal,"Dilution by constant nodes",_vbox);
+  new QLabel("0.0",c1);
+  _slider_proportion_constant=new QSlider(0,100,1,50,Qt::Horizontal,c1);
+  new QLabel("1.0",c1);
+  QToolTip::add(_slider_proportion_constant,"This specifies the proportion of diluting nodes which will be constant.");
+
+  QGroupBox* c2=new QGroupBox(3,Qt::Horizontal,"Dilution by transforming nodes",_vbox);
+  new QLabel("0.0",c2);
+  _slider_identity_supression=new QSlider(0,100,1,50,Qt::Horizontal,c2);
+  QToolTip::add(_slider_identity_supression,"This specifies the proportion of non-constant diluting nodes which will be transforms (c.f identity nodes).");
+  new QLabel("1.0",c2);
+  
+  QLabel* pad=new QLabel(_vbox);
+  _vbox->setStretchFactor(pad,1);
+
   setup_from_mutation_parameters();
 
   _ok=new QPushButton("OK",_vbox);
@@ -60,6 +75,17 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
           _ok,SIGNAL(clicked()),
           this,SLOT(hide())
           );
+
+  connect(
+	  _slider_proportion_constant,SIGNAL(valueChanged(int)),
+	  this,SLOT(changed_proportion_constant(int))
+	  );
+  connect(
+	  _slider_identity_supression,SIGNAL(valueChanged(int)),
+	  this,SLOT(changed_identity_supression(int))
+	  );
+
+
 }
 
 DialogFunctions::~DialogFunctions()
@@ -83,8 +109,11 @@ void DialogFunctions::setup_from_mutation_parameters()
   _branching_ratio->setText(msg.str().c_str());
 
   _slider_target_branching_ratio->setValue(static_cast<int>(100.0f*br+0.5f));
-}
 
+  _slider_proportion_constant->setValue(static_cast<int>(0.5f+100.0f*_mutation_parameters->proportion_constant()));
+  _slider_identity_supression->setValue(static_cast<int>(0.5f+100.0f*_mutation_parameters->identity_supression()));
+
+}
 
 void DialogFunctions::changed_target_branching_ratio(int v)
 {
@@ -104,3 +133,14 @@ void DialogFunctions::changed_target_branching_ratio(int v)
 
   setup_from_mutation_parameters();
 }
+
+void DialogFunctions::changed_proportion_constant(int v)
+{
+  _mutation_parameters->proportion_constant(v/100.0f);
+}
+
+void DialogFunctions::changed_identity_supression(int v)
+{
+  _mutation_parameters->identity_supression(v/100.0f);
+}
+

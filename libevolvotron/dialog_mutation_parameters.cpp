@@ -83,20 +83,6 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   _spinbox_substitute->setSuffix(QString("/%1").arg(_scale));
   QToolTip::add(_spinbox_substitute,"Probability of function node's type being changed");
 
-  new QLabel("Proportion constant",_grid_parameters);
-  _hbox_proportion_constant=new QHBox(_grid_parameters);
-  new QLabel("0.0",_hbox_proportion_constant);
-  _slider_proportion_constant=new QSlider(0,100,10,50,Qt::Horizontal,_hbox_proportion_constant);
-  QToolTip::add(_slider_proportion_constant,"Probability of most basic function node being a constant value");
-  new QLabel("1.0",_hbox_proportion_constant);
-  
-  new QLabel("Identity supression",_grid_parameters);
-  _hbox_identity_supression=new QHBox(_grid_parameters);
-  new QLabel("0.0",_hbox_identity_supression);
-  _slider_identity_supression=new QSlider(0,100,10,50,Qt::Horizontal,_hbox_identity_supression);
-  QToolTip::add(_slider_identity_supression,"Probability of identity node including transform parameters");
-  new QLabel("1.0",_hbox_identity_supression);
-
   _checkbox_iterative=new QCheckBox("Allow iterative nodes",_vbox);
   _checkbox_fractal  =new QCheckBox("Allow fractal nodes",_vbox);
 
@@ -113,9 +99,6 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   connect(_spinbox_insert,SIGNAL(valueChanged(int)),this,SLOT(changed_insert(int)));
   connect(_spinbox_substitute,SIGNAL(valueChanged(int)),this,SLOT(changed_substitute(int)));
  
-  connect(_slider_proportion_constant,SIGNAL(valueChanged(int)),this,SLOT(changed_proportion_constant(int)));
-  connect(_slider_identity_supression,SIGNAL(valueChanged(int)),this,SLOT(changed_identity_supression(int)));
-
   connect(_checkbox_iterative,SIGNAL(stateChanged(int)),this,SLOT(changed_iterative(int)));
   connect(_checkbox_fractal  ,SIGNAL(stateChanged(int)),this,SLOT(changed_fractal(int)));
 
@@ -144,9 +127,6 @@ void DialogMutationParameters::setup_from_mutation_parameters()
   _spinbox_shuffle   ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_shuffle()));
   _spinbox_insert    ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_insert()));
   _spinbox_substitute->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_substitute()));
-
-  _slider_proportion_constant->setValue(static_cast<int>(0.5+100*_mutation_parameters->proportion_constant()));
-  _slider_identity_supression->setValue(static_cast<int>(0.5+100*_mutation_parameters->identity_supression()));
 
   parameters_changed();
 }
@@ -197,7 +177,6 @@ void DialogMutationParameters::shield()
   _spinbox_substitute->stepDown();
 }
 
-
 void DialogMutationParameters::changed_magnitude(int v)
 {
   _mutation_parameters->magnitude(v/static_cast<float>(_scale));
@@ -225,18 +204,6 @@ void DialogMutationParameters::changed_insert(int v)
 void DialogMutationParameters::changed_substitute(int v)
 {
   _mutation_parameters->probability_substitute(v/static_cast<float>(_scale));
-  parameters_changed();
-}
-
-void DialogMutationParameters::changed_proportion_constant(int v)
-{
-  _mutation_parameters->proportion_constant(v/100.0f);
-  parameters_changed();
-}
-
-void DialogMutationParameters::changed_identity_supression(int v)
-{
-  _mutation_parameters->identity_supression(v/100.0f);
   parameters_changed();
 }
 

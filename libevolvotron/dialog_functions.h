@@ -85,7 +85,13 @@ class DialogFunctions : public QDialog
   void setup_from_mutation_parameters();
 
  protected slots:
+   
+   //@{
+   //! Signalled by slider.
    void changed_target_branching_ratio(int v);
+   void changed_proportion_constant(int v);
+   void changed_identity_supression(int v);
+   //@}
 };
 
 #endif
