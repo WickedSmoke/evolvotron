@@ -247,7 +247,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   // We want to use a checkmark on some items
   _popupmenu_settings->setCheckable(true);
 
-  _popupmenu_settings->insertItem("&Mutation parameters...",_dialog_mutation_parameters,SLOT(show()));
+  _popupmenu_settings->insertItem("Mutation &parameters...",_dialog_mutation_parameters,SLOT(show()));
 
 #ifdef FULLSCREEN
   _popupmenu_settings->insertSeparator();
@@ -259,7 +259,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _popupmenu_settings->setItemChecked(_menu_item_number_hide_menu,start_menuhidden);
 #endif //FULLSCREEN
 
-  _menubar->insertItem("&Settings",_popupmenu_settings);
+  _menubar->insertItem("Se&ttings",_popupmenu_settings);
 
   //! This doesn't seem to do anything (supposed to push help menu over to far end ?)
   _menubar->insertSeparator();
