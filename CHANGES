@@ -6,7 +6,7 @@ From release 0.0.4
  - Release tar files now unpack to a ./evolvotron directory
  - More "Big" size options
  - Spawn warped offers more specific controls (zoom/pan/rotate)
- - Middle button pan adjustment (EXPERIMENTAL)
+ - Middle button pan & zoom/scale adjustment (EXPERIMENTAL)
 
 From release 0.0.3:
  - Bump version to 0.0.4

@@ -174,12 +174,6 @@ class EvolvotronMain : public QMainWindow
   TransformFactory* _transform_factory;
 
   //! Accessor.
-  History& history()
-    {
-      return _history;
-    }
-
-  //! Accessor.
   const MutatableImageNode*const last_spawned_image() const
     {
       return _last_spawned_image;
@@ -238,6 +232,12 @@ class EvolvotronMain : public QMainWindow
   MutatableImageComputerFarm*const farm()
     {
       return _farm;
+    }
+
+  //! Accessor.
+  History& history()
+    {
+      return _history;
     }
 
   //! Called by History when performing undo.

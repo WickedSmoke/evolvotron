@@ -266,8 +266,14 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
     }
   else if (event->button()==MidButton)
     {
+      // Take a snapshot to undo back to.
+      main()->history().begin_action();
+      main()->history().replacing(this);
+      main()->history().end_action();
+
+      _mid_button_adjust_start_pos=event->pos();
       _mid_button_adjust_last_pos=event->pos();
-      std::cerr << "\n";
+
     }
   else if (_full_functionality && event->button()==LeftButton)
     {
@@ -277,21 +283,44 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
 
 void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 {
-  if (event->state()==MidButton)
+  if (event->state()&MidButton)
     {
       const QPoint pixel_delta(event->pos()-_mid_button_adjust_last_pos);
       
-      std::cerr << "[" << pixel_delta.x() << "," << pixel_delta.y() << "]";
-
-      _mid_button_adjust_last_pos=event->pos();
-
-      XYZ translate(
-		    (-2.0f*pixel_delta.x())/image_size().width(),
-		    ( 2.0f*pixel_delta.y())/image_size().height(),
-		    0.0f
-		    );
+      // Build the transform caused by the adjustment
       Transform transform;
-      transform.translate(translate);
+
+      // Shift button is zoom
+      if (event->state()&ShiftButton)
+	{
+	  // Only scale in non-degenerate cases
+	  if (
+	      event->pos().x()!=image_size().width()/2
+	      && event->pos().y()!=image_size().height()/2
+	      && _mid_button_adjust_last_pos.x()!=image_size().width()/2
+	      && _mid_button_adjust_last_pos.y()!=image_size().height()/2
+	      )
+	    {
+	      XYZ scale(
+			(event->pos().x()-image_size().width() /2) / static_cast<float>(_mid_button_adjust_last_pos.x()-image_size().width() /2),
+			(event->pos().y()-image_size().height()/2) / static_cast<float>(_mid_button_adjust_last_pos.y()-image_size().height()/2),
+			0.0f
+			);
+	      
+	      transform.basis_x(XYZ(1.0f/scale.x(),          0.0f,0.0f));
+	      transform.basis_y(XYZ(          0.0f,1.0f/scale.y(),0.0f));
+	    }
+	}
+      // Default is panning around
+      else
+	{
+	  XYZ translate(
+			(-2.0f*pixel_delta.x())/image_size().width(),
+			( 2.0f*pixel_delta.y())/image_size().height(),
+			0.0f
+			);
+	  transform.translate(translate);
+	}
 
       MutatableImageNode* new_image;
       if (image()->is_a_MutatableImageNodeTransformWrapper())
@@ -311,7 +340,12 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	  args.push_back(image()->deepclone());
 	  new_image=new MutatableImageNodeTransformWrapper(args,transform);
 	}
+
+      // Install new image (triggers recompute)
       image(new_image);
+
+      // Finally, record position of this event as last event
+      _mid_button_adjust_last_pos=event->pos();
     }
 }
 

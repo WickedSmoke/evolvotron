@@ -67,3 +67,5 @@
     Concatenate the 2 images.
 - Compute volumes in Z direction.
   Use time as z co-ordinate.
+- No low-res images option for when using remotely over slow link
+  (they take longer to display than compute).

@@ -99,14 +99,12 @@ A Mandrake user reports nothing happens at all.
 It's probably easier to just copy it yourself
 (it's not like it's installing a whole load of supporting files or anything complex).
 
-USAGE
-=====
-You will need a fast machine, or patience.
+USAGE & INTERFACE
+=================
 
-Command line options:
-  -geometry <width>x<height> : usual Qt/X option to set on-screen size in pixels
-  -g <rows> <cols> : sets number of image display cells (defaults 8 by 6)
-  -t <threads> : sets number of compute threads (defaults to 2)
+BASICS
+------
+You will need a fast machine, or patience.
 
 On starting the app, a grid of images is displayed.
 (For some reason the default is quite small: you'll 
@@ -126,6 +124,14 @@ escape to a more interesting area.  You can always reset/restart from the
 "File" menu (the difference is that "reset" also resets the mutation
 parameters to their default values).
 
+COMMAND LINE OPTIONS
+--------------------
+  -geometry <width>x<height> : usual Qt/X option to set on-screen size in pixels
+  -g <rows> <cols> : sets number of image display cells (defaults 8 by 6)
+  -t <threads> : sets number of compute threads (defaults to 2)
+
+RIGHT-CLICK CONTEXT MENU
+------------------------
 Right clicking on an image gets you a few more options:
  - "Respawn" regenerates just the current image from whatever it was
    spawned from (and using recolour or warp, if that's what was used
@@ -148,27 +154,49 @@ Right clicking on an image gets you a few more options:
    you get in the file.  Note that the save won't be allowed until the
    full resolution image has been generated.
 
-You can use the middle mouse button to drag an image around (useful
-for centering the most interesting feature of an image).  It also works
-on "Big" images, although it's pretty unusable.
+MIDDLE MOUSE BUTTON
+-------------------
+You can use the middle mouse button to adjust the panning & scaling of
+n individual image. (Useful for "final composition" type tweaks, e.g
+centering an image's most interesting feature).
+It also works on "Big" images, although it's pretty unusable without
+a bit of practice on smaller, faster ones (just boldly make the adjustment
+you want, release the button... and wait).
 
+Changes made can be rolled-back on the main Edit->Undo menu item,
+one drag-action at a time.
+
+An unmodified middle-mouse drag pans the image around following the mouse motion.
+
+A SHIFT-middle drag scales the image so that the part of the image you clicked
+on follows the mouse.  Scaling may be different in X and Y.  Warning: this
+technique is very sensitive and can be quite tricky to use!  In particular,
+if you initially click near the centre axes of the image the zoom factor
+can be HUGE, so the best way to start using this is to click about halfway
+on a diagonal between the image centre and a corner and gently move in and
+out radially.  Dragging from one side of the image to the other flips it over
+(the degenerate case of infinite zoom at the centre is handled cleanly I think).
+If it all goes horribly wrong, undo and try again.
+
+MAIN MENU BAR
+-------------
 On the application's main menu-bar, the Edit menu lets you undo
-previous full-grid spawns (there is a large but limited number
-of levels of undo; note that locking is overriden), and bring
+previous full-grid spawns and middle-button adjustments.
+There is a large but limited number of levels of undo; note that
+locking is overriden, and that locking/unlocking a display is
+not currently recorded in the undo history), and bring
 up a dialog to modify the mutation parameters (see "useful tips"
 and "advanced usage" below).
 
+STATUS BAR
+----------
 An area on the status bar shows how many "tasks" are outstanding.  
 Each "task" is the recomputation of an image at some resolution.
 Tasks are prioritised by their number of pixels  (small image =>higher
-priority).  This is why, if the main grid is still recomputing, a "big" 
-image  will appear to freeze after it has reached a certain resolution, 
-at least until other lower resolution tasks have completed. 
-
-Currently the software runs 2 compute threads by default so those of 
-you lucky enough to have dual processor machines should see some 
-benefit (or see it deadlock :^)... Be warned that I haven't had 
-an opportunity to test it on more than a single processor.  
+priority).  This is why, if the main grid is still recomputing,
+recalculationa of a "big" image will appear to freeze after it
+has reached a certain resolution, at least until other lower
+resolution tasks have completed. 
 
 TIPS
 ====
@@ -178,7 +206,13 @@ TIPS
   immediately catches my eye as they start appearing.  If you stop
   to think about it too much things seem to go downhill.
 - If you seem to be just getting the same old spirals all the time,
-  stop clicking on spirals!
+  stop clicking on spirals!  (The same goes for random mush).
+- Don't get too hung up on using the warp and middle-mouse drag
+  adjustments every iteration... use those tools for final
+  polishing of your composition.
+- You can quickly cycle through a lot of initial images (until
+  you find one with real potential) by bashing on the menu accelerator
+  keys Alt+F,Alt+R to repeatedly restart.
 
 ADVANCED USAGE
 ==============

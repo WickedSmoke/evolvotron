@@ -107,6 +107,9 @@ class MutatableImageDisplay : public QWidget
   uint _menu_big_item_number_4096x4096;
   //@}
 
+  //! Coordinate of mouse event which started mid-button adjustment
+  QPoint _mid_button_adjust_start_pos;
+
   //! Coordinate of last mouse event when mid-button adjusting
   QPoint _mid_button_adjust_last_pos;
 
