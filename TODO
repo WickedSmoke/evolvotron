@@ -1,3 +1,6 @@
+- Make files unpack to subdirectory.
+- Should be a single position transform under user control attached to top level of every image.
+  Use to zoom in/out, rotate/translate etc repeatedly without accumulating loads of extra nodes.
 - Add control over MutatableImageNodePositionTransformedQuadratic vs MutatableImageNodePositionTransformed proportions
   (part of rationalising all of function selection)
 - Warp should maybe scale differently in different directions.
