@@ -1,13 +1,10 @@
 Known bugs:
 
-  - Undo doesn't work properly for much except undoing an immediately previous Spawn or drag-adjust.
+  - Undo doesn't always work how you'd expect
     (e.g undoing a single-image respawn undoes too much).
 
   - Undo and lock don't interact well.
     (So need to make lock a property of images, not displays).
-
-  - Undo a drag on a big image doesn't do anything if the big image is gone
-    (closing the window should purge history ?)
 
   - Recolour behaves strangely sometimes (?)
     (e.g spawns all-black images or subtly warped images)

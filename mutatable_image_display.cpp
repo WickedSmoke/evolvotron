@@ -101,22 +101,23 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       _menu_item_number_lock =_menu->insertItem("&Lock",this,SLOT(menupick_lock()));
 
       _menu->insertSeparator();
-
-      _menu_big=new QPopupMenu(this);
-      _menu_big->insertItem("&Resizable",this,SLOT(menupick_big_resizable()));
-      _menu_big->insertSeparator();
-      _menu_big->insertItem("&512x512",this,SLOT(menupick_big_512x512()));
-      _menu_big->insertItem("&1024x1024",this,SLOT(menupick_big_1024x1024()));
-      _menu_big->insertItem("&2048x2048",this,SLOT(menupick_big_2048x2048()));
-      _menu_big->insertItem("&4096x4096",this,SLOT(menupick_big_4096x4096()));
-      _menu_big->insertSeparator();
-      _menu_big->insertItem("640x&480",this,SLOT(menupick_big_640x480()));
-      _menu_big->insertItem("1024x&768",this,SLOT(menupick_big_1024x768()));
-      _menu_big->insertItem("1280x&960",this,SLOT(menupick_big_1280x960()));
-      _menu_big->insertItem("1&600x1200",this,SLOT(menupick_big_1600x1200()));
-
-      _menu->insertItem("&Big",_menu_big);
     }
+  
+  _menu_big=new QPopupMenu(this);
+  _menu_big->insertItem("&Resizable",this,SLOT(menupick_big_resizable()));
+  _menu_big->insertSeparator();
+  _menu_big->insertItem("&256x256",this,SLOT(menupick_big_256x256()));
+  _menu_big->insertItem("&512x512",this,SLOT(menupick_big_512x512()));
+  _menu_big->insertItem("&1024x1024",this,SLOT(menupick_big_1024x1024()));
+  _menu_big->insertItem("&2048x2048",this,SLOT(menupick_big_2048x2048()));
+  _menu_big->insertItem("&4096x4096",this,SLOT(menupick_big_4096x4096()));
+  _menu_big->insertSeparator();
+  _menu_big->insertItem("640x&480",this,SLOT(menupick_big_640x480()));
+  _menu_big->insertItem("1024x&768",this,SLOT(menupick_big_1024x768()));
+  _menu_big->insertItem("1280x&960",this,SLOT(menupick_big_1280x960()));
+  _menu_big->insertItem("1&600x1200",this,SLOT(menupick_big_1600x1200()));
+
+  _menu->insertItem("&Big",_menu_big);
 
   _menu->insertItem("&Save",this,SLOT(menupick_save()));
 
@@ -132,8 +133,13 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
  */
 MutatableImageDisplay::~MutatableImageDisplay()
 {
-  main()->farm()->abort_for(this);
-  main()->goodbye(this);
+  // During app shutdown EvolvotronMain might have already been destroyed so only call it if it's there.
+  // Don't use main() because it asserts non-null.
+  if (_main)
+    {
+      main()->farm()->abort_for(this);
+      main()->goodbye(this);
+    }
   delete _image;
   delete _offscreen_buffer;
   delete _offscreen_image;
@@ -267,13 +273,12 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
   else if (event->button()==MidButton)
     {
       // Take a snapshot to undo back to.
-      main()->history().begin_action();
+      main()->history().begin_action("middle-button drag");
       main()->history().replacing(this);
       main()->history().end_action();
 
       _mid_button_adjust_start_pos=event->pos();
       _mid_button_adjust_last_pos=event->pos();
-
     }
   else if (_full_functionality && event->button()==LeftButton)
     {
@@ -290,28 +295,93 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
       // Build the transform caused by the adjustment
       Transform transform;
 
-      // Shift button is zoom
-      if (event->state()&ShiftButton)
+      // Shift button (no ctrl) is various zooms
+      if (event->state()&ShiftButton && !(event->state()&ControlButton))
 	{
-	  // Only scale in non-degenerate cases
-	  if (
-	      event->pos().x()!=image_size().width()/2
-	      && event->pos().y()!=image_size().height()/2
-	      && _mid_button_adjust_last_pos.x()!=image_size().width()/2
-	      && _mid_button_adjust_last_pos.y()!=image_size().height()/2
-	      )
+	  // Alt-Shift is anisotropic
+	  if (event->state()&AltButton)
 	    {
-	      XYZ scale(
-			(event->pos().x()-image_size().width() /2) / static_cast<float>(_mid_button_adjust_last_pos.x()-image_size().width() /2),
-			(event->pos().y()-image_size().height()/2) / static_cast<float>(_mid_button_adjust_last_pos.y()-image_size().height()/2),
-			0.0f
-			);
+	      // Only scale in non-degenerate cases
+	      if (
+		  event->pos().x()!=image_size().width()/2
+		  && event->pos().y()!=image_size().height()/2
+		  && _mid_button_adjust_last_pos.x()!=image_size().width()/2
+		  && _mid_button_adjust_last_pos.y()!=image_size().height()/2
+		  )
+		{
+		  XYZ scale(
+			    (event->pos().x()-image_size().width() /2) / static_cast<float>(_mid_button_adjust_last_pos.x()-image_size().width() /2),
+			    (event->pos().y()-image_size().height()/2) / static_cast<float>(_mid_button_adjust_last_pos.y()-image_size().height()/2),
+			    0.0f
+			    );
 	      
-	      transform.basis_x(XYZ(1.0f/scale.x(),          0.0f,0.0f));
-	      transform.basis_y(XYZ(          0.0f,1.0f/scale.y(),0.0f));
+		  transform.basis_x(XYZ(1.0f/scale.x(),          0.0f,0.0f));
+		  transform.basis_y(XYZ(          0.0f,1.0f/scale.y(),0.0f));
+		}
+	    }
+	  // Shift button alone is isotropic zoom
+	  else 
+	    {
+	      const float cx=image_size().width()/2.0f;
+	      const float cy=image_size().width()/2.0f;
+
+	      const float dx=event->pos().x()-cx;
+	      const float dy=event->pos().y()-cy;
+	      
+	      const float last_dx=_mid_button_adjust_last_pos.x()-cx;
+	      const float last_dy=_mid_button_adjust_last_pos.y()-cy;
+
+	      const float radius=sqrt(dx*dx+dy*dy);
+	      const float last_radius=sqrt(last_dx*last_dx+last_dy*last_dy);
+
+	      // Only scale in non-degenerate cases
+	      if (radius!=0.0f && last_radius!=0.0f)
+		{
+		  const float scale=radius/last_radius;
+		  transform.basis_x(XYZ(1.0f/scale,          0.0f,0.0f));
+		  transform.basis_y(XYZ(      0.0f,1.0f/scale,0.0f));
+		}
 	    }
 	}
-      // Default is panning around
+      else if (event->state()&ControlButton)
+	{
+	  // Control-alt is shear
+	  if (event->state()&AltButton)
+	    {
+	      const float cx=image_size().width()/2.0f;
+	      const float cy=image_size().width()/2.0f;
+
+	      const float dx=(event->pos().x()-_mid_button_adjust_last_pos.x())/cx;
+	      const float dy=(event->pos().y()-_mid_button_adjust_last_pos.y())/cy;
+	      
+	      transform.basis_x(XYZ(1.0f, -dy,0.0f));
+	      transform.basis_y(XYZ(  dx,1.0f,0.0f));
+	    }
+	  // Control button only is rotate
+	  else
+	    {
+	      const float cx=image_size().width()/2.0f;
+	      const float cy=image_size().width()/2.0f;
+	      
+	      const float dx=event->pos().x()-cx;
+	      const float dy=event->pos().y()-cy;
+	      
+	      const float last_dx=_mid_button_adjust_last_pos.x()-cx;
+	      const float last_dy=_mid_button_adjust_last_pos.y()-cy;
+	      
+	      const float a=atan2(dy,dx);
+	      const float last_a=atan2(last_dy,last_dx);
+	  
+	      const float rot=a-last_a;
+	  
+	      const float sr=sin(rot);
+	      const float cr=cos(rot);
+
+	      transform.basis_x(XYZ( cr,sr,0.0f));
+	      transform.basis_y(XYZ(-sr,cr,0.0f));
+	    }
+	}
+      // Default (no interesting modifier keys detected) is panning around
       else
 	{
 	  XYZ translate(
@@ -499,6 +569,11 @@ void MutatableImageDisplay::menupick_big_1600x1200()
   spawn_big(true,QSize(1600,1200));
 }
 
+void MutatableImageDisplay::menupick_big_256x256()
+{
+  spawn_big(true,QSize(256,256));
+}
+
 void MutatableImageDisplay::menupick_big_512x512()
 {
   spawn_big(true,QSize(512,512));
@@ -543,7 +618,9 @@ void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
       top_level_widget=display;
     }
   
-  top_level_widget->resize(512,512);
+  //Used to the size explicitly here, but it seems to work better without
+  //top_level_widget->resize(512,512);
+
   top_level_widget->show();
       
   display->image(_image->deepclone());

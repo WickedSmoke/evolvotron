@@ -44,7 +44,7 @@ class MutatableImageDisplay : public QWidget
 
  protected:
   //! Pointer back to the application object to access services.
-  EvolvotronMain*const _main;
+  EvolvotronMain* _main;
 
   //! Flag for whether context menu should display all options.
   bool _full_functionality;
@@ -101,6 +101,7 @@ class MutatableImageDisplay : public QWidget
   uint _menu_big_item_number_1024x768;
   uint _menu_big_item_number_1280x960;
   uint _menu_big_item_number_1600x1200;
+  uint _menu_big_item_number_256x256;
   uint _menu_big_item_number_512x512;
   uint _menu_big_item_number_1024x1024;
   uint _menu_big_item_number_2048x2048;
@@ -135,7 +136,14 @@ class MutatableImageDisplay : public QWidget
   //! Accessor.
   EvolvotronMain*const main() const
     {
+      assert(_main!=0);
       return _main;
+    }
+
+  //! Accessor.
+  void main(EvolvotronMain* m)
+    {
+      _main=m;
     }
 
   //! Accessor.
@@ -209,6 +217,9 @@ class MutatableImageDisplay : public QWidget
 
   //! Called from "Big" submenu of context menu.
   void menupick_big_resizable();
+
+  //! Called from "Big" submenu of context menu.
+  void menupick_big_256x256();
 
   //! Called from "Big" submenu of context menu.
   void menupick_big_512x512();

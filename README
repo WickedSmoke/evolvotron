@@ -163,27 +163,42 @@ Right clicking on an image gets you a few more options:
 
 MIDDLE MOUSE BUTTON
 -------------------
-You can use the middle mouse button to adjust the panning & scaling of
-n individual image. (Useful for "final composition" type tweaks, e.g
-centering an image's most interesting feature).
-It also works on "Big" images, although it's pretty unusable without
+[NB This feature will probably only be usable by those with multi-GHz machines].
+
+You can use the middle mouse button to drag-adjust individual images.
+This is useful for "final composition" type tweaks, e.g centering an
+image's most interesting feature, or just for satisfying your curiosity 
+about what's off the edge of the image.
+
+It also works on "Big" images, although it's virtually unusable without
 a bit of practice on smaller, faster ones (just boldly make the adjustment
 you want, release the button... and wait).
 
 Changes made can be rolled-back on the main Edit->Undo menu item,
 one drag-action at a time.
 
-An unmodified middle-mouse drag pans the image around following the mouse motion.
+An unmodified middle-mouse drag pans the image around following
+the mouse motion.
 
-A SHIFT-middle drag scales the image so that the part of the image you clicked
-on follows the mouse.  Scaling may be different in X and Y.  Warning: this
-technique is very sensitive and can be quite tricky to use!  In particular,
+A SHIFT-middle drag zooms the image in and out with scaling
+proportional to the distance from the centre of the image.  Beware of
+generating huge zooms by clicking too near the centre of the image.
+
+An ALT-SHIFT-middle drag is similar but anisotropic: the scaling
+may be different in X and Y.  Warning: this technique is very
+sensitive and can be quite tricky to use!  In particular,
 if you initially click near the centre axes of the image the zoom factor
 can be HUGE, so the best way to start using this is to click about halfway
 on a diagonal between the image centre and a corner and gently move in and
 out radially.  Dragging from one side of the image to the other flips it over
 (the degenerate case of infinite zoom at the centre is handled cleanly I think).
 If it all goes horribly wrong, undo and try again.
+
+A CTRL-middle drag rotates the image about its centre.
+
+A CTRL-ALT-middle drag shears the image (the best way to see what this does
+is to click in the corner of an image and move the mouse horizontally or
+vertically).
 
 MAIN MENU BAR
 -------------
@@ -216,10 +231,10 @@ TIPS
   stop clicking on spirals!  (The same goes for random mush).
 - Don't get too hung up on using the warp and middle-mouse drag
   adjustments every iteration... use those tools for final
-  polishing of your composition.
+  polishing of your masterpiece.
 - You can quickly cycle through a lot of initial images (until
-  you find one with real potential) by bashing on the menu accelerator
-  keys Alt+F,Alt+R to repeatedly restart.
+  you find one with real potential) by bashing on the menu
+  accelerator keys Alt+F,Alt+R to repeatedly restart.
 
 ADVANCED USAGE
 ==============
@@ -235,9 +250,9 @@ be fuction nodes.)  Evolvotron's nodes tend to correspond to
 geometric or colour-space operations or anything else which can be
 applied to a 3D vector.
 
-By mutating the structure of the function tree (including adding
-random branches) and the values of the constant embedded within it, the
-image can be changed.
+By mutating the structure of the function tree (adding random
+branches, for example) and the values of the constant embedded
+within it, the image can be changed.
 
 The mutation parameters are under control from the dialog accessible via the
 Edit->Mutation Parameters... menu, and also from buttons on the status bar).
@@ -284,6 +299,10 @@ function which are disabled by default.  These are "iterative" functions and
 for their being optional is that, in the former case they're expensive, and
 in the latter case they're expensive and ugly.  Note that if fractal functions
 are enabled, then iterative functions are enabled too.
+
+FUTURE DEVELOPMENTS
+===================
+Please check the TODO file before you send me email!
 
 BUILDING CODE DOCUMENTATION
 ===========================

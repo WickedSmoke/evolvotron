@@ -1,12 +1,17 @@
 [Most recent at top]
 
 From release 0.0.4
- - Bump version to "development for 0.0.5" ***CHANGE FOR RELEASE***
- - configure script changed to sh from csh
+ - Bump version to "development for 0.0.5" ***CHANGE FOR RELEASE*** also .pro file to release
+ - configure script #!/bin/* changed to sh from csh
  - Release tar files now unpack to a ./evolvotron directory
  - More "Big" size options
+ - Big image can create big images
+ - Big image's initial window size decided by Qt
  - Spawn warped offers more specific controls (zoom/pan/rotate)
- - Middle button pan & zoom/scale adjustment (EXPERIMENTAL)
+ - Middle mouse button does stuff (pan/zoom/rotate/shear)
+ - Undo menu entry describes type of action which will be undone
+ - Closing a big image cleans up undo history appropriately
+ - Bug with assumed EvolotronMain/MutableImageDisplay destructor order fixed.
 
 From release 0.0.3:
  - Bump version to 0.0.4

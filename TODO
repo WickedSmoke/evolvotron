@@ -1,31 +1,44 @@
-- Big images should be able to create Big images.
-- Shift middle mouse drag should be safer
-  (compute zoom using radial motion only)
-- Use shift-alt for unsafe zoom
-- Use ctrl for rotate
+Proximity to one end or the other of this list does not necessarily
+imply it will be done sooner or later than other items!
+
 - Load/save to XML file.
+- Locked attribute should be an image property, not a display property.
+  (Would play nicer with Undo)
+- Create registry of all function node types
+  - use to bring up a panel for setting relative frequencies (check for exploding branching ratios)
+  - Allow iterative/allow fractal would then become convenience buttons for quick-setting a whole group of frequencies
+- Undo needs to save more state to work properly (e.g state for respawn)
+- Have a function type which can suck in random images from directories of images
+  (specify by environmental variable ?)
+- Optimise drag: just recompute new area (needs image subregions for tasks).
+- Option (default on) to automatitcally respawn boring constant images as soon
+  as they've been computed to a certain resolution.
 - Pure command line tools to mutate a saved file (generates more xml files from an xml file)
   and render a saved file (generates image file from an xml file).
 - Web front end to command line tools to run an evolvotron web-server.
 - Command line option for border around images... indicate locked status.
-- Maybe add "view" menu: like warp but just applying to current image
-  (would need explicit control over amounts: maybe above approach better ?).
+- Maybe add "view" menu: like warp but just applying to current image (like drag)
+  (would need explicit control over amounts: maybe drag approach better ?).
 - Last method used should point to an object encapsulating the behaviour
   (so warp spawn method can encapsulate a transform factory).
   Needed for breeding behaviour (so can keep 2 last images).
 - Undo needs to restore _last_spawned too (but do above first and keep hisory of spawn methods).
+- Combining/breeding image pairs.
+  Use drag-and-drop
+  Either:
+    Create a new top level node with 2 or more args and add the parents to it.
+    Create a new random stub and insert the parents at random points.
+    Insert one image at a random point into the other.
+    Concatenate the 2 images.
 - Generalise "parameters" along with "args".
 - Add control over MutatableImageNodePositionTransformedQuadratic vs MutatableImageNodePositionTransformed proportions
-  (part of rationalising all of function selection)
+  (do as part of rationalising all of function selection)
 - Non-isotropic scaling & shear warp options.
 - Command line option to enable/disable fractal and iterative types.
-- Replace "Lock" with a "save" or "put-aside" window (could make history/undo simpler).
+- Replace/augment "Lock" with a "save" or "put-aside" window (could make history/undo simpler).
 - "Unlock all" on edit menu
 - More iterative functions (e.g average along a segment between two co-ordinates).
 - More functions (reflection from environment, Perlin noise).
-- Create registry of all function node types
-  - use to bring up a panel for setting relative frequencies (check for exploding branching ratios)
-  - Allow iterative/allow fractal would then become convenience buttons for quick-setting a whole group of frequencies
 - Reset & Restart should bring up modal "are you sure" dialog box which can also contain check boxes for what to reset:
     mutation parameters
     function freqencies (when implemented)
@@ -33,7 +46,7 @@
 - Quit should bring up "are you sure" dialog.
 - Option to increase number of iterations of certain types of iterative node in an image (i.e "accuracy")
   (probably makes sense for Mandelbrot/Julia or a sampling blur where it just increases the detail, 
-  but less useful for repeated function map).
+  but less useful for repeated function mapping).
 - "Move all locked to start" on edit menu
   (or move them to a "safe area", or save them in reloadable form).
 - Save whole grid as a single image (from File menu).
@@ -47,8 +60,6 @@
 - Computing zero co-ordinate sometimes gives unusual output (black lines across images).
   Avoid by jittering co-ordinate (would break up jaggies), or just avoid exact zero ?
 - Why stop at screen resolution ? Antialiasing by supersampling.
-- Have a function type which can suck in random images from directories of images
-  (specify by environmental variable ?)
 - Separate tool (?) to evolve images towards a given image.
   How close would it get and how quickly ?  
   Would the process of getting there be interesting (e.g as an animation) ?
@@ -61,18 +72,10 @@
 - Heat/cool etc should act in proportion to current values
   (probably wanted for autocool).
 - Evolve other things e.g parameters of celluar automata/reaction diffusion equations/iterated function systems.
-- Maybe lock status of a display should be stored in undo history too.
 - Rationalise MutatableImageNode::stub so more work is done by Node constructors
   (just pass in a MutationParameters).  Have to keep existing ctor. form for deepclone though.
 - Special reset which uses iterative types to set up nothing but Mandelbrot/Julia-set type functions.
 - Avoid misleading moire patterns by jittering
-- Combining/breeding image pairs.
-  Use drag-and-drop
-  Either:
-    Create a new top level node with 2 or more args and add the parents to it.
-    Create a new random stub and insert the parents at random points.
-    Insert one image at a random point into the other.
-    Concatenate the 2 images.
 - Compute volumes in Z direction.
   Oscillate z co-ordinate with time.
 - No low-res images option for when using remotely via X11 over slow link

@@ -67,10 +67,10 @@ class EvolvotronMain : public QMainWindow
       //! Pointer to main app.
       EvolvotronMain*const _main;
 
-      //! Each deque slot contains the collection of display-image pairs replaced by an single action.
-      /*! We use a stack rather than a deque because we want to clean up the tail end (limited number of Undos).
+      //! Each deque slot contains the collection of display-image pairs replaced by an single action (and a string naming that action).
+      /*! We use a deque rather than a stack because we want to clean up the tail end (limited number of Undos).
        */
-      std::deque<std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> > > _history;
+      std::deque<std::pair<std::string,std::vector<std::pair<MutatableImageDisplay*,MutatableImageNode*> > > > _history;
 
       //! Number of slots retained for history.
       uint max_slots;
@@ -85,12 +85,15 @@ class EvolvotronMain : public QMainWindow
 
       //! Destructor.
       ~History();
+
+      //! Eliminate any references to the display (and clean up any undo actions which are empty as a result).
+      void goodbye(const MutatableImageDisplay*);
       
       //! Record that we are overwriting the given display.
       void replacing(MutatableImageDisplay* display);
 
       //! Starts a new action slot
-      void begin_action(); 
+      void begin_action(const std::string& action_name);
 
       //! Ends an action slot and updates the undoable state.
       void end_action(); 
@@ -159,6 +162,8 @@ class EvolvotronMain : public QMainWindow
   std::vector<MutatableImageDisplay*> _displays;
 
   //! Keeps track of which displays are still available for display (they might have been destroyed while an image was computing).
+  /*! Non-const because we might need to notify them about various things
+   */
   std::set<MutatableImageDisplay*> _known_displays;
 
   //! Keeps track of which displays are still resizing
@@ -191,6 +196,9 @@ class EvolvotronMain : public QMainWindow
   //! Accessor
   const TransformFactory& transform_factory() const
     {
+      // We shouldn't be here unless transform_factory has been set to something.
+      assert(_transform_factory!=0);
+
       return *_transform_factory;
     }
 
@@ -209,12 +217,15 @@ class EvolvotronMain : public QMainWindow
   //@}
 
   //! Spawn the specified display using the specified method.
-  void spawn_all(MutatableImageDisplay* display,SpawnMemberFn method);
+  void spawn_all(MutatableImageDisplay* display,SpawnMemberFn method,const std::string& action_name);
 
  public:
   //! Constructor.
   EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_threads);
 
+  //! Destructor.
+  ~EvolvotronMain();
+  
   //! Accessor.
   std::vector<MutatableImageDisplay*>& displays()
     {
@@ -244,7 +255,7 @@ class EvolvotronMain : public QMainWindow
   void restore(MutatableImageDisplay* display,MutatableImageNode* image);
 
   //! Called by History to change undo menu status.
-  void set_undoable(bool v);
+  void set_undoable(bool v,const std::string& name);
 
   //! Regenerates a single display using last spawn method and source.
   void respawn(MutatableImageDisplay* display);
@@ -266,6 +277,9 @@ class EvolvotronMain : public QMainWindow
 
   //! Returns true if the display is known.
   bool is_known(MutatableImageDisplay* disp) const;
+
+  //! Write a list of known displays (for debugging)
+  void list_known(std::ostream& out) const;
 
  protected:
   //! Reset the specified display.
