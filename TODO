@@ -1,9 +1,12 @@
+- Middle click and drag should drive pan of current image.
+  Alt/ctrl modifiers to drive rotate & zoom too ?
+- Maybe add "view" menu: like warp but just applying to current image
+  (would need explicit control over amounts: maybe above approach better ?).
 - Last method used should point to an object encapsulating the behaviour
   (so warp spawn method can encapsulate a transform factory).
   Needed for breeding behaviour (so can keep 2 last images).
 - Undo needs to restore _last_spawned too (but do above first and keep hisory of spawn methods).
 - Generalise "parameters" along with "args".
-- Maybe add "view" menu: like warp but just applying to current image (would need explicit control over amounts).
 - Add control over MutatableImageNodePositionTransformedQuadratic vs MutatableImageNodePositionTransformed proportions
   (part of rationalising all of function selection)
 - Non-isotropic scaling & shear warp options.
