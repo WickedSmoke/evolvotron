@@ -43,7 +43,7 @@ This should give you a "evolvotron" executable which you can run with
   ./evolvotron
 or install where you like.
 
-USING
+USAGE
 =====
 You will need a fast machine, or patience.
 
@@ -56,13 +56,16 @@ Repeat the following until bored:
  - Wait until variations on it are regenerated in sufficient 
    detail that you can decide which one you like best again.
 
-Right clicking on an image gets you a few more options: 
- - you can "recolour" to produce different coloured variants of the selected image
- - you can "warp" the spatial co-ordinates of the selected image
- - you can "lock" (and later unlock) an image 
-   (this prevents it from being overwritten by spawn from other images).
- - you can get a big image in a single frame 
-   (which is resizeable, so you can get up to almost full-screen size).
+Right clicking on an image gets you a few more options:
+ - "Spawn" is the same as clicking an image
+ - "Recolour" to produce different coloured variants of the selected image
+ - "Warp" to produce variants of the image with different spatial co-ordinates
+ - "Lock" to prevent an image from being overwritten by spawns from other images.
+ - "Big" to produce a blow-up of the image in a single window.
+   (either a scrollable view of a fixed size image, or in a freely resizable window)
+ - "Save" to save the image in a file (.ppm or .png format).
+   Note that this is most useful on a "Big" blown-up image,
+   and the save won't be allowed until the full resolution image has been generated.
 
 IMPORTANT: Initially you should select images with some sort of variation.
 If you select a uniform image, you may get stuck in a degenerate zone with 
@@ -76,21 +79,12 @@ This is why, if the main grid is still recomputing, a "big" image
 will appear to freeze after it has reached a certain resolution, 
 at least until other lower resolution tasks have completed. 
 
-The initial release focuses very much on getting the display and 
-multi-threading aspects of the software done right; less work has 
-been done on the functions comprising the images so the variety you'll 
-obtain is a bit limited, although something quite striking can sometimes 
-be obtained.  This will be addressed in the next release.
-
 Currently the software runs 2 compute threads so those of 
 you lucky enough to have dual processor machines should see some 
 benefit (or see it deadlock :^)... Be warned that I haven't had 
-an opportunity  to test on more than a single processor.  
+an opportunity to test on more than a single processor.  
 The number of compute threads will be under command-line-option 
 control at some point.
-
-If you want to save anything, for now you'll have to use "import" 
-or similar to do a screen/window capture.
 
 INSTALL
 =======
@@ -118,9 +112,9 @@ GRIPE
 =====
 I originally wanted to use gtkmm for this app 'cos Gtk looks so sexy when themed, and I'd already done
 a Qt app ("fracplanet") and wanted to judge for myself how gtkmm compared.  However, I couldn't find 
-any gtkmm RPMs for RedHat (I did find some old ones on "freshrpms", but when I tried to use them RH's 
+any gtkmm RPMs for RedHat 8 (I did find some old ones on "freshrpms", but when I tried to use them RH's 
 pkg-conf didn't seem to be set up right to actually build anything).  Sure, I could have probably 
 compiled the sources, but most people aren't going to bother and so if I want to write software
 people will actually download and try then it's going to have to use the libs which come with the
 distros, or at least which have hassle free ready-to-go RPMs available.
-Maybe next time.
+Oh well, maybe next time... but Qt is really growing on me.
