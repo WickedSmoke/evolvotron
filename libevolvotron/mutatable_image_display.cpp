@@ -146,7 +146,6 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       setGeometry(0,0,image_size().width(),image_size().height());
     }
 
-
   for (uint f=0;f<_frames;f++)
     {
       _offscreen_buffer.push_back(new QPixmap());
@@ -219,11 +218,19 @@ void MutatableImageDisplay::image(MutatableImage* i)
   // This might have already been done (e.g by resizeEvent), but it can't hurt to be sure.
   main()->farm()->abort_for(this);
 
-  // Careful: we could be passed the same image again (used by resize to trigger recompute & redisplay)
+  // Careful: we could be passed the same image again 
+  // (a trick used by resize to trigger recompute & redisplay)
   if (i!=_image)
     {
       delete _image;
       _image=i;
+
+      // Clear any existing image data - stops old animations continuing to play 
+      for (uint f=0;f<_offscreen_buffer.size();f++)
+	_offscreen_buffer[f]->fill(black);
+
+      // Queue a paint so the display will be blacked out
+      repaint();
     }
 
   // If we start recomputing again we need to accept any delivered images.

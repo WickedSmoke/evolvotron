@@ -61,16 +61,16 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
   const float base=0.7;
 
-  uint steps=67;
+  uint steps=69;
 
   if (!parameters.allow_fractal_nodes())
     {
-      steps=minimum(steps,63u);     // Currently 4 fractal types
+      steps=minimum(steps,65u);     // Currently 4 fractal types
     }
 
   if (!parameters.allow_iterative_nodes())
     {
-      steps=minimum(steps,56u);     // Currently 7 non-fractal iterative types (including multiscale noise - not strictly iterative but expensive)
+      steps=minimum(steps,58u);     // Currently 7 non-fractal iterative types (including multiscale noise - not strictly iterative but expensive)
     }
 
   const float step=(1.0-base)/steps;
@@ -133,94 +133,98 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   else if (r<base+22*step) 
     return FunctionKaleidoscope::stubnew(parameters,false);
   else if (r<base+23*step) 
-    return FunctionKaleidoscopeTwist::stubnew(parameters,false);
+    return FunctionKaleidoscopeZRotate::stubnew(parameters,false);
   else if (r<base+24*step) 
-    return FunctionWindmill::stubnew(parameters,false);
+    return FunctionKaleidoscopeTwist::stubnew(parameters,false);
   else if (r<base+25*step) 
-    return FunctionWindmillTwist::stubnew(parameters,false);
+    return FunctionWindmill::stubnew(parameters,false);
   else if (r<base+26*step) 
-    return FunctionMagnitude::stubnew(parameters,false);
+    return FunctionWindmillZRotate::stubnew(parameters,false);
   else if (r<base+27*step) 
-    return FunctionMagnitudes::stubnew(parameters,false);
+    return FunctionWindmillTwist::stubnew(parameters,false);
   else if (r<base+28*step) 
-    return FunctionChooseSphere::stubnew(parameters,false);
+    return FunctionMagnitude::stubnew(parameters,false);
   else if (r<base+29*step) 
-    return FunctionChooseRect::stubnew(parameters,false);
+    return FunctionMagnitudes::stubnew(parameters,false);
   else if (r<base+30*step) 
-    return FunctionChooseFrom2InCubeMesh::stubnew(parameters,false);
+    return FunctionChooseSphere::stubnew(parameters,false);
   else if (r<base+31*step) 
-    return FunctionChooseFrom3InCubeMesh::stubnew(parameters,false);
+    return FunctionChooseRect::stubnew(parameters,false);
   else if (r<base+32*step) 
-    return FunctionChooseFrom2InSquareGrid::stubnew(parameters,false);
+    return FunctionChooseFrom2InCubeMesh::stubnew(parameters,false);
   else if (r<base+33*step) 
-    return FunctionChooseFrom3InSquareGrid::stubnew(parameters,false);
+    return FunctionChooseFrom3InCubeMesh::stubnew(parameters,false);
   else if (r<base+34*step) 
-    return FunctionChooseFrom2InTriangleGrid::stubnew(parameters,false);
+    return FunctionChooseFrom2InSquareGrid::stubnew(parameters,false);
   else if (r<base+35*step) 
-    return FunctionChooseFrom3InTriangleGrid::stubnew(parameters,false);
+    return FunctionChooseFrom3InSquareGrid::stubnew(parameters,false);
   else if (r<base+36*step) 
-    return FunctionChooseFrom3InDiamondGrid::stubnew(parameters,false);
+    return FunctionChooseFrom2InTriangleGrid::stubnew(parameters,false);
   else if (r<base+37*step) 
-    return FunctionChooseFrom3InHexagonGrid::stubnew(parameters,false);
+    return FunctionChooseFrom3InTriangleGrid::stubnew(parameters,false);
   else if (r<base+38*step) 
-    return FunctionChooseFrom2InBorderedHexagonGrid::stubnew(parameters,false);
+    return FunctionChooseFrom3InDiamondGrid::stubnew(parameters,false);
   else if (r<base+39*step) 
-    return FunctionOrthoSphereShaded::stubnew(parameters,false);
+    return FunctionChooseFrom3InHexagonGrid::stubnew(parameters,false);
   else if (r<base+40*step) 
-    return FunctionOrthoSphereShadedBumpMapped::stubnew(parameters,false);
+    return FunctionChooseFrom2InBorderedHexagonGrid::stubnew(parameters,false);
   else if (r<base+41*step) 
-    return FunctionOrthoSphereReflect::stubnew(parameters,false);
+    return FunctionOrthoSphereShaded::stubnew(parameters,false);
   else if (r<base+42*step) 
+    return FunctionOrthoSphereShadedBumpMapped::stubnew(parameters,false);
+  else if (r<base+43*step) 
+    return FunctionOrthoSphereReflect::stubnew(parameters,false);
+  else if (r<base+44*step) 
     return FunctionOrthoSphereReflectBumpMapped::stubnew(parameters,false);
-  else if (r<base+43*step)
-    return FunctionTransformGeneralised::stubnew(parameters,false);
-  else if (r<base+44*step)
-    return FunctionPreTransform::stubnew(parameters,false);
   else if (r<base+45*step)
-    return FunctionPreTransformGeneralised::stubnew(parameters,false);
+    return FunctionTransformGeneralised::stubnew(parameters,false);
   else if (r<base+46*step)
-    return FunctionPostTransform::stubnew(parameters,false);
+    return FunctionPreTransform::stubnew(parameters,false);
   else if (r<base+47*step)
-    return FunctionPostTransformGeneralised::stubnew(parameters,false);
+    return FunctionPreTransformGeneralised::stubnew(parameters,false);
   else if (r<base+48*step)
-    return FunctionFilter2D::stubnew(parameters,false);
+    return FunctionPostTransform::stubnew(parameters,false);
   else if (r<base+49*step)
-    return FunctionFilter3D::stubnew(parameters,false);
+    return FunctionPostTransformGeneralised::stubnew(parameters,false);
   else if (r<base+50*step)
-    return FunctionShadow::stubnew(parameters,false);
+    return FunctionFilter2D::stubnew(parameters,false);
   else if (r<base+51*step)
-    return FunctionShadowGeneralised::stubnew(parameters,false);
+    return FunctionFilter3D::stubnew(parameters,false);
   else if (r<base+52*step)
-    return FunctionCone::stubnew(parameters,false);
+    return FunctionShadow::stubnew(parameters,false);
   else if (r<base+53*step)
-    return FunctionExpCone::stubnew(parameters,false);
+    return FunctionShadowGeneralised::stubnew(parameters,false);
   else if (r<base+54*step)
-    return FunctionSeparateZ::stubnew(parameters,false);
+    return FunctionCone::stubnew(parameters,false);
   else if (r<base+55*step)
-    return FunctionNoiseOneChannel::stubnew(parameters,false);
+    return FunctionExpCone::stubnew(parameters,false);
   else if (r<base+56*step)
-    return FunctionNoiseThreeChannel::stubnew(parameters,false);
+    return FunctionSeparateZ::stubnew(parameters,false);
   else if (r<base+57*step)
-    return FunctionMultiscaleNoiseOneChannel::stubnew(parameters,false);
+    return FunctionNoiseOneChannel::stubnew(parameters,false);
   else if (r<base+58*step)
-    return FunctionMultiscaleNoiseThreeChannel::stubnew(parameters,false);
+    return FunctionNoiseThreeChannel::stubnew(parameters,false);
   else if (r<base+59*step)
-    return FunctionIterate::stubnew(parameters,false);
+    return FunctionMultiscaleNoiseOneChannel::stubnew(parameters,false);
   else if (r<base+60*step)
-    return FunctionAverageSamples::stubnew(parameters,false);
+    return FunctionMultiscaleNoiseThreeChannel::stubnew(parameters,false);
   else if (r<base+61*step)
-    return FunctionStreak::stubnew(parameters,false);
+    return FunctionIterate::stubnew(parameters,false);
   else if (r<base+62*step)
-    return FunctionConvolveSamples::stubnew(parameters,false);
+    return FunctionAverageSamples::stubnew(parameters,false);
   else if (r<base+63*step)
-    return FunctionAccumulateOctaves::stubnew(parameters,false);
+    return FunctionStreak::stubnew(parameters,false);
   else if (r<base+64*step)
-    return FunctionMandelbrotChoose::stubnew(parameters,false);
+    return FunctionConvolveSamples::stubnew(parameters,false);
   else if (r<base+65*step)
-    return FunctionMandelbrotContour::stubnew(parameters,false);
+    return FunctionAccumulateOctaves::stubnew(parameters,false);
   else if (r<base+66*step)
+    return FunctionMandelbrotChoose::stubnew(parameters,false);
+  else if (r<base+67*step)
+    return FunctionMandelbrotContour::stubnew(parameters,false);
+  else if (r<base+68*step)
     return FunctionJuliaChoose::stubnew(parameters,false);
-  else //if (r<base+67*step)
+  else //if (r<base+69*step)
     return FunctionJuliaContour::stubnew(parameters,false);
 }
 

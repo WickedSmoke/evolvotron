@@ -760,6 +760,35 @@ FUNCTION_END(FunctionKaleidoscope)
 
 //------------------------------------------------------------------------------------------
 
+//! Like FunctionKaleidoscope but Z drives rotation of underlying function
+/*! Good for animation
+ */
+FUNCTION_BEGIN(FunctionKaleidoscopeZRotate,2,1,false)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const uint n=2+static_cast<uint>(floor(8.0f*fabs(param(0))));
+
+      const float a=atan2(p.x(),p.y());
+      const float r=sqrt(p.x()*p.x()+p.y()*p.y());
+      
+      const float sa=trianglef(a,M_PI/n)+param(1)*p.z();
+
+      const XYZ s(r*sin(sa),r*cos(sa),0.0f);
+      return arg(0)(s);
+    }
+  
+  //! Is constant if sampled function is
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionKaleidoscopeZRotate)
+
+//------------------------------------------------------------------------------------------
+
 //! Like FunctionKaleidoscope with a twist
 FUNCTION_BEGIN(FunctionKaleidoscopeTwist,2,1,false)
 
@@ -813,6 +842,36 @@ FUNCTION_BEGIN(FunctionWindmill,1,1,false)
 FUNCTION_END(FunctionWindmill)
 
 //------------------------------------------------------------------------------------------
+
+//! Like FunctionWindmill but Z drives rotation of underlying function
+/*! Good for animation
+ */
+FUNCTION_BEGIN(FunctionWindmillZRotate,2,1,false)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const uint n=1+static_cast<uint>(floor(8.0f*fabs(param(0))));
+
+      const float a=atan2(p.x(),p.y());
+      const float r=sqrt(p.x()*p.x()+p.y()*p.y());
+      
+      const float sa=modulusf(a,M_PI/n)+param(1)*p.z();
+
+      const XYZ s(r*sin(sa),r*cos(sa),0.0f);
+      return arg(0)(s);
+    }
+  
+  //! Is constant if sampled function is
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionWindmillZRotate)
+
+//------------------------------------------------------------------------------------------
+
 
 //! Like FunctionWindmill with twist
 FUNCTION_BEGIN(FunctionWindmillTwist,2,1,false)

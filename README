@@ -234,6 +234,7 @@ DEBUGGING/POWER-USER OPTIONS
 	- Similar to -x except that the specified function is NOT wrapped by space/colour transforms.
 	NB For functions without leaf nodes or parameters (e.g FunctionSphericalToCartesian) this doesn't
 	leave any scope for variation or future mutation.
+        Example: evolvotron -X FunctionKaleidoscope
 	 
 MOUSE CONTROL
 ============= 

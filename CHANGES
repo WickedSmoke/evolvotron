@@ -4,8 +4,9 @@ From release 0.2.0:
  - Bump version to 0.2.1-devel
  - Display (not compute) priority to higher resolution images
    (saves time enlarging low res images unnecessarily)
+ - Blank images on replacement (above change makes this more necessary)
  - x and -X command line options to specify specifc top level function types.
- - FunctionKaleidoscope, FunctionKaleidoscopeTwist, FunctionWindmill, FunctionWindmillTwist, FunctionStreak, FunctionSeparateZ added
+ - FunctionKaleidoscope*, FunctionWindmill*, FunctionStreak, FunctionSeparateZ added
  - Added -f <frames> option to evolvotron_render
  - Internals: function framework changed (avoids FunctionNodeUsing::evaluate wrapper), speed improvement ?
  - Internals: Type of top-level node can mutate, MutatableImage more sane.
