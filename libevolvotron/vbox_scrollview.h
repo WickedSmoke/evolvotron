@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qvbox.h>
 #include <qobjectlist.h>
 
-//! Scrollview containing a vbox, with the vbox width tracking the visible width of the scrolled area.
+//! Scrollview containing a vbox, with the vbox width tracking the visible width of the scrolled area (height behaves as normal).
 class VBoxScrollView : public QScrollView
 {
   typedef QScrollView Superclass;
