@@ -12,6 +12,9 @@ fi
 
 # NB Don't run "qmake -project" again!!! (It wipes evolvotron.pro)
 
+echo "GCC version:"
+gcc --version
+
 qmake evolvotron.pro 
 
 
