@@ -78,7 +78,7 @@ static const char*const helptext_short=
 "    <b>-g</b> <i>cols</i> <i>rows</i> : Set display cells in grid"
 "  </li>"
 "  <li>"
-"    <b>-t</b> <i>threads</i> <i>rows</i> : Set number of compute threads"
+"    <b>-t</b> <i>threads</i> : Set number of compute threads"
 "  </li>"
 #ifdef FULLSCREEN
 "  <li>"
