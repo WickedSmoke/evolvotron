@@ -71,6 +71,12 @@ class MutatableImageDisplay : public QWidget
   //! Offscreen image buffer.
   QPixmap* _offscreen_buffer;
 
+  //! Offscreen image buffer in sensible image format (used for save, as pixmap is in display format).
+  QImage* _offscreen_image;
+
+  //! Offscreen image data for _offscreen_image.  This must remain alive longer than the QImage.
+  std::vector<uint>* _offscreen_image_data;
+
   //! The image being displayed (its root node).
   MutatableImageNode* _image;
 
@@ -161,6 +167,9 @@ class MutatableImageDisplay : public QWidget
   //! Called from context menu.
   void menupick_lock();
 
+  //! Called from context menu.
+  void menupick_save();
+
   //! Called from "Big" submenu of context menu.
   void menupick_big_resizable();
 
@@ -182,6 +191,7 @@ class MutatableImageDisplay : public QWidget
  protected:
   //! Common code for big slots.
   void spawn_big(bool scrollable,const QSize& sz);
+
 };
 
 #endif

@@ -8,6 +8,9 @@ From release 0.0.0:
 From release 0.0.1:
  - Bump version to 0.0.2
  - Switch to QMainWindow base in anticipation of toolbar.
+ - Save as PPM or PNG
+ - Scrollable fixed-size image "Big" windows.
+ - Improvements to app response under load.
 
 
 

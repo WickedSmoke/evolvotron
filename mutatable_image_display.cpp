@@ -23,10 +23,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <iostream>
 
+#include <qstring.h>
 #include <qimage.h>
 #include <qcursor.h>
 #include <qapplication.h>
 #include <qscrollview.h>
+#include <qmessagebox.h>
+#include <qfiledialog.h>
 
 #include "mutatable_image_display.h"
 #include "evolvotron_main.h"
@@ -50,6 +53,8 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
    ,_locked(false)
    ,_current_display_level(0)
    ,_offscreen_buffer(0)
+   ,_offscreen_image(0)
+   ,_offscreen_image_data(0)
    ,_image(0)
    ,_menu(0)
    ,_menu_big(0)
@@ -90,10 +95,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       _menu_item_number_big  =_menu->insertItem("&Big",_menu_big);
     }
 
-  _menu_item_number_save =_menu->insertItem("&Save");
-
-  //! \todo: Add save functionality and re-enable Save menu item
-  _menu->setItemEnabled(_menu_item_number_save,false);
+  _menu_item_number_save =_menu->insertItem("&Save",this,SLOT(menupick_save()));
 
   main()->hello(this);
 
@@ -111,6 +113,8 @@ MutatableImageDisplay::~MutatableImageDisplay()
   main()->goodbye(this);
   delete _image;
   delete _offscreen_buffer;
+  delete _offscreen_image;
+  delete _offscreen_image_data;
 }
 
 void MutatableImageDisplay::image(MutatableImageNode* i)
@@ -154,9 +158,15 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
   // Ignore tasks which were aborted or which have somehow got out of order (not impossible with multiple compute threads).
   if (!task->aborted() && task->level()<_current_display_level)
     {
-      QImage new_image
+      delete _offscreen_image;
+      delete _offscreen_image_data;
+
+      _offscreen_image_data=new std::vector<uint>(task->image_data());
+      
+      _offscreen_image
+	=new QImage
 	(
-	 (uchar*)&(task->image_data()[0]),
+	 (uchar*)&((*_offscreen_image_data)[0]),
 	 task->size().width(),
 	 task->size().height(),
 	 32,
@@ -164,9 +174,9 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
 	 0,
 	 QImage::LittleEndian  // Seems to be right for hi[-/R/G/B]lo packing
 	 );
-		  
+  
       //! \todo Pick a scaling mode: smooth or not (or put it under GUI control).  Curiously, although smoothscale seems to be noticeably slower but doesn't look any better.
-      _offscreen_buffer->convertFromImage(new_image.scale(image_size()));
+      _offscreen_buffer->convertFromImage(_offscreen_image->scale(image_size()));
 		  
       //! Note the resolution we've displayed so out-of-order low resolution images are dropped
       _current_display_level=task->level();
@@ -264,6 +274,42 @@ void MutatableImageDisplay::menupick_lock()
   _menu->setItemChecked(_menu_item_number_lock,_locked);
 }
 
+/*! Saves image (unless the image is not full resolution yet, in which case an informative dialog is generated.
+ */
+void MutatableImageDisplay::menupick_save()
+{
+  if (_current_display_level!=0)
+    {
+      QMessageBox::information(this,"Evolvotron","The selected image has not yet been generated at maximum resolution.\nPlease try again later.");
+    }
+  else
+    {
+      QString save_filename=QFileDialog::getSaveFileName(".","Images(*.ppm *.png)",this,"Save image","Save image to a .ppm or .png file");
+
+      QString save_format("PPM");
+      if (save_filename.upper().endsWith(".PPM"))
+	{
+	  save_format="PPM";
+	}
+      else if (save_filename.upper().endsWith(".PNG"))
+	{
+	  save_format="PNG";
+	}
+      else
+	{
+	  QMessageBox::warning(this,"Evolvotron","Unrecognised file suffix.\nFile will be written in "+save_format+" format.");
+	}
+
+      if (!save_filename.isEmpty())
+	{
+	  if (!_offscreen_image->save(save_filename,save_format))
+	    {
+	      QMessageBox::critical(this,"Evolvotron","File write failed");
+	    }
+	}
+    }
+}
+
 void MutatableImageDisplay::menupick_big_resizable()
 {
   spawn_big(false,QSize(0,0));
@@ -271,7 +317,7 @@ void MutatableImageDisplay::menupick_big_resizable()
 
 void MutatableImageDisplay::menupick_big_1024x1024()
 {
-  spawn_big(true,QSize(1280,960));
+  spawn_big(true,QSize(1024,1024));
 }
 
 void MutatableImageDisplay::menupick_big_1280x960()
@@ -323,3 +369,5 @@ void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
       
   display->image(_image->deepclone());
 }
+
+

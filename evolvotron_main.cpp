@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <time.h>
 #include <qapplication.h>
 #include <qcursor.h>
+#include <qdatetime.h>
 
 #include "evolvotron_main.h"
 #include "xyz.h"
@@ -196,6 +197,9 @@ void EvolvotronMain::tick()
   // shift them straight over to done queue so the compute threads don't have to worry about them.
   farm()->fasttrack_aborted();
 
+  QTime watchdog;
+  watchdog.start();
+
   while ((task=farm()->pop_done())!=0)
     {
       if (_known_displays.find(task->display())!=_known_displays.end())
@@ -207,6 +211,10 @@ void EvolvotronMain::tick()
 	  // If we don't know who owns it we just have to trash it (probably a top level window which was closed with incomplete tasks).
 	  delete task;
 	}
+
+      // Timeout in case we're being swamped by incoming tasks (maintain app responsiveness).
+      if (watchdog.elapsed()>20)
+	break;
     }
 }    
 
