@@ -226,6 +226,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _statusbar->addWidget(_statusbar_tasks_label,0,true);
 
   _dialog_about=new DialogAbout(this);
+  _dialog_help=new DialogHelp(this);
 
   _dialog_mutation_parameters=new DialogMutationParameters(this);
 
@@ -265,6 +266,8 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _menubar->insertSeparator();
 
   _popupmenu_help=new QPopupMenu;
+  _popupmenu_help->insertItem("Quick &reference",_dialog_help,SLOT(show()));
+  _popupmenu_help->insertSeparator();
   _popupmenu_help->insertItem("&About",_dialog_about,SLOT(show()));
 
   _menubar->insertItem("&Help",_popupmenu_help);

@@ -50,6 +50,7 @@ extern "C"
 #include "mutation_parameters.h"
 
 #include "dialog_about.h"
+#include "dialog_help.h"
 #include "dialog_mutation_parameters.h"
 
 //! Top level GUI component for evolvotron application
@@ -122,6 +123,9 @@ class EvolvotronMain : public QMainWindow
 
   //! The "About" dialog widget.
   DialogAbout* _dialog_about;
+
+  //! The "Help" dialog widget.
+  DialogHelp* _dialog_help;
 
   //! The dialog for adjusting MutationParameters.
   DialogMutationParameters* _dialog_mutation_parameters;
