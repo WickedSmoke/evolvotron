@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <vector>
 #include <set>
 #include <iostream>
+#include <map>
 
 #include <qthread.h>
 
@@ -71,8 +72,19 @@ class MutatableImageComputerFarm
   //! The compute threads
   std::vector<MutatableImageComputer*> _computers;
 
+  //! Convenience typedef.
+  typedef std::multiset<MutatableImageComputerTask*,CompareTaskPriorityLoResFirst> TodoQueue;
+
   //! Queue of tasks to be performed, lowest resolution first
-  std::multiset<MutatableImageComputerTask*,CompareTaskPriorityLoResFirst> _todo;
+  TodoQueue _todo;
+
+  //! Conveniencetypedef.
+  typedef std::multiset<MutatableImageComputerTask*,CompareTaskPriorityHiResFirst> DoneQueue;
+
+  //! Convenience typedef.  
+  /*! const because never needs to do anything other than compare pointers
+   */
+  typedef std::map<const MutatableImageDisplay*,DoneQueue> DoneQueueByDisplay;
 
   //! Queue of tasks completed awaiting display.
   /*! We reverse the compute priority so that highest resolution images get displayed first.
@@ -80,14 +92,12 @@ class MutatableImageComputerFarm
       This mainly makes a difference for animation where enlarging multiple low resolution 
       images to screen res takes a lot of time.  May help low-bandwidth X11 connections
       by minimising redraws too.
-      \todo Problem with this is that one display can run way ahead of the others.
-      Need to be able to query for the highest resolution available for a given display,
-      so maybe change to a map (by target display) of priority queues.  But some displays
-      will be orphaned so still need a general queue.  Dynamically recompute priority
-      based on display's current level, which is basically recomputing this every time
-      we take something out ?
+      We now also sort by display and do round-robin delivery (ithout this one display can run way ahead of the others)
    */
-  std::multiset<MutatableImageComputerTask*,CompareTaskPriorityHiResFirst> _done;
+  DoneQueueByDisplay _done;
+
+  //! Points to the next display queue to be returned (could be .end())
+  DoneQueueByDisplay::iterator _done_position;
 
  public:
 

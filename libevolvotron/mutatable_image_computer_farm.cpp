@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 MutatableImageComputerFarm::MutatableImageComputerFarm(uint n_threads)
 {
+  _done_position=_done.end();
+
   for (uint i=0;i<n_threads;i++)
     {
       // The computer's constructor includes a start()
@@ -50,15 +52,19 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
   // Clear all the tasks in queues
   _mutex.lock();
 
-  for (std::multiset<MutatableImageComputerTask*,CompareTaskPriorityLoResFirst>::iterator it=_todo.begin();it!=_todo.end();it++)
+  for (TodoQueue::iterator it=_todo.begin();it!=_todo.end();it++)
     {
       delete (*it);
     }
   _todo.clear();
 
-  for (std::multiset<MutatableImageComputerTask*,CompareTaskPriorityHiResFirst>::iterator it=_done.begin();it!=_done.end();it++)
+  for (DoneQueueByDisplay::iterator it0=_done.begin();it0!=_done.end();it0++)
     {
-      delete (*it);
+      for (DoneQueue::iterator it1=(*it0).second.begin();it1!=(*it0).second.end();it1++)
+	{
+	  delete (*it1);
+	}
+      (*it0).second.clear();
     }
   _done.clear();
 
@@ -78,7 +84,7 @@ void MutatableImageComputerFarm::fasttrack_aborted()
   _mutex.lock();
   
   // \todo: Inefficient starting search again each time.  Some problem with erase otherwise though, but might have been task abort mem leak.
-  std::multiset<MutatableImageComputerTask*,CompareTaskPriorityLoResFirst>::iterator it;
+  TodoQueue::iterator it;
   while (
 	 (
 	  it=std::find_if(_todo.begin(),_todo.end(),predicate_aborted)
@@ -87,7 +93,7 @@ void MutatableImageComputerFarm::fasttrack_aborted()
 	 _todo.end()
 	 )
     {
-      _done.insert(*it);
+      _done[(*it)->display()].insert(*it);
       _todo.erase(it);
     }
   
@@ -113,7 +119,7 @@ MutatableImageComputerTask*const MutatableImageComputerFarm::pop_todo()
   MutatableImageComputerTask* ret=0;
   _mutex.lock();
   
-  std::multiset<MutatableImageComputerTask*,CompareTaskPriorityLoResFirst>::iterator it=_todo.begin();
+  TodoQueue::iterator it=_todo.begin();
   if (it!=_todo.end())
     {
       ret=(*it);
@@ -127,7 +133,7 @@ MutatableImageComputerTask*const MutatableImageComputerFarm::pop_todo()
 void MutatableImageComputerFarm::push_done(MutatableImageComputerTask* task)
 {
   _mutex.lock();
-  _done.insert(task);
+  _done[task->display()].insert(task);
   _mutex.unlock();
 }
 
@@ -136,24 +142,43 @@ MutatableImageComputerTask* MutatableImageComputerFarm::pop_done()
   MutatableImageComputerTask* ret=0;
   _mutex.lock();
   
-  std::multiset<MutatableImageComputerTask*,CompareTaskPriorityHiResFirst>::iterator it=_done.begin();
-  if (it!=_done.end())
+  if (_done_position==_done.end())
     {
-      ret=(*it);
-      _done.erase(it);
+      _done_position=_done.begin();
+    }
+
+  if (_done_position!=_done.end())
+    {
+      DoneQueue& q=(*_done_position).second;
+      DoneQueue::iterator it=q.begin();
+      if (it!=q.end())
+	{
+	  ret=(*it);
+	  q.erase(it);
+	}
+
+      if (q.empty())
+	{
+	  DoneQueueByDisplay::iterator advanced_done_position=_done_position;
+	  advanced_done_position++;	  
+	  _done.erase(_done_position);
+	  _done_position=advanced_done_position;
+	}
+      else
+	{
+	  _done_position++;
+	}
     }
 
   _mutex.unlock();
   return ret;
 }
 
-
-
 void MutatableImageComputerFarm::abort_all()
 {
   _mutex.lock();
 
-  for (std::multiset<MutatableImageComputerTask*,CompareTaskPriorityLoResFirst>::iterator it=_todo.begin();it!=_todo.end();it++)
+  for (TodoQueue::iterator it=_todo.begin();it!=_todo.end();it++)
     {
       (*it)->abort();
       delete (*it);
@@ -165,13 +190,16 @@ void MutatableImageComputerFarm::abort_all()
       (*it)->abort();
     }
 
-  for (std::multiset<MutatableImageComputerTask*,CompareTaskPriorityHiResFirst>::iterator it=_done.begin();it!=_done.end();it++)
+  for (DoneQueueByDisplay::iterator it0=_done.begin();it0!=_done.end();it0++)
     {
-      (*it)->abort();
-      delete (*it);
-      _done.erase(it);
+      DoneQueue& q=(*it0).second;
+      for (DoneQueue::iterator it1=q.begin();it1!=q.end();it1++)
+	{
+	  (*it1)->abort();
+	  delete (*it1);
+	  q.erase(it1);
+	}
     }
-  
   _mutex.unlock();  
 }
 
@@ -179,7 +207,7 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
 {
   _mutex.lock();
 
-  for (std::multiset<MutatableImageComputerTask*,CompareTaskPriorityLoResFirst>::iterator it=_todo.begin();it!=_todo.end();it++)
+  for (TodoQueue::iterator it=_todo.begin();it!=_todo.end();it++)
     {
       if ((*it)->display()==disp)
 	{
@@ -194,13 +222,21 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
 	(*it)->abort_for(disp);
     }
 
-  for (std::multiset<MutatableImageComputerTask*,CompareTaskPriorityHiResFirst>::iterator it=_done.begin();it!=_done.end();it++)
+  
+  DoneQueueByDisplay::iterator it0=_done.find(disp);
+  if (it0!=_done.end())
     {
-      if ((*it)->display()==disp)
+      DoneQueue& q=(*it0).second;
+
+      //! \todo It would be pretty odd if display didn't match the queue bin: change to assert
+      for (DoneQueue::iterator it1=q.begin();it1!=q.end();it1++)
 	{
-	  (*it)->abort();
-	  delete (*it);
-	  _done.erase(it);
+	  if ((*it1)->display()==disp)
+	    {
+	      (*it1)->abort();
+	      delete (*it1);
+	      q.erase(it1);
+	    }
 	}
     }
   
@@ -219,6 +255,7 @@ std::ostream& MutatableImageComputerFarm::write_info(std::ostream& out) const
 	}
     }
 
+  //! /todo _done.size() no longer returns number of tasks to be delivered to, but number of displays with pending deliveries.  Fix ?
   out << "[" << _todo.size() << "/" << active_computers << "/" << _done.size() << "]";
   return out;
 }
@@ -236,8 +273,12 @@ const uint MutatableImageComputerFarm::tasks() const
     }
 
   _mutex.lock();
+
   ret+=_todo.size();
-  ret+=_done.size();
+
+  for (DoneQueueByDisplay::const_iterator it=_done.begin();it!=_done.end();it++)
+    ret+=(*it).second.size();
+
   _mutex.unlock();
 
   return ret;
