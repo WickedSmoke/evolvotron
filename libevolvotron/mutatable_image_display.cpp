@@ -562,7 +562,10 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	  const FunctionPreTransform*const const_new_root_as_transform=new_root_as_transform;
 
 	  Transform current_transform(const_new_root_as_transform->params());
+	  //std::clog << "[Was: " << current_transform;
+	  //std::clog << ", concatenate: " << transform;
 	  current_transform.concatenate_on_right(transform);
+	  //std::clog << ", now: " << current_transform << "]";
 	  new_root_as_transform->params(current_transform.get_columns());
 	}
       else

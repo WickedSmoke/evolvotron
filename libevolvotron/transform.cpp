@@ -54,6 +54,9 @@ Transform::Transform(const std::vector<float>& v)
   _basis_z.x(  v[ 9]);_basis_z.y(  v[10]);_basis_z.z(  v[11]);
 }
 
+Transform::~Transform()
+{}
+
 const std::vector<float> Transform::get_columns() const
 {
   std::vector<float> ret(12);
@@ -64,4 +67,44 @@ const std::vector<float> Transform::get_columns() const
   ret[ 9]=_basis_z.x()  ;ret[10]=_basis_z.y()  ;ret[11]=_basis_z.z();
 
   return ret;
+}
+
+const XYZ Transform::transformed(const XYZ& p) const
+{
+  return _translate+_basis_x*p.x()+_basis_y*p.y()+_basis_z*p.z();
+}
+
+const XYZ Transform::transformed_no_translate(const XYZ& p) const
+{
+  return _basis_x*p.x()+_basis_y*p.y()+_basis_z*p.z();
+}
+
+Transform& Transform::concatenate_on_right(const Transform& t)
+{
+  const XYZ bx(transformed_no_translate(t.basis_x()));
+  const XYZ by(transformed_no_translate(t.basis_y()));
+  const XYZ bz(transformed_no_translate(t.basis_z()));
+  const XYZ tr(transformed(t.translate()));
+  
+  translate(tr);
+  basis_x(bx);
+  basis_y(by);
+  basis_z(bz);
+  
+  return *this;
+}
+
+Transform& Transform::concatenate_on_left(const Transform& t)
+{
+  const XYZ bx(t.transformed_no_translate(basis_x()));
+  const XYZ by(t.transformed_no_translate(basis_y()));
+  const XYZ bz(t.transformed_no_translate(basis_z()));
+  const XYZ tr(t.transformed(translate()));
+  
+  translate(tr);
+  basis_x(bx);
+  basis_y(by);
+  basis_z(bz);
+  
+  return *this;
 }

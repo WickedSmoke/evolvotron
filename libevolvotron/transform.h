@@ -45,71 +45,60 @@ class Transform
   //! Constructor specifying column-wise elements.
   Transform(const std::vector<float>& v);
 
+  //! virtual destructor in case of extension
+  virtual ~Transform();
+
   //@{
   //! Accessor
   const XYZ& translate() const
-    {return _translate;}
+    {
+      return _translate;
+    }
   const XYZ& basis_x() const
-    {return _basis_x;}
+    {
+      return _basis_x;
+    }
   const XYZ& basis_y() const    
-    {return _basis_y;}
+    {
+      return _basis_y;
+    }
   const XYZ& basis_z() const    
-    {return _basis_z;}
+    {
+      return _basis_z;
+    }
+
   void translate(const XYZ &t)
-     {_translate=t;}
+     {
+       _translate=t;
+     }
   void basis_x(const XYZ &x)
-     {_basis_x=x;}
+     {
+       _basis_x=x;
+     }
   void basis_y(const XYZ &y)
-     {_basis_y=y;}
+     {
+       _basis_y=y;
+     }
   void basis_z(const XYZ &z)
-     {_basis_z=z;}
+     {
+       _basis_z=z;
+     }
   //@}
 
   //! Get column-wise element values as a vector
   const std::vector<float> get_columns() const;
 
   //! Transform a point
-  const XYZ transformed(const XYZ& p) const
-    {
-      return _translate+_basis_x*p.x()+_basis_y*p.y()+_basis_z*p.z();
-    }
+  const XYZ transformed(const XYZ& p) const;
 
   //! Transform a point with no translation
-  const XYZ transformed_no_translate(const XYZ& p) const
-    {
-      return _basis_x*p.x()+_basis_y*p.y()+_basis_z*p.z();
-    }
+  const XYZ transformed_no_translate(const XYZ& p) const;
 
   //! Concatenate transforms
-  Transform& concatenate_on_right(const Transform& t)
-    {
-      const XYZ bx(transformed_no_translate(t.basis_x()));
-      const XYZ by(transformed_no_translate(t.basis_y()));
-      const XYZ bz(transformed_no_translate(t.basis_z()));
-      const XYZ tr(transformed(t.translate()));
+  Transform& concatenate_on_right(const Transform& t);
 
-      translate(tr);
-      basis_x(bx);
-      basis_y(by);
-      basis_z(bz);
-
-      return *this;
-    }
-
-  Transform& concatenate_on_left(const Transform& t)
-    {
-      const XYZ bx(t.transformed_no_translate(basis_x()));
-      const XYZ by(t.transformed_no_translate(basis_y()));
-      const XYZ bz(t.transformed_no_translate(basis_z()));
-      const XYZ tr(t.transformed(translate()));
-
-      translate(tr);
-      basis_x(bx);
-      basis_y(by);
-      basis_z(bz);
-
-      return *this;
-    }
+  //! Concatenate transforms
+  Transform& concatenate_on_left(const Transform& t);
 
  protected:
   //@{
@@ -122,7 +111,16 @@ class Transform
 
 inline const XYZ operator*(const Transform& t,const XYZ& p)
 {
-  return t.basis_x()*p.x()+t.basis_y()*p.y()+t.basis_z()*p.z()+t.translate();
+  return 
+     t.basis_x()*p.x()
+    +t.basis_y()*p.y()
+    +t.basis_z()*p.z()
+    +t.translate();
+}
+
+inline std::ostream& operator<<(std::ostream& out,const Transform& t)
+{
+  return out << t.translate() << ";" << t.basis_x() << "," << t.basis_y() << "," << t.basis_z();
 }
 
 class TransformRotateX : public Transform

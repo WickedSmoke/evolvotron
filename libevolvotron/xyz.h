@@ -194,13 +194,13 @@ inline const float operator%(const XYZ& a,const XYZ& b)
 //! Vector addition.
 inline const XYZ operator+(const XYZ& a,const XYZ& b)
 {
-  return XYZ(a.x()+b.x(),a.y()+a.y(),a.z()+b.z());
+  return XYZ(a.x()+b.x(),a.y()+b.y(),a.z()+b.z());
 }
 
 //! Vector subtraction.
 inline const XYZ operator-(const XYZ& a,const XYZ& b)
 {
-  return XYZ(a.x()-b.x(),a.y()-a.y(),a.z()-b.z());
+  return XYZ(a.x()-b.x(),a.y()-b.y(),a.z()-b.z());
 }
 
 //! Multiplication by scalar.
