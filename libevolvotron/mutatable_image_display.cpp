@@ -133,7 +133,6 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
 
   if (_full_functionality)
     {
-      _menu->insertSeparator();
       _menu->insertItem("L&oad function",this,SLOT(menupick_load_function()));
     }
 
