@@ -33,6 +33,13 @@
 #include "function_registry.h"
 #include "function_boilerplate.h"
 
+//! Used when some small sampling step is required (e.g gradient operators).
+#define epsilon (1e-6)
+#define epsilon2 (2.0*epsilon)
+#define inv_epsilon (1.0/epsilon)
+#define inv_epsilon2 (1.0/epsilon2)
+#define big_epsilon (sqrt(epsilon))
+
 //! Sane modulus function always returning a number in the range [0,y)
 inline real modulusf(real x,real y)
 {
@@ -415,6 +422,7 @@ FUNCTION_BEGIN(FunctionGradientOfMagnitude,0,1,false,0)
     }
 
 FUNCTION_END(FunctionGradientOfMagnitude)
+
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionGradientDot,3,1,false,0)
@@ -655,6 +663,43 @@ FUNCTION_BEGIN(FunctionCurl,0,1,false,0)
     }
 
 FUNCTION_END(FunctionCurl)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionScalarLaplacian,0,1,false,0)
+     
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      // Need to use a bigger baseline to avoid noise being amplified
+      const XYZ vx0(arg(0)(p-XYZ(big_epsilon,0.0,0.0)));
+      const XYZ vy0(arg(0)(p-XYZ(0.0,big_epsilon,0.0)));
+      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,big_epsilon)));
+
+      const XYZ v(arg(0)(p));
+
+      const XYZ vx1(arg(0)(p+XYZ(big_epsilon,0.0,0.0)));
+      const XYZ vy1(arg(0)(p+XYZ(0.0,big_epsilon,0.0)));
+      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,big_epsilon)));
+
+      const XYZ dx0(v-vx0);
+      const XYZ dy0(v-vy0);
+      const XYZ dz0(v-vz0);
+
+      const XYZ dx1(vx1-v);
+      const XYZ dy1(vy1-v);
+      const XYZ dz1(vz1-v);
+
+      return XYZ(dx1-dx0+dy1-dy0+dz1-dz0)/(big_epsilon*big_epsilon);
+    }
+  
+  //! Is constant if the function being gradient-ed is.
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionScalarLaplacian)
 
 //------------------------------------------------------------------------------------------
 

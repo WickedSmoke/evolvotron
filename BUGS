@@ -4,6 +4,10 @@ Known bugs:
   as expected (this is because they're not compensated for the projection).
   Live with it.
 
+- Gradient type operators produce a real mess when applied to
+  noise functions.  High frequencies in the noise produce big derivatives.
+  Enlarging up to 4096x4096 sometimes looks a bit more sensible.
+
 - Have yet to find a tool which can display anything other than the
   first frame of a Qt-generated MNG format.  (Apparently Qt's mng
   actually has nothing to do with the standard multi-frame png format).
