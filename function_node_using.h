@@ -32,7 +32,7 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
  public:
 
   //! Registration member encapsulates class meta-information needed to 
-  static Registration registration;
+  static FunctionRegistration registration;
   
  protected:
   
@@ -124,11 +124,12 @@ template <> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsi
 }
 
 //! You'd expect this to live in the .cpp, but instantiation should only be triggered ONCE by REGISTER macros in function.h which is only included in function_node.cpp.
-/*! There is the possibility of associating a name with the association using typeid(F).name()
-  but it's not very useful as it has name mangling stuff attached (on gcc anyway).
+/*! We could obtain a type name obtained from typeid BUT:
+  - it has some strange numbers attached (with gcc 3.2 anyway) although we overwrite them later anyway.
+  - the strings returned from it seem to bomb if you try and do anything with them during static initialisation.
+  So we use the no-name registration and it gets filled in by the REGISTER macro later.
  */
-template <typename F> Registration FunctionNodeUsing<F>::registration;
-
+template <typename F> FunctionRegistration FunctionNodeUsing<F>::registration(/*typeid(F).name(),*/&FunctionNodeUsing::stubnew);
 
 #endif
 

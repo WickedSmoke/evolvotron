@@ -25,6 +25,7 @@
 
 #include "function_node.h"
 #include "function_node_using.h"
+#include "function_registry.h"
 
 #include "xyz.h"
 #include "mutatable_image.h"
@@ -32,7 +33,7 @@
 #include "transform.h"
 
 //! Macro to force instantiation of static registration members, and register them with Registry.
-#define REGISTER(F) static const Registration* force_ ## F = Registry::add(#F,&FunctionNodeUsing<F>::registration)
+#define REGISTER(F) static const FunctionRegistration* force_ ## F = FunctionRegistry::add(#F,&FunctionNodeUsing<F>::registration)
 
 
 //! Base function class.

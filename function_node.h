@@ -34,33 +34,8 @@
 
 #include "mutation_parameters.h"
 
-class Registration
-{
- public:
-  Registration()
-    {}
-};
+#include "function_registry.h"
 
-class Registry
-{
- public:
-  std::map<std::string,const Registration*> _registry;
-
-  Registry()
-    {}
-
-  /*
-    void add(const Registration* reg)
-    {
-      _registry[reg->_name]=reg;
-    }
-  */
-  static const Registration*const add(const std::string& name,const Registration* reg)
-  {
-    std::clog << "Registry : add " << name << "\n";
-    return reg;
-  }
-};
 
 class FunctionPreTransform;
 template <typename F> class FunctionNodeUsing;
@@ -152,12 +127,15 @@ class FunctionNode
       return _param0_is_iterations;
     }
 
-  //! Return the number of iterations (should only be invoked for nodes where param(0) is intended to be an iteration count).
+  //! Return the number of iterations
+  /*! Should only be invoked for nodes where param(0) is intended to be an iteration count.
+    We don't like zero iterations: some functions become ambiguous
+    (although the code that manipulates functions should prevent this happening).
+  */
   const uint iterations() const
     {
       assert(_param0_is_iterations);
-      const unsigned int ret=static_cast<int>(floor(param(0)));
-      assert(ret>0);
+      const unsigned int ret=std::max(1,static_cast<int>(floor(param(0))));
       return ret;
     }
 

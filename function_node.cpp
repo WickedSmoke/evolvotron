@@ -370,4 +370,3 @@ const bool FunctionNode::ok() const
   return true;
 }
 
-static Registry registry;

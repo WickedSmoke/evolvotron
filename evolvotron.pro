@@ -16,7 +16,7 @@ QMAKE_CXXFLAGS_RELEASE -= -march=i386
 QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
 #
 # Use the next line for a "super-release" final build only.
-# It takes ages and gcc grows huge (~100MB), so not good for development.
+# It takes AGES and gcc grows HUGE (~100MB), so not too good for development.
 # But it does do a MUCH better job with template code, especially if SSE code is enabled
 #QMAKE_CXXFLAGS_RELEASE += -funroll-loops -finline-limit=4000
 
@@ -27,6 +27,7 @@ HEADERS += \
 	dialog_mutation_parameters.h \
 	evolvotron_main.h \
         function.h \
+        function_registry.h \
         functions.h \
         function_node.h \
         function_node_using.h \
@@ -54,6 +55,7 @@ SOURCES += \
 	evolvotron.cpp \
 	evolvotron_main.cpp \
         function.cpp \
+        function_registry.cpp \
         functions.cpp \
         function_node.cpp \
         function_node_using.cpp \
