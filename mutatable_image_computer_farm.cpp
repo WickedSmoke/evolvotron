@@ -39,7 +39,7 @@ MutatableImageComputerFarm::MutatableImageComputerFarm(uint n_threads)
  */
 MutatableImageComputerFarm::~MutatableImageComputerFarm()
 {
-  std::cerr << "Compute farm shut down begun...\n";
+  std::clog << "Compute farm shut down begun...\n";
 
   // Kill all the computers
   for (std::vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
@@ -64,7 +64,7 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
 
   _mutex.unlock();
 
-  std::cerr << "...completed compute farm shut down\n";
+  std::clog << "...completed compute farm shut down\n";
 }
 
 //! Predicate function to test whether a task has been aborted

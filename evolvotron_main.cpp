@@ -301,7 +301,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint n_thr
  */
 EvolvotronMain::~EvolvotronMain()
 {
-  std::cerr << "Evolvotron shut down begun...\n";
+  std::clog << "Evolvotron shut down begun...\n";
 
   // Orphan any displays which outlived us (look out: shutdown order is Qt-determined)
   for (std::set<MutatableImageDisplay*>::const_iterator it=_known_displays.begin();it!=_known_displays.end();it++)
@@ -312,7 +312,7 @@ EvolvotronMain::~EvolvotronMain()
   // Shut down the compute farm
   delete _farm;
 
-  std::cerr << "...completed Evolvotron shutdown\n";  
+  std::clog << "...completed Evolvotron shutdown\n";  
 }
 
 void EvolvotronMain::spawn_normal(const MutatableImage* image,MutatableImageDisplay* display)

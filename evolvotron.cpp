@@ -33,6 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #include <iostream>
+#include <fstream>
 
 #include <qapplication.h>
 
@@ -57,11 +58,27 @@ int main(int argc,char* argv[])
   uint cols=8;
   uint threads=2;
 
+  std::ofstream sink("/dev/null");
+
+  if (args.option("-v")) 
+    std::clog.rdbuf(std::cerr.rdbuf());
+  else
+    std::clog.rdbuf(sink.rdbuf());
+
   if (args.option("-g")) args.after() >> cols >> rows;
   
   if (args.option("-t")) args.after() >> threads;
 
-  std::cerr << "Starting with " << cols << " by " << rows << " display cells and " << threads << " compute threads\n";
+  std::clog
+    << "Evolvotron version "
+    << EVOLVOTRON_VERSION_STRING
+    << " starting with " 
+    << cols 
+    << " by " 
+    << rows 
+    << " display cells and " 
+    << threads 
+    << " compute threads\n";
 
   if (threads<1)
     {
@@ -81,7 +98,7 @@ int main(int argc,char* argv[])
   app.setMainWidget(main_widget);
   main_widget->show();
     
-  std::cerr << "Commencing main loop...\n";
+  std::clog << "Commencing main loop...\n";
 
   // NB Do this here rather than in constructor so that compute threads aren't being fired off during general GUI set-up
   main_widget->reset_cold();

@@ -187,7 +187,7 @@ class Registry
   */
   static const Registration* add(const std::string& name,const Registration* reg)
   {
-    std::cerr << "Registry : add " << name << "\n";
+    std::clog << "Registry : add " << name << "\n";
     return reg;
   }
 };

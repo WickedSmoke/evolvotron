@@ -136,6 +136,7 @@ COMMAND LINE OPTIONS
   -geometry <width>x<height> : usual Qt/X option to set on-screen size in pixels
   -g <rows> <cols> : sets number of image display cells (defaults 8 by 6)
   -t <threads> : sets number of compute threads (defaults to 2)
+  -v : verbose mode (mainly to assist debugging)
 
 RIGHT-CLICK CONTEXT MENU
 ------------------------
