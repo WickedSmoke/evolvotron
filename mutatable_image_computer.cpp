@@ -78,40 +78,20 @@ void MutatableImageComputer::run()
 		  if (communications().abort()) break;
 		  if (communications().defer()) break;
 		  
-		  const uint r=task()->pixel()/width;
-		  const uint c=task()->pixel()%width;
+		  const uint row=task()->pixel()/width;
+		  const uint col=task()->pixel()%width;
 		
 		  // xy co-ords vary over -1.0 to 1.0
 		  const XYZ p(
-			      -1.0+2.0*(c+0.5)/width,
-			       1.0-2.0*(r+0.5)/height,
+			      -1.0+2.0*(col+0.5)/width,
+			       1.0-2.0*(row+0.5)/height,
 			      0.0
 			      );
 		  
-		  const MutatableImage*const image=task()->image();
+		  uint c[3];
+		  task()->image()->get_rgb(p,c);
 
-		  // Actually calculate a pixel value from the image.
-		  // The nominal range is -1.0 to 1.0
-		  XYZ pv((*image)(p));
-
-		  // Use smooth tanh to avoid hard clamping.
-		  pv.x(tanh(pv.x()));
-		  pv.y(tanh(pv.y()));
-		  pv.z(tanh(pv.z()));
-
-		  // Scale nominal -1.0 to 1.0 range to 0-255
-		  XYZ v(127.5*(pv+XYZ(1.0,1.0,1.0)));
-		  
-		  // Clamp out of range values just in case
-		  v.x(clamped(v.x(),0.0f,255.0f));
-		  v.y(clamped(v.y(),0.0f,255.0f));
-		  v.z(clamped(v.z(),0.0f,255.0f));
-		  
-		  const uint red  =(uint)floorf(v.x());
-		  const uint blue =(uint)floorf(v.y());
-		  const uint green=(uint)floorf(v.z());
-		  
-		  task()->image_data()[task()->pixel()]=((red<<16)|(green<<8)|(blue));
+		  task()->image_data()[task()->pixel()]=((c[0]<<16)|(c[1]<<8)|(c[2]));
 
 		  task()->pixel_advance();
 		}

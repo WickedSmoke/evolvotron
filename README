@@ -256,7 +256,7 @@ selecting the "PanZ" option of an image's "Warp" menu item).
 
 The image functions are constructed from trees of function nodes.
 (In the mathematical expression 1+(2*x) the "+" and the "*" would
-be fuction nodes.)  Evolvotron's nodes tend to correspond to
+be function nodes.)  Evolvotron's nodes tend to correspond to
 geometric or colour-space operations or anything else which can be
 applied to a 3D vector.
 

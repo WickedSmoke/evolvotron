@@ -30,6 +30,30 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_node_info.h"
 
 
+void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
+{
+  // Actually calculate a pixel value from the image.
+  // The nominal range is -1.0 to 1.0
+  XYZ pv((*root())(p));
+
+  // Use smooth tanh to avoid hard clamping.
+  pv.x(tanh(pv.x()));
+  pv.y(tanh(pv.y()));
+  pv.z(tanh(pv.z()));
+
+  // Scale nominal -1.0 to 1.0 range to 0-255
+  XYZ v(127.5*(pv+XYZ(1.0,1.0,1.0)));
+  
+  // Clamp out of range values just in case
+  v.x(clamped(v.x(),0.0f,255.0f));
+  v.y(clamped(v.y(),0.0f,255.0f));
+  v.z(clamped(v.z(),0.0f,255.0f));
+		  
+  c[0]=(uint)floorf(v.x());
+  c[1]=(uint)floorf(v.y());	  
+  c[2]=(uint)floorf(v.z());
+}
+
 std::ostream& MutatableImage::save_function(std::ostream& out) const
 {
   out << "<?xml version=\"1.0\"?>\n";

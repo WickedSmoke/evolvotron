@@ -89,6 +89,8 @@ class MutatableImage
       return (*root())(p);
     }
 
+  void get_rgb(const XYZ& p,uint c[3]) const;
+
   //! Return whether image value is independent of position.
   const bool is_constant() const
     {
