@@ -122,8 +122,16 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
 
   _menu->insertItem("&Big",_menu_big);
 
+  _menu->insertSeparator();
+  
   _menu->insertItem("Save &image",this,SLOT(menupick_save_image()));
   _menu->insertItem("Save &function",this,SLOT(menupick_save_function()));
+
+  if (_full_functionality)
+    {
+      _menu->insertSeparator();
+      _menu->insertItem("L&oad function",this,SLOT(menupick_load_function()));
+    }
 
   main()->hello(this);
 
@@ -542,7 +550,7 @@ void MutatableImageDisplay::menupick_save_image()
     }
   else
     {
-      QString save_filename=QFileDialog::getSaveFileName(".","Images(*.ppm *.png)",this,"Save image","Save image to a .ppm or .png file");
+      QString save_filename=QFileDialog::getSaveFileName(".","Images (*.ppm *.png)",this,"Save image","Save image to a PPM or PNG file");
       if (!save_filename.isEmpty())
 	{
 	  QString save_format("PPM");
@@ -572,7 +580,7 @@ void MutatableImageDisplay::menupick_save_image()
 
 void MutatableImageDisplay::menupick_save_function()
 {
-  QString save_filename=QFileDialog::getSaveFileName(".","Functions(*.xml)",this,"Save function","Save image to an xml file");
+  QString save_filename=QFileDialog::getSaveFileName(".","Functions (*.xml)",this,"Save function","Save image function to an XML file");
   if (!save_filename.isEmpty())
     {
       std::ofstream file(save_filename);
@@ -581,6 +589,29 @@ void MutatableImageDisplay::menupick_save_function()
       if (!file)
 	{
 	  QMessageBox::critical(this,"Evolvotron","File write failed");
+	}
+    }
+}
+
+void MutatableImageDisplay::menupick_load_function()
+{
+  QString load_filename=QFileDialog::getOpenFileName(".","Functions (*.xml)",this,"Load function","Load image function from an XML file");
+  if (!load_filename.isEmpty())
+    {
+      std::ifstream file(load_filename);
+      std::string report;
+      MutatableImage*const new_image=MutatableImage::load_function(file,report);
+      if (new_image==0)
+	{
+	  QMessageBox::critical(this,"Evolvotron",("File could not be loaded:\n"+report).c_str());
+	}
+      else
+	{
+	  if (!report.empty())
+	    {
+	      QMessageBox::warning(this,"Evolvotron",("File could be read, BUT:\n"+report).c_str(),QMessageBox::Ok,QMessageBox::NoButton);
+	    }
+	  image(new_image);
 	}
     }
 }

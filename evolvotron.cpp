@@ -71,7 +71,7 @@ int main(int argc,char* argv[])
 
   std::clog
     << "Evolvotron version "
-    << EVOLVOTRON_VERSION_STRING
+    << EVOLVOTRON_BUILD
     << " starting with " 
     << cols 
     << " by " 

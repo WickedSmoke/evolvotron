@@ -85,8 +85,10 @@ SOURCES += \
 # Version numbering.  This is ENTIRELY controlled by what is echoed by the VERSION script
 #
 VERSION_NUMBER = $$system(./VERSION)
-QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_VERSION_STRING="$$VERSION_NUMBER (release build)"'
-QMAKE_CXXFLAGS_DEBUG   += '-DEVOLVOTRON_VERSION_STRING="$$VERSION_NUMBER (debug build)"'
+QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_VERSION="$$VERSION_NUMBER"'
+QMAKE_CXXFLAGS_DEBUG   += '-DEVOLVOTRON_VERSION="$$VERSION_NUMBER"'
+QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_BUILD="$$VERSION_NUMBER (release build)"'
+QMAKE_CXXFLAGS_DEBUG   += '-DEVOLVOTRON_BUILD="$$VERSION_NUMBER (debug build)"'
 
 #######################################
 # Disable assertions in release version

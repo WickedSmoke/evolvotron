@@ -21,12 +21,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include <iostream>
+#include <qxml.h>
 
 #include "mutatable_image.h"
 
 std::ostream& MutatableImage::save_function(std::ostream& out) const
 {
-  out << "<evolvotron-image>\n";
+  out << "<?xml version=\"1.0\"?>\n";
+  out << "<evolvotron-image version=\"" << EVOLVOTRON_VERSION << "\">\n";
   
   root()->save_function(out,1);
 
@@ -34,3 +36,52 @@ std::ostream& MutatableImage::save_function(std::ostream& out) const
 
   return out;
 }
+
+
+class LoadHandler : public QXmlDefaultHandler
+{
+public:
+  bool startElement(const QString& namespaceURI,const QString& localName,const QString &qName,const QXmlAttributes& atts)
+  {
+    //std::clog << "Element\n";
+    std::clog << "Element " << (const char*)localName << "\n";
+    //std::clog << "Start element: " << (const char*)namespaceURI << "/" << (const char*)localName << "/" << (const char*)qName << "\n";
+    return true;
+  }
+
+  bool characters(const QString& s)
+  {
+    //std::clog << "Char\n";
+    std::clog << "Characters: " << (const char*)s << "\n";
+    return true;
+  }
+};
+
+/*! If NULL is returned, then the import failed: error message in report.
+  If an image is returned then report contains warning messages (probably version mismatch).
+*/
+MutatableImage*const MutatableImage::load_function(std::istream& in,std::string& report)
+{
+  // Don't want to faff with Qt's file classes so just read everything into a string.
+
+  std::string in_data;
+  char c;
+  while (in.get(c)) in_data+=c;
+
+  QXmlInputSource xml_source;
+  xml_source.setData(QString(in_data.c_str()));
+
+  LoadHandler load_handler;
+
+  QXmlSimpleReader xml_reader;
+  xml_reader.setContentHandler(&load_handler);
+
+  const bool ok=xml_reader.parse(&xml_source,false);
+
+  if (ok)
+    report="Function load not yet implemented\n";
+  else
+    report="Parse error\n";
+  return 0;
+}
+

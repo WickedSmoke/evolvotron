@@ -204,6 +204,9 @@ class MutatableImageDisplay : public QWidget
   //! Called from context menu.
   void menupick_save_function();
 
+  //! Called from context menu.
+  void menupick_load_function();
+
   //! Called from "Big" submenu of context menu.
   void menupick_big_resizable();
 

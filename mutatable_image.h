@@ -98,6 +98,9 @@ class MutatableImage
   //! Save the function-tree to the stream
   std::ostream& save_function(std::ostream& out) const;
 
+  //! Read a new function tree from the given stream.
+  static MutatableImage*const load_function(std::istream& in,std::string& report);
+
   //! Check the function tree is ok.
   const bool ok() const
     {

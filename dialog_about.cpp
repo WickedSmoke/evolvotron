@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "dialog_about.h"
 
-static const char*const about_string="\nEvolvotron " EVOLVOTRON_VERSION_STRING "\n\nAuthor: timday@timday.com\n\nHome page: http://evolvotron.sourceforge.net\n\nProject page: http://sourceforge.net/projects/evolvotron\n\nLicense:";
+static const char*const about_string="\nEvolvotron " EVOLVOTRON_BUILD "\n\nAuthor: timday@timday.com\n\nHome page: http://evolvotron.sourceforge.net\n\nProject page: http://sourceforge.net/projects/evolvotron\n\nLicense:";
 
 /*! About dialog displays author info, web addresses and license info.
  */
