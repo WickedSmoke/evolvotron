@@ -146,6 +146,8 @@ there be a quote-delimeted string in ./libevolvotron/usage_text.h
 BUILD OPTIONS
 =============
 A few things are available through the configure script.
+[NB These simply don't work on older gcc or qt installations,
+but they don't add that much so don't worry about it.]
 
 Usage:
   ./configure [p4|p3|xp] [fs]
@@ -171,7 +173,7 @@ PERFORMANCE OPTIONS
 -------------------
 There are already some generally effective overrides for 
 Qt's fairly conservative (at least on RedHat) compile options 
-in the fracplanet.pro file (where QMAKE_CXXFLAGS_RELEASE is
+in the evolvotron.pro file (where QMAKE_CXXFLAGS_RELEASE is
 modified).  If you change them, do a "make distclean" before 
 you rebuild to make sure Makefiles are rebuilt. 
 
