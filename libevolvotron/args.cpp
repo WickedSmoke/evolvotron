@@ -22,18 +22,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "args.h"
+#include <iostream>
 
-/*! We pad _args with a space at each end to make it easier to search for options.
- */
 Args::Args(int argc,char* argv[])
-:_after(0)
+  :_argc(argc)
+  ,_after(0)
 {
-  _args.append(" ");
-  for (int i=1;i<argc;i++)
-    {
-      _args.append(argv[i]);
-      _args.append(" ");
-    }
+  for (int i=0;i<argc;i++)
+    _argv.push_back(std::string(argv[i]));
 }
 
 Args::~Args()
@@ -41,23 +37,32 @@ Args::~Args()
   delete _after;
 }
 
-bool Args::option(const std::string& opt)
+bool Args::option(const std::string& opt,int n)
 {
-  const uint opt_pos=_args.find(" "+opt+" ");
+  delete _after;
+  _after=0;
 
-  if (opt_pos<_args.size())
+  int i;
+  for (i=1;i<_argc;i++)
     {
-      const uint opt_after=opt_pos+opt.size()+2;
-
-      delete _after;
-      _after=new std::istringstream(_args.substr(opt_after,_args.size()-opt_after));
-
-      return true;
+      if (_argv[i]==opt) break;
     }
-  else
+
+  if (i==_argc) return false;
+
+  _after=new std::istringstream;
+  
+  std::string opts_after;
+
+  for (int o=1;o<=n;o++)
     {
-      return false;
+      opts_after+=_argv[i+o];
+      if (o!=n) opts_after+=" ";
+  
     }
+  (*_after).str(opts_after);
+
+  return true;
 }
   
 std::istringstream& Args::after()
@@ -65,4 +70,15 @@ std::istringstream& Args::after()
   assert(_after!=0);
 
   return *_after;
+}
+
+const std::string& Args::last(int n) const
+{
+  assert(n!=0);
+  if (_argc-n<1)
+    {
+      std::cerr << "Error: insufficient arguments supplied\n";
+      exit(1);
+    }
+  return _argv[_argc-n];
 }

@@ -8,9 +8,9 @@ CONFIG+= qt thread release
 # Improved optimisation options from qmake defaults
 # (There is a nice summary of gcc optimisation options at http://freshmeat.net/articles/view/730/ )
 # 
-# Use the next two lines to generally improve things (unroll loops of dubious value).
-QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer -funroll-loops
+# Use the next two lines to generally improve things (unroll loops of somewhat dubious value).
+#QMAKE_CXXFLAGS_RELEASE -= -O2
+#QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer -funroll-loops
 #
 # Use the next two lines ONLY IF you have the right processor (P4)
 #QMAKE_CXXFLAGS_RELEASE -= -march=i386
@@ -24,9 +24,10 @@ QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer -funroll-loops
 #QMAKE_CXXFLAGS_RELEASE -= -march=i386
 #QMAKE_CXXFLAGS_RELEASE += -march=athalon-xp -mfpmath=sse -msse
 #
-# The next line seems to generate nicer assembler with better SSE register usage from templated code.
-# (Whether the code is actually any faster I don't know).
-# Be warned: gcc grows HUGE (>500MB) and it takes AGES.
+# The next line seems to generate nicer assembler (with better SSE register usage) from some templated code.
+# Testing doesn't show it running any faster though!
+# WARNING: gcc grows HUGE (>500MB) and it takes AGES with this option.
+# ie it's generally not worth bothering with.
 #QMAKE_CXXFLAGS_RELEASE += -finline-limit=4000
 
 ##################

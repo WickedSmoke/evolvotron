@@ -27,19 +27,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <sstream>
 
 #include "useful.h"
+#include <vector>
+#include <string>
 
 //! Class for sanitizing access to commandline arguments.
 /*! The main purpose is to allow >> operators to be used to read args into parameters.
-  Note that any information inherent in the vector partitioning of the arguments is disregarded;
-  for example '-f file name' and '-f "file name"' on the command line will look the same to users of this class.
  */
 class Args
 {
  protected:
 
-  //! The arguments all concatenated together.
-  std::string _args;
-
+  int _argc;
+  
+  std::vector<std::string> _argv;
+  
   //! The stringstream after the selected option.
   std::istringstream* _after;
 
@@ -51,10 +52,13 @@ class Args
   ~Args();
 
   //! Return true if option is present, and set up in anticipation of subsequent after()
-  bool option(const std::string& opt);
+  bool option(const std::string& opt,int n=0);
 
-  //! Return a stream from which arguments
+  //! Return a stream containing the n option arguments requested by the last
   std::istringstream& after();
+
+  //! Return the n-th last argument
+  const std::string& last(int n) const;
 };
 
 #endif

@@ -66,9 +66,9 @@ int main(int argc,char* argv[])
   else
     std::clog.rdbuf(sink.rdbuf());
 
-  if (args.option("-g")) args.after() >> cols >> rows;
+  if (args.option("-g",2)) args.after() >> cols >> rows;
   
-  if (args.option("-t")) args.after() >> threads;
+  if (args.option("-t",1)) args.after() >> threads;
 
   std::clog
     << "Evolvotron version "

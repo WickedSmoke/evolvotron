@@ -66,10 +66,18 @@ BUILD OPTIONS
 =============
 Note that qmake's default optimisation settings are pretty conservative
 (-O2 -march=i386).  IF you have a chip with SSE instuctions or similar, 
-then (once you have it working with the default options) I would HIGHLY
-recommend uncommenting and/or editing some of the lines modifying
+then (once you have it working with the default options) you might
+want to consider uncommenting and/or editing some of the lines modifying
 QMAKE_CXXFLAGS_RELEASE near the start of "common.pro" and rebuilding
 (make clean and ./BUILD).
+
+[To get some perspective on this, here's the times for a 2.4GHz P4 to
+run a 4096x4096 evolvotron_render on a benchmark image.
+  Qt defaults:          2m 36s
+  Better optimisations: 2m 12s
+  +SSE2 instructions:   2m  8s
+  +bigger inline limit: 2m  8s
+]
 
 BUILD PROBLEMS
 ==============
@@ -339,6 +347,17 @@ function which are disabled by default.  These are "iterative" functions and
 for their being optional is that, in the former case they're expensive, and
 in the latter case they're expensive and ugly.  Note that if fractal functions
 are enabled, then iterative functions are enabled too.
+
+OTHER EXECUTABLES
+=================
+Evolvotron also installs two other executables:
+ - evolvotron_render
+   Usage: evolvotron_render [-s <x> <y>] [<file.ppm>|<file.png>] < <file.xml>
+   Reads a XML function description from it's standard input and renders it to the
+   file specified (suffix determines type, defaults to ppm if not recognised).
+   [NB Not multithreaded].
+ - evolvotron_mutate
+   [Under development]
 
 FUTURE DEVELOPMENTS
 ===================
