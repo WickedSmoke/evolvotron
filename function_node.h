@@ -78,7 +78,10 @@ class FunctionNode
   //@}
 
   //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
-  static FunctionNode* stub(const MutationParameters& parameters,bool exciting=false);
+  static FunctionNode*const stub(const MutationParameters& parameters,bool exciting=false);
+
+  //! This returns a random bit of tree suitable for use as a starting image.
+  static FunctionNode*const initial(const MutationParameters& parameters);
 
   //! This returns a vector of random parameter values.
   static const std::vector<float> stubparams(const MutationParameters& parameters,uint n);
@@ -164,13 +167,8 @@ class FunctionNode
 class Registration
 {
  public:
-  std::string _name;
-  
-  Registration(const std::string& n)
-    :_name(n)
-    {
-      std::cerr << "Register: " << _name << "\n";
-    }
+  Registration()
+    {}
 };
 
 class Registry
@@ -181,14 +179,15 @@ class Registry
   Registry()
     {}
 
-  void add(const Registration* reg)
+  /*
+    void add(const Registration* reg)
     {
       _registry[reg->_name]=reg;
     }
-
+  */
   static const Registration* add(const std::string& name,const Registration* reg)
   {
-    std::cerr << "Registry: " << name << "\n";
+    std::cerr << "Registry : add " << name << "\n";
     return reg;
   }
 };
@@ -278,11 +277,11 @@ template <> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsi
   return this;
 }
 
-//! You'd expect this to live in the .cpp, but instantiation should only be triggered once by REGISTER macros in function.cpp.
+//! You'd expect this to live in the .cpp, but instantiation should only be triggered ONCE by REGISTER macros in function.h which is only included in function_node.cpp.
 /*! There is the possibility of associating a name with the association using typeid(F).name()
   but it's not very useful as it has name mangling stuff attached.
  */
-template <typename F> Registration FunctionNodeUsing<F>::registration(typeid(F).name());
+template <typename F> Registration FunctionNodeUsing<F>::registration;
 
 
 //----------------------------------------------------------------------------------------

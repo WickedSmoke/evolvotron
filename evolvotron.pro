@@ -29,6 +29,7 @@ HEADERS += \
         function.h \
         function_node.h \
         function_pre_transform.h \
+        function_post_transform.h \
 	license.h \
         matrix.h \
 	mutatable_image.h \
@@ -52,7 +53,8 @@ SOURCES += \
 	evolvotron_main.cpp \
         function.cpp \
         function_node.cpp \
-        function_pre_transform.h \
+        function_pre_transform.cpp \
+        function_post_transform.cpp \
 	license.cpp \
         matrix.cpp \
 	mutatable_image.cpp \

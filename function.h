@@ -37,7 +37,7 @@
   The one function allowed to escape into the wild is FunctionPreTransform which has it's own header file.
 */
 
-//! Macro to force instantiation of static registration members.
+//! Macro to force instantiation of static registration members, and register them with Registry.
 #define REGISTER(F) static const Registration* force_ ## F = Registry::add(#F,&FunctionNodeUsing<F>::registration)
 
 //------------------------------------------------------------------------------------------
@@ -224,37 +224,7 @@ REGISTER(FunctionPreTransformGeneralised);
 
 //------------------------------------------------------------------------------------------
 
-//! Function class returning leaf node evaluated at given position; result is then transfomed by a 12-component linear transform.
-class FunctionPostTransform
-{
- public:
-
-  //! 12 parameters
-  static const uint parameters()
-    {
-      return 12;
-    }
-
-  //! Single leaf arguments
-  static const uint arguments()
-    {
-      return 1;
-    }
-
-  //! Return the evaluation of arg(0) at the transformed position argument.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
-  {
-    const Transform transform(our.params());
-    return transform.transformed(our.arg(0)(p));
-  }
-
-  //! Has the same const-ness as arg(0)
-  static const bool is_constant(const FunctionNode& our)
-    {
-      return our.arg(0).is_constant();
-    }
-
-};
+#include "function_post_transform.h"
 
 REGISTER(FunctionPostTransform);
 

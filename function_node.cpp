@@ -48,7 +48,7 @@ const std::vector<float> FunctionNode::cloneparams() const
   \todo Compute (statistically) the expected number of nodes in a stub.
   \todo Don't think FunctionNodeUsing<FunctionPreTransform> appears here ?
  */
-FunctionNode* FunctionNode::stub(const MutationParameters& parameters,bool exciting)
+FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool exciting)
 {
   // Base mutations are Constant or Identity types.  
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
@@ -149,6 +149,53 @@ FunctionNode* FunctionNode::stub(const MutationParameters& parameters,bool excit
     return new FunctionNodeIterativeJuliaChoose(stubparams(parameters,0),stubargs(parameters,3),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
   else //if (r<base+34*step)
     return new FunctionNodeIterativeJuliaContour(stubparams(parameters,0),stubargs(parameters,1),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+}
+
+FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
+{
+  FunctionNode* root;
+  bool image_is_constant;
+  
+  do
+    {
+      std::vector<float> params_toplevel;
+      std::vector<FunctionNode*> args_toplevel;
+      
+      std::vector<float> params_in;
+      std::vector<FunctionNode*> args_in;
+      args_in.push_back(FunctionNode::stub(parameters));
+      args_in.push_back(FunctionNode::stub(parameters));
+      args_in.push_back(FunctionNode::stub(parameters));
+      args_in.push_back(FunctionNode::stub(parameters));
+      args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_in,args_in));
+      
+      // This one is crucial: we REALLY want something interesting to happen within here.
+      args_toplevel.push_back(FunctionNode::stub(parameters,true));
+      
+      std::vector<float> params_out;
+      std::vector<FunctionNode*> args_out;
+      args_out.push_back(FunctionNode::stub(parameters));
+      args_out.push_back(FunctionNode::stub(parameters));
+      args_out.push_back(FunctionNode::stub(parameters));
+      args_out.push_back(FunctionNode::stub(parameters));
+      args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_out,args_out));
+      
+      root=new FunctionNodeConcatenateTriple(params_toplevel,args_toplevel);
+      
+      assert(root->ok());
+      
+      image_is_constant=root->is_constant();
+      
+      if (image_is_constant)
+	{
+	  delete root;
+	}
+    }
+  while (image_is_constant);
+  
+  assert(root->ok());
+  
+  return root;
 }
 
 /*! This returns a vector of random bits of stub, used for initialiing nodes with children. 

@@ -30,7 +30,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "evolvotron_main.h"
 #include "xyz.h"
-#include "function.h"
+#include "function_node.h"
+#include "function_pre_transform.h"
+#include "function_post_transform.h"
 
 void EvolvotronMain::History::purge()
 {
@@ -573,48 +575,7 @@ void EvolvotronMain::tick()
  */
 void EvolvotronMain::reset(MutatableImageDisplay* display)
 {
-  FunctionNode* root;
-  bool image_is_constant;
-
-  do
-    {
-      std::vector<float> params_toplevel;
-      std::vector<FunctionNode*> args_toplevel;
-  
-      std::vector<float> params_in;
-      std::vector<FunctionNode*> args_in;
-      args_in.push_back(FunctionNode::stub(mutation_parameters()));
-      args_in.push_back(FunctionNode::stub(mutation_parameters()));
-      args_in.push_back(FunctionNode::stub(mutation_parameters()));
-      args_in.push_back(FunctionNode::stub(mutation_parameters()));
-      args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_in,args_in));
-  
-      // This one is crucial: we REALLY want something interesting to happen within here.
-      args_toplevel.push_back(FunctionNode::stub(mutation_parameters(),true));
-
-      std::vector<float> params_out;
-      std::vector<FunctionNode*> args_out;
-      args_out.push_back(FunctionNode::stub(mutation_parameters()));
-      args_out.push_back(FunctionNode::stub(mutation_parameters()));
-      args_out.push_back(FunctionNode::stub(mutation_parameters()));
-      args_out.push_back(FunctionNode::stub(mutation_parameters()));
-      args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_out,args_out));
-
-      root=new FunctionNodeConcatenateTriple(params_toplevel,args_toplevel);
-
-      assert(root->ok());
-
-      image_is_constant=root->is_constant();
-
-      if (image_is_constant)
-	{
-	  delete root;
-	}
-    }
-  while (image_is_constant);
-
-  assert(root->ok());
-
+  FunctionNode*const root=FunctionNode::initial(mutation_parameters());
   history().replacing(display);
   display->image(new MutatableImage(root));
 }

@@ -17,20 +17,20 @@
 */
 
 /*! \file 
-  \brief Interfaces for class FunctionPreTransform 
+  \brief Interfaces for class FunctionPostTransform 
   This class would normally live in function.h (and is included and registered there), 
   but is split out so it can be efficiently used by MutatableImageDisplay and EvolvotronMain.
   NB There is no class heirarchy here as all virtualisation and boilerplate services are supplied when the functions are plugged into the FunctionNode template.
 */
 
-#ifndef _function_pre_transform_h_
-#define _function_pre_transform_h_
+#ifndef _function_post_transform_h_
+#define _function_post_transform_h_
 
 #include "xyz.h"
 #include "function_node.h"
 
-//! Function class returning leaf node evaluated at position transfomed by a 12-component linear transform.
-class FunctionPreTransform
+//! Function class returning leaf node evaluated at given position; result is then transfomed by a 12-component linear transform.
+class FunctionPostTransform
 {
  public:
 
@@ -50,14 +50,15 @@ class FunctionPreTransform
   static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
   {
     const Transform transform(our.params());
-    return our.arg(0)(transform.transformed(p));
+    return transform.transformed(our.arg(0)(p));
   }
 
   //! Has the same const-ness as arg(0)
   static const bool is_constant(const FunctionNode& our)
-  {
-    return our.arg(0).is_constant();
-  }
+    {
+      return our.arg(0).is_constant();
+    }
+
 };
 
 #endif
