@@ -63,16 +63,16 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
   const float base=0.7;
 
-  uint steps=63;
+  uint steps=65;
 
   if (!parameters.allow_fractal_nodes())
     {
-      steps=minimum(steps,59u);     // Currently 4 fractal types
+      steps=minimum(steps,61u);     // Currently 4 fractal types
     }
 
   if (!parameters.allow_iterative_nodes())
     {
-      steps=minimum(steps,53u);     // Currently 6 non-fractal iterative types (including multiscale noise - not strictly iterative but expensive)
+      steps=minimum(steps,54u);     // Currently 7 non-fractal iterative types (including multiscale noise - not strictly iterative but expensive)
     }
 
   const float step=(1.0-base)/steps;
@@ -193,28 +193,32 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   else if (r<base+51*step)
     return FunctionNodeUsing<FunctionExpCone>::stubnew(parameters);
   else if (r<base+52*step)
-    return FunctionNodeUsing<FunctionNoiseOneChannel>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionSeparateZ>::stubnew(parameters);
   else if (r<base+53*step)
-    return FunctionNodeUsing<FunctionNoiseThreeChannel>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionNoiseOneChannel>::stubnew(parameters);
   else if (r<base+54*step)
-    return FunctionNodeUsing<FunctionMultiscaleNoiseOneChannel>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionNoiseThreeChannel>::stubnew(parameters);
   else if (r<base+55*step)
-    return FunctionNodeUsing<FunctionMultiscaleNoiseThreeChannel>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionMultiscaleNoiseOneChannel>::stubnew(parameters);
   else if (r<base+56*step)
-    return FunctionNodeUsing<FunctionIterate>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionMultiscaleNoiseThreeChannel>::stubnew(parameters);
   else if (r<base+57*step)
-    return FunctionNodeUsing<FunctionAverageSamples>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionIterate>::stubnew(parameters);
   else if (r<base+58*step)
-    return FunctionNodeUsing<FunctionConvolveSamples>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionAverageSamples>::stubnew(parameters);
   else if (r<base+59*step)
-    return FunctionNodeUsing<FunctionAccumulateOctaves>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionStreak>::stubnew(parameters);
   else if (r<base+60*step)
-    return FunctionNodeUsing<FunctionMandelbrotChoose>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionConvolveSamples>::stubnew(parameters);
   else if (r<base+61*step)
-    return FunctionNodeUsing<FunctionMandelbrotContour>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionAccumulateOctaves>::stubnew(parameters);
   else if (r<base+62*step)
+    return FunctionNodeUsing<FunctionMandelbrotChoose>::stubnew(parameters);
+  else if (r<base+63*step)
+    return FunctionNodeUsing<FunctionMandelbrotContour>::stubnew(parameters);
+  else if (r<base+64*step)
     return FunctionNodeUsing<FunctionJuliaChoose>::stubnew(parameters);
-  else //if (r<base+63*step)
+  else //if (r<base+65*step)
     return FunctionNodeUsing<FunctionJuliaContour>::stubnew(parameters);
 }
 

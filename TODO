@@ -109,6 +109,6 @@ Conventional
 - Avoid misleading moire patterns by jittering samples
 - No low-res images option for when using remotely via X11 over slow link
   (they take longer to display than compute) (running over compressed ssh helps a lot though).
+- Evolvotron_mutate should support -x/-X options.
 - Think of more functions:
-    Kelaidascope reflector
     Blending counterparts for switching/choosing functions.

@@ -185,14 +185,12 @@ Repeat the following until bored:
    detail that you can decide which one you like best again.
 
 IMPORTANT: Initially you should select images with some sort of variation.
-It can take quite a few generations before you get something more interesting
-than a simple gradient.  If you select a uniform image, you may get stuck
-in a degenerate zone with little to mutate and therefore little chance of
-escape to a more interesting area.  You can always reset/restart from the
-"File" menu (the difference is that "reset" also resets the mutation
-parameters to their default values).  Note that spirals, grids and tiles,
-although complex looking, are actually implemented by a single function node
-and may leave you stuck too.
+If you select a uniform image, you may get stuck in a degenerate zone with
+little to mutate and therefore little chance of escape to a more interesting
+area.  You can always reset/restart from the "File" menu (the difference is
+that "reset" also resets the mutation parameters to their default values).
+Note that spirals, grids and tiles, although complex looking, are actually
+implemented by a single function node and may leave you stuck too.
 
 COMMAND LINE OPTIONS
 ====================
@@ -200,10 +198,10 @@ COMMAND LINE OPTIONS
 USER OPTIONS
 ------------
   -geometry <width>x<height>
-	- Usual Qt/X option to set on-screen size in pixels
+	- The usual Qt/X option to set on-screen size in pixels
 
   -g <rows> <cols>
-	- Sets number of image display cells (defaults 7 by 5)
+	- Sets number of image display cells (defaults to 7 by 5)
 
   -t <threads>
 	- Sets number of compute threads (defaults to 2)
@@ -220,11 +218,13 @@ ANIMATION OPTIONS
 DEBUGGING/POWER-USER OPTIONS
 ----------------------------
   -v 
-	- Verbose mode, writes to application stderr (mainly to assist debugging)
+	- Verbose mode, writes various things to application stderr (mainly to assist debugging).
+        Probably most useful for getting a list of supported function names for use with the
+        -x/-X options.
 
   -x <functionname>
 	- Force a specific function type to be used at the top level of all function trees.
-	The specifed function is still wrapped (concatenated) by spatial and colour warping
+	The specifed function is still wrapped by spatial and colour warping
 	functions which may disguise it considerably.
 	A list of function names understood by evolvotron is output during app startup
 	when the -v option is specified.
@@ -245,7 +245,7 @@ Right clicking on an image gets you a few more options:
    spawned from (and using recolour or warp, if that's what was used
    to produce it).
    The main use of this is to make your grid of images look nice
-   by regenerating any which aren't up to scratch.
+   for screendumps, by regenerating any which aren't up to scratch.
  - "Spawn" is the same as clicking an image.  It generates mutated
    images to all unlocked images in the grid.
  - "Recolour" to produce different coloured variants of the selected image
@@ -336,7 +336,7 @@ resolution tasks have completed.
 TIPS
 ====
 - Don't start a session with any preconceived ideas about the kind
-  of image you want to get out of it.  You'll be disappointed.
+  of image you want to get out of it.  You will be disappointed.
 - I get the best results when I click the image which most
   immediately catches my eye as they start appearing.  If you stop
   to think about it too much then things seem to go downhill.

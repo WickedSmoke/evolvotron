@@ -2,10 +2,10 @@
 
 From release 0.2.0:
  - Bump version to 0.2.1-devel
- - Priority to displaying (not computing) higher resolution images
+ - Display (not compute) priority to higher resolution images
    (saves time enlarging low res images unnecessarily)
  - x and -X command line options to specify specifc top level function types.
- - FunctionKaleidoscope and FunctionWindmill added
+ - FunctionKaleidoscope, FunctionWindmill, FunctionStreak, FunctionSeparateZ added
  - Added -f <frames> option to evolvotron_render
 
 From release 0.1.4:

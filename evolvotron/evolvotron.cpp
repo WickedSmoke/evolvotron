@@ -137,7 +137,7 @@ int main(int argc,char* argv[])
 
       if (!main_widget->test_function(testfn))
 	{
-	  std::cerr << "Unrecognised function name specified for -x option\n";
+	  std::cerr << "Unrecognised function name specified for -x/-X option\n";
 	  exit(1);
 	}
 

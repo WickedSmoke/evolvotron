@@ -2314,6 +2314,41 @@ class FunctionExpCone : public Function
 
 REGISTER(FunctionExpCone);
 
+//------------------------------------------------------------------------------------------
+
+//! Separate influence of z co-ordinate.
+/*! Interesting as a top level node for animations as structure will tend to be fixed, with only colour map changing
+ */
+class FunctionSeparateZ : public Function
+{
+ public:
+  //! Three parameters
+  static const uint parameters()
+    {
+      return 3;
+    }
+
+  //! Two arguments.
+  static const uint arguments()
+    {
+      return 2;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const XYZ v=our.arg(0)(XYZ(p.x(),p.y(),0.0f));
+      return our.arg(1)(v+p.z()*XYZ(our.param(0),our.param(1),our.param(2)));
+    }
+  
+  //! Constant if arg(1) is
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(1).is_constant();
+    }
+};
+
+REGISTER(FunctionSeparateZ);
 
 //------------------------------------------------------------------------------------------
 
@@ -2597,6 +2632,70 @@ REGISTER(FunctionAverageSamples);
 
 //------------------------------------------------------------------------------------------
 
+//! Similar to average samples except one end has a higher weighting
+class FunctionStreak : public FunctionIterative
+{
+ public:
+  //! Three parameters.
+  static const uint parameters()
+    {
+      return 3;
+    }
+
+  //! One argument.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const XYZ baseline(our.param(0),our.param(1),our.param(2));
+     
+      XYZ p0;
+      XYZ p1;
+      XYZ delta;
+      
+      if (our.iterations()==1)
+	{
+	  p0=p;
+	  p1=p;
+	  delta=XYZ(0.0f,0.0f,0.0f);
+	}
+      else
+	{
+	  p0=p;
+	  p1=p+baseline;
+	  delta=(p1-p0)/(our.iterations()-1);
+	}
+
+      XYZ ret(0.0f,0.0f,0.0f);
+      XYZ ps=p0;
+      float w=0.0f;
+
+      for (uint i=0;i<our.iterations();i++)
+	{
+	  const float k=1.0f-static_cast<float>(i)/our.iterations();
+	  ret+=k*our.arg(0)(ps);
+	  w+=k;
+	  ps+=delta;
+	}
+      ret/=w;
+      return ret;
+    }
+  
+  //! Is constant if sampled leaf function is.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionStreak);
+
+//------------------------------------------------------------------------------------------
+
 //! Function similar to FunctionAverageSamples but doing convolution
 class FunctionConvolveSamples : public FunctionIterative
 {
@@ -2632,22 +2731,22 @@ class FunctionConvolveSamples : public FunctionIterative
 	{
 	  p0=p-baseline;
 	  p1=p+baseline;
-	  delta=(p1-p0)/our.iterations();
+	  delta=(p1-p0)/(our.iterations()-1);
 	}
 
       XYZ ret(0.0f,0.0f,0.0f);
-      XYZ ps=p0;
+      XYZ pd(0.0f,0.0f,0.0f);
 
       for (uint i=0;i<our.iterations();i++)
 	{
-	  ret+=(our.arg(0)(ps)*our.arg(1)(ps));
-	  ps+=delta;
+	  ret+=(our.arg(0)(p+pd)*our.arg(1)(pd));
+	  pd+=delta;
 	}
       ret/=our.iterations();
       return ret;
     }
   
-  //! Is constant if sampled leaf function is.
+  //! Is constant if arg(0) is
   static const bool is_constant(const FunctionNode& our)
     {
       return our.arg(0).is_constant();
@@ -2862,6 +2961,47 @@ class FunctionJuliaContour : public FunctionIterative
 };
 
 REGISTER(FunctionJuliaContour);
+
+//------------------------------------------------------------------------------------------
+
+//! \todo Something like Conway's Game of Life or a reaction-diffusion system, seeded from an initial function.
+/*! Probably operate on an iteration()xiterations()xiterations() grid.
+  Need ability to cache state at a particular time by identity (address-of?) of "our".
+  WILL cause slow start-up due to precompute, although compute-on-demand should help a bit.
+  Maybe the whole static thing was a mistake.
+  Should derive Function classes from FunctionBoilerplate<T> to provide Clone etc.
+ */
+class FunctionCellular : public FunctionIterative
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! One arguments giving initial seed
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      return XYZ(0.0f,0.0f,0.0f);
+    }
+  
+  //! Not constant.
+  static const bool is_constant(const FunctionNode&)
+    {
+      return false;
+    }
+
+ protected:
+};
+
+REGISTER(FunctionCellular);
 
 //------------------------------------------------------------------------------------------
 
