@@ -9,6 +9,7 @@ evolvotron_render
 .I <width>
 .I <height>
 ]
+[\-spheremap]
 [\-f 
 .I <frames>
 ]
@@ -50,6 +51,10 @@ Generates multi-frame animations.  .fnnnnnn is inserted into
 the specified filename (before the filetype suffix, if any).
 You can use this on functions which weren't evolved in animation mode, but there's
 no guarantee they have any interesting time/z variation.
+
+.TP 0.5i
+.B \-spheremap
+Create a spheremap instead of a planar texture.
 
 .SH EXAMPLES
 

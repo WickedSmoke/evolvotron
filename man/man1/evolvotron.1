@@ -20,6 +20,8 @@ evolvotron
 [\-r
 .I <framerate>
 ]
+[\-spheremap
+]
 [
 .I <QtOptions>
 ]
@@ -89,6 +91,11 @@ Standard options recognised by the Qt toolkit (for example
 .B \-geometry
 .I <width>x<height>
 )
+
+.TP 0.5i
+.B \-spheremap
+Create spheremaps instead of planar textures.
+NB The middle-mouse adjustments will not behave as expected in this mode.
 
 .TP 0.5i
 .B \-v
