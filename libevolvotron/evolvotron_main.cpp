@@ -173,7 +173,7 @@ void EvolvotronMain::History::undo()
   if (_history.size()==0)
     {
       // Shouldn't ever see this if Undo menu item is correctly greyed out.
-      QMessageBox::warning(_main,"Evolvotron","Cannot undo further");
+      QMessageBox::warning(_main,"Evolvotron","Sorry, cannot undo any further");
     }
   else if (_history.front().second.size()==0)
     {
@@ -623,8 +623,13 @@ void EvolvotronMain::keyPressEvent(QKeyEvent* e)
     }
   else if (e->key()==Qt::Key_R && !(e->state()^Qt::ControlButton))
     {
-      //Ctrl-R does a reset because that's most useful in full-screen mode
+      //Ctrl-R does a reset mainly because that's most useful in full-screen mode
       reset_warm();
+    }
+  else if (e->key()==Qt::Key_Z && !(e->state()^Qt::ControlButton))
+    {
+      //Ctrl-Z does an undo
+      undo();
     }
   else
     {

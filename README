@@ -386,14 +386,17 @@ window managers).  See also "-F" command line option.
 NB The application may completely disappear from the screen for 
 a brief interval while switching mode.
 
-Ctrl-m toggles status and menu-bar hiding, which is nice when
-in full-screen mode.  See also "-M" command line option.
+Ctrl-m toggles status and menu-bar hiding, which can be nice 
+when in full-screen or window-maximised mode.  See also "-M" 
+command line option.
 
 Esc kills full-screen and/or menu-hiding, putting the application
 into its normal default state. 
 
 Ctrl-r does a restart (for convenience when the menu bar
 is hidden, because this is such a common operation).
+
+Ctrl-z does an undo.
 
 GUI ELEMENTS
 ============
