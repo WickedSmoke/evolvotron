@@ -6,7 +6,7 @@ VERSION=`./VERSION`
 
 cd ..
 
-FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,CHANGES,VERSION,configure,doxygen.cfg,mktgz,mkdoc}`
+FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,CHANGES,VERSION,USAGE,configure,doxygen.cfg,mktgz,mkdoc}`
 
 FILES_H=`find evolvotron -name moc -prune -o -name '*.h' -print`
 FILES_CPP=`find evolvotron -name moc -prune -o -name '*.cpp' -print`
