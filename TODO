@@ -1,30 +1,35 @@
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
-- Bump mapped versions of shaded/reflecting spheres
 - Replace FunctionNode::stub() with FunctionRegistry based code
-- Better random number generator needed ?
-- More functions (reflection from environment, Perlin noise).
-- More iterative functions
-- evolvotron_mutate should provide more control
+- Create registry of all function node types (done)
+  - Use to bring up a panel for setting relative frequencies (check for exploding branching ratios)
+    - Button to spawn images with a specific type of top level node (would be great for testing)
+  - Allow iterative/allow fractal would then become convenience buttons for quick-setting a whole group of frequencies
+  - Classification scheme for function types (basic, smooth, chooser, complex, expensive).
+- More types of mutation
+  - Substitute a node for a different type, retaining it's settings (expand/cull as necessary)
+- evolvotron_mutate standalone exe should provide more control
   (heat/cool/irradiate/shield options, recolour/warp options).
-- Option to spawn images with a given top level node type
-  (would be great for testing)
+- Combining/breeding image pairs.
+  Use drag-and-drop
+  Either:
+    Create a new top level node with 2 or more args and add the parents to it.
+    Create a new random stub and insert the parents at random points.
+    Insert one image at a random point into the other.
+    Concatenate (function compose) the 2 images.
+- Option to compute volumes in Z direction and oscillate z co-ordinate with time.
 - Get rid of silly xyz and matrix dependence on general tuples and templates.
   (Can be optimised, but only with heavyweight compile options.)
 - Profile & optimise.
   Not too happy with FunctionNodeUsing<F> evaluate overhead of function wrapper for F::evaluate
-- Spawn recoloured could be linear, quadratic, or generalised versions.
-- Option to compute volumes in Z direction and oscillate z co-ordinate with time.
+- Spawn recoloured could be linear, quadratic (or generalised?) versions.
 - Locked attribute should be an image property, not a display property.
   (Would play nicer with Undo)
-- Create registry of all function node types (done)
-  - use to bring up a panel for setting relative frequencies (check for exploding branching ratios)
-  - Allow iterative/allow fractal would then become convenience buttons for quick-setting a whole group of frequencies
-  - Classification scheme for function types (basic, smooth, chooser, complex, expensive).
 - Undo needs to save more state to work properly (e.g state for respawn)
 - Have a function type which can suck in random images from directories of images
   (specified by environmental variable ?)
+  Filename would need to be retained in node and XML for reproducibility.
 - Check spew of tasks from drag-adjust can't get out of order in multithread compute farm and come back in wrong order
   (associate tasks with an original image instance/serial number as well as an originating display ?)
 - Optimise drag: just recompute new area (needs image subregions for tasks).
@@ -38,19 +43,10 @@ imply it will be done sooner or later than other items!
   (so warp spawn method can encapsulate a transform factory).
   Needed for breeding behaviour (so can keep 2 last images).
 - Undo needs to restore _last_spawned too (but do above first and keep hisory of spawn methods).
-- Combining/breeding image pairs.
-  Use drag-and-drop
-  Either:
-    Create a new top level node with 2 or more args and add the parents to it.
-    Create a new random stub and insert the parents at random points.
-    Insert one image at a random point into the other.
-    Concatenate (function compose) the 2 images.
-- Add control over MutatableImageNodePositionTransformedQuadratic vs MutatableImageNodePositionTransformed proportions
-  (do as part of rationalising all of function selection)
 - Command line option to enable/disable fractal and iterative types.
 - Replace/augment "Lock" with a "save" or "put-aside" window (could make history/undo simpler).
 - "Unlock all" on edit menu
-- Reset & Restart should bring up modal "are you sure" dialog box which can also contain check boxes for what to reset:
+- Reset & Restart: combine and bring up modal "are you sure" dialog box which can also contain check boxes for what to reset:
     mutation parameters
     function freqencies (when implemented)
     locked displays
@@ -89,5 +85,5 @@ imply it will be done sooner or later than other items!
   (just pass in a MutationParameters).  
 - Avoid misleading moire patterns by jittering samples
 - No low-res images option for when using remotely via X11 over slow link
-  (they take longer to display than compute).
-- Special reset which uses iterative types to set up nothing but Mandelbrot/Julia-set type functions.
+  (they take longer to display than compute) (running over compressed ssh helps though).
+- Think of more functions

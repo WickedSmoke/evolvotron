@@ -7,10 +7,10 @@ From release 0.1.2:
  - Add evolvotron_mutate executable.
  - Better Args class.
  - Fix bug in FunctionAverageSamples
+ - Add noise class
  - Add more functions.
  - Use better random number generator (MT)
- - Change initial setup so there's a chance of identity nodes front and back
- - Add noise class
+ - Changes to initial setup probabilities, add chance of identity nodes front and back
 
 From release 0.1.1:
  - Bump version to 0.1.2.  This is purely a bug-fix release.

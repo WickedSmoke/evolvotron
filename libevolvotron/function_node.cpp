@@ -72,7 +72,7 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
 
   if (!parameters.allow_iterative_nodes())
     {
-      steps=minimum(steps,53u);     // Currently 4 non-fractal iterative types
+      steps=minimum(steps,51u);     // Currently 6 non-fractal iterative types (including multiscale noise - not strictly iterative but expensive)
     }
 
   const float step=(1.0-base)/steps;

@@ -6,33 +6,32 @@ CONFIG+= qt thread release
 
 ##################
 # Improved optimisation options from qmake defaults.
-# (There is a nice summary of gcc optimisation options at http://freshmeat.net/articles/view/730/ )
+# The README contains some timings showing the (small) effect of changing these.
 # 
-# Use the next two lines to generally improve things (unroll loops of somewhat dubious value).
-# Now leaving these ON for general distribution as they DO have a bigger effect than the others,
-# and should be portable.
+# Use the next two lines for slight improvement
+# Now leaving these ON for general distribution as they DO have SOME effect and should be portable.
 QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer
-QMAKE_CXXFLAGS_RELEASE += -funroll-loops
+QMAKE_CXXFLAGS_RELEASE += -O3 -fomit-frame-pointer -funroll-loops -ffast-math 
 #
-# The rest don't have a huge effect - see README file.
+# The following architecture options make the compiled executables less portable.
+# (On a different setup you may need to change what's subtracted out of the flags.)
+# NB -march=X implies -mcpu=X... no need to specify both the same
 #
 # Use the next two lines ONLY IF you have the right processor (P4)
-QMAKE_CXXFLAGS_RELEASE -= -march=i386
+QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
 QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
 #
 # Here's the same thing (UNTESTED) for P3 
-#QMAKE_CXXFLAGS_RELEASE -= -march=i386
+#QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
 #QMAKE_CXXFLAGS_RELEASE += -march=pentium3 -mfpmath=sse -msse
 #
 # Here's the same thing (UNTESTED) for Athalon-XP
-#QMAKE_CXXFLAGS_RELEASE -= -march=i386
+#QMAKE_CXXFLAGS_RELEASE -= -march=i386 -mcpu=i686
 #QMAKE_CXXFLAGS_RELEASE += -march=athalon-xp -mfpmath=sse -msse
 #
 # The next line seems to generate nicer assembler (with better SSE register usage) from some templated code.
-# Testing doesn't show it running any faster though!
-# WARNING: gcc grows HUGE (>500MB) and it takes AGES with this option.
-# ie it's of curiosity value only.
+# WARNING: gcc grows HUGE (>500MB) and it takes AGES (30mins) with this option.
+# Of curiosity value for the hardcore only.
 #QMAKE_CXXFLAGS_RELEASE += -finline-limit=4000
 
 ##################
