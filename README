@@ -209,11 +209,6 @@ Right clicking on an image gets you a few more options:
    save a small grid image, the size you see on the screen is the size
    you get in the file.  Note that the save won't be allowed until the
    full resolution image has been generated.
-   If you save an animation, multiple files will be saved with
-   .fnnnnnn (where nnnnnn is the zero-filled frame number) will be
-   inserted in each filename before the filetype qualifier.
-   Qt lacks support for saving movies, so I suggest you use the
-   ImageMagick tools to convert to a more usable format for now. 
  - "Save function" to store the function to an XML file.
  - "Load function" to load a stored function from an XML file.
    NB if the file was saved from a different version numbered
@@ -302,15 +297,33 @@ TIPS
 
 ANIMATION
 =========
-As of version 0.2.0 evolvotron contains some experimental support for animation.
+As of version 0.2.0 evolvotron contains some experimental support
+for animation (although so far the results have been pretty
+disappointing IMHO).
+
 NB THIS IS EVEN MORE COMPUTATIONALLY AND MEMORY INTENSIVE THAN
-CONVENTIONAL STATIC IMAGE MODE.
-Supply a -f <frames> command line option and evolvotron will generated animated
-sequences with the specified number of frames.  These will be rendered at the
-frame rate specified by the optional -r <framerate> option (default 8).
-So "evolvotron -f 24" will generate 3 second long animations.
-Animations reverse direction at each end to avoid a sudden jump.
-Sorry, saving an animation only saves the first frame currently.
+THE CONVENTIONAL STATIC IMAGE MODE.
+
+Simply supply a -f <frames> command line option and evolvotron will
+generate animated sequences with the specified number of frames.
+These will be displayed at the frame rate specified by the optional
+-r <framerate> option (default 8).  So "evolvotron -f 24" will generate
+3 second long animations.  Animations reverse direction at each end
+to avoid a sudden jump.
+
+If you save an animation, multiple files will be saved with
+.fnnnnnn (where nnnnnn is the zero-filled frame number) 
+inserted in each filename before the filetype qualifier.
+This is a bit awkward, but is a consequence of Qt lacking
+support for saving movie format files, so I suggest
+you use the ImageMagick tools to convert to a more usable
+format for now.
+
+For example, if you enter foo.ppm as the filename to save,
+files foo.f000000.ppm, foo.f000001.ppm... will be saved.
+You can convert these to a MNG (a multi-frame PNG) playing at
+approx. 8 frames per second with: 
+  convert -delay 12 foo.f??????.ppm foo.mng
 
 ADVANCED USAGE
 ==============
