@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image.h"
 #include "function_node_info.h"
 
-
 void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
 {
   // Actually calculate a pixel value from the image.
@@ -43,14 +42,14 @@ void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
 
   // Scale nominal -1.0 to 1.0 range to 0-255
   XYZ v(127.5*(pv+XYZ(1.0,1.0,1.0)));
-  
+
   // Clamp out of range values just in case
   v.x(clamped(v.x(),0.0f,255.0f));
   v.y(clamped(v.y(),0.0f,255.0f));
   v.z(clamped(v.z(),0.0f,255.0f));
-		  
+
   c[0]=(uint)floorf(v.x());
-  c[1]=(uint)floorf(v.y());	  
+  c[1]=(uint)floorf(v.y());
   c[2]=(uint)floorf(v.z());
 }
 
@@ -119,7 +118,7 @@ public:
    */
   bool startElement(const QString&,const QString& localName,const QString&,const QXmlAttributes& atts)
   {
-    const std::string element(localName);
+    const std::string element(localName.latin1());
 
     if (_expect_characters)
       {
@@ -143,7 +142,10 @@ public:
 		const QString version=atts.value(idx);
 		if (version!=QString(EVOLVOTRON_VERSION))
 		  {
-		    _report+="Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+QString(EVOLVOTRON_VERSION)+")\n";
+		    //_report+="Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+QString(EVOLVOTRON_VERSION)+")\n";
+            QString tmp;
+		    tmp = "Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+QString(EVOLVOTRON_VERSION)+")\n";
+		    _report += tmp.latin1();
 		  }
 	      }
 	  }
@@ -206,7 +208,7 @@ public:
    */
   bool endElement(const QString&, const QString& localName, const QString&)
   {
-    const std::string element(localName);
+    const std::string element(localName.latin1());
 
     if (_expect_characters)
       {
@@ -235,7 +237,9 @@ public:
       {
 	if (!_expect_characters)
 	  {
-	    _report+="Error: Unexpected character data : \""+s+"\"\n";
+          QString tmp;
+          tmp = "Error: Unexpected character data : \""+s+"\"\n";
+	    _report += tmp.latin1();
 	    return false;
 	  }
       }
@@ -254,7 +258,9 @@ public:
 	_expect_characters_iterations=false;
 	if (!ok)
 	  {
-	    _report+="Error: Couldn't parse \""+s+"\" as an integer\n";
+          QString tmp;
+          tmp = "Error: Couldn't parse \""+s+"\" as an integer\n";
+	    _report += tmp.latin1();
 	    return false;
 	  }	
       }
@@ -265,7 +271,9 @@ public:
 	_expect_characters_parameter=false;
 	if (!ok)
 	  {
-	    _report+="Error: Couldn't parse \""+s+"\" as a float\n";
+          QString tmp;
+          tmp = "Error: Couldn't parse \""+s+"\" as a float\n";
+	    _report+=tmp.latin1();
 	    return false;
 	  }
 	
@@ -309,7 +317,7 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
   if (ok)
     {
       // Might be a warning message in there.
-      report=load_handler.errorString();
+      report = load_handler.errorString().latin1();
 
       FunctionNode*const root=FunctionNode::create(info,report);
       delete info;
@@ -325,7 +333,9 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
     }
   else
     {
-      report="Parse error: "+load_handler.errorString()+"\n";
+        QString tmp;
+        tmp = "Parse error: "+load_handler.errorString()+"\n";
+      report=tmp.latin1();
       delete info;
       return 0;
     }
