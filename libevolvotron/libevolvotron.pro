@@ -71,5 +71,5 @@ SOURCES += \
 # 
 asm.target = asm
 asm.commands = $(CXX) -S $(CXXFLAGS) $(INCPATH) $<
-asm.depends = function.cpp
+asm.depends =  functions.cpp
 QMAKE_EXTRA_UNIX_TARGETS += asm

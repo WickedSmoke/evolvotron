@@ -4,6 +4,7 @@ From release 0.1.2:
  - Bump version to 0.2.0 ('cos of code restructuring)
  - Build lib and separate executables.  Use qmake "subdirs" at top level, move code into subdirs.
  - Add evolvotron_render executable.
+ - Add evolvotron_mutate executable.
  - Better Args class.
  - Fix bug in FunctionAverageSamples
 

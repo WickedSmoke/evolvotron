@@ -41,6 +41,9 @@ template <typename F> class FunctionNodeUsing : public FunctionNode
  protected:
   
   //! Evaluation supplied by the wrapped class.
+  /*! It would be nice if the wrapped function was included right here to avoid
+    the function call overhead.  But it isn't.
+   */
   virtual const XYZ evaluate(const XYZ& p) const
     {
       return F::evaluate(*this,p);

@@ -1,5 +1,4 @@
 TEMPLATE = subdirs
 
-SUBDIRS = libevolvotron evolvotron evolvotron_render
-
+SUBDIRS = libevolvotron evolvotron evolvotron_render evolvotron_mutate
 

@@ -11,7 +11,7 @@ imply it will be done sooner or later than other items!
 - Option to compute volumes in Z direction and oscillate z co-ordinate with time.
 - Locked attribute should be an image property, not a display property.
   (Would play nicer with Undo)
-- Create registry of all function node types
+- Create registry of all function node types (done)
   - use to bring up a panel for setting relative frequencies (check for exploding branching ratios)
   - Allow iterative/allow fractal would then become convenience buttons for quick-setting a whole group of frequencies
 - Undo needs to save more state to work properly (e.g state for respawn)
@@ -22,8 +22,6 @@ imply it will be done sooner or later than other items!
 - Optimise drag: just recompute new area (needs image subregions for tasks).
 - Option (default on) to automatitcally respawn boring constant images as soon
   as they've been computed to a certain resolution.
-- Pure command line tools to mutate a saved file (generates more xml files from an xml file)
-  and render a saved file (generates image file from an xml file).
 - Web front end to commandline tools: an evolvotron web-server.
 - Command line option for border around images... indicate locked status.
 - Maybe add "view" menu: like warp but just applying to current image (like drag)

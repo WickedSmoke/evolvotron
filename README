@@ -350,14 +350,25 @@ are enabled, then iterative functions are enabled too.
 
 OTHER EXECUTABLES
 =================
-Evolvotron also installs two other executables:
+This release also installs two other executables:
+
  - evolvotron_render
-   Usage: evolvotron_render [-s <x> <y>] [<file.ppm>|<file.png>] < <file.xml>
+   Usage: evolvotron_render [-s <width> <height>] [<file.ppm>|<file.png>] < <file.xml>
    Reads a XML function description from it's standard input and renders it to the
-   file specified (suffix determines type, defaults to ppm if not recognised).
-   [NB Not multithreaded].
+   file specified (suffix determines type, defaults to ppm if not recognised) at the
+   specified resolution (defaults to 512x512).
+   [NB This app does not use multiplt compute threads].
+
  - evolvotron_mutate
-   [Under development]
+   Usage: evolvotron_mutate < <file.xml> > <file.xml>
+   Reads an XML function description from it's standard input, mutates it
+   (using the same algorithm as evolvotron in its default state)
+   and writes the new function's XML representation to the standard output.
+
+These were added to enable the possibility of:
+ - setting up an evolvotron web server.
+ - producing animations by repeatedly manipulating some
+   aspect of a function and re-rendering it.
 
 FUTURE DEVELOPMENTS
 ===================

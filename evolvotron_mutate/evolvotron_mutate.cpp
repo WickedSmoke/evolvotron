@@ -18,18 +18,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 /*! \file
-  \brief Standalone renderer for evolvotron function files.
+  \brief Standalone mutator for evolvotron function files.
 */
 
 #include <iostream>
 #include <fstream>
 #include <string>
 
-#include <qimage.h>
 #include <qstring.h>
+#include <qdatetime.h>
 
 #include "args.h"
 #include "mutatable_image.h"
+#include "mutation_parameters.h"
 
 //! Application code
 int main(int argc,char* argv[])
@@ -44,7 +45,7 @@ int main(int argc,char* argv[])
     std::clog.rdbuf(sink.rdbuf());
 
   std::string report;
-  const MutatableImage*const imagefn=MutatableImage::load_function(std::cin,report);
+  MutatableImage*const imagefn=MutatableImage::load_function(std::cin,report);
 
   if (imagefn==0)
     {
@@ -56,67 +57,20 @@ int main(int argc,char* argv[])
       std::cerr << "evolvotron_render: Warning: Function loaded with warnings:\n" << report;
     }
 
-  int width=512;
-  int height=512;
+  // Normally would use time(0) to seed random number generator
+  // but can imagine several of these starting up virtually simultaneously
+  // so need something with higher resolution.
   
-  if (args.option("-s",2)) args.after() >> width >> height;
+  QTime t(QTime::currentTime());
+  uint seed=t.msec()+1000*t.second()+60000*t.minute()+3600000*t.hour();
 
-  std::vector<uint> image_data;
-  image_data.reserve(width*height);
-  
-  for (int row=0;row<height;row++)
-    for (int col=0;col<width;col++)
-      {
-	// xy co-ords vary over -1.0 to 1.0
-	const XYZ p(
-		    -1.0+2.0*(col+0.5)/width,
-		    1.0-2.0*(row+0.5)/height,
-		    0.0
-		    );
-	uint c[3];
-	imagefn->get_rgb(p,c);
-	
-	image_data.push_back((c[0]<<16)|(c[1]<<8)|(c[2]));
-      }
+  std::clog << "Random seed is " << seed << "\n";
 
-  {
-    QString save_filename(args.last(1).c_str());
-    QString save_format("PPM");
-    if (save_filename.upper().endsWith(".PPM"))
-      {
-	save_format="PPM";
-      }
-    else if (save_filename.upper().endsWith(".PNG"))
-      {
-	save_format="PNG";
-      }
-    else
-      {
-	std::cerr 
-	  << "evolvotron_render: Warning: Unrecognised file suffix.  File will be written in "
-	  << save_format.latin1()
-	  << " format.\n";
-      }
-    
-    QImage image(
-		 (uchar*)&(image_data[0]),
-		 width,
-		 height,
-		 32,
-		 0,
-		 0,
-		 QImage::LittleEndian
-		 );
+  MutationParameters mutation_parameters(seed);
 
-    if (!image.save(save_filename,save_format.latin1()))
-      {
-	std::cerr 
-	  << "evolvotron_render: Error: Couldn't save file "
-	  << save_filename.latin1()
-	  << "\n";
-	exit(1);
-      }
-  }
+  imagefn->mutate(mutation_parameters);
+
+  imagefn->save_function(std::cout);
 
   exit(0);
 }

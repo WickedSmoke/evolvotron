@@ -5,16 +5,17 @@
 CONFIG+= qt thread release
 
 ##################
-# Improved optimisation options from qmake defaults
+# Improved optimisation options from qmake defaults.
+# They don't have a huge effect though.
 # (There is a nice summary of gcc optimisation options at http://freshmeat.net/articles/view/730/ )
 # 
 # Use the next two lines to generally improve things (unroll loops of somewhat dubious value).
-#QMAKE_CXXFLAGS_RELEASE -= -O2
-#QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer -funroll-loops
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer -funroll-loops
 #
 # Use the next two lines ONLY IF you have the right processor (P4)
-#QMAKE_CXXFLAGS_RELEASE -= -march=i386
-#QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
+QMAKE_CXXFLAGS_RELEASE -= -march=i386
+QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
 #
 # Here's the same thing (UNTESTED) for P3 
 #QMAKE_CXXFLAGS_RELEASE -= -march=i386
