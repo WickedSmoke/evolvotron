@@ -389,6 +389,52 @@ FUNCTION_END(FunctionSpiralLogarithmic)
 
 //------------------------------------------------------------------------------------------
 
+FUNCTION_BEGIN(FunctionDerivative,3,1,false,0)
+     
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const XYZ d(epsilon*XYZ(param(0),param(1),param(2)).normalised());
+      
+      const XYZ v0(arg(0)(p-d));
+      const XYZ v1(arg(0)(p+d));
+
+      return (v1-v0)*inv_epsilon2;
+    }
+  
+  //! Is constant if the function being gradient-ed is.
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionDerivative)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionDerivativeGeneralised,0,2,false,0)
+     
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const XYZ d(epsilon*(arg(1)(p)).normalised());
+      
+      const XYZ v0(arg(0)(p-d));
+      const XYZ v1(arg(0)(p+d));
+
+      return (v1-v0)*inv_epsilon2;
+    }
+  
+  //! Is constant if the function being gradient-ed is.
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionDerivativeGeneralised)
+
+//------------------------------------------------------------------------------------------
+
 FUNCTION_BEGIN(FunctionGradient,3,1,false,0)
      
   //! Evaluate function.
