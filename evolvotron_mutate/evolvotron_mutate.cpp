@@ -63,7 +63,7 @@ int main(int argc,char* argv[])
 
   std::string report;
   MutatableImage* imagefn;
-  if (args.option("-n"))
+  if (args.option("-g"))
     {
       FunctionNode*const fn=FunctionNode::initial(mutation_parameters);
       imagefn=new MutatableImage(fn);

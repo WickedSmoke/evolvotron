@@ -1,12 +1,17 @@
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
+- Replace FunctionNode::stub() with FunctionRegistry based code
 - More functions (reflection from environment, Perlin noise).
 - More iterative functions
+- evolvotron_mutate should provide more control
+  (heat/cool/irradiate/shield options, recolour/warp options).
 - Option to spawn images with a given top level node type
   (would be great for testing)
 - Get rid of silly xyz and matrix dependence on general tuples and templates.
   (Can be optimised, but only with heavyweight compile options.)
+- Profile & optimise.
+  Not too happy with FunctionNodeUsing<F> evaluate overhead of function wrapper for F::evaluate
 - Spawn recoloured could be linear, quadratic, or generalised versions.
 - Option to compute volumes in Z direction and oscillate z co-ordinate with time.
 - Locked attribute should be an image property, not a display property.
@@ -14,6 +19,7 @@ imply it will be done sooner or later than other items!
 - Create registry of all function node types (done)
   - use to bring up a panel for setting relative frequencies (check for exploding branching ratios)
   - Allow iterative/allow fractal would then become convenience buttons for quick-setting a whole group of frequencies
+  - Classification scheme for function types (basic, smooth, chooser, complex).
 - Undo needs to save more state to work properly (e.g state for respawn)
 - Have a function type which can suck in random images from directories of images
   (specified by environmental variable ?)
@@ -77,12 +83,9 @@ imply it will be done sooner or later than other items!
   (probably wanted for autocool).
 - Evolve other things
   e.g parameters of celluar automata/reaction diffusion equations/iterated function systems.
-- Special reset which uses iterative types to set up nothing but Mandelbrot/Julia-set type functions.
 - Rationalise MutatableImageNode::stub so more work is done by Node constructors
-  (just pass in a MutationParameters).  Have to keep existing ctor. form for deepclone though.
+  (just pass in a MutationParameters).  
 - Avoid misleading moire patterns by jittering samples
 - No low-res images option for when using remotely via X11 over slow link
   (they take longer to display than compute).
-- evolvotron_mutate should provide more control
-  (heat/cool/irradiate/shield options, recolour/warp options).
-
+- Special reset which uses iterative types to set up nothing but Mandelbrot/Julia-set type functions.

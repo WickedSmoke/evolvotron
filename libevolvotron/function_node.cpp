@@ -63,16 +63,16 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
   const float base=0.7;
 
-  uint steps=47;
+  uint steps=48;
 
   if (!parameters.allow_fractal_nodes())
     {
-      steps=minimum(steps,43u);     // Currently 4 fractal types
+      steps=minimum(steps,44u);     // Currently 4 fractal types
     }
 
   if (!parameters.allow_iterative_nodes())
     {
-      steps=minimum(steps,39u);     // Currently 4 non-fractal iterative types
+      steps=minimum(steps,40u);     // Currently 4 non-fractal iterative types
     }
 
   const float step=(1.0-base)/steps;
@@ -158,31 +158,33 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
     return FunctionNodeUsing<FunctionChooseFrom3InHexagonGrid>::stubnew(parameters);
   else if (r<base+34*step) 
     return FunctionNodeUsing<FunctionChooseFrom2InBorderedHexagonGrid>::stubnew(parameters);
-  else if (r<base+35*step)
-    return FunctionNodeUsing<FunctionTransformGeneralised>::stubnew(parameters);
+  else if (r<base+35*step) 
+    return FunctionNodeUsing<FunctionOrthoSphereReflect>::stubnew(parameters);
   else if (r<base+36*step)
-    return FunctionNodeUsing<FunctionPreTransform>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionTransformGeneralised>::stubnew(parameters);
   else if (r<base+37*step)
-    return FunctionNodeUsing<FunctionPreTransformGeneralised>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionPreTransform>::stubnew(parameters);
   else if (r<base+38*step)
-    return FunctionNodeUsing<FunctionPostTransform>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionPreTransformGeneralised>::stubnew(parameters);
   else if (r<base+39*step)
-    return FunctionNodeUsing<FunctionPostTransformGeneralised>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionPostTransform>::stubnew(parameters);
   else if (r<base+40*step)
-    return FunctionNodeUsing<FunctionIterate>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionPostTransformGeneralised>::stubnew(parameters);
   else if (r<base+41*step)
-    return FunctionNodeUsing<FunctionAverageSamples>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionIterate>::stubnew(parameters);
   else if (r<base+42*step)
-    return FunctionNodeUsing<FunctionConvolveSamples>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionAverageSamples>::stubnew(parameters);
   else if (r<base+43*step)
-    return FunctionNodeUsing<FunctionAccumulateOctaves>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionConvolveSamples>::stubnew(parameters);
   else if (r<base+44*step)
-    return FunctionNodeUsing<FunctionMandelbrotChoose>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionAccumulateOctaves>::stubnew(parameters);
   else if (r<base+45*step)
-    return FunctionNodeUsing<FunctionMandelbrotContour>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionMandelbrotChoose>::stubnew(parameters);
   else if (r<base+46*step)
+    return FunctionNodeUsing<FunctionMandelbrotContour>::stubnew(parameters);
+  else if (r<base+47*step)
     return FunctionNodeUsing<FunctionJuliaChoose>::stubnew(parameters);
-  else //if (r<base+47*step)
+  else //if (r<base+48*step)
     return FunctionNodeUsing<FunctionJuliaContour>::stubnew(parameters);
 }
 

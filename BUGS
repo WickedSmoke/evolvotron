@@ -8,11 +8,10 @@ Known bugs:
 
   - Recolour behaves strangely sometimes (?)
     (e.g spawns all-black images or subtly warped images)
+    Not seen recently.
 
   - Moire patterns mean small images can show structures
     not actually present in larger resolution versions.
 
   - Once image colours become saturated there's not much which will cause
     them to scale back down to sensible ranges.
-
-

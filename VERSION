@@ -3,6 +3,6 @@
 # Script to echo the current version number.
 # THIS IS THE ONLY PLACE A VERSION NUMBER SHOULD BE SPECIFIED
 
-# NB If you edit this, make clean and rebuild as there is no dependency checking
+# NB If you edit this, "make distclean" and then rebuild (./BUILD) as there is no dependency checking
 
-echo "0.2.0-devel"
+echo "0.1.3-devel"
