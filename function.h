@@ -24,27 +24,111 @@
 #ifndef _function_h_
 #define _function_h_
 
-#include "mutatable_image.h"
 #include "xyz.h"
 
-namespace Function
-{
+class MutatableImageNode;
 
-class Identity
+//------------------------------------------------------------------------------------------
+
+//! Function class representing a constant value.
+class FunctionConstant
 {
  public:
   
+  // 3 parameters: one for each component of XYZ
   static const uint parameters()
     {
-      return 0;
+      return 3;
     }
+
+  // No leaf arguments
   static const uint arguments()
     {
       return 0;
     }
-  static const XYZ evaluate(const MutatableImageNode*const our,const XYZ& p);
+
+  //! Returns the constant value/
+  static const XYZ evaluate(const MutatableImageNode& our,const XYZ& p);
+
+  //! Returns true, obviously.
+  static const bool is_constant(const MutatableImageNode& our);
 };
 
-}
+//------------------------------------------------------------------------------------------
+
+//! Function class simply returning the position argument.
+class FunctionIdentity
+{
+ public:
+
+  //! No parameters
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! No leaf arguments
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Simply return the position argument.
+  static const XYZ evaluate(const MutatableImageNode& our,const XYZ& p);
+
+  //! Is definitely not constant.
+  static const bool is_constant(const MutatableImageNode& our);
+};
+
+//------------------------------------------------------------------------------------------
+
+//! Function class returning position transfomed by a 12-component linear transform.
+class FunctionTransform
+{
+ public:
+
+  //! 12 parameters
+  static const uint parameters()
+    {
+      return 12;
+    }
+
+  //! No leaf arguments
+  static const uint arguments()
+    {
+      return 0;
+    }
+
+  //! Return the transformed position argument.
+  static const XYZ evaluate(const MutatableImageNode& our,const XYZ& p);
+
+  //! Is definitely not constant.
+  static const bool is_constant(const MutatableImageNode& our);
+};
+
+//! Function class returning leaf node evaluated at position transfomed by a 12-component linear transform.
+class FunctionPreTransform
+{
+ public:
+
+  //! 12 parameters
+  static const uint parameters()
+    {
+      return 12;
+    }
+
+  //! Single leaf arguments
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Return the evaluation of arg(0) at the transformed position argument.
+  static const XYZ evaluate(const MutatableImageNode& our,const XYZ& p);
+
+  //! Has the same const-ness as arg(0)
+  static const bool is_constant(const MutatableImageNode& our);
+};
+
 
 #endif

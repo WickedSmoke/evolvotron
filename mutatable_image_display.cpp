@@ -406,17 +406,19 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	}
 
       MutatableImageNode* new_image;
-      if (image()->is_a_MutatableImageNodeTransformWrapper())
+      if (image()->is_a_MutatableImageNodeUsingFunctionPreTransform())
 	{
 	  // If the image root is a transform wrapper then we can just concatentate transforms.
 	  new_image=image()->deepclone();
 	  
-	  MutatableImageNodeTransformWrapper* root=new_image->is_a_MutatableImageNodeTransformWrapper();
+	  MutatableImageNodeUsing<FunctionPreTransform>*const root=new_image->is_a_MutatableImageNodeUsingFunctionPreTransform();
 	  assert(root!=0);
-	  
-	  Transform current_transform=root->get_transform();
+	  // Have to access params() through this to avoid protected scope of non-const version creating an error.
+	  const MutatableImageNodeUsing<FunctionPreTransform>*const croot=root;
+
+	  Transform current_transform(croot->params());
 	  current_transform.concatenate_on_right(transform);
-	  root->set_transform(current_transform);
+	  root->params(current_transform.get_columns());
 	}
       else
 	{
@@ -427,7 +429,7 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	  std::vector<MutatableImageNode*> args;	  
 	  args.push_back(image()->deepclone());
 	  
-	  new_image=new MutatableImageNodeTransformWrapper(params,args);
+	  new_image=new MutatableImageNodeUsing<FunctionPreTransform>(params,args);
 	}
 
       // Install new image (triggers recompute).

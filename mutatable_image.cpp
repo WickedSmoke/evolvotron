@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "mutatable_image.h"
 #include "matrix.h"
+#include "function.h"
 
 const std::vector<MutatableImageNode*> MutatableImageNode::cloneargs() const
 {
@@ -45,11 +46,12 @@ const std::vector<float> MutatableImageNode::cloneparams() const
   It needs to be capable of generating any sort of node we have.
   \warning Too much probability of highly branching nodes could result in infinite sized stubs.
   \todo Compute (statistically) the expected number of nodes in a stub.
+  \todo Don't think MutatableImageNodeUsing<FunctionPreTransform> appears here ?
  */
 MutatableImageNode* MutatableImageNode::stub(const MutationParameters& parameters,bool exciting)
 {
-  // Base mutations are Constant or Position types.  
-  // (Position can be Position or PositionTransformed, proportions depending on identity_supression parameter)
+  // Base mutations are Constant or Identity types.  
+  // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
   const float base=0.7;
 
   uint steps=31;
@@ -71,14 +73,14 @@ MutatableImageNode* MutatableImageNode::stub(const MutationParameters& parameter
   if (r<(1.0f-parameters.proportion_constant())*parameters.identity_supression()*base)
     {
       if (parameters.r01()<0.5f)
-	return new MutatableImageNodePositionTransformed(stubparams(parameters,12),stubargs(parameters,0));
+	return new MutatableImageNodeUsing<FunctionTransform>(stubparams(parameters,12),stubargs(parameters,0));
       else
 	return new MutatableImageNodePositionTransformedQuadratic(stubparams(parameters,30),stubargs(parameters,0));	
     }
   else if (r<(1.0f-parameters.proportion_constant())*base)
-    return new MutatableImageNodePosition(stubparams(parameters,0),stubargs(parameters,0));
+    return new MutatableImageNodeUsing<FunctionIdentity>(stubparams(parameters,0),stubargs(parameters,0));
   else if (r<base)
-    return new MutatableImageNodeConstant(stubparams(parameters,3),stubargs(parameters,0));
+    return new MutatableImageNodeUsing<FunctionConstant>(stubparams(parameters,3),stubargs(parameters,0));
   else if (r<base+1*step)
     return new MutatableImageNodeXYZToSpherical(stubparams(parameters,0),stubargs(parameters,0));
   else if (r<base+2*step) 
@@ -177,8 +179,9 @@ MutatableImageNode::~MutatableImageNode()
     delete (*it);
 }
 
-/*! There are 2 kinds of mutation: structural mutations (messing with the tree) are all performed here, 
-  and random adjustments to constants (which are handled by MutatableImageNodeConstant::mutate). 
+/*! There are 2 kinds of mutation:
+  - random adjustments to constants 
+  - structural mutations (messing with the function tree)
   For structural mutations the obvious things to do are:
   - reordering argsuments
   - dropping argsuments and replacing them with new "stubs".
@@ -234,12 +237,12 @@ void MutatableImageNode::mutate(const MutationParameters& parameters)
     }
 }
 
-const MutatableImageNodeTransformWrapper*const MutatableImageNode::is_a_MutatableImageNodeTransformWrapper() const
+const MutatableImageNodeUsing<FunctionPreTransform>*const MutatableImageNode::is_a_MutatableImageNodeUsingFunctionPreTransform() const
 {
   return 0;
 }
 
-MutatableImageNodeTransformWrapper*const MutatableImageNode::is_a_MutatableImageNodeTransformWrapper()
+MutatableImageNodeUsing<FunctionPreTransform>*const MutatableImageNode::is_a_MutatableImageNodeUsingFunctionPreTransform()
 {
   return 0;
 }
@@ -253,132 +256,6 @@ const bool MutatableImageNode::ok() const
 	return false;
     }
   return true;
-}
-
-/*******************************************/
-
-/*! No work to be done for evaluate because _value is already set.
- */
-const XYZ MutatableImageNodeConstant::evaluate(const XYZ&) const
-{
-  return XYZ(param(0),param(1),param(2));
-}
-
-const bool MutatableImageNodeConstant::is_constant() const
-{
-  return true;
-}
-
-MutatableImageNodeConstant::MutatableImageNodeConstant(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-:MutatableImageNode(p,a)
-{
-  assert(params().size()==3);
-  assert(args().size()==0);
-}
-
-MutatableImageNodeConstant::~MutatableImageNodeConstant()
-{}
-
-MutatableImageNode*const MutatableImageNodeConstant::deepclone() const
-{
-  return new MutatableImageNodeConstant(cloneparams(),cloneargs());
-}
-
-/*******************************************/
-
-const XYZ MutatableImageNodePosition::evaluate(const XYZ& p) const
-{
-  return p;
-}
-
-const bool MutatableImageNodePosition::is_constant() const
-{
-  return false;
-}
-
-MutatableImageNodePosition::MutatableImageNodePosition(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
-{
-  assert(params().size()==0);
-  assert(args().size()==0);
-}
-
-MutatableImageNodePosition::~MutatableImageNodePosition()
-{}
-
-MutatableImageNode*const MutatableImageNodePosition::deepclone() const
-{
-  return new MutatableImageNodePosition(cloneparams(),cloneargs());
-}
-
-/*******************************************/
-
-const XYZ MutatableImageNodePositionTransformed::evaluate(const XYZ& p) const
-{
-  const XYZ translate(param( 0),param( 1),param( 2));
-  const XYZ basis_x  (param( 3),param( 4),param( 5));
-  const XYZ basis_y  (param( 6),param( 7),param( 8));
-  const XYZ basis_z  (param( 9),param(10),param(11));
-
-  return translate+basis_x*p.x()+basis_y*p.y()+basis_z*p.z();
-}
-
-const bool MutatableImageNodePositionTransformed::is_constant() const
-{
-  return false;
-}
-
-MutatableImageNodePositionTransformed::MutatableImageNodePositionTransformed(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-:MutatableImageNode(p,a)
-{
-  assert(params().size()==12);
-  assert(args().size()==0);
-}
-
-MutatableImageNodePositionTransformed::~MutatableImageNodePositionTransformed()
-{}
-
-MutatableImageNode*const MutatableImageNodePositionTransformed::deepclone() const
-{
-  return new MutatableImageNodePositionTransformed(cloneparams(),cloneargs());
-}
-
-/*******************************************/
-
-const XYZ MutatableImageNodeTransformWrapper::evaluate(const XYZ& p) const
-{
-  const Transform transform(params());
-  return arg(0)(transform.transformed(p));
-}
-
-const bool MutatableImageNodeTransformWrapper::is_constant() const
-{
-  return arg(0).is_constant();
-}
-
-const MutatableImageNodeTransformWrapper*const MutatableImageNodeTransformWrapper::is_a_MutatableImageNodeTransformWrapper() const
-{
-  return this;
-}
-
-MutatableImageNodeTransformWrapper*const MutatableImageNodeTransformWrapper::is_a_MutatableImageNodeTransformWrapper()
-{
-  return this;
-}
-
-MutatableImageNodeTransformWrapper::MutatableImageNodeTransformWrapper(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-:MutatableImageNode(p,a)
-{
-  assert(params().size()==12);
-  assert(args().size()==1);
-}
-
-MutatableImageNodeTransformWrapper::~MutatableImageNodeTransformWrapper()
-{}
-
-MutatableImageNode*const MutatableImageNodeTransformWrapper::deepclone() const
-{
-  return new MutatableImageNodeTransformWrapper(cloneparams(),cloneargs());
 }
 
 /*******************************************/

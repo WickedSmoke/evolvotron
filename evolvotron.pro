@@ -4,19 +4,21 @@ TEMPLATE = app
 CONFIG+= qt thread release
 
 ##################
-# Better optimisations than qmake defaults IF you have the right processor.
-# The -mfpmath=sse -msse2 options (apparently NOT implied by -march alone) 
-# seem to be needed to generate SSE instructions on the authors setup.
-# The larger inline limit helps with template generated code.
-# There is a nice summary of gcc optimisation options at
-# http://freshmeat.net/articles/view/730/
+# Improved optimisation options from qmake defaults
+# (There is a nice summary of gcc optimisation options at http://freshmeat.net/articles/view/730/ )
+# 
+# Use the next two lines to generally improve things
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer 
 #
-# Uncomment 2 or 3 of the next two lines on a P4 system:
-QMAKE_CXXFLAGS_RELEASE -= -march=i386 -O2
-QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2 -O3 -ffast-math  -fomit-frame-pointer
+# Use the next two lines IF you have the right processor (P4)
+QMAKE_CXXFLAGS_RELEASE -= -march=i386
+QMAKE_CXXFLAGS_RELEASE += -march=pentium4 -mfpmath=sse -msse2
+#
+# Use the next line for a "super-release" final build only.
+# It takes ages and gcc grows huge, so not good for development.
+# But it does a better job with template code, especially if SSE code is enabled
 #QMAKE_CXXFLAGS_RELEASE += -funroll-loops -finline-limit=4000
-#
-# (On a P3 try -msse instead of -msse2 ?)
 
 # Input
 HEADERS += \
@@ -110,6 +112,14 @@ QMAKE_EXTRA_UNIX_TARGETS += doc
 QMAKE_EXTRA_UNIX_TARGETS += realclean
 realclean.depends = clean
 realclean.commands = rm -r -f doc
+
+#########################
+# Target to build assembler listings for specific files of interest
+# 
+asm.target = asm
+asm.commands = $(CXX) -S $(CXXFLAGS) $(INCPATH) $<
+asm.depends = function.cpp
+QMAKE_EXTRA_UNIX_TARGETS += asm
 
 ######################################
 # Hide those crufty moc_ files away

@@ -31,7 +31,11 @@
 
 #include "mutation_parameters.h"
 
-class MutatableImageNodeTransformWrapper;
+// Actually we probably only need a few specific functions used outside mutatable_image.cpp: FunctionPreTransform mainly
+#include "function.h"
+
+class FunctionPreTransform;
+template <typename F> class MutatableImageNodeUsing;
 
 //! Abstract base class for all kinds of mutatable image node.
 class MutatableImageNode
@@ -45,44 +49,6 @@ class MutatableImageNode
   std::vector<float> _params;
     
  protected:
-
-  //! Accessor.
-  std::vector<MutatableImageNode*>& args()
-    {
-      return _args;
-    }
-
-  //! Accessor.
-  const std::vector<MutatableImageNode*>& args() const
-    {
-      return _args;
-    }
-
-  //! Convenience accessor. 
-  MutatableImageNode& arg(uint n) const
-    {
-      assert(n<args().size());
-      return *(args()[n]);
-    }
-
-  //! Accessor.
-  std::vector<float>& params()
-    {
-      return _params;
-    }
-
-  //! Accessor.
-  const std::vector<float>& params() const
-    {
-      return _params;
-    }
-
-  //! Convenience accessor. 
-  const float param(uint n) const
-    {
-      assert(n<params().size());
-      return params()[n];
-    }
 
   //! This returns a deep-cloned copy of the node's children.
   const std::vector<MutatableImageNode*> cloneargs() const;
@@ -105,11 +71,11 @@ class MutatableImageNode
     =0;
 
   //@{
-  //! Query the node as to whether it is a MutatableImageNodePostTransform (return null if not).
+  //! Query the node as to whether it is a MutatableImageUsing<FunctionPreTransform> (return null if not).
   /*! This is useful for accumulating view transforms at the front end of a function tree without creating a new transform each time.
    */
-  virtual const MutatableImageNodeTransformWrapper*const is_a_MutatableImageNodeTransformWrapper() const;
-  virtual MutatableImageNodeTransformWrapper*const is_a_MutatableImageNodeTransformWrapper();
+  virtual const MutatableImageNodeUsing<FunctionPreTransform>*const is_a_MutatableImageNodeUsingFunctionPreTransform() const;
+  virtual MutatableImageNodeUsing<FunctionPreTransform>*const is_a_MutatableImageNodeUsingFunctionPreTransform();
   //@}
 
   //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
@@ -127,6 +93,44 @@ class MutatableImageNode
   //! Destructor.
   virtual ~MutatableImageNode();
 
+  //! Accessor
+  void params(const std::vector<float>& p)
+    {
+      _params=p;
+    }
+
+  //! Accessor.
+  const std::vector<float>& params() const
+    {
+      return _params;
+    }
+
+  //! Accessor. 
+  const float param(uint n) const
+    {
+      assert(n<params().size());
+      return params()[n];
+    }
+
+  //! Accessor.
+  void args(const std::vector<MutatableImageNode*>& a)
+    {
+      _args=a;
+    }
+
+  //! Accessor.
+  const std::vector<MutatableImageNode*>& args() const
+    {
+      return _args;
+    }
+
+  //! Accessor. 
+  const MutatableImageNode& arg(uint n) const
+    {
+      assert(n<args().size());
+      return *(args()[n]);
+    }
+
   //! Scramble this node and its leaves up a bit.
   virtual void mutate(const MutationParameters&);
   
@@ -142,119 +146,103 @@ class MutatableImageNode
 
   //! Internal self-consistency check.
   virtual const bool ok() const;
-};
-
-//! This node just returns a constant value.
-class MutatableImageNodeConstant : public MutatableImageNode
-{
- private:
 
  protected:
-  //! Returns the value of the constant.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
 
-  //! Returns true if the function is independent of it's position argument (obviously always true in this case).
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  MutatableImageNodeConstant(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
-
-  //! Destructor.
-  virtual ~MutatableImageNodeConstant();
-
-  //! Returns a clone.
-  virtual MutatableImageNode*const deepclone() const;
-};
-
-//! This node just returns the position it's passed.
-class MutatableImageNodePosition : public MutatableImageNode
-{
- private:
-
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-
-  //! Returns true if the function is independent of it's position argument (obviously always false in this case).
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  MutatableImageNodePosition(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
-
-  //! Destructor.
-  virtual ~MutatableImageNodePosition();
-
-  //! Returns a clone.
-  virtual MutatableImageNode*const deepclone() const;
-};
-
-//! This node type is intended as a substitute for MutatableImageNodePosition.  
-/*! This means the zero co-ordinate is generally mapped to something else, which should supress obviously origin-centred images.
- */
-class MutatableImageNodePositionTransformed : public MutatableImageNode
-{
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Returns true if the function is independent of it's position argument (obviously generally false in this case).
-  virtual const bool is_constant() const;
-
-  //! Constructor.
-  MutatableImageNodePositionTransformed(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
-
-  //! Destructor.
-  virtual ~MutatableImageNodePositionTransformed();
-
-  //! Returns a clone.
-  virtual MutatableImageNode*const deepclone() const;
-};
-
-//! This node type is intended to wrap the image at the top level.  It has extra stuff to allow transform concatenation, which avoids repeated warp operations creating too many nodes.
-class MutatableImageNodeTransformWrapper : public MutatableImageNode
-{
- private:
- protected:
-  //! Implements this node's function.
-  virtual const XYZ evaluate(const XYZ&) const;
-  
- public:
-  //! Returns true if the function is independent of it's position argument.
-  virtual const bool is_constant() const;
-
-  //@{
-  //! Query the node as to whether it is a MutatableImageNodeTransformWrapper (in this case it is).
-  virtual const MutatableImageNodeTransformWrapper*const is_a_MutatableImageNodeTransformWrapper() const;
-  virtual MutatableImageNodeTransformWrapper*const is_a_MutatableImageNodeTransformWrapper();
-  //@}
-
-  //! Constructor.
-  MutatableImageNodeTransformWrapper(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
-  //! Destructor.
-  virtual ~MutatableImageNodeTransformWrapper();
-
-  //! Returns a clone.
-  virtual MutatableImageNode*const deepclone() const;
-
-  //@{
-  //! Accessors.  Used by GUI adjustment code.
-  const Transform get_transform() const
+  //! Accessor (non-const version is protected, required internally to obtain non-const iterators).
+  std::vector<float>& params()
     {
-      assert(params().size()==12);
-      return Transform(params());
+      return _params;
     }
-  void set_transform(const Transform& t)
+
+  //! Accessor (non-const version is protected, required internally to obtain non-const iterators).
+  std::vector<MutatableImageNode*>& args()
     {
-      params()=t.get_columns();
+      return _args;
     }
-  //@}
+
 };
 
+//! Template class to generate boilerplate for virtual methods
+template <typename F> class MutatableImageNodeUsing : public MutatableImageNode
+{
+ protected:
+  
+  //! Evaluation supplied by the wrapped class.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return F::evaluate(*this,p);
+    }
+  
+ public:
+  
+  //! Constant-ness supplied by the wrapped class.
+  virtual const bool is_constant() const
+    {
+      return F::is_constant(*this);
+    }
+  
+  //! Constructor
+  MutatableImageNodeUsing(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
+    :MutatableImageNode(p,a)
+    {
+      assert(params().size()==F::parameters());
+      assert(args().size()==F::arguments());
+    }
+  
+  //! Destructor.
+  virtual ~MutatableImageNodeUsing()
+    {}
+  
+  //! Return a deeploned copy.
+  virtual MutatableImageNode*const deepclone() const
+    {
+      return new MutatableImageNodeUsing<F>(cloneparams(),cloneargs());
+    }
+  
+  //! Internal self-consistency check.  We can add some extra checks.
+  virtual const bool ok() const
+    {
+      return 
+	(
+	 params().size()==F::parameters() &&
+	 args().size()==F::arguments() &&
+	 MutatableImageNode::ok()
+	 );
+    }
+
+  //! Implementation depends on template parameter
+  virtual const MutatableImageNodeUsing<FunctionPreTransform>*const is_a_MutatableImageNodeUsingFunctionPreTransform() const;
+
+  //! Implementation depends on template parameter
+  virtual MutatableImageNodeUsing<FunctionPreTransform>*const is_a_MutatableImageNodeUsingFunctionPreTransform();
+};
+
+//! In the general case this still returns 0
+template <typename F> inline const MutatableImageNodeUsing<FunctionPreTransform>*const MutatableImageNodeUsing<F>::is_a_MutatableImageNodeUsingFunctionPreTransform() const
+{
+  return 0;
+}
+
+//! In the general case this still returns 0
+template <typename F> inline MutatableImageNodeUsing<FunctionPreTransform>*const MutatableImageNodeUsing<F>::is_a_MutatableImageNodeUsingFunctionPreTransform()
+{
+  return 0;
+}
+
+//! Specialisation for FunctionPreTransform
+template <> inline const MutatableImageNodeUsing<FunctionPreTransform>*const MutatableImageNodeUsing<FunctionPreTransform>::is_a_MutatableImageNodeUsingFunctionPreTransform() const
+{
+  return this;
+}
+
+//! Specialisation for FunctionPreTransform
+template <> inline MutatableImageNodeUsing<FunctionPreTransform>*const MutatableImageNodeUsing<FunctionPreTransform>::is_a_MutatableImageNodeUsingFunctionPreTransform()
+{
+  return this;
+}
+
+//----------------------------------------------------------------------------------------
 
 //! This node type is intended as a substitute for MutatableImageNodePositionTransformed.  
 class MutatableImageNodePositionTransformedQuadratic : public MutatableImageNode

@@ -25,12 +25,54 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "matrix.h"
 #include "transform.h"
 
-namespace Function
-{
-  
-  const XYZ Identity::evaluate(const MutatableImageNode*const,const XYZ& p)
-  {
-    return p;
-  }
+//------------------------------------------------------------------------------------------
 
-};
+const XYZ FunctionConstant::evaluate(const MutatableImageNode& our,const XYZ&)
+{
+  return XYZ(our.param(0),our.param(1),our.param(2));
+}
+
+const bool FunctionConstant::is_constant(const MutatableImageNode&)
+{
+  return true;
+}
+
+//------------------------------------------------------------------------------------------
+
+const XYZ FunctionIdentity::evaluate(const MutatableImageNode&,const XYZ& p)
+{
+  return p;
+}
+
+const bool FunctionIdentity::is_constant(const MutatableImageNode&)
+{
+  return false;
+}
+
+//------------------------------------------------------------------------------------------
+
+const XYZ FunctionTransform::evaluate(const MutatableImageNode& our,const XYZ& p)
+{
+  const Transform transform(our.params());
+  return transform.transformed(p);
+}
+
+const bool FunctionTransform::is_constant(const MutatableImageNode&)
+{
+  return false;
+}
+
+//------------------------------------------------------------------------------------------
+
+const XYZ FunctionPreTransform::evaluate(const MutatableImageNode& our,const XYZ& p)
+{
+  const Transform transform(our.params());
+  return our.arg(0)(transform.transformed(p));
+}
+
+const bool FunctionPreTransform::is_constant(const MutatableImageNode& our)
+{
+  return our.arg(0).is_constant();
+}
+
+//------------------------------------------------------------------------------------------
