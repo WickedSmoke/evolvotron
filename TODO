@@ -17,6 +17,9 @@ Animation
 
 Conventional
 ------------
+- Window ordering (and whether fullscreen) should be an input to
+  compute priority.  Need to be able to change priorities once tasks
+  are in queue, and re-order queue.
 - Give some sort of control over pixel aspect ratio.  
   A nice circular image in a square display on the screen is 
   squished when rendered to a rectangular image.
