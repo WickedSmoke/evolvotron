@@ -367,7 +367,7 @@ class MutatableImageNodeChoose : public MutatableImageNode
 
 
 //! This node implements something like a 3D transform.
-class MutatableImageNodeTransform : public MutatableImageNode
+class MutatableImageNodePreTransform : public MutatableImageNode
 {
  private:
 
@@ -377,10 +377,30 @@ class MutatableImageNodeTransform : public MutatableImageNode
   
  public:
   //! Constructor.
-  MutatableImageNodeTransform(const std::vector<MutatableImageNode*>& a);
+  MutatableImageNodePreTransform(const std::vector<MutatableImageNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeTransform();
+  virtual ~MutatableImageNodePreTransform();
+
+  //! Return a clone.
+  virtual MutatableImageNode*const deepclone() const;
+};
+
+//! This node implements something like a 3D transform.
+class MutatableImageNodePostTransform : public MutatableImageNode
+{
+ private:
+
+ protected:
+  //! Implements this node's function.
+  virtual const XYZ evaluate(const XYZ&) const;
+  
+ public:
+  //! Constructor.
+  MutatableImageNodePostTransform(const std::vector<MutatableImageNode*>& a);
+
+  //! Destructor.
+  virtual ~MutatableImageNodePostTransform();
 
   //! Return a clone.
   virtual MutatableImageNode*const deepclone() const;

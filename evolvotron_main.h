@@ -117,6 +117,12 @@ class EvolvotronMain : public QVBox
   //! Mutates the image held by the given display to all the other displays owned.
   void spawn(MutatableImageDisplay* spawning_display);
 
+  //! Similar to spawn except just changes the colouration of the image.
+  void spawn_recoloured(MutatableImageDisplay* spawning_display);
+
+  //! Similar to spawn except just changes the input co-ordinates to the image.
+  void spawn_warped(MutatableImageDisplay* spawning_display);
+
   //! Called from display constructor to indicate the display is available for the disposal of its completed tasks.
   void hello(MutatableImageDisplay*);
 

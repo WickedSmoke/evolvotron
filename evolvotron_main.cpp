@@ -103,6 +103,68 @@ void EvolvotronMain::spawn(MutatableImageDisplay* spawning_display)
   QApplication::restoreOverrideCursor();
 }
 
+/*! This is the similar to spawn, except images ARE NOT MUTATED after deepclone and have a final transform applied to change their colour.
+ */
+void EvolvotronMain::spawn_recoloured(MutatableImageDisplay* spawning_display)
+{
+  // Spawn potentially a bit sluggish so set the hourglass cursor.
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  
+  // Issue new images (except to locked displays and to originator)
+  // This will cause them to abort any running tasks
+  const MutatableImageNode*const spawning_image=spawning_display->image();
+  
+  for (std::vector<MutatableImageDisplay*>::iterator it=display().begin();it!=display().end();it++)
+    {
+      if ((*it)!=spawning_display && !(*it)->locked())
+	{
+	  std::vector<MutatableImageNode*> args;
+	  args.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
+	  args.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
+	  args.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
+	  args.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
+	  args.push_back(spawning_image->deepclone());
+	  
+	  (*it)->image(new MutatableImageNodePostTransform(args));
+	}
+    }
+
+  QApplication::restoreOverrideCursor();
+}
+
+/*! This is the similar to spawn, except images ARE NOT MUTATED after deepclone and have an initial transform applied to spatially warp them.
+ */
+void EvolvotronMain::spawn_warped(MutatableImageDisplay* spawning_display)
+{
+  // Spawn potentially a bit sluggish so set the hourglass cursor.
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  
+  // Issue new images (except to locked displays and to originator)
+  // This will cause them to abort any running tasks
+  const MutatableImageNode*const spawning_image=spawning_display->image();
+  
+  for (std::vector<MutatableImageDisplay*>::iterator it=display().begin();it!=display().end();it++)
+    {
+      if ((*it)!=spawning_display && !(*it)->locked())
+	{
+	  std::vector<MutatableImageNode*> args;
+
+	  // NB We don't generate any z co-ordinates so the random transform remains in the image plane.
+	  // (completely random transforms mostly look to dissimilar; they are different slices of the 3D image volume)
+	  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),1.0)));
+	  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),2.0)));
+	  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),2.0)));
+	  args.push_back(new MutatableImageNodeConstant(RandomXYZInXYDisc(mutation_parameters().rng01(),2.0)));
+	  args.push_back(spawning_image->deepclone());
+	  
+	  (*it)->image(new MutatableImageNodePreTransform(args));
+	}
+    }
+
+  QApplication::restoreOverrideCursor();
+}
+
+
 void EvolvotronMain::hello(MutatableImageDisplay* disp)
 {
   _known_displays.insert(disp);
@@ -173,7 +235,7 @@ void EvolvotronMain::reset()
       args0.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
       args0.push_back(new MutatableImageNodePosition());
 
-      args_toplevel.push_back(new MutatableImageNodeTransform(args0));
+      args_toplevel.push_back(new MutatableImageNodePostTransform(args0));
 
       std::vector<MutatableImageNode*> args1;
       args1.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
@@ -182,7 +244,7 @@ void EvolvotronMain::reset()
       args1.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
       args1.push_back(new MutatableImageNodePosition());
       
-      args_toplevel.push_back(new MutatableImageNodeTransform(args1));
+      args_toplevel.push_back(new MutatableImageNodePostTransform(args1));
 
       std::vector<MutatableImageNode*> args2;
       args2.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
@@ -191,7 +253,7 @@ void EvolvotronMain::reset()
       args2.push_back(new MutatableImageNodeConstant(RandomXYZInSphere(mutation_parameters().rng01(),1.0)));
       args2.push_back(new MutatableImageNodePosition());
 
-      args_toplevel.push_back(new MutatableImageNodeTransform(args2));
+      args_toplevel.push_back(new MutatableImageNodePostTransform(args2));
       
       (*it)->image(new MutatableImageNodeConcatenateTriple(args_toplevel));
     }

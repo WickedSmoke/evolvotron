@@ -79,6 +79,21 @@ RandomXYZInEllipsoid::RandomXYZInEllipsoid(Random01& rng,const XYZ& axes)
 	 );
 }
 
+RandomXYZInXYDisc::RandomXYZInXYDisc(Random01& rng,float radius)
+:XYZ(0.0,0.0,0.0)
+{
+  if (radius!=0.0)
+    {
+      do
+	{
+	  x=2.0*rng()-1.0;
+	  y=2.0*rng()-1.0;
+	}
+      while (magnitude2()>1.0);
+      (*this)*=radius;
+    }
+}
+
 
 
 

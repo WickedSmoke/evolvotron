@@ -69,8 +69,10 @@ MutatableImageNode* MutatableImageNode::stub(Random01& r01)
     return new MutatableImageNodeReflect(stubvector(r01,3));
   else if (r<0.91) 
     return new MutatableImageNodeChoose(stubvector(r01,4));
+  else if (r<0.955)
+    return new MutatableImageNodePostTransform(stubvector(r01,5));
   else 
-    return new MutatableImageNodeTransform(stubvector(r01,5));
+    return new MutatableImageNodePreTransform(stubvector(r01,5));
 }
 
 /*! This returns a vector of random bits of stub, used for initialiing nodes with children. 
@@ -447,7 +449,39 @@ MutatableImageNode*const MutatableImageNodeChoose::deepclone() const
 
 /*******************************************/
 
-const XYZ MutatableImageNodeTransform::evaluate(const XYZ& p) const
+/*! Transforms the co-ordinate BEFORE passing it through the function argument.
+ */
+const XYZ MutatableImageNodePreTransform::evaluate(const XYZ& p) const
+{
+  const XYZ offset (arg(0)(p));
+  const XYZ basis_x(arg(1)(p));
+  const XYZ basis_y(arg(2)(p));
+  const XYZ basis_z(arg(3)(p));
+
+  const XYZ pt(offset+basis_x*p.x+basis_y*p.y+basis_z*p.z);
+
+  return arg(4)(pt);
+}
+
+MutatableImageNodePreTransform::MutatableImageNodePreTransform(const std::vector<MutatableImageNode*>& a)
+  :MutatableImageNode(a)
+{
+  assert (args().size()==5);
+}
+
+MutatableImageNodePreTransform::~MutatableImageNodePreTransform()
+{}
+
+MutatableImageNode*const MutatableImageNodePreTransform::deepclone() const
+{
+  return new MutatableImageNodePreTransform(cloneargs());
+}
+
+/*******************************************/
+
+/*! Transforms the co-ordinate AFTER passing it through the function argument.
+ */
+const XYZ MutatableImageNodePostTransform::evaluate(const XYZ& p) const
 {
   const XYZ offset (arg(0)(p));
   const XYZ basis_x(arg(1)(p));
@@ -455,21 +489,21 @@ const XYZ MutatableImageNodeTransform::evaluate(const XYZ& p) const
   const XYZ basis_z(arg(3)(p));
 
   const XYZ pt(arg(4)(p));
-  
+
   return offset+basis_x*pt.x+basis_y*pt.y+basis_z*pt.z;
 }
 
-MutatableImageNodeTransform::MutatableImageNodeTransform(const std::vector<MutatableImageNode*>& a)
+MutatableImageNodePostTransform::MutatableImageNodePostTransform(const std::vector<MutatableImageNode*>& a)
   :MutatableImageNode(a)
 {
   assert (args().size()==5);
 }
 
-MutatableImageNodeTransform::~MutatableImageNodeTransform()
+MutatableImageNodePostTransform::~MutatableImageNodePostTransform()
 {}
 
-MutatableImageNode*const MutatableImageNodeTransform::deepclone() const
+MutatableImageNode*const MutatableImageNodePostTransform::deepclone() const
 {
-  return new MutatableImageNodeTransform(cloneargs());
+  return new MutatableImageNodePostTransform(cloneargs());
 }
 

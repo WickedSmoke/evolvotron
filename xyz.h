@@ -245,6 +245,14 @@ class RandomXYZInEllipsoid : public XYZ
   RandomXYZInEllipsoid(Random01& rng,const XYZ& axes);
 };
 
+//! Generates a random point in or on a disc in the XY plane of the specified radius.
+class RandomXYZInXYDisc : public XYZ
+{
+ public:
+  //! Constructor.
+  RandomXYZInXYDisc(Random01& rng,float radius);
+};
+
 #endif
 
 

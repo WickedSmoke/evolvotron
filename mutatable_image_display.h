@@ -74,6 +74,8 @@ class MutatableImageDisplay : public QWidget
   //@{
   //! Position of item in menu.
   uint _menu_item_number_spawn;
+  uint _menu_item_number_spawn_recoloured;
+  uint _menu_item_number_spawn_warped;
   uint _menu_item_number_lock;
   uint _menu_item_number_big;
   uint _menu_item_number_save;
@@ -124,6 +126,12 @@ class MutatableImageDisplay : public QWidget
 
   //! Called from context menu and also by click event.
   void menupick_spawn();
+
+  //! Called from context menu.
+  void menupick_spawn_recoloured();
+
+  //! Called from context menu.
+  void menupick_spawn_warped();
 
   //! Called from context menu.
   void menupick_bigwin();

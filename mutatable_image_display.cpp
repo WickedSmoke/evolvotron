@@ -60,6 +60,8 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
       _menu->setCheckable(true);
 
       _menu_item_number_spawn=_menu->insertItem("&Spawn",this,SLOT(menupick_spawn()));
+      _menu_item_number_spawn_recoloured=_menu->insertItem("&Recolour",this,SLOT(menupick_spawn_recoloured()));
+      _menu_item_number_spawn_warped=_menu->insertItem("&Warp",this,SLOT(menupick_spawn_warped()));
       _menu->insertSeparator();
       _menu_item_number_lock =_menu->insertItem("&Lock",this,SLOT(menupick_lock()));
       _menu->insertSeparator();
@@ -202,6 +204,20 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
 void MutatableImageDisplay::menupick_spawn()
 {
   main()->spawn(this);
+}
+
+/*! This slot is called by selecting the "Spawn Recoloured" context menu item
+ */
+void MutatableImageDisplay::menupick_spawn_recoloured()
+{
+  main()->spawn_recoloured(this);
+}
+
+/*! This slot is called by selecting the "Spawn Warped" context menu item
+ */
+void MutatableImageDisplay::menupick_spawn_warped()
+{
+  main()->spawn_warped(this);
 }
 
 /*! This slot is called by selecting the "Big" context menu item.

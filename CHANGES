@@ -1,6 +1,11 @@
 From release 0.0.0:
  - Bump version to 0.0.1
- - Add volatile
+ - Add volatile to inter-thread communication flags
+ - Added a few more image node function types
+ - Add "spawn_recoloured"
+ - Add "spawn_warped"
+
+
 
 
 
