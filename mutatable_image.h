@@ -17,7 +17,7 @@
 */
 
 /*! \file 
-  \brief Interfaces for class MutatableImageNode and derived classes.
+  \brief Interfaces for class FunctionNode and derived classes.
 */
 
 #ifndef _mutatable_image_h_
@@ -37,15 +37,15 @@
 #include "function.h"
 
 class FunctionPreTransform;
-template <typename F> class MutatableImageNodeUsing;
+template <typename F> class FunctionNodeUsing;
 
 //! Abstract base class for all kinds of mutatable image node.
-class MutatableImageNode
+class FunctionNode
 {
  private:
 
   //! The arguments (ie child nodes) for this node.
-  std::vector<MutatableImageNode*> _args;
+  std::vector<FunctionNode*> _args;
 
   //! The parameters (ie constant values) for this node.
   std::vector<float> _params;
@@ -53,7 +53,7 @@ class MutatableImageNode
  protected:
 
   //! This returns a deep-cloned copy of the node's children.
-  const std::vector<MutatableImageNode*> cloneargs() const;
+  const std::vector<FunctionNode*> cloneargs() const;
 
   //! This returns a copy of the node's parameters
   const std::vector<float> cloneparams() const;
@@ -65,7 +65,7 @@ class MutatableImageNode
  public:
 
   //! Returns true if the function is independent of it's position argument.
-  /*! This isn't used for optimisation (which would require MutatableImageNode to have computation-specific state,
+  /*! This isn't used for optimisation (which would require FunctionNode to have computation-specific state,
       which would wreck plans for reference counted deepclone()), 
       but to cull boring constant images on creation.
    */
@@ -76,24 +76,24 @@ class MutatableImageNode
   //! Query the node as to whether it is a MutatableImageUsing<FunctionPreTransform> (return null if not).
   /*! This is useful for accumulating view transforms at the front end of a function tree without creating a new transform each time.
    */
-  virtual const MutatableImageNodeUsing<FunctionPreTransform>*const is_a_MutatableImageNodeUsingFunctionPreTransform() const;
-  virtual MutatableImageNodeUsing<FunctionPreTransform>*const is_a_MutatableImageNodeUsingFunctionPreTransform();
+  virtual const FunctionNodeUsing<FunctionPreTransform>*const is_a_FunctionNodeUsingFunctionPreTransform() const;
+  virtual FunctionNodeUsing<FunctionPreTransform>*const is_a_FunctionNodeUsingFunctionPreTransform();
   //@}
 
   //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
-  static MutatableImageNode* stub(const MutationParameters& parameters,bool exciting=false);
+  static FunctionNode* stub(const MutationParameters& parameters,bool exciting=false);
 
   //! This returns a vector of random parameter values.
   static const std::vector<float> stubparams(const MutationParameters& parameters,uint n);
 
   //! This returns a vector of new random bits of tree.
-  static const std::vector<MutatableImageNode*> stubargs(const MutationParameters& parameters,uint n);
+  static const std::vector<FunctionNode*> stubargs(const MutationParameters& parameters,uint n);
 
   //! Constructor given an array of params. and args (these MUST be provided; there are no alterative constructors).
-  MutatableImageNode(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNode();
+  virtual ~FunctionNode();
 
   //! Accessor
   void params(const std::vector<float>& p)
@@ -115,19 +115,19 @@ class MutatableImageNode
     }
 
   //! Accessor.
-  void args(const std::vector<MutatableImageNode*>& a)
+  void args(const std::vector<FunctionNode*>& a)
     {
       _args=a;
     }
 
   //! Accessor.
-  const std::vector<MutatableImageNode*>& args() const
+  const std::vector<FunctionNode*>& args() const
     {
       return _args;
     }
 
   //! Accessor. 
-  const MutatableImageNode& arg(uint n) const
+  const FunctionNode& arg(uint n) const
     {
       assert(n<args().size());
       return *(args()[n]);
@@ -137,7 +137,7 @@ class MutatableImageNode
   virtual void mutate(const MutationParameters&);
   
   //! Return an clone of this image node and all its children.
-  virtual MutatableImageNode*const deepclone() const
+  virtual FunctionNode*const deepclone() const
     =0;
   
   //! Convenience wrapper for evaluate (actually, evaluate is protected so can't be called externally anyway)
@@ -158,7 +158,7 @@ class MutatableImageNode
     }
 
   //! Accessor (non-const version is protected, required internally to obtain non-const iterators).
-  std::vector<MutatableImageNode*>& args()
+  std::vector<FunctionNode*>& args()
     {
       return _args;
     }
@@ -198,7 +198,7 @@ class Registry
 
 
 //! Template class to generate boilerplate for virtual methods.
-template <typename F> class MutatableImageNodeUsing : public MutatableImageNode
+template <typename F> class FunctionNodeUsing : public FunctionNode
 {
  public:
 
@@ -222,21 +222,21 @@ template <typename F> class MutatableImageNodeUsing : public MutatableImageNode
     }
   
   //! Constructor
-  MutatableImageNodeUsing(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-    :MutatableImageNode(p,a)
+  FunctionNodeUsing(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+    :FunctionNode(p,a)
     {
       assert(params().size()==F::parameters());
       assert(args().size()==F::arguments());
     }
   
   //! Destructor.
-  virtual ~MutatableImageNodeUsing()
+  virtual ~FunctionNodeUsing()
     {}
   
   //! Return a deeploned copy.
-  virtual MutatableImageNode*const deepclone() const
+  virtual FunctionNode*const deepclone() const
     {
-      return new MutatableImageNodeUsing<F>(cloneparams(),cloneargs());
+      return new FunctionNodeUsing<F>(cloneparams(),cloneargs());
     }
   
   //! Internal self-consistency check.  We can add some extra checks.
@@ -246,37 +246,37 @@ template <typename F> class MutatableImageNodeUsing : public MutatableImageNode
 	(
 	 params().size()==F::parameters() &&
 	 args().size()==F::arguments() &&
-	 MutatableImageNode::ok()
+	 FunctionNode::ok()
 	 );
     }
 
   //! Implementation depends on template parameter
-  virtual const MutatableImageNodeUsing<FunctionPreTransform>*const is_a_MutatableImageNodeUsingFunctionPreTransform() const;
+  virtual const FunctionNodeUsing<FunctionPreTransform>*const is_a_FunctionNodeUsingFunctionPreTransform() const;
 
   //! Implementation depends on template parameter
-  virtual MutatableImageNodeUsing<FunctionPreTransform>*const is_a_MutatableImageNodeUsingFunctionPreTransform();
+  virtual FunctionNodeUsing<FunctionPreTransform>*const is_a_FunctionNodeUsingFunctionPreTransform();
 };
 
 //! In the general case this still returns 0
-template <typename F> inline const MutatableImageNodeUsing<FunctionPreTransform>*const MutatableImageNodeUsing<F>::is_a_MutatableImageNodeUsingFunctionPreTransform() const
+template <typename F> inline const FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsing<F>::is_a_FunctionNodeUsingFunctionPreTransform() const
 {
   return 0;
 }
 
 //! In the general case this still returns 0
-template <typename F> inline MutatableImageNodeUsing<FunctionPreTransform>*const MutatableImageNodeUsing<F>::is_a_MutatableImageNodeUsingFunctionPreTransform()
+template <typename F> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsing<F>::is_a_FunctionNodeUsingFunctionPreTransform()
 {
   return 0;
 }
 
 //! Specialisation for FunctionPreTransform
-template <> inline const MutatableImageNodeUsing<FunctionPreTransform>*const MutatableImageNodeUsing<FunctionPreTransform>::is_a_MutatableImageNodeUsingFunctionPreTransform() const
+template <> inline const FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsing<FunctionPreTransform>::is_a_FunctionNodeUsingFunctionPreTransform() const
 {
   return this;
 }
 
 //! Specialisation for FunctionPreTransform
-template <> inline MutatableImageNodeUsing<FunctionPreTransform>*const MutatableImageNodeUsing<FunctionPreTransform>::is_a_MutatableImageNodeUsingFunctionPreTransform()
+template <> inline FunctionNodeUsing<FunctionPreTransform>*const FunctionNodeUsing<FunctionPreTransform>::is_a_FunctionNodeUsingFunctionPreTransform()
 {
   return this;
 }
@@ -285,13 +285,13 @@ template <> inline MutatableImageNodeUsing<FunctionPreTransform>*const Mutatable
 /*! There is the possibility of associating a name with the association using typeid(F).name()
   but it's not very useful as it has name mangling stuff attached.
  */
-template <typename F> Registration MutatableImageNodeUsing<F>::registration(typeid(F).name());
+template <typename F> Registration FunctionNodeUsing<F>::registration(typeid(F).name());
 
 
 //----------------------------------------------------------------------------------------
 
-//! This node type is intended as a substitute for MutatableImageNodePositionTransformed.  
-class MutatableImageNodePositionTransformedQuadratic : public MutatableImageNode
+//! This node type is intended as a substitute for FunctionNodePositionTransformed.  
+class FunctionNodePositionTransformedQuadratic : public FunctionNode
 {
  protected:
   //! Implements this node's function.
@@ -302,17 +302,17 @@ class MutatableImageNodePositionTransformedQuadratic : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodePositionTransformedQuadratic(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodePositionTransformedQuadratic(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodePositionTransformedQuadratic();
+  virtual ~FunctionNodePositionTransformedQuadratic();
 
   //! Returns a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements XYZ to spherical co-ords
-class MutatableImageNodeXYZToSpherical : public MutatableImageNode
+class FunctionNodeXYZToSpherical : public FunctionNode
 {
  private:
 
@@ -325,17 +325,17 @@ class MutatableImageNodeXYZToSpherical : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeXYZToSpherical(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeXYZToSpherical(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeXYZToSpherical();
+  virtual ~FunctionNodeXYZToSpherical();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements spherical to XYZ co-ords
-class MutatableImageNodeSphericalToXYZ : public MutatableImageNode
+class FunctionNodeSphericalToXYZ : public FunctionNode
 {
  private:
 
@@ -348,17 +348,17 @@ class MutatableImageNodeSphericalToXYZ : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeSphericalToXYZ(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeSphericalToXYZ(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeSphericalToXYZ();
+  virtual ~FunctionNodeSphericalToXYZ();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node evaluates a child function in spherical co-ordinates
-class MutatableImageNodeSphericalize : public MutatableImageNode
+class FunctionNodeSphericalize : public FunctionNode
 {
  private:
 
@@ -371,17 +371,17 @@ class MutatableImageNodeSphericalize : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeSphericalize(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeSphericalize(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeSphericalize();
+  virtual ~FunctionNodeSphericalize();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node applies rotation matrices to it's argument
-class MutatableImageNodeRotate : public MutatableImageNode
+class FunctionNodeRotate : public FunctionNode
 {
  private:
 
@@ -394,17 +394,17 @@ class MutatableImageNodeRotate : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeRotate(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeRotate(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeRotate();
+  virtual ~FunctionNodeRotate();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements sin
-class MutatableImageNodeSin : public MutatableImageNode
+class FunctionNodeSin : public FunctionNode
 {
  private:
 
@@ -417,17 +417,17 @@ class MutatableImageNodeSin : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeSin(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeSin(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeSin();
+  virtual ~FunctionNodeSin();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements cos
-class MutatableImageNodeCos : public MutatableImageNode
+class FunctionNodeCos : public FunctionNode
 {
  private:
 
@@ -440,17 +440,17 @@ class MutatableImageNodeCos : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeCos(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeCos(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeCos();
+  virtual ~FunctionNodeCos();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements a linear spiral
-class MutatableImageNodeSpiralLinear : public MutatableImageNode
+class FunctionNodeSpiralLinear : public FunctionNode
 {
  private:
 
@@ -463,17 +463,17 @@ class MutatableImageNodeSpiralLinear : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeSpiralLinear(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeSpiralLinear(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeSpiralLinear();
+  virtual ~FunctionNodeSpiralLinear();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements a logarithmic spiral
-class MutatableImageNodeSpiralLogarithmic : public MutatableImageNode
+class FunctionNodeSpiralLogarithmic : public FunctionNode
 {
  private:
 
@@ -486,17 +486,17 @@ class MutatableImageNodeSpiralLogarithmic : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeSpiralLogarithmic(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeSpiralLogarithmic(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeSpiralLogarithmic();
+  virtual ~FunctionNodeSpiralLogarithmic();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements grad
-class MutatableImageNodeGrad : public MutatableImageNode
+class FunctionNodeGrad : public FunctionNode
 {
  private:
 
@@ -509,17 +509,17 @@ class MutatableImageNodeGrad : public MutatableImageNode
 
  public:
   //! Constructor.
-  MutatableImageNodeGrad(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeGrad(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeGrad();
+  virtual ~FunctionNodeGrad();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements functional concatenation
-class MutatableImageNodeConcatenatePair : public MutatableImageNode
+class FunctionNodeConcatenatePair : public FunctionNode
 {
  private:
 
@@ -532,17 +532,17 @@ class MutatableImageNodeConcatenatePair : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeConcatenatePair(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeConcatenatePair(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeConcatenatePair();
+  virtual ~FunctionNodeConcatenatePair();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements addition
-class MutatableImageNodeAdd : public MutatableImageNode
+class FunctionNodeAdd : public FunctionNode
 {
  private:
 
@@ -555,17 +555,17 @@ class MutatableImageNodeAdd : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeAdd(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeAdd(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeAdd();
+  virtual ~FunctionNodeAdd();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements componentwise multiply
-class MutatableImageNodeMultiply : public MutatableImageNode
+class FunctionNodeMultiply : public FunctionNode
 {
  private:
 
@@ -578,17 +578,17 @@ class MutatableImageNodeMultiply : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeMultiply(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeMultiply(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeMultiply();
+  virtual ~FunctionNodeMultiply();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements componentwise divide
-class MutatableImageNodeDivide : public MutatableImageNode
+class FunctionNodeDivide : public FunctionNode
 {
  private:
 
@@ -601,17 +601,17 @@ class MutatableImageNodeDivide : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeDivide(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeDivide(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeDivide();
+  virtual ~FunctionNodeDivide();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements cross-product
-class MutatableImageNodeCross : public MutatableImageNode
+class FunctionNodeCross : public FunctionNode
 {
  private:
 
@@ -624,18 +624,18 @@ class MutatableImageNodeCross : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeCross(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeCross(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeCross();
+  virtual ~FunctionNodeCross();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 
 //! This node implements geometric inversion of the a point in a sphere with an origin and radius given by child functions.
-class MutatableImageNodeGeometricInversion : public MutatableImageNode
+class FunctionNodeGeometricInversion : public FunctionNode
 {
  private:
 
@@ -648,17 +648,17 @@ class MutatableImageNodeGeometricInversion : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeGeometricInversion(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeGeometricInversion(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeGeometricInversion();
+  virtual ~FunctionNodeGeometricInversion();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements maximum
-class MutatableImageNodeMax : public MutatableImageNode
+class FunctionNodeMax : public FunctionNode
 {
  private:
 
@@ -671,17 +671,17 @@ class MutatableImageNodeMax : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeMax(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeMax(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeMax();
+  virtual ~FunctionNodeMax();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements minimum
-class MutatableImageNodeMin : public MutatableImageNode
+class FunctionNodeMin : public FunctionNode
 {
  private:
 
@@ -694,17 +694,17 @@ class MutatableImageNodeMin : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeMin(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeMin(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeMin();
+  virtual ~FunctionNodeMin();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements modulus
-class MutatableImageNodeMod : public MutatableImageNode
+class FunctionNodeMod : public FunctionNode
 {
  private:
 
@@ -717,18 +717,18 @@ class MutatableImageNodeMod : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeMod(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeMod(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeMod();
+  virtual ~FunctionNodeMod();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 
 //! This node implements functional concatenation
-class MutatableImageNodeConcatenateTriple : public MutatableImageNode
+class FunctionNodeConcatenateTriple : public FunctionNode
 {
  private:
 
@@ -741,17 +741,17 @@ class MutatableImageNodeConcatenateTriple : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeConcatenateTriple(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeConcatenateTriple(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeConcatenateTriple();
+  virtual ~FunctionNodeConcatenateTriple();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements reflection about a plane
-class MutatableImageNodeReflect : public MutatableImageNode
+class FunctionNodeReflect : public FunctionNode
 {
  private:
 
@@ -763,17 +763,17 @@ class MutatableImageNodeReflect : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeReflect(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeReflect(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeReflect();
+  virtual ~FunctionNodeReflect();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements magnitudes of 3 arguments 
-class MutatableImageNodeMagnitudes : public MutatableImageNode
+class FunctionNodeMagnitudes : public FunctionNode
 {
  private:
 
@@ -785,17 +785,17 @@ class MutatableImageNodeMagnitudes : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeMagnitudes(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeMagnitudes(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeMagnitudes();
+  virtual ~FunctionNodeMagnitudes();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements selection between 2 functions based on the relative magnitudes of 2 other functions
-class MutatableImageNodeChooseSphere : public MutatableImageNode
+class FunctionNodeChooseSphere : public FunctionNode
 {
  private:
 
@@ -808,17 +808,17 @@ class MutatableImageNodeChooseSphere : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeChooseSphere(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeChooseSphere(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeChooseSphere();
+  virtual ~FunctionNodeChooseSphere();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements selection between 2 functions based on whether a rectangle contains a point
-class MutatableImageNodeChooseRect : public MutatableImageNode
+class FunctionNodeChooseRect : public FunctionNode
 {
  private:
 
@@ -831,18 +831,18 @@ class MutatableImageNodeChooseRect : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeChooseRect(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodeChooseRect(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodeChooseRect();
+  virtual ~FunctionNodeChooseRect();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 
 //! This node implements something like a 3D transform.
-class MutatableImageNodePreTransform : public MutatableImageNode
+class FunctionNodePreTransform : public FunctionNode
 {
  private:
 
@@ -855,17 +855,17 @@ class MutatableImageNodePreTransform : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodePreTransform(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodePreTransform(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodePreTransform();
+  virtual ~FunctionNodePreTransform();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! This node implements something like a 3D transform.
-class MutatableImageNodePostTransform : public MutatableImageNode
+class FunctionNodePostTransform : public FunctionNode
 {
  private:
 
@@ -878,19 +878,19 @@ class MutatableImageNodePostTransform : public MutatableImageNode
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodePostTransform(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a);
+  FunctionNodePostTransform(const std::vector<float>& p,const std::vector<FunctionNode*>& a);
 
   //! Destructor.
-  virtual ~MutatableImageNodePostTransform();
+  virtual ~FunctionNodePostTransform();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! Base class for iterative node types.
 /*! evaluate, is_constant and deepclone methods remain virtual.
  */
-class MutatableImageNodeIterative : public MutatableImageNode
+class FunctionNodeIterative : public FunctionNode
 {
  private:
 
@@ -901,16 +901,16 @@ class MutatableImageNodeIterative : public MutatableImageNode
 
  public:
   //! Constructor.
-  MutatableImageNodeIterative(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i);
+  FunctionNodeIterative(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
 
   //! Destructor.
-  virtual ~MutatableImageNodeIterative();
+  virtual ~FunctionNodeIterative();
   
   void mutate(const MutationParameters& parameters);
 };
 
 //! Repeatedly apply function to argument.
-class MutatableImageNodeIterativeMap : public MutatableImageNodeIterative
+class FunctionNodeIterativeMap : public FunctionNodeIterative
 {
  private:
 
@@ -923,17 +923,17 @@ class MutatableImageNodeIterativeMap : public MutatableImageNodeIterative
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeIterativeMap(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i);
+  FunctionNodeIterativeMap(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
 
   //! Destructor.
-  virtual ~MutatableImageNodeIterativeMap();
+  virtual ~FunctionNodeIterativeMap();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! Accumulate function values as parameter is mapped
-class MutatableImageNodeIterativeMapAccumulator : public MutatableImageNodeIterative
+class FunctionNodeIterativeMapAccumulator : public FunctionNodeIterative
 {
  private:
 
@@ -946,17 +946,17 @@ class MutatableImageNodeIterativeMapAccumulator : public MutatableImageNodeItera
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeIterativeMapAccumulator(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i);
+  FunctionNodeIterativeMapAccumulator(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
 
   //! Destructor.
-  virtual ~MutatableImageNodeIterativeMapAccumulator();
+  virtual ~FunctionNodeIterativeMapAccumulator();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! Abstract base class for Mandelbrot and Julie sets.
-class MutatableImageNodeIterativeZSquaredPlusC : public MutatableImageNodeIterative
+class FunctionNodeIterativeZSquaredPlusC : public FunctionNodeIterative
 {
  protected:
   //! Shared iteration code.
@@ -964,14 +964,14 @@ class MutatableImageNodeIterativeZSquaredPlusC : public MutatableImageNodeIterat
   
  public:
   //! Constructor.
-  MutatableImageNodeIterativeZSquaredPlusC(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i);
+  FunctionNodeIterativeZSquaredPlusC(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
 
   //! Destructor;
-  ~MutatableImageNodeIterativeZSquaredPlusC();
+  ~FunctionNodeIterativeZSquaredPlusC();
 };
 
 //! Do Mandelbrot Set test to choose between two functions.
-class MutatableImageNodeIterativeMandelbrotChoose : public MutatableImageNodeIterativeZSquaredPlusC
+class FunctionNodeIterativeMandelbrotChoose : public FunctionNodeIterativeZSquaredPlusC
 {
  private:
 
@@ -984,17 +984,17 @@ class MutatableImageNodeIterativeMandelbrotChoose : public MutatableImageNodeIte
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeIterativeMandelbrotChoose(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i);
+  FunctionNodeIterativeMandelbrotChoose(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
 
   //! Destructor.
-  virtual ~MutatableImageNodeIterativeMandelbrotChoose();
+  virtual ~FunctionNodeIterativeMandelbrotChoose();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! Do Mandelbrot Set returning co-ordinate filled with normalised iterations, or -1 in set.
-class MutatableImageNodeIterativeMandelbrotContour : public MutatableImageNodeIterativeZSquaredPlusC
+class FunctionNodeIterativeMandelbrotContour : public FunctionNodeIterativeZSquaredPlusC
 {
  private:
 
@@ -1007,19 +1007,19 @@ class MutatableImageNodeIterativeMandelbrotContour : public MutatableImageNodeIt
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeIterativeMandelbrotContour(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i);
+  FunctionNodeIterativeMandelbrotContour(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
 
   //! Destructor.
-  virtual ~MutatableImageNodeIterativeMandelbrotContour();
+  virtual ~FunctionNodeIterativeMandelbrotContour();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! Do Julia test to choose between two functions.
 /*! Julia set parameter is picked up from an extra argument c.f Mandelbrot
  */
-class MutatableImageNodeIterativeJuliaChoose : public MutatableImageNodeIterativeZSquaredPlusC
+class FunctionNodeIterativeJuliaChoose : public FunctionNodeIterativeZSquaredPlusC
 {
  private:
 
@@ -1032,19 +1032,19 @@ class MutatableImageNodeIterativeJuliaChoose : public MutatableImageNodeIterativ
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeIterativeJuliaChoose(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i);
+  FunctionNodeIterativeJuliaChoose(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
 
   //! Destructor.
-  virtual ~MutatableImageNodeIterativeJuliaChoose();
+  virtual ~FunctionNodeIterativeJuliaChoose();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! Do Julia set returning co-ordinate filled with normalised iterations, or -1 in set.
 /*! Julia set parameter is picked up from an extra argument c.f Mandelbrot
  */
-class MutatableImageNodeIterativeJuliaContour : public MutatableImageNodeIterativeZSquaredPlusC
+class FunctionNodeIterativeJuliaContour : public FunctionNodeIterativeZSquaredPlusC
 {
  private:
 
@@ -1057,13 +1057,13 @@ class MutatableImageNodeIterativeJuliaContour : public MutatableImageNodeIterati
   virtual const bool is_constant() const;
 
   //! Constructor.
-  MutatableImageNodeIterativeJuliaContour(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i);
+  FunctionNodeIterativeJuliaContour(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i);
 
   //! Destructor.
-  virtual ~MutatableImageNodeIterativeJuliaContour();
+  virtual ~FunctionNodeIterativeJuliaContour();
 
   //! Return a clone.
-  virtual MutatableImageNode*const deepclone() const;
+  virtual FunctionNode*const deepclone() const;
 };
 
 //! Class to hold the base FunctionNode of an image.
@@ -1075,11 +1075,11 @@ class MutatableImage
   //! The top level FunctionNode of the image.
   /*! Set at image construction time and can't be changed.
    */
-  MutatableImageNode*const _root;
+  FunctionNode*const _root;
  public:
 
   //! Take ownership of the image tree with the specified root node.
-  MutatableImage(MutatableImageNode* r)
+  MutatableImage(FunctionNode* r)
     :_root(r)
     {
       assert(_root!=0);
@@ -1087,7 +1087,7 @@ class MutatableImage
 
   //! Create a new random image tree.
   MutatableImage(const MutationParameters& parameters,bool exciting=false)
-    :_root(MutatableImageNode::stub(parameters,exciting))
+    :_root(FunctionNode::stub(parameters,exciting))
     {
       assert(_root!=0);
     }
@@ -1099,12 +1099,12 @@ class MutatableImage
     }
 
   //! Accessor.
-  const MutatableImageNode*const root() const
+  const FunctionNode*const root() const
     {
       return _root;
     }
   //! Accessor.
-  MutatableImageNode*const root()
+  FunctionNode*const root()
     {
       return _root;
     }

@@ -18,7 +18,7 @@
 
 /*! \file 
   \brief Interfaces for Function classes.
-  NB There is no class heirarchy here as all virtualisation and boilerplate services are supplied when the functions are plugged into the MutatableImageNode template.
+  NB There is no class heirarchy here as all virtualisation and boilerplate services are supplied when the functions are plugged into the FunctionNode template.
 */
 
 #ifndef _function_h_
@@ -26,7 +26,7 @@
 
 #include "xyz.h"
 
-class MutatableImageNode;
+class FunctionNode;
 
 //------------------------------------------------------------------------------------------
 
@@ -48,10 +48,10 @@ class FunctionConstant
     }
 
   //! Returns the constant value/
-  static const XYZ evaluate(const MutatableImageNode& our,const XYZ& p);
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p);
 
   //! Returns true, obviously.
-  static const bool is_constant(const MutatableImageNode& our);
+  static const bool is_constant(const FunctionNode& our);
 };
 
 //------------------------------------------------------------------------------------------
@@ -74,10 +74,10 @@ class FunctionIdentity
     }
 
   //! Simply return the position argument.
-  static const XYZ evaluate(const MutatableImageNode& our,const XYZ& p);
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p);
 
   //! Is definitely not constant.
-  static const bool is_constant(const MutatableImageNode& our);
+  static const bool is_constant(const FunctionNode& our);
 };
 
 //------------------------------------------------------------------------------------------
@@ -100,10 +100,10 @@ class FunctionTransform
     }
 
   //! Return the transformed position argument.
-  static const XYZ evaluate(const MutatableImageNode& our,const XYZ& p);
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p);
 
   //! Is definitely not constant.
-  static const bool is_constant(const MutatableImageNode& our);
+  static const bool is_constant(const FunctionNode& our);
 };
 
 //! Function class returning leaf node evaluated at position transfomed by a 12-component linear transform.
@@ -124,10 +124,10 @@ class FunctionPreTransform
     }
 
   //! Return the evaluation of arg(0) at the transformed position argument.
-  static const XYZ evaluate(const MutatableImageNode& our,const XYZ& p);
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p);
 
   //! Has the same const-ness as arg(0)
-  static const bool is_constant(const MutatableImageNode& our);
+  static const bool is_constant(const FunctionNode& our);
 };
 
 

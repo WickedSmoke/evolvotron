@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 /*! \file
-  \brief Implementation of class MutatableImageNode and derived classes.
+  \brief Implementation of class FunctionNode and derived classes.
 */
 
 #include <algorithm>
@@ -27,17 +27,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "matrix.h"
 #include "function.h"
 
-const std::vector<MutatableImageNode*> MutatableImageNode::cloneargs() const
+const std::vector<FunctionNode*> FunctionNode::cloneargs() const
 {
-  std::vector<MutatableImageNode*> ret;
-  for (std::vector<MutatableImageNode*>::const_iterator it=args().begin();it!=args().end();it++)
+  std::vector<FunctionNode*> ret;
+  for (std::vector<FunctionNode*>::const_iterator it=args().begin();it!=args().end();it++)
     {
       ret.push_back((*it)->deepclone());
     }
   return ret;
 }
 
-const std::vector<float> MutatableImageNode::cloneparams() const
+const std::vector<float> FunctionNode::cloneparams() const
 {
   return params();
 }
@@ -46,9 +46,9 @@ const std::vector<float> MutatableImageNode::cloneparams() const
   It needs to be capable of generating any sort of node we have.
   \warning Too much probability of highly branching nodes could result in infinite sized stubs.
   \todo Compute (statistically) the expected number of nodes in a stub.
-  \todo Don't think MutatableImageNodeUsing<FunctionPreTransform> appears here ?
+  \todo Don't think FunctionNodeUsing<FunctionPreTransform> appears here ?
  */
-MutatableImageNode* MutatableImageNode::stub(const MutationParameters& parameters,bool exciting)
+FunctionNode* FunctionNode::stub(const MutationParameters& parameters,bool exciting)
 {
   // Base mutations are Constant or Identity types.  
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
@@ -73,89 +73,89 @@ MutatableImageNode* MutatableImageNode::stub(const MutationParameters& parameter
   if (r<(1.0f-parameters.proportion_constant())*parameters.identity_supression()*base)
     {
       if (parameters.r01()<0.5f)
-	return new MutatableImageNodeUsing<FunctionTransform>(stubparams(parameters,12),stubargs(parameters,0));
+	return new FunctionNodeUsing<FunctionTransform>(stubparams(parameters,12),stubargs(parameters,0));
       else
-	return new MutatableImageNodePositionTransformedQuadratic(stubparams(parameters,30),stubargs(parameters,0));	
+	return new FunctionNodePositionTransformedQuadratic(stubparams(parameters,30),stubargs(parameters,0));	
     }
   else if (r<(1.0f-parameters.proportion_constant())*base)
-    return new MutatableImageNodeUsing<FunctionIdentity>(stubparams(parameters,0),stubargs(parameters,0));
+    return new FunctionNodeUsing<FunctionIdentity>(stubparams(parameters,0),stubargs(parameters,0));
   else if (r<base)
-    return new MutatableImageNodeUsing<FunctionConstant>(stubparams(parameters,3),stubargs(parameters,0));
+    return new FunctionNodeUsing<FunctionConstant>(stubparams(parameters,3),stubargs(parameters,0));
   else if (r<base+1*step)
-    return new MutatableImageNodeXYZToSpherical(stubparams(parameters,0),stubargs(parameters,0));
+    return new FunctionNodeXYZToSpherical(stubparams(parameters,0),stubargs(parameters,0));
   else if (r<base+2*step) 
-    return new MutatableImageNodeSphericalToXYZ(stubparams(parameters,0),stubargs(parameters,0));
+    return new FunctionNodeSphericalToXYZ(stubparams(parameters,0),stubargs(parameters,0));
   else if (r<base+3*step) 
-    return new MutatableImageNodeSphericalize(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeSphericalize(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+4*step) 
-    return new MutatableImageNodeRotate(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeRotate(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+5*step) 
-    return new MutatableImageNodeSin(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeSin(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+6*step) 
-    return new MutatableImageNodeCos(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeCos(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+7*step) 
-    return new MutatableImageNodeSpiralLinear(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeSpiralLinear(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+8*step) 
-    return new MutatableImageNodeSpiralLogarithmic(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeSpiralLogarithmic(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+9*step) 
-    return new MutatableImageNodeGrad(stubparams(parameters,0),stubargs(parameters,1));
+    return new FunctionNodeGrad(stubparams(parameters,0),stubargs(parameters,1));
   else if (r<base+10*step) 
-    return new MutatableImageNodeConcatenatePair(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeConcatenatePair(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+11*step) 
-    return new MutatableImageNodeAdd(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeAdd(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+12*step) 
-    return new MutatableImageNodeMultiply(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeMultiply(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+13*step) 
-    return new MutatableImageNodeDivide(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeDivide(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+14*step) 
-    return new MutatableImageNodeCross(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeCross(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+15*step) 
-    return new MutatableImageNodeGeometricInversion(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeGeometricInversion(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+16*step) 
-    return new MutatableImageNodeMax(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeMax(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+17*step) 
-    return new MutatableImageNodeMin(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeMin(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+18*step) 
-    return new MutatableImageNodeMod(stubparams(parameters,0),stubargs(parameters,2));
+    return new FunctionNodeMod(stubparams(parameters,0),stubargs(parameters,2));
   else if (r<base+19*step) 
-    return new MutatableImageNodeConcatenateTriple(stubparams(parameters,0),stubargs(parameters,3));
+    return new FunctionNodeConcatenateTriple(stubparams(parameters,0),stubargs(parameters,3));
   else if (r<base+20*step) 
-    return new MutatableImageNodeReflect(stubparams(parameters,0),stubargs(parameters,3));
+    return new FunctionNodeReflect(stubparams(parameters,0),stubargs(parameters,3));
   else if (r<base+21*step) 
-    return new MutatableImageNodeMagnitudes(stubparams(parameters,0),stubargs(parameters,3));
+    return new FunctionNodeMagnitudes(stubparams(parameters,0),stubargs(parameters,3));
   else if (r<base+22*step) 
-    return new MutatableImageNodeChooseSphere(stubparams(parameters,0),stubargs(parameters,4));
+    return new FunctionNodeChooseSphere(stubparams(parameters,0),stubargs(parameters,4));
   else if (r<base+23*step) 
-    return new MutatableImageNodeChooseRect(stubparams(parameters,0),stubargs(parameters,4));
+    return new FunctionNodeChooseRect(stubparams(parameters,0),stubargs(parameters,4));
   else if (r<base+24*step)
-    return new MutatableImageNodePostTransform(stubparams(parameters,0),stubargs(parameters,5));
+    return new FunctionNodePostTransform(stubparams(parameters,0),stubargs(parameters,5));
   else if (r<base+25*step)
-    return new MutatableImageNodePreTransform(stubparams(parameters,0),stubargs(parameters,5));
+    return new FunctionNodePreTransform(stubparams(parameters,0),stubargs(parameters,5));
   else if (r<base+26*step)
-    return new MutatableImageNodeIterativeMap(stubparams(parameters,0),stubargs(parameters,1),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeIterativeMap(stubparams(parameters,0),stubargs(parameters,1),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
   else if (r<base+27*step)
-    return new MutatableImageNodeIterativeMapAccumulator(stubparams(parameters,0),stubargs(parameters,2),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeIterativeMapAccumulator(stubparams(parameters,0),stubargs(parameters,2),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
   else if (r<base+28*step)
-    return new MutatableImageNodeIterativeMandelbrotChoose(stubparams(parameters,0),stubargs(parameters,2),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeIterativeMandelbrotChoose(stubparams(parameters,0),stubargs(parameters,2),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
   else if (r<base+29*step)
-    return new MutatableImageNodeIterativeMandelbrotContour(stubparams(parameters,0),stubargs(parameters,0),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeIterativeMandelbrotContour(stubparams(parameters,0),stubargs(parameters,0),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
   else if (r<base+30*step)
-    return new MutatableImageNodeIterativeJuliaChoose(stubparams(parameters,0),stubargs(parameters,3),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeIterativeJuliaChoose(stubparams(parameters,0),stubargs(parameters,3),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
   else //if (r<base+31*step)
-    return new MutatableImageNodeIterativeJuliaContour(stubparams(parameters,0),stubargs(parameters,1),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
+    return new FunctionNodeIterativeJuliaContour(stubparams(parameters,0),stubargs(parameters,1),1+static_cast<uint>(parameters.r01()*parameters.max_initial_iterations()));
 }
 
 /*! This returns a vector of random bits of stub, used for initialiing nodes with children. 
  */
-const std::vector<MutatableImageNode*> MutatableImageNode::stubargs(const MutationParameters& parameters,uint n)
+const std::vector<FunctionNode*> FunctionNode::stubargs(const MutationParameters& parameters,uint n)
 {
-  std::vector<MutatableImageNode*> ret;
+  std::vector<FunctionNode*> ret;
   for (uint i=0;i<n;i++)
     ret.push_back(stub(parameters));
   return ret;
 }
 
-const std::vector<float> MutatableImageNode::stubparams(const MutationParameters& parameters,uint n)
+const std::vector<float> FunctionNode::stubparams(const MutationParameters& parameters,uint n)
 {
   std::vector<float> ret;
   for (uint i=0;i<n;i++)
@@ -163,7 +163,7 @@ const std::vector<float> MutatableImageNode::stubparams(const MutationParameters
   return ret;
 }
 
-MutatableImageNode::MutatableImageNode(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
+FunctionNode::FunctionNode(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
   :_args(a)
   ,_params(p)
 {
@@ -172,10 +172,10 @@ MutatableImageNode::MutatableImageNode(const std::vector<float>& p,const std::ve
 
 /*! Deletes all arguments.  No one else should be referencing nodes except the root node of an image.
  */
-MutatableImageNode::~MutatableImageNode()
+FunctionNode::~FunctionNode()
 {
   assert(ok());
-  for (std::vector<MutatableImageNode*>::iterator it=args().begin();it!=args().end();it++)
+  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
     delete (*it);
 }
 
@@ -191,10 +191,10 @@ MutatableImageNode::~MutatableImageNode()
 
   And of course all children have to be mutated too.
  */
-void MutatableImageNode::mutate(const MutationParameters& parameters)
+void FunctionNode::mutate(const MutationParameters& parameters)
 {
   // First mutate all child nodes.
-  for (std::vector<MutatableImageNode*>::iterator it=args().begin();it!=args().end();it++)
+  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
     (*it)->mutate(parameters);
   
   // Perturb any parameters we have
@@ -204,7 +204,7 @@ void MutatableImageNode::mutate(const MutationParameters& parameters)
   // Then go to work on the argument structure...
   
   // Think about glitching some nodes.
-  for (std::vector<MutatableImageNode*>::iterator it=args().begin();it!=args().end();it++)
+  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
     {
       if (parameters.r01()<parameters.probability_glitch())
 	{
@@ -222,35 +222,35 @@ void MutatableImageNode::mutate(const MutationParameters& parameters)
     }
 
   // Think about inserting a random stub between us and some children
-  for (std::vector<MutatableImageNode*>::iterator it=args().begin();it!=args().end();it++)
+  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
     {
       if (parameters.r01()<parameters.probability_insert())
 	{
 	  std::vector<float> p;
-	  std::vector<MutatableImageNode*> a;
+	  std::vector<FunctionNode*> a;
 
 	  a.push_back((*it));
 	  a.push_back(stub(parameters));
 
-	  (*it)=new MutatableImageNodeConcatenatePair(p,a);
+	  (*it)=new FunctionNodeConcatenatePair(p,a);
 	}
     }
 }
 
-const MutatableImageNodeUsing<FunctionPreTransform>*const MutatableImageNode::is_a_MutatableImageNodeUsingFunctionPreTransform() const
+const FunctionNodeUsing<FunctionPreTransform>*const FunctionNode::is_a_FunctionNodeUsingFunctionPreTransform() const
 {
   return 0;
 }
 
-MutatableImageNodeUsing<FunctionPreTransform>*const MutatableImageNode::is_a_MutatableImageNodeUsingFunctionPreTransform()
+FunctionNodeUsing<FunctionPreTransform>*const FunctionNode::is_a_FunctionNodeUsingFunctionPreTransform()
 {
   return 0;
 }
 
-const bool MutatableImageNode::ok() const
+const bool FunctionNode::ok() const
 {
   // Args vector should never contain a null or a non-ok argument
-  for (std::vector<MutatableImageNode*>::const_iterator it=args().begin();it!=args().end();it++)
+  for (std::vector<FunctionNode*>::const_iterator it=args().begin();it!=args().end();it++)
     {
       if ((*it)==0 || !(*it)->ok())
 	return false;
@@ -262,7 +262,7 @@ static Registry registry;
 
 /*******************************************/
 
-const XYZ MutatableImageNodePositionTransformedQuadratic::evaluate(const XYZ& p) const
+const XYZ FunctionNodePositionTransformedQuadratic::evaluate(const XYZ& p) const
 {
   const XYZ translate(param( 0),param( 1),param( 2));
   const XYZ basis_x  (param( 3),param( 4),param( 5));
@@ -282,30 +282,30 @@ const XYZ MutatableImageNodePositionTransformedQuadratic::evaluate(const XYZ& p)
     +basis_xx*(p.x()*p.x())+basis_yy*(p.y()*p.y())+basis_zz*(p.z()*p.z());
 }
 
-const bool MutatableImageNodePositionTransformedQuadratic::is_constant() const
+const bool FunctionNodePositionTransformedQuadratic::is_constant() const
 {
   return false;
 }
 
-MutatableImageNodePositionTransformedQuadratic::MutatableImageNodePositionTransformedQuadratic(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-:MutatableImageNode(p,a)
+FunctionNodePositionTransformedQuadratic::FunctionNodePositionTransformedQuadratic(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+:FunctionNode(p,a)
 {
   assert(params().size()==30);
   assert(args().size()==0);
 }
 
-MutatableImageNodePositionTransformedQuadratic::~MutatableImageNodePositionTransformedQuadratic()
+FunctionNodePositionTransformedQuadratic::~FunctionNodePositionTransformedQuadratic()
 {}
 
-MutatableImageNode*const MutatableImageNodePositionTransformedQuadratic::deepclone() const
+FunctionNode*const FunctionNodePositionTransformedQuadratic::deepclone() const
 {
-  return new MutatableImageNodePositionTransformedQuadratic
+  return new FunctionNodePositionTransformedQuadratic
     (cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeXYZToSpherical::evaluate(const XYZ& p) const
+const XYZ FunctionNodeXYZToSpherical::evaluate(const XYZ& p) const
 {
   const float r=p.magnitude();
 
@@ -316,29 +316,29 @@ const XYZ MutatableImageNodeXYZToSpherical::evaluate(const XYZ& p) const
   return XYZ(r,theta,phi);
 }
 
-const bool MutatableImageNodeXYZToSpherical::is_constant() const
+const bool FunctionNodeXYZToSpherical::is_constant() const
 {
   return false;
 }
 
-MutatableImageNodeXYZToSpherical::MutatableImageNodeXYZToSpherical(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeXYZToSpherical::FunctionNodeXYZToSpherical(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==0);
 }
 
-MutatableImageNodeXYZToSpherical::~MutatableImageNodeXYZToSpherical()
+FunctionNodeXYZToSpherical::~FunctionNodeXYZToSpherical()
 {}
 
-MutatableImageNode*const MutatableImageNodeXYZToSpherical::deepclone() const
+FunctionNode*const FunctionNodeXYZToSpherical::deepclone() const
 {
-  return new MutatableImageNodeXYZToSpherical(cloneparams(),cloneargs());
+  return new FunctionNodeXYZToSpherical(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeSphericalToXYZ::evaluate(const XYZ& p) const
+const XYZ FunctionNodeSphericalToXYZ::evaluate(const XYZ& p) const
 {
   const float r=p.x();
   const float theta=M_PI*p.y();
@@ -351,29 +351,29 @@ const XYZ MutatableImageNodeSphericalToXYZ::evaluate(const XYZ& p) const
   return XYZ(x,y,z);
 }
 
-const bool MutatableImageNodeSphericalToXYZ::is_constant() const
+const bool FunctionNodeSphericalToXYZ::is_constant() const
 {
   return false;
 }
 
-MutatableImageNodeSphericalToXYZ::MutatableImageNodeSphericalToXYZ(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeSphericalToXYZ::FunctionNodeSphericalToXYZ(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==0);
 }
 
-MutatableImageNodeSphericalToXYZ::~MutatableImageNodeSphericalToXYZ()
+FunctionNodeSphericalToXYZ::~FunctionNodeSphericalToXYZ()
 {}
 
-MutatableImageNode*const MutatableImageNodeSphericalToXYZ::deepclone() const
+FunctionNode*const FunctionNodeSphericalToXYZ::deepclone() const
 {
-  return new MutatableImageNodeSphericalToXYZ(cloneparams(),cloneargs());
+  return new FunctionNodeSphericalToXYZ(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeSphericalize::evaluate(const XYZ& p) const
+const XYZ FunctionNodeSphericalize::evaluate(const XYZ& p) const
 {
   const float in_r=p.magnitude();
   const float in_theta=atan2(p.y(),p.x())*(1.0f/M_PI);
@@ -392,30 +392,30 @@ const XYZ MutatableImageNodeSphericalize::evaluate(const XYZ& p) const
   return XYZ(x,y,z);
 }
 
-const bool MutatableImageNodeSphericalize::is_constant() const
+const bool FunctionNodeSphericalize::is_constant() const
 {
   return arg(0).is_constant();
 }
 
 
-MutatableImageNodeSphericalize::MutatableImageNodeSphericalize(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeSphericalize::FunctionNodeSphericalize(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==1);
 }
 
-MutatableImageNodeSphericalize::~MutatableImageNodeSphericalize()
+FunctionNodeSphericalize::~FunctionNodeSphericalize()
 {}
 
-MutatableImageNode*const MutatableImageNodeSphericalize::deepclone() const
+FunctionNode*const FunctionNodeSphericalize::deepclone() const
 {
-  return new MutatableImageNodeSphericalize(cloneparams(),cloneargs());
+  return new FunctionNodeSphericalize(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeRotate::evaluate(const XYZ& p) const
+const XYZ FunctionNodeRotate::evaluate(const XYZ& p) const
 {
   const XYZ a(arg(0)(p)*M_PI);
   
@@ -426,86 +426,86 @@ const XYZ MutatableImageNodeRotate::evaluate(const XYZ& p) const
   return XYZ((rx*ry*rz)*p);
 }
 
-const bool MutatableImageNodeRotate::is_constant() const
+const bool FunctionNodeRotate::is_constant() const
 {
   return arg(0).is_constant();
 }
 
-MutatableImageNodeRotate::MutatableImageNodeRotate(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeRotate::FunctionNodeRotate(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==1);
 }
 
-MutatableImageNodeRotate::~MutatableImageNodeRotate()
+FunctionNodeRotate::~FunctionNodeRotate()
 {}
 
-MutatableImageNode*const MutatableImageNodeRotate::deepclone() const
+FunctionNode*const FunctionNodeRotate::deepclone() const
 {
-  return new MutatableImageNodeRotate(cloneparams(),cloneargs());
+  return new FunctionNodeRotate(cloneparams(),cloneargs());
 }
 
 
 /*******************************************/
 
-const XYZ MutatableImageNodeSin::evaluate(const XYZ& p) const
+const XYZ FunctionNodeSin::evaluate(const XYZ& p) const
 {
   const XYZ v(arg(0)(p));
   return XYZ(sin(v.x()),sin(v.y()),sin(v.z()));
 }
 
-const bool MutatableImageNodeSin::is_constant() const
+const bool FunctionNodeSin::is_constant() const
 {
   return arg(0).is_constant();
 }
 
-MutatableImageNodeSin::MutatableImageNodeSin(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeSin::FunctionNodeSin(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==1);
 }
 
-MutatableImageNodeSin::~MutatableImageNodeSin()
+FunctionNodeSin::~FunctionNodeSin()
 {}
 
-MutatableImageNode*const MutatableImageNodeSin::deepclone() const
+FunctionNode*const FunctionNodeSin::deepclone() const
 {
-  return new MutatableImageNodeSin(cloneparams(),cloneargs());
+  return new FunctionNodeSin(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeCos::evaluate(const XYZ& p) const
+const XYZ FunctionNodeCos::evaluate(const XYZ& p) const
 {
   const XYZ v(arg(0)(p));
   return XYZ(cos(v.x()),cos(v.y()),cos(v.z()));
 }
 
-const bool MutatableImageNodeCos::is_constant() const
+const bool FunctionNodeCos::is_constant() const
 {
   return arg(0).is_constant();
 }
 
-MutatableImageNodeCos::MutatableImageNodeCos(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeCos::FunctionNodeCos(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==1);
 }
 
-MutatableImageNodeCos::~MutatableImageNodeCos()
+FunctionNodeCos::~FunctionNodeCos()
 {}
 
-MutatableImageNode*const MutatableImageNodeCos::deepclone() const
+FunctionNode*const FunctionNodeCos::deepclone() const
 {
-  return new MutatableImageNodeCos(cloneparams(),cloneargs());
+  return new FunctionNodeCos(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeSpiralLinear::evaluate(const XYZ& p) const
+const XYZ FunctionNodeSpiralLinear::evaluate(const XYZ& p) const
 {
   const float r=p.magnitude();
   float theta=atan2(p.y(),p.x());
@@ -518,29 +518,29 @@ const XYZ MutatableImageNodeSpiralLinear::evaluate(const XYZ& p) const
   return arg(0)(XYZ(x,y,p.z()));
 }
 
-const bool MutatableImageNodeSpiralLinear::is_constant() const
+const bool FunctionNodeSpiralLinear::is_constant() const
 {
   return (arg(0).is_constant());
 }
 
-MutatableImageNodeSpiralLinear::MutatableImageNodeSpiralLinear(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeSpiralLinear::FunctionNodeSpiralLinear(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==1);
 }
 
-MutatableImageNodeSpiralLinear::~MutatableImageNodeSpiralLinear()
+FunctionNodeSpiralLinear::~FunctionNodeSpiralLinear()
 {}
 
-MutatableImageNode*const MutatableImageNodeSpiralLinear::deepclone() const
+FunctionNode*const FunctionNodeSpiralLinear::deepclone() const
 {
-  return new MutatableImageNodeSpiralLinear(cloneparams(),cloneargs());
+  return new FunctionNodeSpiralLinear(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeSpiralLogarithmic::evaluate(const XYZ& p) const
+const XYZ FunctionNodeSpiralLogarithmic::evaluate(const XYZ& p) const
 {
   const float r=p.magnitude();
   float theta=atan2(p.y(),p.x());
@@ -554,29 +554,29 @@ const XYZ MutatableImageNodeSpiralLogarithmic::evaluate(const XYZ& p) const
   return arg(0)(XYZ(x,y,p.z()));
 }
 
-const bool MutatableImageNodeSpiralLogarithmic::is_constant() const
+const bool FunctionNodeSpiralLogarithmic::is_constant() const
 {
   return (arg(0).is_constant());
 }
 
-MutatableImageNodeSpiralLogarithmic::MutatableImageNodeSpiralLogarithmic(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeSpiralLogarithmic::FunctionNodeSpiralLogarithmic(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==1);
 }
 
-MutatableImageNodeSpiralLogarithmic::~MutatableImageNodeSpiralLogarithmic()
+FunctionNodeSpiralLogarithmic::~FunctionNodeSpiralLogarithmic()
 {}
 
-MutatableImageNode*const MutatableImageNodeSpiralLogarithmic::deepclone() const
+FunctionNode*const FunctionNodeSpiralLogarithmic::deepclone() const
 {
-  return new MutatableImageNodeSpiralLogarithmic(cloneparams(),cloneargs());
+  return new FunctionNodeSpiralLogarithmic(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeGrad::evaluate(const XYZ& p) const
+const XYZ FunctionNodeGrad::evaluate(const XYZ& p) const
 {
   const float epsilon=1e-6;
   const XYZ vepsilon(epsilon,epsilon,epsilon);
@@ -586,110 +586,110 @@ const XYZ MutatableImageNodeGrad::evaluate(const XYZ& p) const
   return (v1-v0)/(2.0*epsilon);
 }
 
-const bool MutatableImageNodeGrad::is_constant() const
+const bool FunctionNodeGrad::is_constant() const
 {
   return arg(0).is_constant();
 }
 
-MutatableImageNodeGrad::MutatableImageNodeGrad(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeGrad::FunctionNodeGrad(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==1);
 }
 
-MutatableImageNodeGrad::~MutatableImageNodeGrad()
+FunctionNodeGrad::~FunctionNodeGrad()
 {}
 
-MutatableImageNode*const MutatableImageNodeGrad::deepclone() const
+FunctionNode*const FunctionNodeGrad::deepclone() const
 {
-  return new MutatableImageNodeGrad(cloneparams(),cloneargs());
+  return new FunctionNodeGrad(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeConcatenatePair::evaluate(const XYZ& p) const
+const XYZ FunctionNodeConcatenatePair::evaluate(const XYZ& p) const
 {
   return arg(1)(arg(0)(p));
 }
 
-const bool MutatableImageNodeConcatenatePair::is_constant() const
+const bool FunctionNodeConcatenatePair::is_constant() const
 {
   return (arg(0).is_constant() || arg(1).is_constant());
 }
 
-MutatableImageNodeConcatenatePair::MutatableImageNodeConcatenatePair(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeConcatenatePair::FunctionNodeConcatenatePair(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==2);
 }
 
-MutatableImageNodeConcatenatePair::~MutatableImageNodeConcatenatePair()
+FunctionNodeConcatenatePair::~FunctionNodeConcatenatePair()
 {}
 
-MutatableImageNode*const MutatableImageNodeConcatenatePair::deepclone() const
+FunctionNode*const FunctionNodeConcatenatePair::deepclone() const
 {
-  return new MutatableImageNodeConcatenatePair(cloneparams(),cloneargs());
+  return new FunctionNodeConcatenatePair(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeAdd::evaluate(const XYZ& p) const
+const XYZ FunctionNodeAdd::evaluate(const XYZ& p) const
 {
   return arg(0)(p)+arg(1)(p);
 }
 
-const bool MutatableImageNodeAdd::is_constant() const
+const bool FunctionNodeAdd::is_constant() const
 {
   return (arg(0).is_constant() && arg(1).is_constant());
 }
 
-MutatableImageNodeAdd::MutatableImageNodeAdd(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeAdd::FunctionNodeAdd(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==2);
 }
 
-MutatableImageNodeAdd::~MutatableImageNodeAdd()
+FunctionNodeAdd::~FunctionNodeAdd()
 {}
 
-MutatableImageNode*const MutatableImageNodeAdd::deepclone() const
+FunctionNode*const FunctionNodeAdd::deepclone() const
 {
-  return new MutatableImageNodeAdd(cloneparams(),cloneargs());
+  return new FunctionNodeAdd(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeMultiply::evaluate(const XYZ& p) const
+const XYZ FunctionNodeMultiply::evaluate(const XYZ& p) const
 {
   return arg(0)(p)*arg(1)(p);
 }
 
-const bool MutatableImageNodeMultiply::is_constant() const
+const bool FunctionNodeMultiply::is_constant() const
 {
   return (arg(0).is_constant() && arg(1).is_constant());
 }
 
-MutatableImageNodeMultiply::MutatableImageNodeMultiply(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeMultiply::FunctionNodeMultiply(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==2);
 }
 
-MutatableImageNodeMultiply::~MutatableImageNodeMultiply()
+FunctionNodeMultiply::~FunctionNodeMultiply()
 {}
 
-MutatableImageNode*const MutatableImageNodeMultiply::deepclone() const
+FunctionNode*const FunctionNodeMultiply::deepclone() const
 {
-  return new MutatableImageNodeMultiply(cloneparams(),cloneargs());
+  return new FunctionNodeMultiply(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeDivide::evaluate(const XYZ& p) const
+const XYZ FunctionNodeDivide::evaluate(const XYZ& p) const
 {
   const XYZ v0(arg(0)(p));
   const XYZ v1(arg(1)(p));
@@ -701,56 +701,56 @@ const XYZ MutatableImageNodeDivide::evaluate(const XYZ& p) const
 	     );
 }
 
-const bool MutatableImageNodeDivide::is_constant() const
+const bool FunctionNodeDivide::is_constant() const
 {
   return (arg(0).is_constant() && arg(1).is_constant());
 }
 
-MutatableImageNodeDivide::MutatableImageNodeDivide(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeDivide::FunctionNodeDivide(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==2);
 }
 
-MutatableImageNodeDivide::~MutatableImageNodeDivide()
+FunctionNodeDivide::~FunctionNodeDivide()
 {}
 
-MutatableImageNode*const MutatableImageNodeDivide::deepclone() const
+FunctionNode*const FunctionNodeDivide::deepclone() const
 {
-  return new MutatableImageNodeDivide(cloneparams(),cloneargs());
+  return new FunctionNodeDivide(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeCross::evaluate(const XYZ& p) const
+const XYZ FunctionNodeCross::evaluate(const XYZ& p) const
 {
   return arg(0)(p)*arg(1)(p);
 }
 
-const bool MutatableImageNodeCross::is_constant() const
+const bool FunctionNodeCross::is_constant() const
 {
   return (arg(0).is_constant() && arg(1).is_constant());
 }
 
-MutatableImageNodeCross::MutatableImageNodeCross(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeCross::FunctionNodeCross(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==2);
 }
 
-MutatableImageNodeCross::~MutatableImageNodeCross()
+FunctionNodeCross::~FunctionNodeCross()
 {}
 
-MutatableImageNode*const MutatableImageNodeCross::deepclone() const
+FunctionNode*const FunctionNodeCross::deepclone() const
 {
-  return new MutatableImageNodeCross(cloneparams(),cloneargs());
+  return new FunctionNodeCross(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeGeometricInversion::evaluate(const XYZ& p) const
+const XYZ FunctionNodeGeometricInversion::evaluate(const XYZ& p) const
 {
   const XYZ origin(arg(0)(p));
   const float radius2(arg(1)(p).magnitude2());
@@ -763,87 +763,87 @@ const XYZ MutatableImageNodeGeometricInversion::evaluate(const XYZ& p) const
   return origin+prn*radius2*prmi;
 }
 
-const bool MutatableImageNodeGeometricInversion::is_constant() const
+const bool FunctionNodeGeometricInversion::is_constant() const
 {
   return false;
 }
 
-MutatableImageNodeGeometricInversion::MutatableImageNodeGeometricInversion(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeGeometricInversion::FunctionNodeGeometricInversion(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==2);
 }
 
-MutatableImageNodeGeometricInversion::~MutatableImageNodeGeometricInversion()
+FunctionNodeGeometricInversion::~FunctionNodeGeometricInversion()
 {}
 
-MutatableImageNode*const MutatableImageNodeGeometricInversion::deepclone() const
+FunctionNode*const FunctionNodeGeometricInversion::deepclone() const
 {
-  return new MutatableImageNodeGeometricInversion(cloneparams(),cloneargs());
+  return new FunctionNodeGeometricInversion(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeMax::evaluate(const XYZ& p) const
+const XYZ FunctionNodeMax::evaluate(const XYZ& p) const
 {
   const XYZ v0(arg(0)(p));
   const XYZ v1(arg(1)(p));
   return XYZ(maximum(v0.x(),v1.x()),maximum(v0.y(),v1.y()),maximum(v0.z(),v1.z()));
 }
 
-const bool MutatableImageNodeMax::is_constant() const
+const bool FunctionNodeMax::is_constant() const
 {
   return (arg(0).is_constant() && arg(1).is_constant());
 }
 
-MutatableImageNodeMax::MutatableImageNodeMax(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeMax::FunctionNodeMax(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==2);
 }
 
-MutatableImageNodeMax::~MutatableImageNodeMax()
+FunctionNodeMax::~FunctionNodeMax()
 {}
 
-MutatableImageNode*const MutatableImageNodeMax::deepclone() const
+FunctionNode*const FunctionNodeMax::deepclone() const
 {
-  return new MutatableImageNodeMax(cloneparams(),cloneargs());
+  return new FunctionNodeMax(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeMin::evaluate(const XYZ& p) const
+const XYZ FunctionNodeMin::evaluate(const XYZ& p) const
 {
   const XYZ v0(arg(0)(p));
   const XYZ v1(arg(1)(p));
   return XYZ(minimum(v0.x(),v1.x()),minimum(v0.y(),v1.y()),minimum(v0.z(),v1.z()));
 }
 
-const bool MutatableImageNodeMin::is_constant() const
+const bool FunctionNodeMin::is_constant() const
 {
   return (arg(0).is_constant() && arg(1).is_constant());
 }
 
-MutatableImageNodeMin::MutatableImageNodeMin(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeMin::FunctionNodeMin(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==2);
 }
 
-MutatableImageNodeMin::~MutatableImageNodeMin()
+FunctionNodeMin::~FunctionNodeMin()
 {}
 
-MutatableImageNode*const MutatableImageNodeMin::deepclone() const
+FunctionNode*const FunctionNodeMin::deepclone() const
 {
-  return new MutatableImageNodeMin(cloneparams(),cloneargs());
+  return new FunctionNodeMin(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeMod::evaluate(const XYZ& p) const
+const XYZ FunctionNodeMod::evaluate(const XYZ& p) const
 {
   const XYZ a(arg(0)(p));
   const XYZ b(arg(1)(p));
@@ -851,56 +851,56 @@ const XYZ MutatableImageNodeMod::evaluate(const XYZ& p) const
   return XYZ(fmod(a.x(),b.x()),fmod(a.y(),b.y()),fmod(a.z(),b.z()));
 }
 
-const bool MutatableImageNodeMod::is_constant() const
+const bool FunctionNodeMod::is_constant() const
 {
   return (arg(0).is_constant() && arg(1).is_constant());
 }
 
-MutatableImageNodeMod::MutatableImageNodeMod(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeMod::FunctionNodeMod(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==2);
 }
 
-MutatableImageNodeMod::~MutatableImageNodeMod()
+FunctionNodeMod::~FunctionNodeMod()
 {}
 
-MutatableImageNode*const MutatableImageNodeMod::deepclone() const
+FunctionNode*const FunctionNodeMod::deepclone() const
 {
-  return new MutatableImageNodeMod(cloneparams(),cloneargs());
+  return new FunctionNodeMod(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeConcatenateTriple::evaluate(const XYZ& p) const
+const XYZ FunctionNodeConcatenateTriple::evaluate(const XYZ& p) const
 {
   return arg(2)(arg(1)(arg(0)(p)));
 }
 
-const bool MutatableImageNodeConcatenateTriple::is_constant() const
+const bool FunctionNodeConcatenateTriple::is_constant() const
 {
   return (arg(0).is_constant() || arg(1).is_constant() || arg(2).is_constant());
 }
 
-MutatableImageNodeConcatenateTriple::MutatableImageNodeConcatenateTriple(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeConcatenateTriple::FunctionNodeConcatenateTriple(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==3);
 }
 
-MutatableImageNodeConcatenateTriple::~MutatableImageNodeConcatenateTriple()
+FunctionNodeConcatenateTriple::~FunctionNodeConcatenateTriple()
 {}
 
-MutatableImageNode*const MutatableImageNodeConcatenateTriple::deepclone() const
+FunctionNode*const FunctionNodeConcatenateTriple::deepclone() const
 {
-  return new MutatableImageNodeConcatenateTriple(cloneparams(),cloneargs());
+  return new FunctionNodeConcatenateTriple(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeReflect::evaluate(const XYZ& p) const
+const XYZ FunctionNodeReflect::evaluate(const XYZ& p) const
 {
   const XYZ pt_in_plane(arg(0)(p));
   const XYZ normal(arg(1)(p).normalised());
@@ -918,56 +918,56 @@ const XYZ MutatableImageNodeReflect::evaluate(const XYZ& p) const
   return pos;
 }
 
-const bool MutatableImageNodeReflect::is_constant() const
+const bool FunctionNodeReflect::is_constant() const
 {
   return arg(2).is_constant();
 }
 
-MutatableImageNodeReflect::MutatableImageNodeReflect(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeReflect::FunctionNodeReflect(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==3);
 }
 
-MutatableImageNodeReflect::~MutatableImageNodeReflect()
+FunctionNodeReflect::~FunctionNodeReflect()
 {}
 
-MutatableImageNode*const MutatableImageNodeReflect::deepclone() const
+FunctionNode*const FunctionNodeReflect::deepclone() const
 {
-  return new MutatableImageNodeReflect(cloneparams(),cloneargs());
+  return new FunctionNodeReflect(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeMagnitudes::evaluate(const XYZ& p) const
+const XYZ FunctionNodeMagnitudes::evaluate(const XYZ& p) const
 {
   return XYZ(arg(0)(p).magnitude(),arg(1)(p).magnitude(),arg(2)(p).magnitude());
 }
 
-const bool MutatableImageNodeMagnitudes::is_constant() const
+const bool FunctionNodeMagnitudes::is_constant() const
 {
   return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant());
 }
 
-MutatableImageNodeMagnitudes::MutatableImageNodeMagnitudes(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeMagnitudes::FunctionNodeMagnitudes(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==3);
 }
 
-MutatableImageNodeMagnitudes::~MutatableImageNodeMagnitudes()
+FunctionNodeMagnitudes::~FunctionNodeMagnitudes()
 {}
 
-MutatableImageNode*const MutatableImageNodeMagnitudes::deepclone() const
+FunctionNode*const FunctionNodeMagnitudes::deepclone() const
 {
-  return new MutatableImageNodeMagnitudes(cloneparams(),cloneargs());
+  return new FunctionNodeMagnitudes(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeChooseSphere::evaluate(const XYZ& p) const
+const XYZ FunctionNodeChooseSphere::evaluate(const XYZ& p) const
 {
   if ((arg(0)(p)).magnitude2()<(arg(1)(p)).magnitude2())
     return arg(2)(p);
@@ -975,29 +975,29 @@ const XYZ MutatableImageNodeChooseSphere::evaluate(const XYZ& p) const
     return arg(3)(p);
 }
 
-const bool MutatableImageNodeChooseSphere::is_constant() const
+const bool FunctionNodeChooseSphere::is_constant() const
 {
   return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant() && arg(3).is_constant());
 }
 
-MutatableImageNodeChooseSphere::MutatableImageNodeChooseSphere(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeChooseSphere::FunctionNodeChooseSphere(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==4);
 }
 
-MutatableImageNodeChooseSphere::~MutatableImageNodeChooseSphere()
+FunctionNodeChooseSphere::~FunctionNodeChooseSphere()
 {}
 
-MutatableImageNode*const MutatableImageNodeChooseSphere::deepclone() const
+FunctionNode*const FunctionNodeChooseSphere::deepclone() const
 {
-  return new MutatableImageNodeChooseSphere(cloneparams(),cloneargs());
+  return new FunctionNodeChooseSphere(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeChooseRect::evaluate(const XYZ& p) const
+const XYZ FunctionNodeChooseRect::evaluate(const XYZ& p) const
 {
   const XYZ p0(arg(0)(p));
   const XYZ p1(arg(1)(p));
@@ -1008,31 +1008,31 @@ const XYZ MutatableImageNodeChooseRect::evaluate(const XYZ& p) const
     return arg(3)(p);
 }
 
-const bool MutatableImageNodeChooseRect::is_constant() const
+const bool FunctionNodeChooseRect::is_constant() const
 {
   return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant() && arg(3).is_constant());
 }
 
-MutatableImageNodeChooseRect::MutatableImageNodeChooseRect(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodeChooseRect::FunctionNodeChooseRect(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==4);
 }
 
-MutatableImageNodeChooseRect::~MutatableImageNodeChooseRect()
+FunctionNodeChooseRect::~FunctionNodeChooseRect()
 {}
 
-MutatableImageNode*const MutatableImageNodeChooseRect::deepclone() const
+FunctionNode*const FunctionNodeChooseRect::deepclone() const
 {
-  return new MutatableImageNodeChooseRect(cloneparams(),cloneargs());
+  return new FunctionNodeChooseRect(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
 /*! Transforms the co-ordinate BEFORE passing it through the function argument.
  */
-const XYZ MutatableImageNodePreTransform::evaluate(const XYZ& p) const
+const XYZ FunctionNodePreTransform::evaluate(const XYZ& p) const
 {
   const XYZ offset (arg(0)(p));
   const XYZ basis_x(arg(1)(p));
@@ -1049,31 +1049,31 @@ const XYZ MutatableImageNodePreTransform::evaluate(const XYZ& p) const
   return arg(4)(pt);
 }
 
-const bool MutatableImageNodePreTransform::is_constant() const
+const bool FunctionNodePreTransform::is_constant() const
 {
   return arg(4).is_constant();
 }
 
-MutatableImageNodePreTransform::MutatableImageNodePreTransform(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodePreTransform::FunctionNodePreTransform(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert (args().size()==5);
 }
 
-MutatableImageNodePreTransform::~MutatableImageNodePreTransform()
+FunctionNodePreTransform::~FunctionNodePreTransform()
 {}
 
-MutatableImageNode*const MutatableImageNodePreTransform::deepclone() const
+FunctionNode*const FunctionNodePreTransform::deepclone() const
 {
-  return new MutatableImageNodePreTransform(cloneparams(),cloneargs());
+  return new FunctionNodePreTransform(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
 /*! Transforms the co-ordinate AFTER passing it through the function argument.
  */
-const XYZ MutatableImageNodePostTransform::evaluate(const XYZ& p) const
+const XYZ FunctionNodePostTransform::evaluate(const XYZ& p) const
 {
   const XYZ offset (arg(0)(p));
   const XYZ basis_x(arg(1)(p));
@@ -1085,40 +1085,40 @@ const XYZ MutatableImageNodePostTransform::evaluate(const XYZ& p) const
   return offset+basis_x*pt.x()+basis_y*pt.y()+basis_z*pt.z();
 }
 
-const bool MutatableImageNodePostTransform::is_constant() const
+const bool FunctionNodePostTransform::is_constant() const
 {
   return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant() && arg(3).is_constant() && arg(4).is_constant());
 }
 
-MutatableImageNodePostTransform::MutatableImageNodePostTransform(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a)
-  :MutatableImageNode(p,a)
+FunctionNodePostTransform::FunctionNodePostTransform(const std::vector<float>& p,const std::vector<FunctionNode*>& a)
+  :FunctionNode(p,a)
 {
   assert(params().size()==0);
   assert(args().size()==5);
 }
 
-MutatableImageNodePostTransform::~MutatableImageNodePostTransform()
+FunctionNodePostTransform::~FunctionNodePostTransform()
 {}
 
-MutatableImageNode*const MutatableImageNodePostTransform::deepclone() const
+FunctionNode*const FunctionNodePostTransform::deepclone() const
 {
-  return new MutatableImageNodePostTransform(cloneparams(),cloneargs());
+  return new FunctionNodePostTransform(cloneparams(),cloneargs());
 }
 
 /*******************************************/
 
-MutatableImageNodeIterative::MutatableImageNodeIterative(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i)
-  :MutatableImageNode(p,a)
+FunctionNodeIterative::FunctionNodeIterative(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
+  :FunctionNode(p,a)
    ,_iterations(i)
 {}
 
-MutatableImageNodeIterative::~MutatableImageNodeIterative()
+FunctionNodeIterative::~FunctionNodeIterative()
 {}
 
-void MutatableImageNodeIterative::mutate(const MutationParameters& parameters)
+void FunctionNodeIterative::mutate(const MutationParameters& parameters)
 {
   // Take care of mutating any branches using base class code.
-  MutatableImageNode::mutate(parameters);
+  FunctionNode::mutate(parameters);
 
   if (parameters.r01()<parameters.probability_iterations_change_step())
     {
@@ -1147,7 +1147,7 @@ void MutatableImageNodeIterative::mutate(const MutationParameters& parameters)
 
 /*******************************************/
 
-const XYZ MutatableImageNodeIterativeMap::evaluate(const XYZ& p) const
+const XYZ FunctionNodeIterativeMap::evaluate(const XYZ& p) const
 {
   XYZ ret(p);
 
@@ -1159,30 +1159,30 @@ const XYZ MutatableImageNodeIterativeMap::evaluate(const XYZ& p) const
   return ret;
 }
 
-const bool MutatableImageNodeIterativeMap::is_constant() const
+const bool FunctionNodeIterativeMap::is_constant() const
 {
   // Assumes _iterations>0
   return arg(0).is_constant();
 }
 
-MutatableImageNodeIterativeMap::MutatableImageNodeIterativeMap(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i)
-  :MutatableImageNodeIterative(p,a,i)
+FunctionNodeIterativeMap::FunctionNodeIterativeMap(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
+  :FunctionNodeIterative(p,a,i)
 {
   assert(params().size()==0);
   assert(args().size()==1);
 }
 
-MutatableImageNodeIterativeMap::~MutatableImageNodeIterativeMap()
+FunctionNodeIterativeMap::~FunctionNodeIterativeMap()
 {}
 
-MutatableImageNode*const MutatableImageNodeIterativeMap::deepclone() const
+FunctionNode*const FunctionNodeIterativeMap::deepclone() const
 {
-  return new MutatableImageNodeIterativeMap(cloneparams(),cloneargs(),_iterations);
+  return new FunctionNodeIterativeMap(cloneparams(),cloneargs(),_iterations);
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeIterativeMapAccumulator::evaluate(const XYZ& p) const
+const XYZ FunctionNodeIterativeMapAccumulator::evaluate(const XYZ& p) const
 {
   XYZ q(p);
   XYZ ret(0.0f,0.0f,0.0f);
@@ -1196,33 +1196,33 @@ const XYZ MutatableImageNodeIterativeMapAccumulator::evaluate(const XYZ& p) cons
   return ret/_iterations;
 }
 
-const bool MutatableImageNodeIterativeMapAccumulator::is_constant() const
+const bool FunctionNodeIterativeMapAccumulator::is_constant() const
 {
   // If arg0 is constant then we get the same value everywhere.  
   // If arg1 is constant we still perform a lookup of arg0 at 2 different places.
   return (arg(0).is_constant());
 }
 
-MutatableImageNodeIterativeMapAccumulator::MutatableImageNodeIterativeMapAccumulator(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i)
-  :MutatableImageNodeIterative(p,a,i)
+FunctionNodeIterativeMapAccumulator::FunctionNodeIterativeMapAccumulator(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
+  :FunctionNodeIterative(p,a,i)
 {
   assert(params().size()==0);
   assert(args().size()==2);
 }
 
-MutatableImageNodeIterativeMapAccumulator::~MutatableImageNodeIterativeMapAccumulator()
+FunctionNodeIterativeMapAccumulator::~FunctionNodeIterativeMapAccumulator()
 {}
 
-MutatableImageNode*const MutatableImageNodeIterativeMapAccumulator::deepclone() const
+FunctionNode*const FunctionNodeIterativeMapAccumulator::deepclone() const
 {
-  return new MutatableImageNodeIterativeMapAccumulator(cloneparams(),cloneargs(),_iterations);
+  return new FunctionNodeIterativeMapAccumulator(cloneparams(),cloneargs(),_iterations);
 }
 
 /*******************************************/
 
 /*! Returns i in 0 to _iterations inclusive.  i==_iterations implies "in" set.
  */
-const uint MutatableImageNodeIterativeZSquaredPlusC::iterate(const XYZ& z0,const XYZ& c) const
+const uint FunctionNodeIterativeZSquaredPlusC::iterate(const XYZ& z0,const XYZ& c) const
 {
   XYZ z(z0);
   uint i;
@@ -1246,121 +1246,121 @@ const uint MutatableImageNodeIterativeZSquaredPlusC::iterate(const XYZ& z0,const
   return i;
 }
   
-MutatableImageNodeIterativeZSquaredPlusC::MutatableImageNodeIterativeZSquaredPlusC(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i)
-  :MutatableImageNodeIterative(p,a,i)
+FunctionNodeIterativeZSquaredPlusC::FunctionNodeIterativeZSquaredPlusC(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
+  :FunctionNodeIterative(p,a,i)
 {}
 
-MutatableImageNodeIterativeZSquaredPlusC::~MutatableImageNodeIterativeZSquaredPlusC()
+FunctionNodeIterativeZSquaredPlusC::~FunctionNodeIterativeZSquaredPlusC()
 {}
 
 
 /*******************************************/
 
-const XYZ MutatableImageNodeIterativeMandelbrotChoose::evaluate(const XYZ& p) const
+const XYZ FunctionNodeIterativeMandelbrotChoose::evaluate(const XYZ& p) const
 {
   return (iterate(XYZ(0.0f,0.0f,0.0f),p)==_iterations ? arg(0)(p) : arg(1)(p));
 }
 
-const bool MutatableImageNodeIterativeMandelbrotChoose::is_constant() const
+const bool FunctionNodeIterativeMandelbrotChoose::is_constant() const
 {
   return false;
 }
 
-MutatableImageNodeIterativeMandelbrotChoose::MutatableImageNodeIterativeMandelbrotChoose(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i)
-  :MutatableImageNodeIterativeZSquaredPlusC(p,a,i)
+FunctionNodeIterativeMandelbrotChoose::FunctionNodeIterativeMandelbrotChoose(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
+  :FunctionNodeIterativeZSquaredPlusC(p,a,i)
 {
   assert(params().size()==0);
   assert (args().size()==2);
 }
 
-MutatableImageNodeIterativeMandelbrotChoose::~MutatableImageNodeIterativeMandelbrotChoose()
+FunctionNodeIterativeMandelbrotChoose::~FunctionNodeIterativeMandelbrotChoose()
 {}
 
-MutatableImageNode*const MutatableImageNodeIterativeMandelbrotChoose::deepclone() const
+FunctionNode*const FunctionNodeIterativeMandelbrotChoose::deepclone() const
 {
-  return new MutatableImageNodeIterativeMandelbrotChoose(cloneparams(),cloneargs(),_iterations);
+  return new FunctionNodeIterativeMandelbrotChoose(cloneparams(),cloneargs(),_iterations);
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeIterativeMandelbrotContour::evaluate(const XYZ& p) const
+const XYZ FunctionNodeIterativeMandelbrotContour::evaluate(const XYZ& p) const
 {
   const uint i=iterate(XYZ(0.0f,0.0f,0.0f),p);
   return (i==_iterations ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/_iterations));
 }
 
-const bool MutatableImageNodeIterativeMandelbrotContour::is_constant() const
+const bool FunctionNodeIterativeMandelbrotContour::is_constant() const
 {
   return false;
 }
 
-MutatableImageNodeIterativeMandelbrotContour::MutatableImageNodeIterativeMandelbrotContour(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i)
-  :MutatableImageNodeIterativeZSquaredPlusC(p,a,i)
+FunctionNodeIterativeMandelbrotContour::FunctionNodeIterativeMandelbrotContour(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
+  :FunctionNodeIterativeZSquaredPlusC(p,a,i)
 {
   assert(params().size()==0);
   assert (args().size()==2);
 }
 
-MutatableImageNodeIterativeMandelbrotContour::~MutatableImageNodeIterativeMandelbrotContour()
+FunctionNodeIterativeMandelbrotContour::~FunctionNodeIterativeMandelbrotContour()
 {}
 
-MutatableImageNode*const MutatableImageNodeIterativeMandelbrotContour::deepclone() const
+FunctionNode*const FunctionNodeIterativeMandelbrotContour::deepclone() const
 {
-  return new MutatableImageNodeIterativeMandelbrotContour(cloneparams(),cloneargs(),_iterations);
+  return new FunctionNodeIterativeMandelbrotContour(cloneparams(),cloneargs(),_iterations);
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeIterativeJuliaChoose::evaluate(const XYZ& p) const
+const XYZ FunctionNodeIterativeJuliaChoose::evaluate(const XYZ& p) const
 {
   return (iterate(p,arg(0)(p))==_iterations ? arg(1)(p) : arg(2)(p));
 }
 
-const bool MutatableImageNodeIterativeJuliaChoose::is_constant() const
+const bool FunctionNodeIterativeJuliaChoose::is_constant() const
 {
   return false;
 }
 
-MutatableImageNodeIterativeJuliaChoose::MutatableImageNodeIterativeJuliaChoose(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i)
-  :MutatableImageNodeIterativeZSquaredPlusC(p,a,i)
+FunctionNodeIterativeJuliaChoose::FunctionNodeIterativeJuliaChoose(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
+  :FunctionNodeIterativeZSquaredPlusC(p,a,i)
 {
   assert(params().size()==0);
   assert(args().size()==3);
 }
 
-MutatableImageNodeIterativeJuliaChoose::~MutatableImageNodeIterativeJuliaChoose()
+FunctionNodeIterativeJuliaChoose::~FunctionNodeIterativeJuliaChoose()
 {}
 
-MutatableImageNode*const MutatableImageNodeIterativeJuliaChoose::deepclone() const
+FunctionNode*const FunctionNodeIterativeJuliaChoose::deepclone() const
 {
-  return new MutatableImageNodeIterativeJuliaChoose(cloneparams(),cloneargs(),_iterations);
+  return new FunctionNodeIterativeJuliaChoose(cloneparams(),cloneargs(),_iterations);
 }
 
 /*******************************************/
 
-const XYZ MutatableImageNodeIterativeJuliaContour::evaluate(const XYZ& p) const
+const XYZ FunctionNodeIterativeJuliaContour::evaluate(const XYZ& p) const
 {
   const uint i=iterate(p,arg(0)(p));
   return (i==_iterations ? XYZ::fill(-1.0f) : XYZ::fill(static_cast<float>(i)/_iterations));
 }
 
-const bool MutatableImageNodeIterativeJuliaContour::is_constant() const
+const bool FunctionNodeIterativeJuliaContour::is_constant() const
 {
   return false;
 }
 
-MutatableImageNodeIterativeJuliaContour::MutatableImageNodeIterativeJuliaContour(const std::vector<float>& p,const std::vector<MutatableImageNode*>& a,uint i)
-  :MutatableImageNodeIterativeZSquaredPlusC(p,a,i)
+FunctionNodeIterativeJuliaContour::FunctionNodeIterativeJuliaContour(const std::vector<float>& p,const std::vector<FunctionNode*>& a,uint i)
+  :FunctionNodeIterativeZSquaredPlusC(p,a,i)
 {
   assert(params().size()==0);
   assert (args().size()==1);
 }
 
-MutatableImageNodeIterativeJuliaContour::~MutatableImageNodeIterativeJuliaContour()
+FunctionNodeIterativeJuliaContour::~FunctionNodeIterativeJuliaContour()
 {}
 
-MutatableImageNode*const MutatableImageNodeIterativeJuliaContour::deepclone() const
+FunctionNode*const FunctionNodeIterativeJuliaContour::deepclone() const
 {
-  return new MutatableImageNodeIterativeJuliaContour(cloneparams(),cloneargs(),_iterations);
+  return new FunctionNodeIterativeJuliaContour(cloneparams(),cloneargs(),_iterations);
 }
 

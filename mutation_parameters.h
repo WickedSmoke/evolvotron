@@ -44,7 +44,7 @@ class MutationParameters
   //! Disables generation of Mandelbrot & Julia set node types.
   bool _allow_fractal_nodes;
 
-  //! Specifies the magnitude of random changes to MutatableImageNodeConstant.
+  //! Specifies the magnitude of random changes to FunctionNodeConstant.
   float _magnitude;
 
   //! Specifies the probability of a child being dropped and replaced with a new random stub.
@@ -59,7 +59,7 @@ class MutationParameters
   //! Specifies the proportion of Constant nodes vs Position type nodes.
   float _proportion_constant;
 
-  //! Specifies the probability of a using a MutatableImageNodePositionTransformed instead of MutatableImageNodePosition
+  //! Specifies the probability of a using a FunctionNodePositionTransformed instead of FunctionNodePosition
   float _identity_supression;
 
   //! The maximum number of iterations an iterative function node can have initially.
