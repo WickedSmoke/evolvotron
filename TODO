@@ -21,7 +21,7 @@ imply it will be done sooner or later than other items!
 - Create registry of all function node types (done)
   - use to bring up a panel for setting relative frequencies (check for exploding branching ratios)
   - Allow iterative/allow fractal would then become convenience buttons for quick-setting a whole group of frequencies
-  - Classification scheme for function types (basic, smooth, chooser, complex).
+  - Classification scheme for function types (basic, smooth, chooser, complex, expensive).
 - Undo needs to save more state to work properly (e.g state for respawn)
 - Have a function type which can suck in random images from directories of images
   (specified by environmental variable ?)

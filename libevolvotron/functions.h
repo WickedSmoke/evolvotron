@@ -671,7 +671,7 @@ class FunctionGradient : public Function
   //! Evaluate function.
   static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
     {
-      const float epsilon=1e-6;
+      const float epsilon=1e-4;
       const XYZ vepsilon(epsilon,epsilon,epsilon);
       
       const XYZ v0(our.arg(0)(p-vepsilon));
@@ -1809,6 +1809,76 @@ REGISTER(FunctionOrthoSphereShaded);
 
 //------------------------------------------------------------------------------------------
 
+//! Rays intersecting a textured unit sphere, with bump mapping
+/*! arg(0) is background
+    arg(1) is 3D texture for sphere
+    arg(2) is bump-map for sphere (take magnitude2)
+  param(0,1,2) is light source direction
+  p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
+*/
+class FunctionOrthoSphereShadedBumpMapped : public Function
+{
+ public:
+  //! Three parameters.
+  static const uint parameters()
+    {
+      return 3;
+    }
+
+  //! Three arguments.
+  static const uint arguments()
+    {
+      return 3;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const float pr2=p.x()*p.x()+p.y()*p.y();
+      if (pr2<1.0f)
+	{
+	  const float z=-sqrt(1.0f-pr2);
+	  const XYZ n(p.x(),p.y(),z);
+
+	  // Tangent vectors
+	  const XYZ east((XYZ(0.0f,1.0f,0.0f)*n).normalised());
+	  const XYZ north(n*east);
+
+	  const float epsilon=1e-4;
+
+	  const float e0=(our.arg(2)(n-epsilon*east)).magnitude2();
+	  const float e1=(our.arg(2)(n+epsilon*east)).magnitude2();
+	  const float n0=(our.arg(2)(n-epsilon*north)).magnitude2();
+	  const float n1=(our.arg(2)(n+epsilon*north)).magnitude2();
+
+	  const float de=(e1-e0)/(2.0f*epsilon);
+	  const float dn=(n1-n0)/(2.0f*epsilon);
+
+	  const XYZ perturbed_n((n-east*de-north*dn).normalised());
+
+	  const XYZ l(XYZ(our.param(0),our.param(1),our.param(2)).normalised());
+
+	  const float i=0.5*(1.0+l%perturbed_n); // In range 0-1
+	  return i*our.arg(1)(n);
+	}
+      else
+	{
+	  return our.arg(0)(p);
+	}
+    }
+  
+  //! Unlikely to be constant.
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionOrthoSphereShadedBumpMapped);
+
+
+//------------------------------------------------------------------------------------------
+
 //! Rays reflecting off a unit sphere
 /*! arg(0) is background
     arg(1) sampled using a normalised vector defines an environment for reflected rays
@@ -1840,9 +1910,12 @@ class FunctionOrthoSphereReflect : public Function
 	  // This is on surface of unit radius sphere - no need to normalise
 	  XYZ n(p.x(),p.y(),z);
 
-	  // The ray _towards_ the viewer is (0 0 -1)
-	  // The reflected ray is n-(v-n) = 2n-v
-	  const XYZ reflected(2*n-XYZ(0.0f,0.0f,-1.0f));
+	  // The ray _towards_ the viewer v is (0 0 -1)
+	  const XYZ v(0.0f,0.0f,-1.0f);
+
+	  // The reflected ray is (2n.v)n-v
+	  const XYZ reflected((2.0f*(n%v))*n-v);
+
 	  return our.arg(1)(reflected);
 	}
       else
@@ -1859,6 +1932,159 @@ class FunctionOrthoSphereReflect : public Function
 };
 
 REGISTER(FunctionOrthoSphereReflect);
+
+//------------------------------------------------------------------------------------------
+
+//! Rays reflecting off a bump mapped unit sphere
+/*! arg(0) is background
+    arg(1) sampled using a normalised vector defines an environment for reflected rays
+    arg(2) is bump map
+  p.x, p.y is the 2D position of a ray from infinity travelling in direction (0 0 1)
+*/
+class FunctionOrthoSphereReflectBumpMapped : public Function
+{
+ public:
+  //! No parameters.
+  static const uint parameters()
+    {
+      return 0;
+    }
+
+  //! Three arguments.
+  static const uint arguments()
+    {
+      return 3;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      const float pr2=p.x()*p.x()+p.y()*p.y();
+      if (pr2<1.0f)
+	{
+	  const float z=-sqrt(1.0f-pr2);
+
+	  // This is on surface of unit radius sphere - no need to normalise
+	  XYZ n(p.x(),p.y(),z);
+
+	  // Tangent vectors
+	  const XYZ east((XYZ(0.0f,1.0f,0.0f)*n).normalised());
+	  const XYZ north(n*east);
+
+	  const float epsilon=1e-4;
+
+	  const float e0=(our.arg(2)(n-epsilon*east)).magnitude2();
+	  const float e1=(our.arg(2)(n+epsilon*east)).magnitude2();
+	  const float n0=(our.arg(2)(n-epsilon*north)).magnitude2();
+	  const float n1=(our.arg(2)(n+epsilon*north)).magnitude2();
+
+	  const float de=(e1-e0)/(2.0f*epsilon);
+	  const float dn=(n1-n0)/(2.0f*epsilon);
+
+	  const XYZ perturbed_n((n-east*de-north*dn).normalised());
+
+	  // The ray _towards_ the viewer is (0 0 -1)
+	  const XYZ v(0.0f,0.0f,-1.0f);
+
+	  // The reflected ray is (2n.v)n-v
+	  const XYZ reflected((2.0f*(perturbed_n%v))*perturbed_n-v);
+
+	  return our.arg(1)(reflected);
+	}
+      else
+	{
+	  return our.arg(0)(p);
+	}
+    }
+  
+  //! Can't be constant unless args are constant and equal (unlikely).
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return false;
+    }
+};
+
+REGISTER(FunctionOrthoSphereReflectBumpMapped);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionFilter2D : public Function
+{
+ public:
+  //! Two parameters.
+  static const uint parameters()
+    {
+      return 2;
+    }
+
+  //! One arguments.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      return
+	our.arg(0)(p)
+	-(
+	  our.arg(0)(p+XYZ(our.param(0),0.0f,0.0f))
+	  +our.arg(0)(p+XYZ(-our.param(0),0.0f,0.0f))
+	  +our.arg(0)(p+XYZ(0.0f,our.param(1),0.0f))
+	  +our.arg(0)(p+XYZ(0.0f,-our.param(1),0.0f))
+	  )/4.0f;
+    }
+  
+  //! Is constant if arg is
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionFilter2D);
+
+//------------------------------------------------------------------------------------------
+
+class FunctionFilter3D : public Function
+{
+ public:
+  //! Two parameters.
+  static const uint parameters()
+    {
+      return 3;
+    }
+
+  //! One arguments.
+  static const uint arguments()
+    {
+      return 1;
+    }
+
+  //! Evaluate function.
+  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+    {
+      return
+	our.arg(0)(p)
+	-(
+	  our.arg(0)(p+XYZ(our.param(0),0.0f,0.0f))
+	  +our.arg(0)(p+XYZ(-our.param(0),0.0f,0.0f))
+	  +our.arg(0)(p+XYZ(0.0f,our.param(1),0.0f))
+	  +our.arg(0)(p+XYZ(0.0f,-our.param(1),0.0f))
+	  +our.arg(0)(p+XYZ(0.0f,0.0f,our.param(1)))
+	  +our.arg(0)(p+XYZ(0.0f,0.0f,-our.param(1)))
+	  )/6.0f;
+    }
+  
+  //! Is constant if arg is
+  static const bool is_constant(const FunctionNode& our)
+    {
+      return our.arg(0).is_constant();
+    }
+};
+
+REGISTER(FunctionFilter3D);
 
 //------------------------------------------------------------------------------------------
 

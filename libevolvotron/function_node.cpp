@@ -63,16 +63,16 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
   const float base=0.7;
 
-  uint steps=49;
+  uint steps=53;
 
   if (!parameters.allow_fractal_nodes())
     {
-      steps=minimum(steps,45u);     // Currently 4 fractal types
+      steps=minimum(steps,49u);     // Currently 4 fractal types
     }
 
   if (!parameters.allow_iterative_nodes())
     {
-      steps=minimum(steps,41u);     // Currently 4 non-fractal iterative types
+      steps=minimum(steps,45u);     // Currently 4 non-fractal iterative types
     }
 
   const float step=(1.0-base)/steps;
@@ -161,36 +161,46 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   else if (r<base+35*step) 
     return FunctionNodeUsing<FunctionOrthoSphereShaded>::stubnew(parameters);
   else if (r<base+36*step) 
+    return FunctionNodeUsing<FunctionOrthoSphereShadedBumpMapped>::stubnew(parameters);
+  else if (r<base+37*step) 
     return FunctionNodeUsing<FunctionOrthoSphereReflect>::stubnew(parameters);
-  else if (r<base+37*step)
-    return FunctionNodeUsing<FunctionTransformGeneralised>::stubnew(parameters);
-  else if (r<base+38*step)
-    return FunctionNodeUsing<FunctionPreTransform>::stubnew(parameters);
+  else if (r<base+38*step) 
+    return FunctionNodeUsing<FunctionOrthoSphereReflectBumpMapped>::stubnew(parameters);
   else if (r<base+39*step)
-    return FunctionNodeUsing<FunctionPreTransformGeneralised>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionTransformGeneralised>::stubnew(parameters);
   else if (r<base+40*step)
-    return FunctionNodeUsing<FunctionPostTransform>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionPreTransform>::stubnew(parameters);
   else if (r<base+41*step)
-    return FunctionNodeUsing<FunctionPostTransformGeneralised>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionPreTransformGeneralised>::stubnew(parameters);
   else if (r<base+42*step)
-    return FunctionNodeUsing<FunctionIterate>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionPostTransform>::stubnew(parameters);
   else if (r<base+43*step)
-    return FunctionNodeUsing<FunctionAverageSamples>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionPostTransformGeneralised>::stubnew(parameters);
   else if (r<base+44*step)
-    return FunctionNodeUsing<FunctionConvolveSamples>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionFilter2D>::stubnew(parameters);
   else if (r<base+45*step)
-    return FunctionNodeUsing<FunctionAccumulateOctaves>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionFilter3D>::stubnew(parameters);
   else if (r<base+46*step)
-    return FunctionNodeUsing<FunctionMandelbrotChoose>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionIterate>::stubnew(parameters);
   else if (r<base+47*step)
-    return FunctionNodeUsing<FunctionMandelbrotContour>::stubnew(parameters);
+    return FunctionNodeUsing<FunctionAverageSamples>::stubnew(parameters);
   else if (r<base+48*step)
+    return FunctionNodeUsing<FunctionConvolveSamples>::stubnew(parameters);
+  else if (r<base+49*step)
+    return FunctionNodeUsing<FunctionAccumulateOctaves>::stubnew(parameters);
+  else if (r<base+50*step)
+    return FunctionNodeUsing<FunctionMandelbrotChoose>::stubnew(parameters);
+  else if (r<base+51*step)
+    return FunctionNodeUsing<FunctionMandelbrotContour>::stubnew(parameters);
+  else if (r<base+52*step)
     return FunctionNodeUsing<FunctionJuliaChoose>::stubnew(parameters);
-  else //if (r<base+49*step)
+  else //if (r<base+53*step)
     return FunctionNodeUsing<FunctionJuliaContour>::stubnew(parameters);
 }
 
-FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
+/*! If a specific function's registration (ie meta info) is provided then that will be used as the wrapped function type.
+ */
+FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn)
 {
   FunctionNode* root;
   bool image_is_constant;
@@ -200,50 +210,60 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters)
       std::vector<float> params_toplevel;
       std::vector<FunctionNode*> args_toplevel;
       
-      if (parameters.r01()<1.0f/3.0f)
-	{
-	  std::vector<float> params_in;
-	  std::vector<FunctionNode*> args_in;
-	  args_in.push_back(FunctionNode::stub(parameters,false));
-	  args_in.push_back(FunctionNode::stub(parameters,false));
-	  args_in.push_back(FunctionNode::stub(parameters,false));
-	  args_in.push_back(FunctionNode::stub(parameters,false));
-	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_in,args_in,0));
-	}
-      else if (parameters.r01()<0.5f)
-	{
-	  args_toplevel.push_back(FunctionNodeUsing<FunctionTransform>::stubnew(parameters));
-	}
-      else
-	{
-	  args_toplevel.push_back(FunctionNodeUsing<FunctionIdentity>::stubnew(parameters));
-	}
-      
-      // This one is crucial: we REALLY want something interesting to happen within here.
-      args_toplevel.push_back(FunctionNode::stub(parameters,true));
-      
-      // This is how to test a speciifc function
-      //args_toplevel.push_back(FunctionNodeUsing<FunctionOrthoSphereShaded>::stubnew(parameters));
+      {
+	const float which=parameters.r01();
+	if (which<0.3f)
+	  {
+	    args_toplevel.push_back(FunctionNodeUsing<FunctionTransformGeneralised>::stubnew(parameters));
+	  }
+	else if (which<0.6f)
+	  {
+	    args_toplevel.push_back(FunctionNodeUsing<FunctionTransform>::stubnew(parameters));
+	  }
+	else if (which<0.9f)
+	  {
+	    args_toplevel.push_back(FunctionNodeUsing<FunctionTransformQuadratic>::stubnew(parameters));
+	  }
+	else
+	  {
+	    args_toplevel.push_back(FunctionNodeUsing<FunctionIdentity>::stubnew(parameters));
+	  }
+      }
 
-      if (parameters.r01()<1.0f/3.0f)
+      if (specific_fn)
 	{
-	  std::vector<float> params_out;
-	  std::vector<FunctionNode*> args_out;
-	  args_out.push_back(FunctionNode::stub(parameters,false));
-	  args_out.push_back(FunctionNode::stub(parameters,false));
-	  args_out.push_back(FunctionNode::stub(parameters,false));
-	  args_out.push_back(FunctionNode::stub(parameters,false));
-	  args_toplevel.push_back(new FunctionNodeUsing<FunctionTransformGeneralised>(params_out,args_out,0));
-	}
-      else if (parameters.r01()<0.5f)
-	{
-	  args_toplevel.push_back(FunctionNodeUsing<FunctionTransform>::stubnew(parameters));
+	  args_toplevel.push_back((*(specific_fn->stubnew_fn()))(parameters));
 	}
       else
 	{
-	  args_toplevel.push_back(FunctionNodeUsing<FunctionIdentity>::stubnew(parameters));
+	  // This one is crucial: we REALLY want something interesting to happen within here.
+	  args_toplevel.push_back(FunctionNode::stub(parameters,true));
+
+	  //Debug: Test specific functions here like this:
+	  //args_toplevel.push_back(FunctionNodeUsing<FunctionFilter2D>::stubnew(parameters));
 	}
-      	
+      
+      {
+	const float which=parameters.r01();
+
+	if (which<0.3f)
+	  {
+	    args_toplevel.push_back(FunctionNodeUsing<FunctionTransformGeneralised>::stubnew(parameters));
+	  }
+	else if (which<0.6f)
+	  {
+	    args_toplevel.push_back(FunctionNodeUsing<FunctionTransform>::stubnew(parameters));
+	  }
+	else if (which<0.9f)
+	  {
+	    args_toplevel.push_back(FunctionNodeUsing<FunctionTransformQuadratic>::stubnew(parameters));
+	  }
+	else
+	  {
+	    args_toplevel.push_back(FunctionNodeUsing<FunctionIdentity>::stubnew(parameters));
+	  }	
+      }
+
       root=new FunctionNodeUsing<FunctionComposeTriple>(params_toplevel,args_toplevel,0);
       
       assert(root->ok());

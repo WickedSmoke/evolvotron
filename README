@@ -168,7 +168,9 @@ than a simple gradient.  If you select a uniform image, you may get stuck
 in a degenerate zone with little to mutate and therefore little chance of
 escape to a more interesting area.  You can always reset/restart from the
 "File" menu (the difference is that "reset" also resets the mutation
-parameters to their default values).
+parameters to their default values).  Note that spirals, grids and tiles,
+although complex looking, are actually implemented by a single function node
+and may leave you stuck too.
 
 COMMAND LINE OPTIONS
 --------------------
@@ -276,8 +278,9 @@ TIPS
 - I get the best results when I click the image which most
   immediately catches my eye as they start appearing.  If you stop
   to think about it too much then things seem to go downhill.
-- If you seem to be just getting the same old spirals all the time,
-  stop clicking on spirals!  (The same goes for random mush).
+- If you seem to be just getting the same old spirals and grids
+  all the time, stop clicking on spirals and grids! 
+  (The same goes for random mush).
 - Don't get too hung up on using the warp and middle-mouse drag
   adjustments every iteration... use those tools for final
   polishing of your masterpiece.

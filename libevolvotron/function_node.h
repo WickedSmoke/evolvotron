@@ -91,7 +91,7 @@ class FunctionNode
   static FunctionNode*const stub(const MutationParameters& parameters,bool exciting);
 
   //! This returns a random bit of tree suitable for use as a starting image.
-  static FunctionNode*const initial(const MutationParameters& parameters);
+  static FunctionNode*const initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn=0);
 
   //! This returns a vector of random parameter values.
   static const std::vector<float> stubparams(const MutationParameters& parameters,uint n);

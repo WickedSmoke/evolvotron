@@ -11,8 +11,8 @@ CONFIG+= qt thread release
 # Use the next two lines to generally improve things (unroll loops of somewhat dubious value).
 # Now leaving these ON for general distribution as they DO have a bigger effect than the others,
 # and should be portable.
-MAKE_CXXFLAGS_RELEASE -= -O2
-MAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer -funroll-loops
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -O3 -ffast-math -fomit-frame-pointer -funroll-loops
 #
 # The rest don't have a huge effect - see README file.
 #
