@@ -148,10 +148,15 @@ Right clicking on an image gets you a few more options:
    you get in the file.  Note that the save won't be allowed until the
    full resolution image has been generated.
 
-The Edit menu lets you undo previous full-grid spawns (there is a
-large but limited number of levels of undo; note that locking is
-overriden), and bring up a dialog to modify the mutation parameters
-(see "useful tips" and "advanced usage" below).
+You can use the middle mouse button to drag an image around (useful
+for centering the most interesting feature of an image).  It also works
+on "Big" images, although it's pretty unusable.
+
+On the application's main menu-bar, the Edit menu lets you undo
+previous full-grid spawns (there is a large but limited number
+of levels of undo; note that locking is overriden), and bring
+up a dialog to modify the mutation parameters (see "useful tips"
+and "advanced usage" below).
 
 An area on the status bar shows how many "tasks" are outstanding.  
 Each "task" is the recomputation of an image at some resolution.
