@@ -999,13 +999,13 @@ class FunctionExp : public Function
     }
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
     {
       return XYZ(exp(p.x()),exp(p.y()),exp(p.z()));
     }
   
   //! Is not constant.
-  static const bool is_constant(const FunctionNode& our)
+  static const bool is_constant(const FunctionNode&)
     {
       return false;
     }
@@ -1151,14 +1151,14 @@ class FunctionMagnitude : public Function
     }
 
   //! Evaluate function.
-  static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
+  static const XYZ evaluate(const FunctionNode&,const XYZ& p)
     {
       const float m=p.magnitude();
       return XYZ(m,m,m);
     }
   
   //! Is not constant.
-  static const bool is_constant(const FunctionNode& our)
+  static const bool is_constant(const FunctionNode&)
     {
       return false;
     }
@@ -1273,7 +1273,7 @@ class FunctionChooseCheckerboard : public Function
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode& our)
+  static const bool is_constant(const FunctionNode&)
     {
       return false;
     }
@@ -1317,7 +1317,7 @@ class FunctionChooseTriangleboard : public Function
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode& our)
+  static const bool is_constant(const FunctionNode&)
     {
       return false;
     }
@@ -1327,7 +1327,9 @@ REGISTER(FunctionChooseTriangleboard);
 
 //------------------------------------------------------------------------------------------
 
-//! Function implements selection between 3 functions based on position in grid of hexagons
+//! Function implements selection between 3 functions based on position in grid of hexagons`
+/*! Don't entirely understand how this works, but it looks nice.
+ */
 class FunctionChoosePseudocubeboard : public Function
 {
  public:
@@ -1371,7 +1373,7 @@ class FunctionChoosePseudocubeboard : public Function
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode& our)
+  static const bool is_constant(const FunctionNode&)
     {
       return false;
     }
@@ -1397,35 +1399,55 @@ class FunctionChooseHexboard : public Function
       return 3;
     }
 
+  static const XYZ hex(int x,int y)
+    {
+      const float k=sqrt(3.0f)/2.0f;
+      return XYZ(
+		 x*k,
+		 y+((x&1) ? 0.5f : 0.0f),
+		 0.0f
+		 );
+    }
+  
   //! Evaluate function.
   static const XYZ evaluate(const FunctionNode& our,const XYZ& p)
     {
-      static const XYZ d0(1.0f         ,0.0f         ,0.0f);
-      static const XYZ d1(cos(  M_PI/3),sin(  M_PI/3),0.0f);
-      static const XYZ d2(cos(2*M_PI/3),sin(2*M_PI/3),0.0f);
-      
-      const float p0=p%d0;
-      const float p1=p%d1;
-      const float p2=p%d2;
+      // Initial guess at which hex we're in:
+      const float k=sqrt(3.0f)/2.0f;
 
-      const int i0=lrintf(p0);
-      const int i1=lrintf(p1);
-      const int i2=lrintf(p2);
-      
-      const float m0=fabsf(p0-i0);
-      const float m1=fabsf(p1-i1);
-      const float m2=fabsf(p2-i2);
+      const int xn=(int)rintf(p.x()/k);
+      const int yn=(int)(
+			 (xn&1) 
+			 ? 
+			 rintf(p.y()-0.5f) 
+			 : 
+			 rintf(p.y())
+			 );
 
-      if (m0>=m1 && m0>=m2)
-	return our.arg(0)(p);
-      else if (m1>=m0 && m1>=m2)
-	return our.arg(1)(p);
-      else 
-	return our.arg(2)(p);
+      int xb=xn;
+      int yb=yn;
+      const XYZ ph=hex(xn,yn);
+      float m2b=(XYZ(p.x(),p.y(),0.0f)-ph).magnitude2();
+
+      for (int yd=-1;yd<=1;yd++)
+	for (int xd=-1;xd<=1;xd++)
+	  if (!(yd==0 && xd==0))
+	    {
+	      const float m2=(XYZ(p.x(),p.y(),0.0f)-hex(xn+xd,yn+yd)).magnitude2();
+	      if (m2<m2b)
+		{
+		  xb=xn+xd;
+		  yb=yn+yd;
+		  m2b=m2;
+		}
+	    }
+
+      const uint which=yb+((xb&1)? 2 : 0);
+      return our.arg(which%3)(p);
     }
   
   //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  static const bool is_constant(const FunctionNode& our)
+  static const bool is_constant(const FunctionNode&)
     {
       return false;
     }
@@ -1575,7 +1597,7 @@ class FunctionMandelbrotChoose : public FunctionIterative
 
 REGISTER(FunctionMandelbrotChoose);
 
-//------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
 
 //! Function returns -1 for points in set, 0-1 for escaped points
 class FunctionMandelbrotContour : public FunctionIterative
