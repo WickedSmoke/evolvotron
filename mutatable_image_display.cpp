@@ -264,12 +264,54 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
     {
       _menu->exec(QCursor::pos());
     }
-  else
+  else if (event->button()==MidButton)
     {
-      if (_full_functionality)
+      _mid_button_adjust_last_pos=event->pos();
+      std::cerr << "\n";
+    }
+  else if (_full_functionality && event->button()==LeftButton)
+    {
+      menupick_spawn();
+    }
+}
+
+void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
+{
+  if (event->state()==MidButton)
+    {
+      const QPoint pixel_delta(event->pos()-_mid_button_adjust_last_pos);
+      
+      std::cerr << "[" << pixel_delta.x() << "," << pixel_delta.y() << "]";
+
+      _mid_button_adjust_last_pos=event->pos();
+
+      XYZ translate(
+		    (-2.0f*pixel_delta.x())/image_size().width(),
+		    ( 2.0f*pixel_delta.y())/image_size().height(),
+		    0.0f
+		    );
+      Transform transform;
+      transform.translate(translate);
+
+      MutatableImageNode* new_image;
+      if (image()->is_a_MutatableImageNodeTransformWrapper())
 	{
-	  menupick_spawn();
+	  // If the image root is a transform wrapper then we can just concatentate transforms.
+	  new_image=image()->deepclone();
+	  
+	  MutatableImageNodeTransformWrapper* root=new_image->is_a_MutatableImageNodeTransformWrapper();
+	  assert(root!=0);
+	  
+	  root->transform().concatenate_on_right(transform);
 	}
+      else
+	{
+	  // Otherwise have to create a new wrapper for the transform
+	  std::vector<MutatableImageNode*> args;
+	  args.push_back(image()->deepclone());
+	  new_image=new MutatableImageNodeTransformWrapper(args,transform);
+	}
+      image(new_image);
     }
 }
 

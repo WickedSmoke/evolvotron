@@ -107,6 +107,9 @@ class MutatableImageDisplay : public QWidget
   uint _menu_big_item_number_4096x4096;
   //@}
 
+  //! Coordinate of last mouse event when mid-button adjusting
+  QPoint _mid_button_adjust_last_pos;
+
  public:
   //! Constructor.
   MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full,bool fixed_size,const QSize& image_size);
@@ -156,6 +159,9 @@ class MutatableImageDisplay : public QWidget
 
   //! Handler for mouse events.
   virtual void mousePressEvent(QMouseEvent* event);
+
+  //! Handler for mouse events.
+  virtual void mouseMoveEvent(QMouseEvent* event);
 
   protected slots:
 
