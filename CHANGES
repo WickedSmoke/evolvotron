@@ -5,6 +5,8 @@ From release 0.3.1:
  - Lock state moved to mutatable image so is stored in undo history
  - Mandelbrot & Julia set only in x,y plane.  Julia set uses fixed parameters.
  - Add Juliabrot.
+ - Fix "Randomize" button on "All" functions tab.
+ - Add restart with randomized functions to menu
 
 From release 0.3.0:
  - Version to 0.3.1

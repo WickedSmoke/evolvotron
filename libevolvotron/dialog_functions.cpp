@@ -247,12 +247,13 @@ void DialogFunctions::changed_function_weighting(QSlider* s,int v)
 
 void DialogFunctions::clicked_button_rand(uint mask)
 {
+  std::clog << "Randomizing functions matching mask " << mask << "\n";
   _mutation_parameters->randomize_function_weightings_for_classifications(mask);
 }
 
 void DialogFunctions::mutation_parameters_changed()
 {
-  std::clog << "[DialogFunctions::mutation_parameters_changed()]\n";
+  //std::clog << "[DialogFunctions::mutation_parameters_changed()]\n";
   setup_from_mutation_parameters();  
 }
 

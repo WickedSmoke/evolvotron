@@ -272,6 +272,10 @@ MAIN MENU BAR
   Items to restart, reset and quit the application.
   The difference between restart and reset is that reset 
   sets the mutation parameters back the their default values.
+  The randomize functions version of restart scrambles the
+  relative probability of the various function types (if you
+  think evolvotron just keeps generating the same kinds of
+  images give it a try).
 - Edit menu:
   "Undo" lets you undo certain actions: e.g spawn,
   middle-button adjustment, simplification and lock/unlock.

@@ -172,7 +172,7 @@ void MutationParameters::randomize_function_weightings_for_classifications(uint 
        it++
        )
     {
-      if ((*it).first->classification() & classification_mask)
+      if (classification_mask==0 || classification_mask==static_cast<uint>(-1) || ((*it).first->classification() & classification_mask))
 	{
 	  const int i=static_cast<int>(floor(11.0f*r01()));
 	  (*it).second=pow(2,-i);
@@ -212,6 +212,5 @@ void MutationParameters::recalculate_function_stuff()
     {
       normalised+=(*it).second/_function_weighting_total;
       _function_pick.insert(std::make_pair(normalised,(*it).first));
-      std::clog << "[" << normalised << ":" << (*it).first->name() << "]";
     }
 }

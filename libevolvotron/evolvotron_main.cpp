@@ -241,6 +241,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _menubar=new QMenuBar(this);
 
   _popupmenu_file=new QPopupMenu;
+  _popupmenu_file->insertItem("Res&tart (randomized fns)",this,SLOT(reset_randomized()));
   _popupmenu_file->insertItem("&Restart",this,SLOT(reset_warm()));
   _popupmenu_file->insertItem("Re&set",this,SLOT(reset_cold()));
   _popupmenu_file->insertItem("&Quit",qApp,SLOT(quit()));
@@ -783,6 +784,12 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
   last_spawned_image(0,&EvolvotronMain::spawn_normal);
 
   history().end_action();
+}
+
+void EvolvotronMain::reset_randomized()
+{
+  _mutation_parameters.randomize_function_weightings_for_classifications(static_cast<uint>(-1));
+  reset(false,false);
 }
 
 void EvolvotronMain::reset_warm()

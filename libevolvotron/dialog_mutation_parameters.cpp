@@ -199,6 +199,5 @@ void DialogMutationParameters::changed_substitute(int v)
 
 void DialogMutationParameters::mutation_parameters_changed()
 {
-  std::clog << "[DialogMutationParameters::mutation_parameters_changed()]\n";
   setup_from_mutation_parameters();  
 }
