@@ -64,12 +64,17 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent)
   _spinbox_shuffle=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
   _spinbox_shuffle->setSuffix(QString("/%1").arg(_scale));
 
+  new QLabel("p(Insert)",_grid_parameters);
+  _spinbox_insert=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
+  _spinbox_insert->setSuffix(QString("/%1").arg(_scale));
+
   setup_from_mutation_parameters();
 
   // Do this AFTER setup
   connect(_spinbox_magnitude,SIGNAL(valueChanged(int)),this,SLOT(changed_magnitude(int)));
   connect(_spinbox_glitch,SIGNAL(valueChanged(int)),this,SLOT(changed_glitch(int)));
   connect(_spinbox_shuffle,SIGNAL(valueChanged(int)),this,SLOT(changed_shuffle(int)));
+  connect(_spinbox_insert,SIGNAL(valueChanged(int)),this,SLOT(changed_insert(int)));
 
   _vbox->setStretchFactor(_grid_parameters,1);
 
@@ -88,9 +93,10 @@ void DialogMutationParameters::resizeEvent(QResizeEvent*)
 
 void DialogMutationParameters::setup_from_mutation_parameters()
 {
-  _spinbox_magnitude->setValue(static_cast<int>(_scale*mutation_parameters().magnitude()));
-  _spinbox_glitch   ->setValue(static_cast<int>(_scale*mutation_parameters().probability_glitch()));
-  _spinbox_shuffle  ->setValue(static_cast<int>(_scale*mutation_parameters().probability_shuffle()));
+  _spinbox_magnitude->setValue(static_cast<int>(0.5+_scale*mutation_parameters().magnitude()));
+  _spinbox_glitch   ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_glitch()));
+  _spinbox_shuffle  ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_shuffle()));
+  _spinbox_insert   ->setValue(static_cast<int>(0.5+_scale*mutation_parameters().probability_insert()));
 
   parameters_changed();
 }
@@ -98,10 +104,11 @@ void DialogMutationParameters::setup_from_mutation_parameters()
 void DialogMutationParameters::parameters_changed()
 {
   QString message
-    =QString("Mutate: %1/%2/%3")
+    =QString("%1/%2/%3/%4")
     .arg(_spinbox_magnitude->value())
     .arg(_spinbox_glitch->value())
-    .arg(_spinbox_shuffle->value());
+    .arg(_spinbox_shuffle->value())
+    .arg(_spinbox_insert->value());
 
   _parent->statusBar()->message(message,2000);
 }
@@ -126,12 +133,14 @@ void DialogMutationParameters::irradiate()
 {
   _spinbox_glitch->stepUp();
   _spinbox_shuffle->stepUp();
+  _spinbox_insert->stepUp();
 }
 
 void DialogMutationParameters::shield()
 {
   _spinbox_glitch->stepDown();
   _spinbox_shuffle->stepDown();
+  _spinbox_insert->stepDown();
 }
 
 void DialogMutationParameters::changed_magnitude(int v)
@@ -149,5 +158,11 @@ void DialogMutationParameters::changed_glitch(int v)
 void DialogMutationParameters::changed_shuffle(int v)
 {
   mutation_parameters().probability_shuffle(v/static_cast<float>(_scale));
+  parameters_changed();
+}
+
+void DialogMutationParameters::changed_insert(int v)
+{
+  mutation_parameters().probability_insert(v/static_cast<float>(_scale));
   parameters_changed();
 }

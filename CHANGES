@@ -18,4 +18,4 @@ From release 0.0.2:
  - GUI control of mutation parameters
  - "Respawn" regenerates a single display area using spawn/recolour/warp as appropriate.
  - "Cancel" in file save dialog obeyed.
-
+ - "Insert" mutation type.

@@ -46,6 +46,9 @@ class MutationParameters
 
   //! Specifies the probability of all child nodes being reordered.
   float _probability_shuffle;
+
+  //! Specifies the probability of a random stub being inserted before a child.
+  float _probability_insert;
   
  public:
   //! Trivial constructor.
@@ -105,6 +108,18 @@ class MutationParameters
     {
       _probability_shuffle=v;
     }
+
+  //! Accessor.
+  const float probability_insert() const
+    {
+      return _probability_insert;
+    }
+  //! Accessor.
+  void probability_insert(float v)
+    {
+      _probability_insert=v;
+    }
+
 };
 
 #endif

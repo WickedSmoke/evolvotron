@@ -113,9 +113,10 @@ Edit->Mutation Parameters... menu, and also from buttons on the status bar).
 
 There are two kinds of mutation: perturbations to the magnitude of constants, 
 and structural mutations which rearrage the function tree of an image.  
-Two kinds of structural mutations are currently implemented:
+Three kinds of structural mutations are currently implemented:
 replacement of a function branch by a new random stub (a "Glitch" mutation),
-and a random shuffle of a node's arguments.  The probability (per function node)
+a random shuffle of a node's arguments, and the insertion of random nodes between
+a node and it's children.  The probability (per function node)
 of these mutations is controlled from spinboxes on the dialog (expressed as 
 chances-in-a-million), as is the size of perturbations from constant.
 

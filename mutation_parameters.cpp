@@ -27,6 +27,7 @@ MutationParameters::MutationParameters(uint seed)
   ,_magnitude(0.0)
   ,_probability_glitch(0.0)
   ,_probability_shuffle(0.0)
+  ,_probability_insert(0.0)
 {
   reset();
 }
@@ -38,6 +39,7 @@ void MutationParameters::reset()
 {
   _magnitude=0.5;
   
-  _probability_glitch=0.025;
-  _probability_shuffle=0.025;
+  _probability_glitch=0.02;
+  _probability_shuffle=0.02;
+  _probability_insert=0.02;
 }

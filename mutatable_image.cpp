@@ -120,7 +120,7 @@ MutatableImageNode::~MutatableImageNode()
   For structural mutations the obvious things to do are:
   - reordering argsuments
   - dropping argsuments and replacing them with new "stubs".
-  - duplicating argsuments
+  - duplicating arguments
   - substituting nodes with other types (can't do this for ourself very easily, but we can do it for children)
   - inserting new nodes between children and ourself
 
@@ -148,6 +148,19 @@ void MutatableImageNode::mutate(const MutationParameters& parameters)
       // This uses rand() (would rather use our one).
       // This bit of STL seems a bit up in the air (at least in GNU implementation), but it works so who cares.
       std::random_shuffle(args().begin(),args().end());
+    }
+
+  // Think about inserting a random stub between us and some children
+  for (std::vector<MutatableImageNode*>::iterator it=args().begin();it!=args().end();it++)
+    {
+      if (parameters.r01()<parameters.probability_insert())
+	{
+	  std::vector<MutatableImageNode*> a;
+	  a.push_back((*it));
+	  a.push_back(stub(parameters.rng01()));
+
+	  (*it)=new MutatableImageNodeConcatenatePair(a);
+	}
     }
 }
 

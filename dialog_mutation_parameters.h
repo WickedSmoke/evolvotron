@@ -77,6 +77,7 @@ class DialogMutationParameters : public QDialog
   QSpinBox* _spinbox_magnitude;
   QSpinBox* _spinbox_glitch;
   QSpinBox* _spinbox_shuffle;
+  QSpinBox* _spinbox_insert;
   //@}
 
   //! Button to close dialog.
@@ -127,6 +128,7 @@ class DialogMutationParameters : public QDialog
   void changed_magnitude(int v);
   void changed_glitch(int v);
   void changed_shuffle(int v);
+  void changed_insert(int v);
   //@}
 };
 
