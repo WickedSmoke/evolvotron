@@ -60,7 +60,9 @@ include a directory containing qmake and you like it that way.]
 
 Make will recurse into and build the libevolvotron directory
 (which is 99% of the work) and some additional subdirectories with 
-executables.  Among other things, this will give you an "evolvotron" 
+executables.  There may be a couple of "unused variable" warnings.
+
+Among other things, this will give you an "evolvotron" 
 executable which you can run immediately with
   ./evolvotron/evolvotron
 and/or copy where you like (see INSTALL section).

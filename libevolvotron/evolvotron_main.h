@@ -333,13 +333,11 @@ class EvolvotronMain : public QMainWindow
 
  public slots:
 
-#ifdef FULLSCREEN
   //! Signalled by menu item.
   void toggle_hide_menu();
 
   //! Signalled by menu item
   void toggle_fullscreen();
-#endif
   
   //! Signalled by menu item.  Public because called from evolvotron app wrapper.
   void reset(bool reset_mutation_parameters,bool reset_locks);

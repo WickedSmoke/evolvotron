@@ -652,10 +652,10 @@ void EvolvotronMain::keyPressEvent(QKeyEvent* e)
       }
 }
 
-#ifdef FULLSCREEN
 
 void EvolvotronMain::toggle_fullscreen()
 {
+#ifdef FULLSCREEN
   if (isFullScreen()) 
     {
       showNormal();
@@ -666,10 +666,12 @@ void EvolvotronMain::toggle_fullscreen()
       showFullScreen();
       _popupmenu_settings->setItemChecked(_menu_item_number_fullscreen,true);
     }
+#endif
 }
 
 void EvolvotronMain::toggle_hide_menu()
 {
+#ifdef FULLSCREEN
   if (menuBar()->isHidden())
     {
       menuBar()->show();
@@ -685,9 +687,8 @@ void EvolvotronMain::toggle_hide_menu()
     statusBar()->show();
   else if (statusBar()->isShown())
     statusBar()->hide();
+#endif
 }
-
-#endif // FULLSCREEN
 
 /*! Set up an initial random image in the specified display. 
 
