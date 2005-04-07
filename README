@@ -99,8 +99,11 @@ Short story
 
 Long story
 ----------
+[These days the author primarily develops on Debian Sarge.
+The comments below re RedHat are based on experience with RH9;
+they may or may not be applicable to Fedora.]
 
-QTDIR should point to your Qt installation.  Your qt installation
+QTDIR should point to your Qt installation.  Your Qt installation
 should be a directory somewhere (it might be /usr/share/qt3, it
 might be /usr/lib/qt3-gcc3.2, who knows), containing some or all
 of the subdirectories bin, doc, etc, include, lib, mkspecs, plugins.
@@ -124,18 +127,10 @@ aren't in your path:
   which moc
 should both find something.
 
-RedHat makes things easy by putting these binaries in
-/usr/bin, but many distros leave them in $QTDIR/bin, in which
+RedHat makes life easy by putting these binaries in
+/usr/bin, but many distros leave them languishing in $QTDIR/bin, in which
 case you should either add this to your path or use the BUILD script 
 provided here (which sets it for the commands it runs).
-
-The author develops on 
-  RedHat 8 (gcc 3.2, qt 3.0.5),
-  RedHat 9 (gcc 3.2.2, qt 3.1.1)
-  Debian testing
-and sometimes (infrequently) also tests things on Debian stable,
-and Mandrake.  (So the closer your system is to one of these,
-the less likely you are to have problems).
 
 If you have gcc/c++ compile problems problems:
 

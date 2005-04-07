@@ -439,7 +439,6 @@ FUNCTION_BEGIN(FunctionGradient,3,1,false,0)
      
   //! Evaluate function.
   /*! Gradient converts scalar to vector, so need a scalar to work on.
-    \todo Gradient in a particular direction and generalised version.
    */
   virtual const XYZ evaluate(const XYZ& p) const
     {

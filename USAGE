@@ -440,7 +440,7 @@ ratio results in simple, boring images.
 
 OTHER EXECUTABLES
 =================
-This release also builds two other executables:
+This release also builds some other executables:
 
  $ evolvotron_render [-v] [-s <width> <height>] [-f <frames>] [<file.ppm> | <file.png>] < <file.xml>
    Reads a XML function description from it's standard input and renders it to the
@@ -462,7 +462,7 @@ This release also builds two other executables:
    representation to the standard output.
 
  $ evolvotron_match [-v] image[.ppm | .png]
-   Experiment in replacing a human operator with a simple scoring function
+   An experiment in replacing the human operator with a simple scoring function
    (minimise sum-of-squares of pixel value differences between evolvotron
    image and image specified on command line).  Outputs f??????.png whenever
    it finds a better match.  Terminates after 10000000 iterations and writes

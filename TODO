@@ -1,8 +1,9 @@
 For next release
 ----------------
-- Finish shuffling stuff between dialogs.
-- Per-function probability weighting.
+- -x/-X options & restart-with: move to "Favourite" (need a better name) select on a tab in functions dialog.
 
+Sometime
+--------
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
@@ -22,6 +23,9 @@ Animation
 
 Conventional
 ------------
+- Add functions for the 17 "wallpaper" symmetry groups.
+  Also 7 frieze groups (in a single or multiple strips?).
+  Presumably there are 3D versions too.
 - DialogFunctions and DialogMutationParameters don't notice when the other dialog modifies MutationParameters.
   Fortunately this doesn't matter because they (will) control completely disjoint aspects of it.
   Could do with proper model update propagation/validation if things get any more complex though..
