@@ -27,6 +27,7 @@ Conventional
   Also 7 frieze groups (in a single or multiple strips?).
   Presumably there are 3D versions too.
 - Option for save function to also generate thumbnail at the same time.
+- QFileDialog seems to support previewing; enable it.
 - Look into mime-type registration and auto-thumbnailing in nautilus, KDE etc
 - Browse window to show thumbnails for all .xml files in  a directory.
 - DialogFunctions and DialogMutationParameters don't notice when the other dialog modifies MutationParameters.
