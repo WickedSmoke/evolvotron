@@ -26,6 +26,9 @@ Conventional
 - Add functions for the 17 "wallpaper" symmetry groups.
   Also 7 frieze groups (in a single or multiple strips?).
   Presumably there are 3D versions too.
+- Option for save function to also generate thumbnail at the same time.
+- Look into mime-type registration and auto-thumbnailing in nautilus, KDE etc
+- Browse window to show thumbnails for all .xml files in  a directory.
 - DialogFunctions and DialogMutationParameters don't notice when the other dialog modifies MutationParameters.
   Fortunately this doesn't matter because they (will) control completely disjoint aspects of it.
   Could do with proper model update propagation/validation if things get any more complex though..
