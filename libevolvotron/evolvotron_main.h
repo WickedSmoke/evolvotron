@@ -49,10 +49,11 @@ extern "C"
 #include "mutatable_image_computer_farm.h"
 #include "mutation_parameters.h"
 
-#include "dialog_about.h"
-#include "dialog_help.h"
-#include "dialog_mutation_parameters.h"
-#include "dialog_functions.h"
+class DialogAbout;
+class DialogHelp;
+class DialogMutationParameters;
+class DialogFunctions;
+class DialogFavourite;
 
 //! Utility class to expand "restart with" menu picks
 class SignalExpanderRestartWith : public QObject
@@ -164,6 +165,9 @@ class EvolvotronMain : public QMainWindow
   //! Dialog for controlling which functions are in use.
   DialogFunctions* _dialog_functions;
 
+  //! Dialog for selecting a favourite function
+  DialogFavourite* _dialog_favourite;
+
   //! The menubar.
   QMenuBar* _menubar;
 
@@ -234,11 +238,11 @@ class EvolvotronMain : public QMainWindow
   //! An owned pointer to the current transform factory (needed for Respawn).
   TransformFactory* _transform_factory;
 
-  //! A function name to be tested (no test if empty)
-  std::string _test_function;
+  //! A function name to be used as the root node of new image function tres (no favourite if empty)
+  std::string _favourite_function;
 
-  //! Flag specifying whether test function should be exposed
-  bool _test_function_unwrapped;
+  //! Flag specifying whether favourite function should be exposed
+  bool _favourite_function_unwrapped;
 
   //! Accessor.
   const MutatableImage*const last_spawned_image() const
@@ -289,24 +293,24 @@ class EvolvotronMain : public QMainWindow
   ~EvolvotronMain();
 
   //! Accessor
-  const std::string& test_function() const
+  const std::string& favourite_function() const
     {
-      return _test_function;
+      return _favourite_function;
     }
   
   //! Accessor. Returns true if function name recognised
-  const bool test_function(const std::string& f);
+  const bool favourite_function(const std::string& f);
   
   //! Accessor.
-  const bool test_function_unwrapped() const
+  const bool favourite_function_unwrapped() const
     {
-      return _test_function_unwrapped;
+      return _favourite_function_unwrapped;
     }
 
   //! Accessor.
-  void test_function_unwrapped(bool v)
+  void favourite_function_unwrapped(bool v)
     {
-      _test_function_unwrapped=v;
+      _favourite_function_unwrapped=v;
     }
 
   //! Accessor.

@@ -130,7 +130,6 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
     _slider_identity_supression=new QSlider(0,100,1,50,Qt::Horizontal,c2);
     QToolTip::add(_slider_identity_supression,"This specifies the proportion of non-constant diluting nodes which will be transforms (c.f identity nodes).");
     new QLabel("1.0",c2);
-  }
 
   connect(
 	  _slider_target_branching_ratio,SIGNAL(valueChanged(int)),
@@ -151,6 +150,7 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
 	  _slider_identity_supression,SIGNAL(valueChanged(int)),
 	  this,SLOT(changed_identity_supression(int))
 	  );
+  }
 
   setup_from_mutation_parameters();
 

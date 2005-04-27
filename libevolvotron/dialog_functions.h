@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 /*! \file 
-  \brief Interface for class DialogMutationParameters.
+  \brief Interface for class DialogFunctions.
 */
 
 #ifndef _dialog_functions_h_
@@ -152,7 +152,6 @@ class DialogFunctions : public QDialog
  public slots:
   //! Signalled by mutation parameters
   void mutation_parameters_changed();
-
 };
 
 #endif

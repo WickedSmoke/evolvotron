@@ -91,17 +91,17 @@ int main(int argc,char* argv[])
       exit(1);
     }
 
-  bool testfn_unwrapped=false;
-  std::string testfn;
+  std::string favourite_function;
+  bool favourite_function_unwrapped=false;
   if (args.option("-x",1))
     {
-      args.after() >> testfn;
+      args.after() >> favourite_function;
     }
 
   if (args.option("-X",1))
     {
-      args.after() >> testfn;
-      testfn_unwrapped=true;
+      args.after() >> favourite_function;
+      favourite_function_unwrapped=true;
     }
 
 #ifdef FULLSCREEN
@@ -130,21 +130,21 @@ int main(int argc,char* argv[])
 
   EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),frames,framerate,threads,start_fullscreen,start_menuhidden);
 
-  if (!testfn.empty())
+  if (!favourite_function.empty())
     {
       std::clog
-	<< "Testing function: "
-	<< testfn
-	<< (testfn_unwrapped ? " (unwrapped)" : " (wrapped)")
+	<< "Selected specific function: "
+	<< favourite_function
+	<< (favourite_function_unwrapped ? " (unwrapped)" : " (wrapped)")
 	<< "\n";
 
-      if (!main_widget->test_function(testfn))
+      if (!main_widget->favourite_function(favourite_function))
 	{
 	  std::cerr << "Unrecognised function name specified for -x/-X option\n";
 	  exit(1);
 	}
 
-      main_widget->test_function_unwrapped(testfn_unwrapped);
+      main_widget->favourite_function_unwrapped(favourite_function_unwrapped);
     }
   
   app.setMainWidget(main_widget);

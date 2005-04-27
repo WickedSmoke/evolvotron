@@ -36,6 +36,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_pre_transform.h"
 #include "function_post_transform.h"
 
+#include "dialog_about.h"
+#include "dialog_help.h"
+#include "dialog_mutation_parameters.h"
+#include "dialog_functions.h"
+#include "dialog_favourite.h"
+
 void EvolvotronMain::History::purge()
 {
   if (_history.size()>0)
@@ -219,7 +225,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
    ,_last_spawned_image(0)
    ,_last_spawn_method(&EvolvotronMain::spawn_normal)
    ,_transform_factory(0)
-   ,_test_function_unwrapped(false)
+   ,_favourite_function_unwrapped(false)
 {
   setMinimumSize(600,400);
 
@@ -238,6 +244,8 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _dialog_mutation_parameters=new DialogMutationParameters(this,&_mutation_parameters);
 
   _dialog_functions=new DialogFunctions(this,&_mutation_parameters);
+
+  _dialog_favourite=new DialogFavourite(this);
 
   _menubar=new QMenuBar(this);
 
@@ -304,6 +312,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
 
   _popupmenu_settings->insertItem("&Mutations...",_dialog_mutation_parameters,SLOT(show()));
   _popupmenu_settings->insertItem("&Functions...",_dialog_functions,SLOT(show()));
+  _popupmenu_settings->insertItem("&Favourite...",_dialog_favourite,SLOT(show()));
 
 #ifdef FULLSCREEN
   _popupmenu_settings->insertSeparator();
@@ -406,11 +415,11 @@ EvolvotronMain::~EvolvotronMain()
   std::clog << "...completed Evolvotron shutdown\n";  
 }
 
-const bool EvolvotronMain::test_function(const std::string& f)
+const bool EvolvotronMain::favourite_function(const std::string& f)
 {
   if (FunctionRegistry::get()->lookup(f))
     {
-      _test_function=f;
+      _favourite_function=f;
       return true;
     }
   else
@@ -750,23 +759,23 @@ void EvolvotronMain::toggle_hide_menu()
 }
 
 /*! Set up an initial random image in the specified display. 
-  If a test function was specified then we use that as the top level node.
+  If a favourite function was specified then we use that as the top level node.
  */
 void EvolvotronMain::reset(MutatableImageDisplay* display)
 {
   FunctionNode* root;
-  if (test_function().empty())
+  if (favourite_function().empty())
     {
       root=FunctionNode::initial(mutation_parameters());
     }
-  else if (test_function_unwrapped())
+  else if (favourite_function_unwrapped())
     {
-      FunctionNodeStubNewFnPtr rootfn=FunctionRegistry::get()->lookup(test_function())->stubnew_fn();
+      FunctionNodeStubNewFnPtr rootfn=FunctionRegistry::get()->lookup(favourite_function())->stubnew_fn();
       root=(*rootfn)(mutation_parameters(),true);
     }
   else
     {
-      root=FunctionNode::initial(mutation_parameters(),FunctionRegistry::get()->lookup(test_function()));
+      root=FunctionNode::initial(mutation_parameters(),FunctionRegistry::get()->lookup(favourite_function()));
     }
 
   history().replacing(display);
@@ -823,19 +832,19 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
 
 void EvolvotronMain::restart_with_wrapped(const FunctionRegistration* fn)
 {
-  _test_function=fn->name();
-  _test_function_unwrapped=false;
+  _favourite_function=fn->name();
+  _favourite_function_unwrapped=false;
   reset(false,false);
-  _test_function=std::string();
+  _favourite_function=std::string();
 }
 
 void EvolvotronMain::restart_with_unwrapped(const FunctionRegistration* fn)
 {
-  _test_function=fn->name();
-  _test_function_unwrapped=true;
+  _favourite_function=fn->name();
+  _favourite_function_unwrapped=true;
   reset(false,false);
-  _test_function=std::string();
-  _test_function_unwrapped=false;
+  _favourite_function=std::string();
+  _favourite_function_unwrapped=false;
 }
 
 void EvolvotronMain::reset_randomized()

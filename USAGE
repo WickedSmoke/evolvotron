@@ -92,7 +92,7 @@ POWER-USER & DEBUG OPTIONS
         menu item.
 
   -x <functionname>
-	Force a specific function type to be used at the top level 
+	Force a specific "favourite" function type to be used at the top level 
 	of all function trees.  The specifed function is still wrapped 
 	by spatial and colour warping functions which may disguise 
 	it considerably.  A list of all the function names understood 
@@ -102,7 +102,7 @@ POWER-USER & DEBUG OPTIONS
         $ evolvotron -x FunctionSpiralLinear
 
   -X <functionname>
-	Similar to -x except that the specified function is NOT wrapped 
+	Similar to -x except that the specified "favourite" function is NOT wrapped 
 	by space/colour transforms.  NB For functions without leaf nodes 
 	or parameters (e.g FunctionSphericalToCartesian) this doesn't
 	leave any scope for variation or future mutation.
