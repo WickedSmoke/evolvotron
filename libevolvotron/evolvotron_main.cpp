@@ -225,7 +225,6 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
    ,_last_spawned_image(0)
    ,_last_spawn_method(&EvolvotronMain::spawn_normal)
    ,_transform_factory(0)
-   ,_favourite_function_unwrapped(false)
 {
   setMinimumSize(600,400);
 
@@ -249,51 +248,11 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
 
   _menubar=new QMenuBar(this);
 
-  _popupmenu_restart_with=new QPopupMenu;
-
-  {
-    _popupmenu_restart_with_wrapped=new QPopupMenu;
-    _popupmenu_restart_with_unwrapped=new QPopupMenu;
-    
-    // Downsize fonts 'cos function list is so huge
-    const QFont& current_font=_popupmenu_restart_with_wrapped->font();
-    QFont replacement_font(current_font.family(),std::max(6,current_font.pointSize()-2));
-
-    _popupmenu_restart_with_wrapped->setFont(replacement_font);
-    _popupmenu_restart_with_unwrapped->setFont(replacement_font);
-    _popupmenu_restart_with->insertItem("&Wrapped",_popupmenu_restart_with_wrapped);
-    _popupmenu_restart_with->insertItem("&Unwrapped",_popupmenu_restart_with_unwrapped);
-  }
-
-  for (
-       FunctionRegistry::Registrations::const_iterator it=FunctionRegistry::get()->registrations().begin();
-       it!=FunctionRegistry::get()->registrations().end();
-       it++
-       )
-    {
-      QString label((*it)->name());
-      label.replace(QRegExp("^Function"),"");  // Attempt to make menu take up less space
-
-      SignalExpanderRestartWith*const xw=new SignalExpanderRestartWith(this,*it);
-      _popupmenu_restart_with_wrapped->insertItem(label,xw,SLOT(restart_with()));
-      connect(
-	      xw,SIGNAL(restart_with(const FunctionRegistration*)),
-	      this,SLOT(restart_with_wrapped(const FunctionRegistration*))
-	      );
-
-      SignalExpanderRestartWith*const xu=new SignalExpanderRestartWith(this,*it);
-      _popupmenu_restart_with_unwrapped->insertItem(label,xu,SLOT(restart_with()));
-      connect(
-	      xu,SIGNAL(restart_with(const FunctionRegistration*)),
-	      this,SLOT(restart_with_unwrapped(const FunctionRegistration*))
-	      );
-    }
 
   _popupmenu_file=new QPopupMenu;
-  _popupmenu_file->insertItem("Re&set",this,SLOT(reset_cold()));
-  _popupmenu_file->insertItem("&Restart",this,SLOT(reset_warm()));
-  _popupmenu_file->insertItem("Restart (random function &weights)",this,SLOT(reset_randomized()));
-  _popupmenu_file->insertItem("Restart with specific &function",_popupmenu_restart_with);
+  _popupmenu_file->insertItem("Re&set (Reset mutation parameters, clear locks)",this,SLOT(reset_cold()));
+  _popupmenu_file->insertItem("&Restart (Preserve mutation parameters and locks)",this,SLOT(reset_warm()));
+  _popupmenu_file->insertItem("Remi&x (Randomize function weights and restart)",this,SLOT(reset_randomized()));
   _popupmenu_file->insertSeparator();
   _popupmenu_file->insertItem("&Quit",qApp,SLOT(quit()));
   _menubar->insertItem("&File",_popupmenu_file);
@@ -417,22 +376,13 @@ EvolvotronMain::~EvolvotronMain()
 
 const bool EvolvotronMain::favourite_function(const std::string& f)
 {
-  if (FunctionRegistry::get()->lookup(f))
-    {
-      _favourite_function=f;
-      _dialog_favourite->update();
-      return true;
-    }
-  else
-    return false;
+  return _dialog_favourite->favourite_function(f);
 }
 
 void EvolvotronMain::favourite_function_unwrapped(bool v)
 {
-  _favourite_function_unwrapped=v;
-  _dialog_favourite->update();
+  _dialog_favourite->favourite_function_unwrapped(v);
 }
-
 
 void EvolvotronMain::spawn_normal(const MutatableImage* image,MutatableImageDisplay* display)
 {
@@ -713,7 +663,7 @@ void EvolvotronMain::keyPressEvent(QKeyEvent* e)
 #endif // FULLSCREEN
     if (e->key()==Qt::Key_R && !(e->state()^Qt::ControlButton))
       {
-	//Ctrl-R does a reset mainly because that's most useful in full-screen mode
+	//Ctrl-R does a restart mainly because that's most useful in full-screen mode
 	reset_warm();
       }
     else if (e->key()==Qt::Key_Z && !(e->state()^Qt::ControlButton))
@@ -772,18 +722,18 @@ void EvolvotronMain::toggle_hide_menu()
 void EvolvotronMain::reset(MutatableImageDisplay* display)
 {
   FunctionNode* root;
-  if (favourite_function().empty())
+  if (_dialog_favourite->favourite_function().empty())
     {
       root=FunctionNode::initial(mutation_parameters());
     }
-  else if (favourite_function_unwrapped())
+  else if (_dialog_favourite->favourite_function_unwrapped())
     {
-      FunctionNodeStubNewFnPtr rootfn=FunctionRegistry::get()->lookup(favourite_function())->stubnew_fn();
+      FunctionNodeStubNewFnPtr rootfn=FunctionRegistry::get()->lookup(_dialog_favourite->favourite_function())->stubnew_fn();
       root=(*rootfn)(mutation_parameters(),true);
     }
   else
     {
-      root=FunctionNode::initial(mutation_parameters(),FunctionRegistry::get()->lookup(favourite_function()));
+      root=FunctionNode::initial(mutation_parameters(),FunctionRegistry::get()->lookup(_dialog_favourite->favourite_function()));
     }
 
   history().replacing(display);
@@ -836,23 +786,6 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
   last_spawned_image(0,&EvolvotronMain::spawn_normal);
 
   history().end_action();
-}
-
-void EvolvotronMain::restart_with_wrapped(const FunctionRegistration* fn)
-{
-  _favourite_function=fn->name();
-  _favourite_function_unwrapped=false;
-  reset(false,false);
-  _favourite_function=std::string();
-}
-
-void EvolvotronMain::restart_with_unwrapped(const FunctionRegistration* fn)
-{
-  _favourite_function=fn->name();
-  _favourite_function_unwrapped=true;
-  reset(false,false);
-  _favourite_function=std::string();
-  _favourite_function_unwrapped=false;
 }
 
 void EvolvotronMain::reset_randomized()

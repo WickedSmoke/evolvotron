@@ -149,7 +149,7 @@ int main(int argc,char* argv[])
   
   app.setMainWidget(main_widget);
   main_widget->show();
-    
+
   std::clog << "Commencing main loop...\n";
 
   // NB Do this here rather than in constructor so that compute threads aren't being fired off during general GUI set-up

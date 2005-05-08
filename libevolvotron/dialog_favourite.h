@@ -39,8 +39,14 @@ class DialogFavourite : public QDialog
   typedef QDialog Superclass;
 
  protected:
-  //! Owner.  Also holder of favourite state.
+  //! Owner.
   EvolvotronMain* _parent;
+
+  //! Function name to be used as the root node of new image function tres (no favourite if empty)
+  std::string _favourite_function;
+
+  //! Flag specifying whether favourite function should be exposed
+  bool _favourite_function_unwrapped;
 
   //! Top level holder of all the dialog content.
   QVBox* _dialog_content;
@@ -57,6 +63,17 @@ class DialogFavourite : public QDialog
   //! Controls unwrapped state.
   QCheckBox* _unwrapped;
 
+  //! Make GUI match _favourite_function and _favourite_function_unwrapped state
+  void update_gui_from_state();
+
+ protected slots:
+
+  //! Invoked on combo-box selection.
+  void changed_favourite(int i);
+
+  //! Invoked on checkbox toggle.
+  void changed_unwrapped(bool b);
+
  public:
   //! Constructor.
   DialogFavourite(EvolvotronMain* parent);
@@ -64,8 +81,23 @@ class DialogFavourite : public QDialog
   //! Destructor.
   virtual ~DialogFavourite();
 
-  //! Update state.
-  void update();
+  //! Accessor
+  const std::string& favourite_function() const
+    {
+      return _favourite_function;
+    }
+  
+  //! Accessor. Returns true if function name recognised.
+  const bool favourite_function(const std::string& f);
+  
+  //! Accessor.
+  const bool favourite_function_unwrapped() const
+    {
+      return _favourite_function_unwrapped;
+    }
+
+  //! Accessor.
+  void favourite_function_unwrapped(bool v);
 
   //! Handle resizes.
   virtual void resizeEvent(QResizeEvent* e);

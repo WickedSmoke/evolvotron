@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include <qgroupbox.h>
+#include <qpushbutton.h>
 
 #include "dialog_favourite.h"
 #include "function_registry.h"
@@ -29,14 +30,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 DialogFavourite::DialogFavourite(EvolvotronMain* parent)
   :QDialog(parent)
   ,_parent(parent)
+  ,_favourite_function_unwrapped(false)
 {
   setCaption("Favourite");
   
   _dialog_content=new QVBox(this);
   
-  QGroupBox* group0=new QGroupBox(1,Qt::Horizontal,"Favourite",_dialog_content);
+  QGroupBox* group0=new QGroupBox(1,Qt::Horizontal,"Function",_dialog_content);
 
-  new QLabel("The function type used as the root node of new image functions:",group0,0,Qt::WordBreak);
+  new QLabel("A function type used as the root node of all new image functions:",group0,0,Qt::WordBreak);
   _favourite=new QComboBox(false,group0);
   _favourite_fn_to_index[""]=_favourite->count();
   _index_to_favourite_fn[_favourite->count()]="";
@@ -53,29 +55,77 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
       _favourite->insertItem(fn->name());      
     }
 
-  std::cerr << _parent->favourite_function() << "\n";
-
   QGroupBox* group1=new QGroupBox(1,Qt::Horizontal,"Wrapping",_dialog_content);
   
-  _unwrapped=new QCheckBox("Root node is UNWRAPPED",group1);
+  _unwrapped=new QCheckBox("Root node is NOT wrapped with space/colour transforms\nIntended mainly for testing",group1);
 
-  update();
+  //! \todo: Add OK & reset/restart versions ?
+  QPushButton* ok=new QPushButton("OK",_dialog_content);
+
+  update_gui_from_state();
+
+  connect(_favourite,SIGNAL(activated(int)),this,SLOT(changed_favourite(int)));
+  
+  connect(_unwrapped,SIGNAL(toggled(bool)),this,SLOT(changed_unwrapped(bool)));
+
+  connect(ok,SIGNAL(clicked()),this,SLOT(hide()));
 }
 
 DialogFavourite::~DialogFavourite()
 {}
 
-void DialogFavourite::update()
+void DialogFavourite::changed_favourite(int i)
 {
-  const std::map<std::string,unsigned int>::const_iterator it=_favourite_fn_to_index.find(_parent->favourite_function());
+  const std::map<unsigned int,std::string>::const_iterator it=_index_to_favourite_fn.find(i);
+  if (it!=_index_to_favourite_fn.end())
+    {
+      _favourite_function=(*it).second;
+    }
+
+  update_gui_from_state();
+}
+
+void DialogFavourite::changed_unwrapped(bool b)
+{
+  _favourite_function_unwrapped=b;
+
+  update_gui_from_state();
+}
+
+
+void DialogFavourite::update_gui_from_state()
+{
+  const std::map<std::string,unsigned int>::const_iterator it=_favourite_fn_to_index.find(_favourite_function);
   if (it!=_favourite_fn_to_index.end())
     _favourite->setCurrentItem((*it).second);
+  else
+    _favourite->setCurrentItem(0);
 
-  _unwrapped->setChecked(_parent->favourite_function_unwrapped());
+  _unwrapped->setChecked(_favourite_function_unwrapped);
+
+  _unwrapped->setEnabled(!_favourite_function.empty());
 }
 
 void DialogFavourite::resizeEvent(QResizeEvent* e)
 {
   Superclass::resizeEvent(e);
   _dialog_content->resize(size());
+}
+
+const bool DialogFavourite::favourite_function(const std::string& f)
+{
+  if (FunctionRegistry::get()->lookup(f))
+    {
+      _favourite_function=f;
+      update_gui_from_state();
+      return true;
+    }
+  else
+    return false;
+}
+
+void DialogFavourite::favourite_function_unwrapped(bool v)
+{
+  _favourite_function_unwrapped=v;
+  update_gui_from_state();
 }

@@ -5,4 +5,4 @@
 
 # NB If you edit this, "make distclean" and then rebuild (./BUILD) as there is no dependency checking
 
-echo "0.3.2-devel"
+echo "0.4.0-devel"

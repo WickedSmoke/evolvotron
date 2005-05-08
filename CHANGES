@@ -1,13 +1,12 @@
 [Most recent at top]
 
 From release 0.3.1:
- - Version to 0.3.2-devel
+ - Version to 0.4.0-devel
  - Lock state moved to mutatable image so is stored in undo history
  - Mandelbrot & Julia set only in x,y plane.  Julia set uses fixed parameters.
  - Add Juliabrot.
  - Fix "Randomize" button on "All" functions tab.
- - Add restart with randomized functions to File menu
- - Add restart with specific functions to File menu
+ - "Favourite" function dialog provides access to -x/-X command-line functionality
  - Undo after reset works better
  - Fix broken FunctionGradient.
    Replace with GradientOfMagnitude, DivergenceOfMagnitude, Divergence, Curl

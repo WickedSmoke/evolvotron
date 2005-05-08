@@ -1,6 +1,7 @@
 For next release
 ----------------
 - -x/-X options & restart-with: move to "Favourite" (need a better name) select on a tab in functions dialog.
+Push favourite state into dialog.  Send -X/-x to dialog.  Avoids circular setting to/from evolvotron main.
 - Docs: "identity supression" no longer exists - is a slider.  Update.
 
 Sometime

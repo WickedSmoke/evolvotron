@@ -165,20 +165,11 @@ class EvolvotronMain : public QMainWindow
   //! Dialog for controlling which functions are in use.
   DialogFunctions* _dialog_functions;
 
-  //! Dialog for selecting a favourite function
+  //! Dialog for selecting a favourite function (also holds the state for favourite stuff)
   DialogFavourite* _dialog_favourite;
 
   //! The menubar.
   QMenuBar* _menubar;
-
-  //! Submenu for restarts.
-  QPopupMenu* _popupmenu_restart_with;
-
-  //! Submenu for restarts.
-  QPopupMenu* _popupmenu_restart_with_wrapped;
-
-  //! Submenu for restarts.
-  QPopupMenu* _popupmenu_restart_with_unwrapped;
 
   //! The file menu.
   QPopupMenu* _popupmenu_file;
@@ -238,12 +229,6 @@ class EvolvotronMain : public QMainWindow
   //! An owned pointer to the current transform factory (needed for Respawn).
   TransformFactory* _transform_factory;
 
-  //! A function name to be used as the root node of new image function tres (no favourite if empty)
-  std::string _favourite_function;
-
-  //! Flag specifying whether favourite function should be exposed
-  bool _favourite_function_unwrapped;
-
   //! Accessor.
   const MutatableImage*const last_spawned_image() const
     {
@@ -292,22 +277,10 @@ class EvolvotronMain : public QMainWindow
   //! Destructor.
   ~EvolvotronMain();
 
-  //! Accessor
-  const std::string& favourite_function() const
-    {
-      return _favourite_function;
-    }
-  
-  //! Accessor. Returns true if function name recognised.  Updates DialogFavourite.
+  //! Accessor. Returns true if function name recognised.  Forwards to DialogFavourite.
   const bool favourite_function(const std::string& f);
-  
-  //! Accessor.
-  const bool favourite_function_unwrapped() const
-    {
-      return _favourite_function_unwrapped;
-    }
 
-  //! Accessor.  Updates DialogFavourite.
+  //! Accessor.  Forwards to DialogFavourite.
   void favourite_function_unwrapped(bool v);
 
   //! Accessor.  
@@ -399,12 +372,6 @@ class EvolvotronMain : public QMainWindow
   
   //! Forwards to reset(true)
   void reset_cold();
-
-  //! Restart with a specific function
-  void restart_with_wrapped(const FunctionRegistration* fn);
-
-  //! Restart with a specific function
-  void restart_with_unwrapped(const FunctionRegistration* fn);
 
   //! Resets and randomizes function weightings
   void reset_randomized();
