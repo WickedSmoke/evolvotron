@@ -420,11 +420,19 @@ const bool EvolvotronMain::favourite_function(const std::string& f)
   if (FunctionRegistry::get()->lookup(f))
     {
       _favourite_function=f;
+      _dialog_favourite->update();
       return true;
     }
   else
     return false;
 }
+
+void EvolvotronMain::favourite_function_unwrapped(bool v)
+{
+  _favourite_function_unwrapped=v;
+  _dialog_favourite->update();
+}
+
 
 void EvolvotronMain::spawn_normal(const MutatableImage* image,MutatableImageDisplay* display)
 {

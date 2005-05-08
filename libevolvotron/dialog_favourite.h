@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <qdialog.h>
 #include <qvbox.h>
+#include <qcombobox.h>
+#include <qcheckbox.h>
 
 class EvolvotronMain;
 
@@ -43,12 +45,27 @@ class DialogFavourite : public QDialog
   //! Top level holder of all the dialog content.
   QVBox* _dialog_content;
 
+  //! Select favourite function, if any.
+  QComboBox* _favourite;
+
+  //! Map function names to combo box entries.
+  std::map<std::string,unsigned int> _favourite_fn_to_index;
+
+  //! Look up function names from combo box.
+  std::map<unsigned int,std::string> _index_to_favourite_fn;
+
+  //! Controls unwrapped state.
+  QCheckBox* _unwrapped;
+
  public:
   //! Constructor.
   DialogFavourite(EvolvotronMain* parent);
 
   //! Destructor.
   virtual ~DialogFavourite();
+
+  //! Update state.
+  void update();
 
   //! Handle resizes.
   virtual void resizeEvent(QResizeEvent* e);

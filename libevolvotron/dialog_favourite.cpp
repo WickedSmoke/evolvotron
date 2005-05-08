@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class DialogFavourite.
 */
 
-#include <qcombobox.h>
 #include <qgroupbox.h>
 
 #include "dialog_favourite.h"
@@ -37,22 +36,43 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
   
   QGroupBox* group0=new QGroupBox(1,Qt::Horizontal,"Favourite",_dialog_content);
 
-  new QLabel("Function type used as the root node of new image functions",group0,0,Qt::WordBreak);
-  QComboBox* combo_box=new QComboBox(false,group0);
-  combo_box->insertItem("Random");
-  
+  new QLabel("The function type used as the root node of new image functions:",group0,0,Qt::WordBreak);
+  _favourite=new QComboBox(false,group0);
+  _favourite_fn_to_index[""]=_favourite->count();
+  _index_to_favourite_fn[_favourite->count()]="";
+  _favourite->insertItem("- No preference -");
+
   for (std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
        it!=FunctionRegistry::get()->registrations().end();
        it++
        )
     {
       const FunctionRegistration*const fn=(*it);
-      combo_box->insertItem(fn->name());
+      _favourite_fn_to_index[fn->name()]=_favourite->count();
+      _index_to_favourite_fn[_favourite->count()]=fn->name();
+      _favourite->insertItem(fn->name());      
     }
+
+  std::cerr << _parent->favourite_function() << "\n";
+
+  QGroupBox* group1=new QGroupBox(1,Qt::Horizontal,"Wrapping",_dialog_content);
+  
+  _unwrapped=new QCheckBox("Root node is UNWRAPPED",group1);
+
+  update();
 }
 
 DialogFavourite::~DialogFavourite()
 {}
+
+void DialogFavourite::update()
+{
+  const std::map<std::string,unsigned int>::const_iterator it=_favourite_fn_to_index.find(_parent->favourite_function());
+  if (it!=_favourite_fn_to_index.end())
+    _favourite->setCurrentItem((*it).second);
+
+  _unwrapped->setChecked(_parent->favourite_function_unwrapped());
+}
 
 void DialogFavourite::resizeEvent(QResizeEvent* e)
 {

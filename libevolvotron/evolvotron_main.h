@@ -298,7 +298,7 @@ class EvolvotronMain : public QMainWindow
       return _favourite_function;
     }
   
-  //! Accessor. Returns true if function name recognised
+  //! Accessor. Returns true if function name recognised.  Updates DialogFavourite.
   const bool favourite_function(const std::string& f);
   
   //! Accessor.
@@ -307,13 +307,10 @@ class EvolvotronMain : public QMainWindow
       return _favourite_function_unwrapped;
     }
 
-  //! Accessor.
-  void favourite_function_unwrapped(bool v)
-    {
-      _favourite_function_unwrapped=v;
-    }
+  //! Accessor.  Updates DialogFavourite.
+  void favourite_function_unwrapped(bool v);
 
-  //! Accessor.
+  //! Accessor.  
   std::vector<MutatableImageDisplay*>& displays()
     {
       return _displays;
