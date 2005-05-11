@@ -16,14 +16,14 @@ mutation and user-selection driven evolution.  If you like lava-lamps,
 and still think the Mandelbrot set is cool, this could be the software
 for you.
 
-It uses C++ (and STL) & Qt, and is multithreaded (using Qt's threading API).
+It uses C++ (and STL) & Qt (that's Trolltech's Qt GUI toolkit, it's NOTHING TO
+DO WITH APPLE'S QUICKTIME!).  It's multithreaded (using Qt's threading API).
 
 Home page: http://www.bottlenose.demon.co.uk/share/evolvotron
-
 Author: timday at timday dot com
 
 This file describes how to build evolvotron.
-See the USAGE file for details of what you can do with the built executable.
+See the USAGE file for details of what the built executable can do.
 
 If you manage to make practical use of evolvotron, especially
 if evolvotron derived imagery makes it into print or other
@@ -74,7 +74,7 @@ include a directory containing qmake and you like it that way.]
 
 Make will recurse into and build the libevolvotron directory
 (which is 99% of the work) and some additional subdirectories with 
-executables.  There may be a couple of "unused variable" warnings.
+executables.
 
 Among other things, this will give you an "evolvotron" 
 executable which you can run immediately with
@@ -136,13 +136,13 @@ If you have gcc/c++ compile problems problems:
 
 If you have to change anything, the chances are it should be changed in
 common.pro.  Remember that any Makefiles you can see are generated
-by qmake from .pro files and therefore hacking on Makefiles is a
-fruitless exercise.
+by qmake from .pro files and therefore hacking on the Makefiles is
+generally a fruitless exercise.
 
 Some source releases have had problems with other versions of gcc than
 the ones I test on.  A COMPLETE record of a failed build would be
 appreciated (including the initial display of the gcc version).
-If you can fix it, the patches would be even better!
+If you can fix it, then patches would be even better!
 
 Another possibly problematic area (only because it's new and not widely tested)
 is the automatic building of a marked-up version of the USAGE file.
@@ -164,29 +164,16 @@ front of the other -I paths.  Yuk.
 BUILD OPTIONS
 =============
 A few things are available through the configure script.
-[NB These simply don't work on older gcc or qt installations,
-but they don't add that much so don't worry about it.]
 
 Usage:
-  ./configure [p4|p3|xp] [fs]
+  ./configure [p4|p3|xp]
 
 (Any command line arguments given to ./BUILD are passed through to configure,
-so you can do e.g "./BUILD fs p4").
+so you can do e.g "./BUILD p4").
 
 If you rerun configure or build with a different option to the last time
 you almost certainly need to do a "make distclean" to clean up old
 code and Makefiles. 
-
-FUNCTIONALITY OPTIONS
----------------------
-Specify 'fs' on the ./configure commandline to enable
-fullscreen support (which is off by default, but is recommended).
-
-If you select fullscreen support but your version of Qt is too
-old, the build will fail.
-
-I don't know what minimum version of Qt you need for this, 
-but it works on RH9 and fails to build on RH8.
 
 PERFORMANCE OPTIONS
 -------------------
@@ -224,7 +211,7 @@ here's the times for a 2.4GHz P4 to run a 2048x2048 evolvotron_render
 [NB This was done a while ago; things have probably changed a lot,
 especially after some major changes to the function code around version 0.2.0.
 Also around 0.2.4 the implementation of the XYZ vector class was changed to
-no longer use the Tuple template, and -funroll-loops was dropped as this
+no longer use a general Tuple template, and -funroll-loops was dropped as this
 was the only obvious reason for using it.]
 
 BUILDING ON OTHER PLATFORMS
@@ -287,7 +274,7 @@ If you'd rather just do it by hand, all you need to do is copy the executables
   ./evolvotron_mutate/evolvotron_mutate
   ./evolvotron_match/evolvotron_match
 to wherever you like (e.g ~/bin, /usr/local/bin).
-There are NO extra supporting files (e.g libraries, config files)
+There are NO extra supporting files (e.g libraries, config files, resource files)
 which need to be in special places for the software to work.
 
 BUILDING CODE DOCUMENTATION

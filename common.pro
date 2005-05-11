@@ -13,15 +13,6 @@ CONFIG+= qt thread release
 INSTALLPATH = /home/$(USER)/bin
 
 ##################
-# Full screen support selected ?
-
-contains(CONFIG_OPTS, fs ){
-  QMAKE_CXXFLAGS_RELEASE += -DFULLSCREEN
-  QMAKE_CXXFLAGS_DEBUG   += -DFULLSCREEN
-  BUILD_INFO+= Fullscreen
-}
-
-##################
 # Improved optimisation options from qmake defaults.
 # The README contains some timings showing the (fairly small) effect of changing these.
 # 
@@ -35,7 +26,7 @@ QMAKE_CXXFLAGS_RELEASE += -O3 -fomit-frame-pointer -ffast-math
 ##################
 # Architecture specific optimisations
 # The following architecture options make the compiled executables less portable.
-# (On a different setup you may need to change what's subtracted out of the flags.)
+# (On a different setup you may need to change what is subtracted out of the flags.)
 # NB -march=X implies -mcpu=X... no need to specify both the same
 
 contains(CONFIG_OPTS, p4 ){ 

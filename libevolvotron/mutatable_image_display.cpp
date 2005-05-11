@@ -962,10 +962,8 @@ void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
 
   top_level_widget->show();
 
-#ifdef FULLSCREEN
   //Propagate full screen mode 
   if (main()->isFullScreen()) top_level_widget->showFullScreen();
-#endif
 
   // Fire up image calculation
   display->image(_image->deepclone());

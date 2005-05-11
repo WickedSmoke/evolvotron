@@ -19,8 +19,8 @@ Simply repeat the following until bored:
 
 IMPORTANT: Initially you should select images with some sort of variation.
 If you select a uniform image, you may get stuck in a degenerate zone with
-little to mutate and therefore little chance of escape to a more interesting
-area.  You can always reset/restart from the "File" menu (the difference is
+little to mutate and therefore little chance of escape to more interesting
+images.  You can always reset/restart from the "File" menu (the difference is
 that "reset" also resets the mutation parameters to their default values).
 Selecting one of the "warp" options from a context menu (right-click on
 an image) can also help by introducing an additional opportunity for
@@ -47,7 +47,6 @@ USER OPTIONS
 	Sets number of compute threads (defaults to 2)
 
   -F
-	[NB Only available with fullscreen build option; ignored otherwise]
 	Start in "fullscreen" mode (NB for Qt on X11 this means 
 	a screen-filling borderless/undecorated window is used; 
 	it's not simply maximising the window, and it's not the 
@@ -61,7 +60,6 @@ USER OPTIONS
 	The Esc key will also exit it.
 
   -M	
-	[NB Only available with fullscreen build option; ignored otherwise]
 	Start with menu and status bar hidden.  Nice with -F.
 	Hiding can be toggled within the application using ctrl-m.
 	The Esc key will also bring them back.
@@ -88,8 +86,7 @@ POWER-USER & DEBUG OPTIONS
 	This is primarily intended to assist debugging.
         This option used to be useful for getting a list of supported function 
 	names for use with the -x/-X options, but those can now be inspected
-        via the Settings/Functions dialog or the "restart with specific function"
-        menu item.
+        via the Settings/Functions dialog.
 
   -x <functionname>
 	Force a specific "favourite" function type to be used at the top level 
@@ -298,6 +295,10 @@ MAIN MENU BAR
   is the place to adjust the frequency with which they appear.
   If the software was built with the fullscreen option,
   that can also be controlled from this menu.
+  "Favourite" brings up a dialog which allows you to select a specific
+  function type to always be used as the root node of any new functions.
+  The function can be wrapped by some other random stuff, or unwrapped.
+  See also the -X and -x command line options.
 - Help menu:
   Items to bring up documentation, and the usual "About" box
   (which includes the license).
@@ -327,7 +328,7 @@ TIPS
   polishing of your masterpiece.
 - You can quickly cycle through a lot of initial images (until
   you find one with real potential) by bashing on Ctrl-r to
-  repeatedly restart. 
+  repeatedly restart.
 - To add variety to an image's mutations, nudge it with a small
   middle-mouse drag.  This introduces a top level transform, and
   therefore more parameters to be varied.
@@ -339,7 +340,7 @@ for generation of animations (although so far the results have been
 pretty disappointing IMHO, but it's still early days).
 
 NB THIS IS EVEN MORE COMPUTATIONALLY AND MEMORY INTENSIVE THAN
-THE CONVENTIONAL STATIC IMAGE MODE.
+THE STATIC IMAGE MODE.
 
 Simply supply a -f <frames> command line option and evolvotron will
 generate animated sequences with the specified number of frames.
@@ -382,8 +383,8 @@ By mutating the structure of the function tree (adding random
 branches, for example) and the values of the constant embedded
 within it, the image can be changed.
 
-The mutation parameters are under control from the dialog accessible via the
-Settings/Mutations menu, and also from buttons on the status bar).
+The mutation parameters are under control from the dialogs accessible
+via the Settings menu, and also from buttons on the status bar).
 
 There are two kinds of mutation: perturbations to the magnitude of constants, 
 and structural mutations which rearrage the function tree of an image.  
@@ -391,12 +392,12 @@ Four types of structural mutations are currently implemented:
   - replacement of a function branch by a new random stub (a "Glitch" mutation).
   - a random shuffle of a node's sub-nodes
   - insertion of random nodes between a node and it's sub-nodes
-  - and the substitution of a node with one of a different type, 
+  - the substitution of a node with one of a different type, 
     with sub-nodes unaffected where possible).
 
 The probability (per function node) of these mutations is controlled
-from spinboxes on the dialog (expressed as chances-in-a-million), 
-as is the size of perturbations to constants.
+from spinboxes on the "Mutation Parameters" dialog (expressed as
+chances-in-a-million),  as is the size of perturbations to constants.
 
 It is useful to think of the perturbations to constant parameters as
 being a thermal effect (hence the "heat" and "cool" buttons), while 
@@ -411,32 +412,33 @@ function trees have grown quite large and therefore are experiencing a lot
 of mutations) then cool and/or shield.
 If all the images look too similar, heat and/or irradiate.
 
-2 types of function node are considered fundamental: constant nodes
-(which return a constant) and position nodes (which should really be
-called identity nodes) which return their position argument.  There
-are two slider controls to affect things related to these:
- - "proportion constant" controls the proportion of fundamental nodes
-   which are constants.  Changing this from its default value of 0.5 doesn't
-   actually seem to have much effect.
- - "identity supression" causes all identity nodes to actually include a
-   random transform; the main effect of this is that images are less commonly
-   obviously centred on the origin or aligned with the axes.  I think this
-   is a good thing, so identity supression is at 1.0 by default.
-
 There is also a dialog accessible from "Functions..." on the "Settings" menu.
 This allows control over the relative proportions in which functions occur.
 There is a tab showing the relative weighting of all functions (log-2 scale: each
 tick halves the probability of the function occurring), and additional tabs
-for various classifications of function for quicker access.  The most useful
-thing you can do here is hit the "Randomize" button on the "All" functions tab:
-this assigns random weightings and helps increase the uniqueness of your
-session.
+for various classifications of function for quicker access.  
+The "Randomize" button on each tab assigns random weightings and helps
+increase the uniqueness of your session.
 
-There is also a "Dilution" tab which allows the average function-tree branching
-ratio to be controlled (by changing the proportion of trivial zero-branch
-functions added): note that using a high branching ratio results in very
-complex images which will take a long time to compute, while reducing the
-ratio results in simple, boring images.  
+The "Functions" dialog also has a "Dilution" tab which allows the average
+function-tree branching ratio to be controlled (by changing the proportion
+of trivial zero-branch functions added): note that using a high branching
+ratio results in very complex images which will take a long time to compute,
+while reducing the ratio results in simple, boring images.  
+
+3 types of function node are considered fundamental: constant nodes
+(which return a constant), identity nodes (which return their
+position argument) and transform nodes (which transform their positon
+argument by random parameters).  On the "Dilution" tab of the "Functions"
+dialog there are two slider controls to affect things related to these:
+ - "proportion constant" controls the proportion of diluting fundamental nodes
+   which are constants.  Changing this from its default value of 0.5 doesn't
+   actually seem to have much effect.
+ - "proportion transforms" sets the proportion of non-constant nodes diluting
+   which are transforms (as opposed to identity nodes).
+   The main effect of this is that images are less commonly obviously centred
+   on the origin or aligned with the axes.  I think this is a good thing, so
+   the value is at 1.0 by default.
 
 OTHER EXECUTABLES
 =================

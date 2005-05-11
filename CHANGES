@@ -11,6 +11,7 @@ From release 0.3.1:
  - Fix broken FunctionGradient.
    Replace with GradientOfMagnitude, DivergenceOfMagnitude, Divergence, Curl
  - Migrate float->double via typedef real
+ - Always builds with fullscreen option.
 
 From release 0.3.0:
  - Version to 0.3.1
