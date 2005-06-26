@@ -38,7 +38,7 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
   
   QGroupBox* group0=new QGroupBox(1,Qt::Horizontal,"Function",_dialog_content);
 
-  new QLabel("A function type used as the root node of all new image functions:",group0,0,Qt::WordBreak);
+  new QLabel("Root node for new image functions:",group0,0,Qt::WordBreak);
   _favourite=new QComboBox(false,group0);
   _favourite_fn_to_index[""]=_favourite->count();
   _index_to_favourite_fn[_favourite->count()]="";
@@ -57,7 +57,7 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
 
   QGroupBox* group1=new QGroupBox(1,Qt::Horizontal,"Wrapping",_dialog_content);
   
-  _unwrapped=new QCheckBox("Root node is NOT wrapped with space/colour transforms\nIntended mainly for testing",group1);
+  _unwrapped=new QCheckBox("Disable additional space/colour transforms\n",group1);
 
   //! \todo: Add OK & reset/restart versions ?
   QPushButton* ok=new QPushButton("OK",_dialog_content);

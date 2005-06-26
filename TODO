@@ -1,33 +1,21 @@
 Soon
-----
+====
 File contents previewing in file dialog.
 
 Sometime
---------
+========
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
-Animation
----------
-- More warp types (rotate time into space etc)
-- More control over animation (frames & framerate) from edit/options menu
-  (or on a display by display basis ?  Then "big" images could have
-  more frames and higher framerates)
-- Ability to degrade temporal resolution with spatial resolution 
-  at low-res render levels
-- Support animation in evolvotron_render 
-- Sync animation to xmms beat somehow ?
-- Option to sweep z sinusoidally or linearly
-- Option to bounce or cycle z
-- Make frames, frame-rate, sine vs. linear, loop vs. bounce properties of the image.
-
-Conventional
-------------
+Conventional Mode
+-----------------
+- QFileDialog seems to support previewing; enable it.
 - Add functions for the 17 "wallpaper" symmetry groups.
   Also 7 frieze groups (in a single or multiple strips?).
   Presumably there are 3D versions too.
-- Option for save function to also generate thumbnail at the same time.
-- QFileDialog seems to support previewing; enable it.
+- Make middle-mose-button adjustments work sensibly with -spheremap 
+- Option for save function to also generate thumbnail at the same time ?
+  (Maybe not with previewing)
 - Look into mime-type registration and auto-thumbnailing in nautilus, KDE etc
 - Browse window to show thumbnails for all .xml files in  a directory.
 - DialogFunctions and DialogMutationParameters don't notice when the other dialog modifies MutationParameters.
@@ -162,6 +150,20 @@ Conventional
     Generalised rotations
     Square "Bhuddist mandala" versions of kaleidascope
     Concentric rings
+
+Animation
+---------
+- More warp types (rotate time into space etc)
+- More control over animation (frames & framerate) from edit/options menu
+  (or on a display by display basis ?  Then "big" images could have
+  more frames and higher framerates)
+- Ability to degrade temporal resolution with spatial resolution 
+  at low-res render levels
+- Support animation in evolvotron_render 
+- Sync animation to xmms beat somehow ?
+- Option to sweep z sinusoidally or linearly
+- Option to bounce or cycle z
+- Make frames, frame-rate, sine vs. linear, loop vs. bounce properties of the image.
 
 Extras
 ------
