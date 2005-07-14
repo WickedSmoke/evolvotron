@@ -1063,6 +1063,36 @@ FUNCTION_END(FunctionFriezeStrip)
 
 //------------------------------------------------------------------------------------------
 
+// Strip of one function across another
+FUNCTION_BEGIN(FunctionFriezeStripBlend,0,4,false,FnStructure)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const real r0=arg(2)(p).magnitude();
+      const real r1=arg(3)(p).magnitude();
+      const real inner=std::min(r0,r1);
+      const real outer=std::max(r0,r1);
+
+      const real ay=fabs(p.y());
+      if (ay<=inner) return arg(0)(p);
+      if (ay>=outer) return arg(1)(p);
+      
+      const XYZ v0(arg(0)(p));
+      const XYZ v1(arg(1)(p));
+
+      return v0+(v1-v0)*(ay-inner)/(outer-inner);
+    }
+  
+  //! Is constant if all sampled functions are
+  virtual const bool is_constant() const
+    {
+      return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant() && arg(3).is_constant());
+    }
+
+FUNCTION_END(FunctionFriezeStripBlend)
+//------------------------------------------------------------------------------------------
+
 // Frieze group 1
 FUNCTION_BEGIN(FunctionFriezeGroup1,0,1,false,FnStructure)
 
