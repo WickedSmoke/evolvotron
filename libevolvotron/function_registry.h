@@ -25,8 +25,6 @@
 
 #include <string>
 #include <map>
-#include <deque>
-#include <vector>
 #include <iostream>
 
 #include "useful.h"
@@ -50,12 +48,12 @@ class FunctionRegistry : public Singleton<FunctionRegistry>
   const FunctionRegistration*const lookup(const std::string& f) const;
 
   //! typedefed for convenience
-  typedef std::vector<const FunctionRegistration*> Registrations;
+  typedef std::map<std::string,const FunctionRegistration*> Registrations;
   
   //! Just get the collection of registrations.
   const Registrations& registrations() const
     {
-      return _registry_by_series;
+      return _registry_by_name;
     }
 
   //! Dump list of registered functions
@@ -67,10 +65,7 @@ class FunctionRegistry : public Singleton<FunctionRegistry>
 
  protected:
   //! Dictionary from names to Registration objects
-  std::map<std::string,const FunctionRegistration*> _registry_by_name;
-
-  //! Just an array of Registration objects, for random picks
-  Registrations _registry_by_series;
+  Registrations _registry_by_name;
 };
 
 //! Yes it's a static instance declared in a header file but that's how nifty counters work.

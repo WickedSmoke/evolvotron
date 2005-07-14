@@ -65,11 +65,11 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
       VBoxScrollView* scrollview=new VBoxScrollView(tab_content);
       tab_content->setStretchFactor(scrollview,1);
 
-      for (std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
+      for (FunctionRegistry::Registrations::const_iterator it=FunctionRegistry::get()->registrations().begin();
 	   it!=FunctionRegistry::get()->registrations().end();
 	   it++)
 	{
-	  const FunctionRegistration*const fn=(*it);
+	  const FunctionRegistration*const fn=(*it).second;
 	  if (c==-1 || fn->classification()&(1<<c))
 	    {
 	      QGroupBox* g=new QGroupBox(3,Qt::Horizontal,fn->name(),scrollview->contentParent());

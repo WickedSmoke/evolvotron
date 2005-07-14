@@ -60,6 +60,8 @@ inline uint modulusi(int x,int y)
 }
 
 //! Triangle function: like modulus, but ramps down instead of discontinuity at y
+/*! Setting y=1 ensures x in [0,1]
+ */
 inline real trianglef(real x,real y)
 {
   if (y<0.0) y=-y;
@@ -1014,7 +1016,6 @@ FUNCTION_END(FunctionWindmillZRotate)
 
 //------------------------------------------------------------------------------------------
 
-
 //! Like FunctionWindmill with twist
 FUNCTION_BEGIN(FunctionWindmillTwist,2,1,false,FnStructure)
 
@@ -1039,6 +1040,181 @@ FUNCTION_BEGIN(FunctionWindmillTwist,2,1,false,FnStructure)
     }
 
 FUNCTION_END(FunctionWindmillTwist)
+
+//------------------------------------------------------------------------------------------
+
+// Strip of one function across another
+FUNCTION_BEGIN(FunctionFriezeStrip,0,3,false,FnStructure)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      if (fabs(p.y()) > arg(2)(p).magnitude()) return arg(1)(p);
+      else return arg(0)(p);
+    }
+  
+  //! Is constant if all sampled functions are
+  virtual const bool is_constant() const
+    {
+      return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant());
+    }
+
+FUNCTION_END(FunctionFriezeStrip)
+
+//------------------------------------------------------------------------------------------
+
+// Frieze group 1
+FUNCTION_BEGIN(FunctionFriezeGroup1,0,1,false,FnStructure)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      // HOP
+      const real x=modulusf(p.x(),1.0);
+      const real y=p.y();
+      return arg(0)(XYZ(x,y,p.z()));
+    }
+  
+  //! Is constant if sampled function is
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionFriezeGroup1)
+
+//------------------------------------------------------------------------------------------
+
+// Frieze group 2
+FUNCTION_BEGIN(FunctionFriezeGroup2,0,1,false,FnStructure)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      // SPINHOP
+      const real x=(p.y()>0.0 ? modulusf(p.x(),1.0) : 1.0-modulusf(p.x(),1.0));
+      const real y=fabs(p.y());
+      return arg(0)(XYZ(x,y,p.z()));
+    }
+  
+  //! Is constant if sampled function is
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionFriezeGroup2)
+
+//------------------------------------------------------------------------------------------
+
+// Frieze group 3
+FUNCTION_BEGIN(FunctionFriezeGroup3,0,1,false,FnStructure)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      // JUMP
+      const real x=modulusf(p.x(),1.0);
+      const real y=fabs(p.y());
+      return arg(0)(XYZ(x,y,p.z()));
+    }
+  
+  //! Is constant if sampled function is
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionFriezeGroup3)
+
+//------------------------------------------------------------------------------------------
+
+// Frieze group 4
+FUNCTION_BEGIN(FunctionFriezeGroup4,0,1,false,FnStructure)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      // SIDLE
+      const real x=trianglef(p.x(),1.0);
+      const real y=p.y();
+      return arg(0)(XYZ(x,y,p.z()));
+    }
+  
+  //! Is constant if sampled function is
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionFriezeGroup4)
+
+//------------------------------------------------------------------------------------------
+
+// Frieze group 5
+FUNCTION_BEGIN(FunctionFriezeGroup5,0,1,false,FnStructure)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      // STEP
+      const real x=(p.y()>0.0 ? modulusf(p.x(),1.0) : modulusf(p.x()+0.5,1.0));
+      const real y=fabs(p.y());
+      return arg(0)(XYZ(x,y,p.z()));
+    }
+  
+  //! Is constant if sampled function is
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionFriezeGroup5)
+
+//------------------------------------------------------------------------------------------
+
+// Frieze group 6
+//! \todo But this is the same as 4!
+FUNCTION_BEGIN(FunctionFriezeGroup6,0,1,false,FnStructure)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      // SPINJUMP
+      const real x=trianglef(p.x(),1.0);
+      const real y=fabs(p.y());
+      return arg(0)(XYZ(x,y,p.z()));
+    }
+  
+  //! Is constant if sampled function is
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionFriezeGroup6)
+
+//------------------------------------------------------------------------------------------
+
+// Frieze group 7
+FUNCTION_BEGIN(FunctionFriezeGroup7,0,1,false,FnStructure)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      // SPINSIDLE
+      const real x=trianglef(p.x(),1.0);
+      const real y=(modulusf(p.x()+1.0,4.0)<2.0 ? p.y() : -p.y());
+      return arg(0)(XYZ(x,y,p.z()));
+    }
+  
+  //! Is constant if sampled function is
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();
+    }
+
+FUNCTION_END(FunctionFriezeGroup7)
 
 //------------------------------------------------------------------------------------------
 

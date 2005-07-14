@@ -32,15 +32,15 @@ FunctionRegistry::FunctionRegistry()
 
 FunctionRegistry::~FunctionRegistry()
 {
-  for (Registrations::const_iterator it=_registry_by_series.begin();it!=_registry_by_series.end();it++)
-    delete (*it);
+  for (Registrations::const_iterator it=_registry_by_name.begin();it!=_registry_by_name.end();it++)
+    delete (*it).second;
   // std::clog << "FunctionRegistry destroyed\n";
 }
 
 //! Return the registration for the function named (returns 0 if unknown)
 const FunctionRegistration*const FunctionRegistry::lookup(const std::string& f) const
 {
-  std::map<std::string,const FunctionRegistration*>::const_iterator it=_registry_by_name.find(f);
+  Registrations::const_iterator it=_registry_by_name.find(f);
   if (it==_registry_by_name.end())
     return 0;
   else
@@ -50,7 +50,7 @@ const FunctionRegistration*const FunctionRegistry::lookup(const std::string& f) 
 std::ostream& FunctionRegistry::status(std::ostream& out) const
 {
   out << "Registered functions:\n";
-  for (std::map<std::string,const FunctionRegistration*>::const_iterator it=_registry_by_name.begin();it!=_registry_by_name.end();it++)
+  for (Registrations::const_iterator it=_registry_by_name.begin();it!=_registry_by_name.end();it++)
     {
       out << "  " << (*it).first << "\n";
     }
@@ -65,7 +65,6 @@ const bool FunctionRegistry::name_and_register(const char* n,FunctionRegistratio
   const std::string ns(n);
   if (_registry_by_name.find(ns)!=_registry_by_name.end())
     {
-      //std::clog << " repeat registration ignored.\n";
       return false;
     }
   else
@@ -73,12 +72,6 @@ const bool FunctionRegistry::name_and_register(const char* n,FunctionRegistratio
       const FunctionRegistration*const definitive_reg=new FunctionRegistration(n,r);
 
       _registry_by_name[ns]=definitive_reg;
-      _registry_by_series.push_back(definitive_reg);
-      //std::clog << ns << " registered successfully.\n";
       return true;
     }
 }
-
-
-
-

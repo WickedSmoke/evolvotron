@@ -44,15 +44,15 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
   _index_to_favourite_fn[_favourite->count()]="";
   _favourite->insertItem("- No preference -");
 
-  for (std::vector<const FunctionRegistration*>::const_iterator it=FunctionRegistry::get()->registrations().begin();
+  for (FunctionRegistry::Registrations::const_iterator it=FunctionRegistry::get()->registrations().begin();
        it!=FunctionRegistry::get()->registrations().end();
        it++
        )
     {
-      const FunctionRegistration*const fn=(*it);
+      const FunctionRegistration*const fn=(*it).second;
       _favourite_fn_to_index[fn->name()]=_favourite->count();
       _index_to_favourite_fn[_favourite->count()]=fn->name();
-      _favourite->insertItem(fn->name());      
+      _favourite->insertItem(fn->name());
     }
 
   QGroupBox* group1=new QGroupBox(1,Qt::Horizontal,"Wrapping",_dialog_content);

@@ -11,8 +11,9 @@ Conventional Mode
 -----------------
 - QFileDialog seems to support previewing; enable it.
 - Add functions for the 17 "wallpaper" symmetry groups.
-  Also 7 frieze groups (in a single or multiple strips?).
+  ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
   Presumably there are 3D versions too.
+- Better way of choosing where to "cut" in freize groups ?
 - Make middle-mose-button adjustments work sensibly with -spheremap 
 - Option for save function to also generate thumbnail at the same time ?
   (Maybe not with previewing)
