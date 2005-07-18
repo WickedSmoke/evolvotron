@@ -95,9 +95,10 @@ class FunctionNode
   /*! This isn't used for optimisation (which would require FunctionNode to have computation-specific state,
       which would wreck plans for reference counted deepclone()), 
       but to cull boring constant images on creation.
+      Default implementation (and probably the only sensible one)
+      is constant if all args are constant; no args returns false.
    */
-  virtual const bool is_constant() const
-    =0;
+  virtual const bool is_constant() const;
 
   //! Bits give some classification of the function type
   virtual const uint self_classification() const

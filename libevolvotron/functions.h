@@ -20,8 +20,8 @@
   \brief Interfaces and implementation for specific Function classes.
   As much as possible of the implementation should be pushed into the FunctionBoilerplate template.
   \warning This file should ONLY be included in function_node.cpp, which instantiates everything.
-  The two functions allowed to escape "into the wild" are FunctionPreTransform and FunctionPostTransform 
-  which have their own header file.
+  A few functions are allowed to escape "into the wild" (e.g FunctionPreTransform and FunctionPostTransform 
+  which have their own header file)
 */
 
 #ifndef _functions_h_
@@ -40,66 +40,20 @@
 #define inv_epsilon2 (1.0/epsilon2)
 #define big_epsilon (sqrt(epsilon))
 
-//! Sane modulus function always returning a number in the range [0,y)
-inline real modulusf(real x,real y)
-{
-  if (y<0.0) y=-y;
-  real r=fmod(x,y);
-  if (r<0.0) r+=y;
-  return r;
-}
+extern void flushreg(const bool&);
 
-//! Sane modulus function always returning a number in the range [0,y-1]
-inline uint modulusi(int x,int y)
-{
-  if (y<0) y=-y;
-  int r=x%y;
-  if (r<0) r+=y;
-  assert(r>=0);
-  return r;
-}
+//------------------------------------------------------
 
-//! Triangle function: like modulus, but ramps down instead of discontinuity at y
-/*! Setting y=1 ensures x in [0,1]
- */
-inline real trianglef(real x,real y)
-{
-  if (y<0.0) y=-y;
-  if (x<0.0) x=-x;
-  real r=fmod(x,2.0*y);
-  if (r>y) r=2.0*y-r;
-  return r;
-}
+//! Function class returning simply scaled position
+FUNCTION_BEGIN(FunctionIsotropicScale,1,0,false,0)
 
-
-//------------------------------------------------------------------------------------------
-
-#include "function_core.h"
-#include "function_null.h"
-
-//------------------------------------------------------------------------------------------
-
-//! Function class returning position transfomed by a 12-component linear transform.
-FUNCTION_BEGIN(FunctionTransformGeneralised,0,4,false,0)
-
-  //! Return the transformed position argument.
+  //! Return the evaluation of arg(0) at the transformed position argument.
   virtual const XYZ evaluate(const XYZ& p) const
   {
-    const Transform transform(arg(0)(p),arg(1)(p),arg(2)(p),arg(3)(p));
-    return transform.transformed(p);
+    return param(0)*p;
   }
 
-  //! Is almost certainly not constant.
-  virtual const bool is_constant() const
-  {
-    return false;
-  }
-
-FUNCTION_END(FunctionTransformGeneralised)
-
-//------------------------------------------------------------------------------------------
-
-#include "function_pre_transform.h"
+FUNCTION_END(FunctionIsotropicScale)
 
 //------------------------------------------------------------------------------------------
 
@@ -115,17 +69,7 @@ FUNCTION_BEGIN(FunctionPreTransformGeneralised,0,5,false,0)
       return arg(0)(transform.transformed(p));
     }
 
-  //! Has the same const-ness as arg(0)
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionPreTransformGeneralised)
-
-//------------------------------------------------------------------------------------------
-
-#include "function_post_transform.h"
 
 //------------------------------------------------------------------------------------------
 
@@ -139,18 +83,6 @@ FUNCTION_BEGIN(FunctionPostTransformGeneralised,0,5,false,0)
     {
       const Transform transform(arg(1)(p),arg(2)(p),arg(3)(p),arg(4)(p));
       return transform.transformed(arg(0)(p));
-    }
-
-  //! Only constant if all the leaf functions are constant.
-  virtual const bool is_constant() const
-    {
-      return (
-	      arg(0).is_constant()
-	      && arg(1).is_constant()
-	      && arg(2).is_constant()
-	      && arg(3).is_constant()
-	      && arg(4).is_constant()
-	      );
     }
 
 FUNCTION_END(FunctionPostTransformGeneralised)
@@ -183,12 +115,6 @@ FUNCTION_BEGIN(FunctionTransformQuadratic,30,0,false,0)
 	+basis_xx*(p.x()*p.x())+basis_yy*(p.y()*p.y())+basis_zz*(p.z()*p.z());
     }
 
-  //! Unlikely to ever be constant (requires all parameters zero).
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionTransformQuadratic)
 
 //------------------------------------------------------------------------------------------
@@ -207,12 +133,6 @@ FUNCTION_BEGIN(FunctionCartesianToSpherical,0,0,false,0)
   
     return XYZ(r,theta,phi);
   }
-
-  //! Not constant.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
 
 FUNCTION_END(FunctionCartesianToSpherical)
 
@@ -233,12 +153,6 @@ FUNCTION_BEGIN(FunctionSphericalToCartesian,0,0,false,0)
     const real z=r*cos(phi);
     
     return XYZ(x,y,z);
-  }
-
-  //! Not constant.
-  virtual const bool is_constant() const
-  {
-    return false;
   }
 
 FUNCTION_END(FunctionSphericalToCartesian)
@@ -268,12 +182,6 @@ FUNCTION_BEGIN(FunctionEvaluateInSpherical,0,1,false,0)
       return XYZ(x,y,z);
     }
   
-  //! Is constant if leaf node is.
-  virtual const bool is_constant() const
-  {
-    return arg(0).is_constant();
-  }
-
 FUNCTION_END(FunctionEvaluateInSpherical)
 
 //------------------------------------------------------------------------------------------
@@ -292,12 +200,6 @@ FUNCTION_BEGIN(FunctionRotate,0,1,false,0)
       return rx*(ry*(rz*p));
     }
   
-  //! Is constant if leaf node is.
-  virtual const bool is_constant() const
-  {
-    return arg(0).is_constant();
-  }
-
 FUNCTION_END(FunctionRotate)
 
 //------------------------------------------------------------------------------------------
@@ -310,12 +212,6 @@ FUNCTION_BEGIN(FunctionSin,0,0,false,0)
       return XYZ(sin(p.x()),sin(p.y()),sin(p.z()));
     }
   
-  //! Isn't constant
-  virtual const bool is_constant() const
-  {
-    return false;
-  }
-
 FUNCTION_END(FunctionSin)
 
 //------------------------------------------------------------------------------------------
@@ -328,12 +224,6 @@ FUNCTION_BEGIN(FunctionCos,0,0,false,0)
       return XYZ(cos(p.x()),cos(p.y()),cos(p.z()));
     }
   
-  //! Isn't constant
-  virtual const bool is_constant() const
-  {
-    return false;
-  }
-
 FUNCTION_END(FunctionCos)
 
 //------------------------------------------------------------------------------------------
@@ -354,12 +244,6 @@ FUNCTION_BEGIN(FunctionSpiralLinear,0,1,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-  //! Is constant if the function being spiral-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionSpiralLinear)
 
 //------------------------------------------------------------------------------------------
@@ -381,12 +265,6 @@ FUNCTION_BEGIN(FunctionSpiralLogarithmic,0,1,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-  //! Is constant if the function being spiral-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionSpiralLogarithmic)
 
 //------------------------------------------------------------------------------------------
@@ -404,12 +282,6 @@ FUNCTION_BEGIN(FunctionDerivative,3,1,false,0)
       return (v1-v0)*inv_epsilon2;
     }
   
-  //! Is constant if the function being gradient-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionDerivative)
 
 //------------------------------------------------------------------------------------------
@@ -427,12 +299,6 @@ FUNCTION_BEGIN(FunctionDerivativeGeneralised,0,2,false,0)
       return (v1-v0)*inv_epsilon2;
     }
   
-  //! Is constant if the function being gradient-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionDerivativeGeneralised)
 
 //------------------------------------------------------------------------------------------
@@ -457,12 +323,6 @@ FUNCTION_BEGIN(FunctionGradient,3,1,false,0)
       return XYZ(vx1-vx0,vy1-vy0,vz1-vz0)*inv_epsilon2;
     }
   
-  //! Is constant if the function being gradient-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionGradient)
 
 //------------------------------------------------------------------------------------------
@@ -487,12 +347,6 @@ FUNCTION_BEGIN(FunctionGradientGeneralised,0,2,false,0)
       return XYZ(vx1-vx0,vy1-vy0,vz1-vz0)*inv_epsilon2;
     }
   
-  //! Is constant if the function being gradient-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionGradientGeneralised)
 
 //------------------------------------------------------------------------------------------
@@ -515,12 +369,6 @@ FUNCTION_BEGIN(FunctionDivergence,0,1,false,0)
       return (vx1-vx0+vy1-vy0+vz1-vz0)*inv_epsilon2;
     }
   
-  //! Is constant if the function being gradient-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionDivergence)
 
 //------------------------------------------------------------------------------------------
@@ -561,12 +409,6 @@ FUNCTION_BEGIN(FunctionCurl,0,1,false,0)
 	 );
     }
   
-  //! Is constant if the function being gradient-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionCurl)
 
 //------------------------------------------------------------------------------------------
@@ -598,49 +440,7 @@ FUNCTION_BEGIN(FunctionScalarLaplacian,0,1,false,0)
       return XYZ(dx1-dx0+dy1-dy0+dz1-dz0)/(big_epsilon*big_epsilon);
     }
   
-  //! Is constant if the function being gradient-ed is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionScalarLaplacian)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionComposePair,0,2,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return arg(1)(arg(0)(p));
-    }
-  
-  //! Is constant if either function is.
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() || arg(1).is_constant());
-    }
-
-FUNCTION_END(FunctionComposePair)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionComposeTriple,0,3,false,0)
-  
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return arg(2)(arg(1)(arg(0)(p)));
-    }
-  
-  //! Is constant if any function is.
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() || arg(1).is_constant() || arg(2).is_constant());
-    }
-
-FUNCTION_END(FunctionComposeTriple)
 
 //------------------------------------------------------------------------------------------
 
@@ -652,12 +452,6 @@ FUNCTION_BEGIN(FunctionAdd,0,2,false,0)
       return arg(0)(p)+arg(1)(p);
     }
   
-  //! Is constant if both leaf functions are.
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() && arg(1).is_constant());
-    }
-
 FUNCTION_END(FunctionAdd)
 
 //------------------------------------------------------------------------------------------
@@ -673,12 +467,6 @@ FUNCTION_BEGIN(FunctionMultiply,0,2,false,0)
       return XYZ(v0.x()*v1.x(),v0.y()*v1.y(),v0.z()*v1.z());
     }
   
-  //! Is constant if both leaf functions are.
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() && arg(1).is_constant());
-    }
-
 FUNCTION_END(FunctionMultiply)
 
 //------------------------------------------------------------------------------------------
@@ -699,12 +487,6 @@ FUNCTION_BEGIN(FunctionDivide,0,2,false,0)
 
     }
   
-  //! Is constant if both leaf functions are.
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() && arg(1).is_constant());
-    }
-
 FUNCTION_END(FunctionDivide)
 
 //------------------------------------------------------------------------------------------
@@ -719,12 +501,6 @@ FUNCTION_BEGIN(FunctionCross,0,2,false,0)
       return v0*v1;
     }
   
-  //! Is constant if both leaf functions are.
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() && arg(1).is_constant());
-    }
-
 FUNCTION_END(FunctionCross)
 
 //------------------------------------------------------------------------------------------
@@ -743,12 +519,6 @@ FUNCTION_BEGIN(FunctionMax,0,2,false,0)
 		 );
     }
   
-  //! Is constant if both leaf functions are.
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() && arg(1).is_constant());
-    }
-
 FUNCTION_END(FunctionMax)
 
 //------------------------------------------------------------------------------------------
@@ -767,12 +537,6 @@ FUNCTION_BEGIN(FunctionMin,0,2,false,0)
 		 );
     }
   
-  //! Is constant if both leaf functions are.
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() && arg(1).is_constant());
-    }
-
 FUNCTION_END(FunctionMin)
 
 //------------------------------------------------------------------------------------------
@@ -794,12 +558,6 @@ FUNCTION_BEGIN(FunctionModulus,0,2,false,0)
 		 );
     }
   
-  //! Is constant if both leaf functions are.
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() && arg(1).is_constant());
-    }
-
 FUNCTION_END(FunctionModulus)
 
 //------------------------------------------------------------------------------------------
@@ -812,12 +570,6 @@ FUNCTION_BEGIN(FunctionExp,0,0,false,0)
       return XYZ(exp(p.x()),exp(p.y()),exp(p.z()));
     }
   
-  //! Is not constant.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionExp)
 
 //------------------------------------------------------------------------------------------
@@ -834,12 +586,6 @@ FUNCTION_BEGIN(FunctionGeometricInversion,0,1,false,0)
       return arg(0)(ip);
     }
   
-  //! Is constant if leaf function is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionGeometricInversion)
 
 //------------------------------------------------------------------------------------------
@@ -867,12 +613,6 @@ FUNCTION_BEGIN(FunctionReflect,0,3,false,0)
       return pos;
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(2).is_constant();
-    }
-
 FUNCTION_END(FunctionReflect)
 
 //------------------------------------------------------------------------------------------
@@ -894,12 +634,6 @@ FUNCTION_BEGIN(FunctionKaleidoscope,1,1,false,FnStructure)
       return arg(0)(s);
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionKaleidoscope)
 
 //------------------------------------------------------------------------------------------
@@ -923,12 +657,6 @@ FUNCTION_BEGIN(FunctionKaleidoscopeZRotate,2,1,false,FnStructure)
       return arg(0)(s);
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionKaleidoscopeZRotate)
 
 //------------------------------------------------------------------------------------------
@@ -950,12 +678,6 @@ FUNCTION_BEGIN(FunctionKaleidoscopeTwist,2,1,false,FnStructure)
       return arg(0)(s);
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionKaleidoscopeTwist)
 
 //------------------------------------------------------------------------------------------
@@ -977,12 +699,6 @@ FUNCTION_BEGIN(FunctionWindmill,1,1,false,FnStructure)
       return arg(0)(s);
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionWindmill)
 
 //------------------------------------------------------------------------------------------
@@ -1006,12 +722,6 @@ FUNCTION_BEGIN(FunctionWindmillZRotate,2,1,false,FnStructure)
       return arg(0)(s);
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionWindmillZRotate)
 
 //------------------------------------------------------------------------------------------
@@ -1033,12 +743,6 @@ FUNCTION_BEGIN(FunctionWindmillTwist,2,1,false,FnStructure)
       return arg(0)(s);
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionWindmillTwist)
 
 //------------------------------------------------------------------------------------------
@@ -1053,12 +757,6 @@ FUNCTION_BEGIN(FunctionFriezeStrip,0,3,false,FnStructure)
       else return arg(0)(p);
     }
   
-  //! Is constant if all sampled functions are
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant());
-    }
-
 FUNCTION_END(FunctionFriezeStrip)
 
 //------------------------------------------------------------------------------------------
@@ -1084,12 +782,6 @@ FUNCTION_BEGIN(FunctionFriezeStripBlend,0,4,false,FnStructure)
       return v0+(v1-v0)*(ay-inner)/(outer-inner);
     }
   
-  //! Is constant if all sampled functions are
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant() && arg(3).is_constant());
-    }
-
 FUNCTION_END(FunctionFriezeStripBlend)
 //------------------------------------------------------------------------------------------
 
@@ -1105,12 +797,6 @@ FUNCTION_BEGIN(FunctionFriezeGroup1,0,1,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionFriezeGroup1)
 
 //------------------------------------------------------------------------------------------
@@ -1127,12 +813,6 @@ FUNCTION_BEGIN(FunctionFriezeGroup2,0,1,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionFriezeGroup2)
 
 //------------------------------------------------------------------------------------------
@@ -1149,12 +829,6 @@ FUNCTION_BEGIN(FunctionFriezeGroup3,0,1,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionFriezeGroup3)
 
 //------------------------------------------------------------------------------------------
@@ -1171,12 +845,6 @@ FUNCTION_BEGIN(FunctionFriezeGroup4,0,1,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionFriezeGroup4)
 
 //------------------------------------------------------------------------------------------
@@ -1193,12 +861,6 @@ FUNCTION_BEGIN(FunctionFriezeGroup5,0,1,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionFriezeGroup5)
 
 //------------------------------------------------------------------------------------------
@@ -1216,12 +878,6 @@ FUNCTION_BEGIN(FunctionFriezeGroup6,0,1,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionFriezeGroup6)
 
 //------------------------------------------------------------------------------------------
@@ -1238,12 +894,6 @@ FUNCTION_BEGIN(FunctionFriezeGroup7,0,1,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-  //! Is constant if sampled function is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionFriezeGroup7)
 
 //------------------------------------------------------------------------------------------
@@ -1261,12 +911,6 @@ FUNCTION_BEGIN(FunctionMagnitudes,0,3,false,0)
 		 );
     }
   
-  //! Is constant if all leaf functions are
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant());
-    }
-
 FUNCTION_END(FunctionMagnitudes)
 
 //------------------------------------------------------------------------------------------
@@ -1281,12 +925,6 @@ FUNCTION_BEGIN(FunctionMagnitude,0,0,false,0)
       return XYZ(m,m,m);
     }
   
-  //! Is not constant.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionMagnitude)
 
 //------------------------------------------------------------------------------------------
@@ -1303,12 +941,6 @@ FUNCTION_BEGIN(FunctionChooseSphere,0,4,false,0)
 	return arg(3)(p);
     }
   
-  //! Is constant if all leaf functions are
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant() && arg(3).is_constant());
-    }
-
 FUNCTION_END(FunctionChooseSphere)
 
 //------------------------------------------------------------------------------------------
@@ -1328,12 +960,6 @@ FUNCTION_BEGIN(FunctionChooseRect,0,4,false,0)
 	return arg(3)(p);
     }
   
-  //! Is constant if all leaf functions are
-  virtual const bool is_constant() const
-    {
-      return (arg(0).is_constant() && arg(1).is_constant() && arg(2).is_constant() && arg(3).is_constant());
-    }
-
 FUNCTION_END(FunctionChooseRect)
 
 //------------------------------------------------------------------------------------------
@@ -1354,12 +980,6 @@ FUNCTION_BEGIN(FunctionChooseFrom2InCubeMesh,0,2,false,FnStructure)
 	return arg(1)(p);
     }
   
-  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionChooseFrom2InCubeMesh);
 
 //------------------------------------------------------------------------------------------
@@ -1377,12 +997,6 @@ FUNCTION_BEGIN(FunctionChooseFrom3InCubeMesh,0,3,false,FnStructure)
       return arg(modulusi(x+y+z,3))(p);
     }
   
-  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionChooseFrom3InCubeMesh)
 
 //------------------------------------------------------------------------------------------
@@ -1402,12 +1016,6 @@ FUNCTION_BEGIN(FunctionChooseFrom2InSquareGrid,0,2,false,FnStructure)
 	return arg(1)(p);
     }
   
-  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionChooseFrom2InSquareGrid)
 
 //------------------------------------------------------------------------------------------
@@ -1424,12 +1032,6 @@ FUNCTION_BEGIN(FunctionChooseFrom3InSquareGrid,0,3,false,FnStructure)
       return arg(modulusi(x+y,3))(p);
     }
   
-  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionChooseFrom3InSquareGrid)
 
 //------------------------------------------------------------------------------------------
@@ -1454,12 +1056,6 @@ FUNCTION_BEGIN(FunctionChooseFrom2InTriangleGrid,0,2,false,FnStructure)
 	return arg(1)(p);
     }
   
-  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionChooseFrom2InTriangleGrid)
 
 //------------------------------------------------------------------------------------------
@@ -1483,12 +1079,6 @@ FUNCTION_BEGIN(FunctionChooseFrom3InTriangleGrid,0,3,false,FnStructure)
       return arg(modulusi(a+b+c,3))(p);
     }
   
-  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionChooseFrom3InTriangleGrid)
 
 //------------------------------------------------------------------------------------------
@@ -1530,12 +1120,6 @@ FUNCTION_BEGIN(FunctionChooseFrom3InDiamondGrid,0,3,false,FnStructure)
 	return arg(2)(p);
     }
   
-  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionChooseFrom3InDiamondGrid)
 
 //------------------------------------------------------------------------------------------
@@ -1598,12 +1182,6 @@ FUNCTION_BEGIN(FunctionChooseFrom3InHexagonGrid,0,3,false,FnStructure)
       return arg(modulusi(which,3))(p);
     }
     
-  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionChooseFrom3InHexagonGrid)
 
 //------------------------------------------------------------------------------------------
@@ -1688,12 +1266,6 @@ FUNCTION_BEGIN(FunctionChooseFrom2InBorderedHexagonGrid,1,2,false,FnStructure)
       return arg(in_border)(p);
     }
   
-  //! Isn't constant (unless leaf functions constant and return same result - unlikely)
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionChooseFrom2InBorderedHexagonGrid)
 
 //------------------------------------------------------------------------------------------
@@ -1727,12 +1299,6 @@ FUNCTION_BEGIN(FunctionOrthoSphereShaded,3,2,false,FnRender)
 	}
     }
   
-  //! Can't be constant unless args are constant and equal (unlikely).
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionOrthoSphereShaded)
 
 //------------------------------------------------------------------------------------------
@@ -1781,12 +1347,6 @@ FUNCTION_BEGIN(FunctionOrthoSphereShadedBumpMapped,3,3,false,FnRender)
 	}
     }
   
-  //! Unlikely to be constant.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionOrthoSphereShadedBumpMapped)
 
 
@@ -1824,12 +1384,6 @@ FUNCTION_BEGIN(FunctionOrthoSphereReflect,0,2,false,FnRender)
 	}
     }
   
-  //! Can't be constant unless args are constant and equal (unlikely).
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionOrthoSphereReflect)
 
 //------------------------------------------------------------------------------------------
@@ -1881,12 +1435,6 @@ FUNCTION_BEGIN(FunctionOrthoSphereReflectBumpMapped,0,3,false,FnRender)
 	}
     }
   
-  //! Can't be constant unless args are constant and equal (unlikely).
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionOrthoSphereReflectBumpMapped)
 
 //------------------------------------------------------------------------------------------
@@ -1906,12 +1454,6 @@ FUNCTION_BEGIN(FunctionFilter2D,2,1,false,0)
 	  )/4.0;
     }
   
-  //! Is constant if arg is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionFilter2D)
 
 //------------------------------------------------------------------------------------------
@@ -1933,12 +1475,6 @@ FUNCTION_BEGIN(FunctionFilter3D,3,1,false,0)
 	  )/6.0;
     }
   
-  //! Is constant if arg is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionFilter3D)
 
 //------------------------------------------------------------------------------------------
@@ -1953,12 +1489,6 @@ FUNCTION_BEGIN(FunctionShadow,4,1,false,0)
 	arg(0)(p)+param(3)*arg(0)(p+XYZ(param(0),param(1),param(2)));
     }
   
-  //! Is constant if arg is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionShadow)
 
 
@@ -1974,12 +1504,6 @@ FUNCTION_BEGIN(FunctionShadowGeneralised,1,2,false,0)
 	arg(0)(p)+param(0)*arg(0)(p+arg(1)(p));
     }
   
-  //! Is constant if arg(0) is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionShadowGeneralised)
 
 //------------------------------------------------------------------------------------------
@@ -1993,12 +1517,6 @@ FUNCTION_BEGIN(FunctionCone,0,0,false,0)
       return XYZ(p.x()*p.z(),p.y()*p.z(),p.z());
     }
   
-  //! Not constant
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionCone)
 
 //------------------------------------------------------------------------------------------
@@ -2013,12 +1531,6 @@ FUNCTION_BEGIN(FunctionExpCone,0,0,false,0)
       return XYZ(p.x()*k,p.y()*k,p.z());
     }
   
-  //! Not constant
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionExpCone)
 
 //------------------------------------------------------------------------------------------
@@ -2035,139 +1547,7 @@ FUNCTION_BEGIN(FunctionSeparateZ,3,2,false,0)
       return arg(1)(v+p.z()*XYZ(param(0),param(1),param(2)));
     }
   
-  //! Constant if arg(1) is
-  virtual const bool is_constant() const
-    {
-      return arg(1).is_constant();
-    }
-
 FUNCTION_END(FunctionSeparateZ)
-
-//------------------------------------------------------------------------------------------
-
-#include "noise.h"
-
-//! Perlin noise function.
-/*! Returns a single value replicated into all three channels
-*/
-FUNCTION_BEGIN(FunctionNoiseOneChannel,0,0,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      // Crank up the frequency a bit otherwise don't see much variation in base case
-      const real v=_noise(2.0*p);
-      return XYZ(v,v,v);
-    }
-  
-  //! Not constant
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
- protected:
-  static Noise _noise;
-
-FUNCTION_END(FunctionNoiseOneChannel)
-
-//------------------------------------------------------------------------------------------
-
-
-//! Multiscale noise function.
-/*! Returns a single value replicated into all three channels
-*/
-FUNCTION_BEGIN(FunctionMultiscaleNoiseOneChannel,0,0,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      real t=0.0;
-      real tm=0.0;
-      for (uint i=0;i<8;i++)
-	{
-	  const real k=(1<<i);
-	  const real ik=1.0/k;
-	  t+=ik*_noise(k*p);
-	  tm+=ik;
-	}
-      const real v=t/tm;
-      return XYZ(v,v,v);
-    }
-  
-  //! Not constant
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
- protected:
-  static Noise _noise;
-
-FUNCTION_END(FunctionMultiscaleNoiseOneChannel)
-
-//------------------------------------------------------------------------------------------
-
-//! Perlin noise function.
-/*! Returns three independent channels
-*/
-FUNCTION_BEGIN(FunctionNoiseThreeChannel,0,0,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return XYZ(_noise0(p),_noise1(p),_noise2(p));
-    }
-  
-  //! Not constant
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
- protected:
-  static Noise _noise0;
-  static Noise _noise1;
-  static Noise _noise2;
-
-FUNCTION_END(FunctionNoiseThreeChannel)
-
-//------------------------------------------------------------------------------------------
-
-//! Perlin multiscale noise function.
-/*! Returns three independent channels
-*/
-FUNCTION_BEGIN(FunctionMultiscaleNoiseThreeChannel,0,0,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      XYZ t(0.0,0.0,0.0);
-      real tm=0.0;
-      for (uint i=0;i<8;i++)
-	{
-	  const real k=(1<<i);
-	  const real ik=1.0/k;
-	  const XYZ kp(k*p);
-	  t+=ik*XYZ(_noise0(kp),_noise1(kp),_noise2(kp));
-	  tm+=ik;
-	}
-      return t/tm;
-    }
-  
-  //! Not constant
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
- protected:
-  static Noise _noise0;
-  static Noise _noise1;
-  static Noise _noise2;
-
-FUNCTION_END(FunctionMultiscaleNoiseThreeChannel)
-
 
 //------------------------------------------------------------------------------------------
 
@@ -2183,12 +1563,6 @@ FUNCTION_BEGIN(FunctionIterate,0,1,true,FnIterative)
       return ret;
     }
   
-  //! Is constant if leaf function is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionIterate)
 
 //------------------------------------------------------------------------------------------
@@ -2231,12 +1605,6 @@ FUNCTION_BEGIN(FunctionAverageSamples,3,1,true,FnIterative)
       return ret;
     }
   
-  //! Is constant if sampled leaf function is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionAverageSamples)
 
 //------------------------------------------------------------------------------------------
@@ -2281,12 +1649,6 @@ FUNCTION_BEGIN(FunctionStreak,3,1,true,FnIterative)
       return ret;
     }
   
-  //! Is constant if sampled leaf function is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionStreak)
 
 //------------------------------------------------------------------------------------------
@@ -2310,12 +1672,6 @@ FUNCTION_BEGIN(FunctionAverageRing,1,1,true,FnIterative)
       return ret/iterations();
     }
   
-  //! Is constant if sampled leaf function is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionAverageRing)
 
 //------------------------------------------------------------------------------------------
@@ -2339,12 +1695,6 @@ FUNCTION_BEGIN(FunctionFilterRing,1,1,true,FnIterative)
       return ret/iterations()-arg(0)(p);
     }
   
-  //! Is constant if sampled leaf function is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionFilterRing)
 
 //------------------------------------------------------------------------------------------
@@ -2387,12 +1737,6 @@ FUNCTION_BEGIN(FunctionConvolveSamples,3,2,true,FnIterative)
       return ret;
     }
   
-  //! Is constant if arg(0) is
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionConvolveSamples)
 
 //------------------------------------------------------------------------------------------
@@ -2416,12 +1760,6 @@ FUNCTION_BEGIN(FunctionAccumulateOctaves,0,1,true,FnIterative)
       return ret;
     }
   
-  //! Is constant if sampled leaf function is.
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
 FUNCTION_END(FunctionAccumulateOctaves)
 
 
@@ -2464,12 +1802,6 @@ FUNCTION_BEGIN(FunctionMandelbrotChoose,0,2,true,FnIterative|FnFractal)
       return (brot(0.0,0.0,p.x(),p.y(),iterations())==iterations() ? arg(0)(p) : arg(1)(p));
     }
   
-  //! Can't be constant unless functions are the same.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionMandelbrotChoose)
 
 //-----------------------------------------------------------------------------------------
@@ -2484,12 +1816,6 @@ FUNCTION_BEGIN(FunctionMandelbrotContour,0,0,true,FnIterative|FnFractal)
       return (i==iterations() ? XYZ::fill(-1.0) : XYZ::fill(static_cast<real>(i)/iterations()));
     }
   
-  //! Not constant.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionMandelbrotContour)
 
 //------------------------------------------------------------------------------------------
@@ -2503,12 +1829,6 @@ FUNCTION_BEGIN(FunctionJuliaChoose,2,2,true,FnIterative|FnFractal)
       return (brot(p.x(),p.y(),param(0),param(1),iterations())==iterations() ? arg(0)(p) : arg(1)(p));
     }
   
-  //! Can't be constant unless functions are the same.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionJuliaChoose)
 
 //------------------------------------------------------------------------------------------
@@ -2523,12 +1843,6 @@ FUNCTION_BEGIN(FunctionJuliaContour,2,0,true,FnIterative|FnFractal)
       return (i==iterations() ? XYZ::fill(-1.0) : XYZ::fill(static_cast<real>(i)/iterations()));
     }
   
-  //! Not constant.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionJuliaContour)
 
 //------------------------------------------------------------------------------------------
@@ -2549,12 +1863,6 @@ FUNCTION_BEGIN(FunctionJuliabrotChoose,16,2,true,FnIterative|FnFractal)
       return (brot(zr,zi,cr,ci,iterations())==iterations() ? arg(0)(p) : arg(1)(p));
     }
   
-  //! Can't be constant unless functions are the same.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionJuliabrotChoose)
 
 //------------------------------------------------------------------------------------------
@@ -2576,12 +1884,6 @@ FUNCTION_BEGIN(FunctionJuliabrotContour,16,0,true,FnIterative|FnFractal)
       return (i==iterations() ? XYZ::fill(-1.0) : XYZ::fill(static_cast<real>(i)/iterations()));
     }
   
-  //! Can't be constant unless functions are the same.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionJuliabrotContour)
 
 

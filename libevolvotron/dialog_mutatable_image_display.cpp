@@ -26,7 +26,7 @@ DialogMutatableImageDisplay::DialogMutatableImageDisplay(QWidget* parent)
   :QDialog(parent,0,TRUE)
 {
   setCaption("Image Properties");
-  setMinimumSize(256,128);
+  setMinimumSize(320,240);
 
   _vbox=new QVBox(this);
 

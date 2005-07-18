@@ -39,6 +39,7 @@ FUNCTION_BEGIN(FunctionConstant,3,0,false,FnCore)
     }
 
   //! Returns true, obviously.
+  /*! One of the few cases this method is overriden; most (all) other no-argument functions should return false*/
   virtual const bool is_constant() const
     {
       return true;
@@ -57,12 +58,6 @@ FUNCTION_BEGIN(FunctionIdentity,0,0,false,FnCore)
       return p;
     }
 
-  //! Is definitely not constant.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionIdentity)
 
 //------------------------------------------------------------------------------------------
@@ -77,15 +72,8 @@ FUNCTION_BEGIN(FunctionTransform,12,0,false,FnCore)
     return transform.transformed(p);
   }
 
-  //! Is definitely not constant.
-  virtual const bool is_constant() const
-    {
-      return false;
-    }
-
 FUNCTION_END(FunctionTransform)
 
 //------------------------------------------------------------------------------------------
-
 
 #endif

@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2005 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -17,16 +17,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 /*! \file
-  \brief Implementation of specific Function classes.
-  Except there's nothing here because it's all in the header.
-  And in fact we don't even include functions.h because it just takes
-  ages to compile, then never gets linked into any final executable
-  because nothing is needed from this module.  (Although it seems that
-  even referencing one symbol from here would do the trick).
+  \brief Implementation of noise related function classes.
 */
  
-#include "useful.h"
-#include "function_boilerplate.h"
-#include "function_registry.h"             
+#include "functions_noise.h"
 
-//#include "functions.h"
+Noise FunctionNoiseOneChannel::_noise(100);
+
+Noise FunctionMultiscaleNoiseOneChannel::_noise(101);
+
+Noise FunctionNoiseThreeChannel::_noise0(200);
+Noise FunctionNoiseThreeChannel::_noise1(300);
+Noise FunctionNoiseThreeChannel::_noise2(400);
+
+Noise FunctionMultiscaleNoiseThreeChannel::_noise0(201);
+Noise FunctionMultiscaleNoiseThreeChannel::_noise1(202);
+Noise FunctionMultiscaleNoiseThreeChannel::_noise2(203);
+

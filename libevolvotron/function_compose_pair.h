@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2005 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -16,28 +16,33 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-/*! \file 
-  \brief Interface for class FunctionNull 
-  This class would normally live in functions.h (and is included and registered there), 
-  but is split out so it can be efficiently used by MutatableImage.
+/*! \file
+  \brief Interfaces and implementation for FunctionComposeTriple
 */
 
-#ifndef _function_null_h_
-#define _function_null_h_
+#ifndef _function_compose_pair_h_
+#define _function_compose_pair_h_
 
-#include "xyz.h"
-#include "function_node.h"
+#include "useful.h"
+#include "function_registry.h"
 #include "function_boilerplate.h"
 
-//! Function class simply forwarding to leaf node
-FUNCTION_BEGIN(FunctionNull,0,1,false,0)
+FUNCTION_BEGIN(FunctionComposePair,0,2,false,0)
 
-  //! Simply return the position argument.
+  //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return arg(0)(p);
+      return arg(1)(arg(0)(p));
     }
 
-FUNCTION_END(FunctionNull)
+  //! Is constant if the "leftmost" function is.
+  /*! One of the few cases it's worth overriding this method
+   */
+  virtual const bool is_constant() const
+    {
+      return (arg(1).is_constant());
+    }
+
+FUNCTION_END(FunctionComposePair)
 
 #endif

@@ -138,6 +138,37 @@ template <typename T> class Singleton
   static T* _singleton_instance;  
 };
 
+//! Sane modulus function always returning a number in the range [0,y)
+inline real modulusf(real x,real y)
+{
+  if (y<0.0) y=-y;
+  real r=fmod(x,y);
+  if (r<0.0) r+=y;
+  return r;
+}
+
+//! Sane modulus function always returning a number in the range [0,y-1]
+inline uint modulusi(int x,int y)
+{
+  if (y<0) y=-y;
+  int r=x%y;
+  if (r<0) r+=y;
+  assert(r>=0);
+  return r;
+}
+
+//! Triangle function: like modulus, but ramps down instead of discontinuity at y
+/*! Setting y=1 ensures x in [0,1]
+ */
+inline real trianglef(real x,real y)
+{
+  if (y<0.0) y=-y;
+  if (x<0.0) x=-x;
+  real r=fmod(x,2.0*y);
+  if (r>y) r=2.0*y-r;
+  return r;
+}
+
 #endif
 
 

@@ -26,7 +26,8 @@
 #include <iosfwd>
 
 #include "function_node.h"
-#include "function_null.h"
+
+class FunctionNull;
 
 //! Class to hold the base FunctionNode of an image.
 /*! Once it owns a root FunctionNode* the whole structure should be fixed (mutate isn't available, only mutated).
@@ -54,38 +55,13 @@ class MutatableImage
  public:
   
   //! Take ownership of the image tree with the specified root node.
-  MutatableImage(FunctionNode* r,bool sinz,bool sm)
-    :_root_holder(0)
-    ,_sinusoidal_z(sinz)
-    ,_spheremap(sm)
-    ,_locked(false)
-    {
-      assert(r!=0);
-      std::vector<real> pv;
-      std::vector<FunctionNode*> av;
-      av.push_back(r);
-      _root_holder=new FunctionNull(pv,av,0);
-    }
+  MutatableImage(FunctionNode* r,bool sinz,bool sm);
 
   //! Create a new random image tree.
-  MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm)
-    :_root_holder(0)
-    ,_sinusoidal_z(true)
-    ,_spheremap(sm)
-    ,_locked(false)
-    {      
-      std::vector<real> pv;
-      std::vector<FunctionNode*> av;
-      av.push_back(FunctionNode::stub(parameters,exciting));
-      _root_holder=new FunctionNull(pv,av,0);
-      //! \todo _sinusoidal_z should be obtained from AnimationParameters when it exists
-    }
+  MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm);
 
   //! Destructor.  NB Deletes owned image function tree.
-  ~MutatableImage()
-    {
-      delete _root_holder;
-    }
+  virtual ~MutatableImage();
 
   //! Returns the sampling co-ordinate given a pixel position
   /*! This depends on things like sinusoidal_z and spheremap
@@ -93,10 +69,7 @@ class MutatableImage
   const XYZ sampling_coordinate(uint x,uint y,uint z,uint sx,uint sy,uint sz) const;
 
   //! Accessor.
-  const FunctionNode*const root() const
-    {
-      return _root_holder->argptr(0);
-    }
+  const FunctionNode*const root() const;
 
   //! Accessor.
   /*
@@ -131,10 +104,7 @@ class MutatableImage
     }
 
   //! Clone this image.
-  MutatableImage*const deepclone() const
-    {
-      return new MutatableImage(root()->deepclone(),sinusoidal_z(),spheremap()); 
-    }
+  MutatableImage*const deepclone() const;
 
   //! Return a mutated version of this image
   MutatableImage*const mutated(const MutationParameters& p) const;
@@ -143,19 +113,12 @@ class MutatableImage
   MutatableImage*const simplified() const;
 
   //! Evaluate the image at specified coordinate.
-  const XYZ operator()(const XYZ& p) const
-    {
-      assert(root()!=0);
-      return (*root())(p);
-    }
+  const XYZ operator()(const XYZ& p) const;
 
   void get_rgb(const XYZ& p,uint c[3]) const;
 
   //! Return whether image value is independent of position.
-  const bool is_constant() const
-    {
-      return root()->is_constant();
-    }
+  const bool is_constant() const;
 
   //! Save the function-tree to the stream
   std::ostream& save_function(std::ostream& out) const;
@@ -167,10 +130,7 @@ class MutatableImage
   void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const;
 
   //! Check the function tree is ok.
-  const bool ok() const
-    {
-      return root()->ok();
-    }  
+  const bool ok() const;
 };
 
 #endif

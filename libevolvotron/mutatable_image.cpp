@@ -31,6 +31,64 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_null.h"
 #include "mutatable_image_display_big.h"
 
+MutatableImage::MutatableImage(FunctionNode* r,bool sinz,bool sm)
+  :_root_holder(0)
+  ,_sinusoidal_z(sinz)
+  ,_spheremap(sm)
+  ,_locked(false)
+{
+  assert(r!=0);
+  std::vector<real> pv;
+  std::vector<FunctionNode*> av;
+  av.push_back(r);
+  _root_holder=new FunctionNull(pv,av,0);
+}
+
+MutatableImage::MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm)
+  :_root_holder(0)
+  ,_sinusoidal_z(true)
+  ,_spheremap(sm)
+  ,_locked(false)
+{      
+  std::vector<real> pv;
+  std::vector<FunctionNode*> av;
+  av.push_back(FunctionNode::stub(parameters,exciting));
+  _root_holder=new FunctionNull(pv,av,0);
+  //! \todo _sinusoidal_z should be obtained from AnimationParameters when it exists
+}
+
+MutatableImage::~MutatableImage()
+{
+  delete _root_holder;
+}
+
+//! Accessor.
+const FunctionNode*const MutatableImage::root() const
+{
+  return _root_holder->argptr(0);
+}
+
+MutatableImage*const MutatableImage::deepclone() const
+{
+  return new MutatableImage(root()->deepclone(),sinusoidal_z(),spheremap()); 
+}
+
+const XYZ MutatableImage::operator()(const XYZ& p) const
+{
+  assert(root()!=0);
+  return (*root())(p);
+}
+
+const bool MutatableImage::is_constant() const
+{
+  return root()->is_constant();
+}
+
+const bool MutatableImage::ok() const
+{
+  return root()->ok();
+}  
+
 const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint sy,uint sz) const
 {
   if (spheremap())

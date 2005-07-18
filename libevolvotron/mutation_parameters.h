@@ -49,6 +49,9 @@ class MutationParameters : public QObject
    */
   mutable Random01 _r01;
 
+  //! Negative-exponential generator might be useful too.
+  mutable RandomNegExp _r_negexp;
+
   //! Specifies the magnitude of random changes to FunctionNodeConstant.
   real _magnitude;
 
@@ -124,6 +127,11 @@ class MutationParameters : public QObject
   const real r01() const
     {
       return _r01();
+    }
+
+  const real rnegexp() const
+    {
+      return _r_negexp();
     }
 
   //! Accessor.

@@ -59,16 +59,18 @@ std::ostream& FunctionRegistry::status(std::ostream& out) const
 
 const bool FunctionRegistry::name_and_register(const char* n,FunctionRegistration& r)
 {
+  //NB IO is a bad idea here: occurs during static init so std::clog maybe not redirected by -v option (or it's absence)
   r.name(n);
 
-  //std::clog << "Registering " << n << ": ";
   const std::string ns(n);
   if (_registry_by_name.find(ns)!=_registry_by_name.end())
     {
+      //std::clog << "Duplicate registration of " << n << "\n";
       return false;
     }
   else
     {
+      //std::clog << "Registering " << n << "\n";
       const FunctionRegistration*const definitive_reg=new FunctionRegistration(n,r);
 
       _registry_by_name[ns]=definitive_reg;

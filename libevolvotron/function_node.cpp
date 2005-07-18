@@ -18,6 +18,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /*! \file
   \brief Implementation of class FunctionNode and derived classes.
+  Also include all function definition headers here becuase code from this compile module
+  is included in any built executable and this sucks all the classes in.
+  Trying to leave registration in functions.cpp doesn't trigger a link.
 */
 
 #include <algorithm>
@@ -30,8 +33,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "mutatable_image.h"
 
-// This is the ONLY place this should be included as FunctionNode::stub will instantiate everything
-//! \todo Would like functions.h to only be included in one file to avoid multiple statics
+#include "function_core.h"
+#include "function_transform_generalised.h"
+#include "function_compose_triple.h"
+#include "function_compose_pair.h"
+#include "function_pre_transform.h"
+#include "function_post_transform.h"
+#include "function_null.h"
+#include "functions_noise.h"
 #include "functions.h"
 
 const std::vector<FunctionNode*> FunctionNode::cloneargs() const
@@ -135,6 +144,16 @@ const bool FunctionNode::verify_info(const FunctionNodeInfo* info,unsigned int n
   return true;
 }
 
+const bool FunctionNode::is_constant() const
+{
+  if (args().empty()) return false;
+  for (unsigned int i=0;i<args().size();i++)
+    {
+      if (!arg(i).is_constant()) return false;
+    }
+  return true;
+}
+
 const bool FunctionNode::create_args(const FunctionNodeInfo* info,std::vector<FunctionNode*>& args,std::string& report)
 {
   for (std::vector<FunctionNodeInfo*>::const_iterator it=info->args().begin();it!=info->args().end();it++)
@@ -180,21 +199,17 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
       
       {
 	const real which=parameters.r01();
-	if (which<0.4f)
+	if (which<0.45)
 	  {
 	    args_toplevel.push_back(FunctionTransformGeneralised::stubnew(parameters,false));
 	  }
-	else if (which<0.8f)
+	else if (which<0.9)
 	  {
 	    args_toplevel.push_back(FunctionTransform::stubnew(parameters,false));
 	  }
-	else if (which<0.9)
-	  {
-	    args_toplevel.push_back(FunctionTransformQuadratic::stubnew(parameters,false));
-	  }
 	else
 	  {
-	    args_toplevel.push_back(FunctionIdentity::stubnew(parameters,false));
+	    args_toplevel.push_back(FunctionIsotropicScale::stubnew(parameters,false));
 	  }
       }
 
@@ -211,21 +226,17 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
       {
 	const real which=parameters.r01();
 
-	if (which<0.4f)
+	if (which<0.45)
 	  {
 	    args_toplevel.push_back(FunctionTransformGeneralised::stubnew(parameters,false));
 	  }
-	else if (which<0.8f)
+	else if (which<0.9)
 	  {
 	    args_toplevel.push_back(FunctionTransform::stubnew(parameters,false));
 	  }
-	else if (which<0.9)
-	  {
-	    args_toplevel.push_back(FunctionTransformQuadratic::stubnew(parameters,false));
-	  }
 	else
 	  {
-	    args_toplevel.push_back(FunctionIdentity::stubnew(parameters,false));
+	    args_toplevel.push_back(FunctionIsotropicScale::stubnew(parameters,false));
 	  }	
       }
 
@@ -262,7 +273,10 @@ const std::vector<real> FunctionNode::stubparams(const MutationParameters& param
   std::vector<real> ret;
   for (uint i=0;i<n;i++)
     {
-      ret.push_back(-1.0+2.0*parameters.r01());
+      //real v=-1.0+2.0*parameters.r01();
+      //while (parameters.r01()<0.125) v*=2.0;
+      real v=parameters.rnegexp();
+      ret.push_back(parameters.r01() < 0.5 ? -v : v);
     }
   return ret;
 }

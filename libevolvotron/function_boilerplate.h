@@ -31,7 +31,7 @@
 #include "margin.h"
 
 //! Template class to generate boilerplate for virtual methods.
-template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class FunctionBoilerplate : public FunctionNode
+template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION> class FunctionBoilerplate : public FunctionNode
 {
  public:
   typedef FunctionNode Superclass;
@@ -45,13 +45,11 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class
   virtual const XYZ evaluate(const XYZ& p) const
     =0;
   
-  //! Constant-ness is supplied by the specific class.
-  virtual const bool is_constant() const
-    =0;
+  //! Bits give some classification of the function type
+  static const uint type_classification() {return CLASSIFICATION;}
 
   //! Bits give some classification of the function type
-  virtual const uint self_classification() const
-    =0;
+  virtual const uint self_classification() const {return CLASSIFICATION;}
 
   //! Constructor
   /*! \warning Careful to pass an appropriate initial iteration count for iterative functions.
@@ -132,14 +130,14 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> class
   \warning Returns a new instance of the registration for each invokation,
   but should only be being called once if REGISTER is used correctly (once for each class).
 */
-template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE> 
-	     FunctionRegistration& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE>::get_registration()
+template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION> 
+	     FunctionRegistration& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::get_registration()
 {
   static FunctionRegistration reg
     (
      /*typeid(FUNCTION).name(),*/
-     &FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE>::stubnew,
-     &FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE>::create,
+     &FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::stubnew,
+     &FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::create,
      PARAMETERS,
      ARGUMENTS,
      ITERATIVE,
@@ -149,24 +147,18 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE>
 }
 
 #define FUNCTION_BEGIN(FN,NP,NA,IT,CL) \
-   class FN : public FunctionBoilerplate<FN,NP,NA,IT> \
+   class FN : public FunctionBoilerplate<FN,NP,NA,IT,CL> \
    {public: \
      FN(const std::vector<real>& p,const std::vector<FunctionNode*>& a,uint iter) \
-       :FunctionBoilerplate<FN,NP,NA,IT>(p,a,iter) {} \
-     virtual ~FN() {} \
-     static const uint type_classification() {return CL;} \
-     virtual const uint self_classification() const {return CL;}
-
+       :FunctionBoilerplate<FN,NP,NA,IT,CL>(p,a,iter) {} \
+     virtual ~FN() {}
  
 //! Macro to push registrations through to registry.
-/*! The idea was that this would only be defined in functions.cpp,
-  (where there is a #define DO_REGISTRATION)
-  so there would only be one file performing registration.
-  In practice this doesn't work, so we just register in every unit
-  a function has visibility and let the registry ignore duplicates.
-  (a NiftyCounter would work in much the same way, discarding duplicates using it's counter).
+/*! In practice multiple registrations occur for "framework" classes
+  instantiated in locations other than functions.cpp.  But it
+  doesn't matter.
 */
-#define REGISTER(FN) static const bool registered_ ## FN =FunctionRegistry::get()->name_and_register(#FN,FN::get_registration());
+#define REGISTER(FN) namespace {const bool registered_ ## FN =FunctionRegistry::get()->name_and_register(#FN,FN::get_registration());}
 
 #define FUNCTION_END(FN) };REGISTER(FN)
 

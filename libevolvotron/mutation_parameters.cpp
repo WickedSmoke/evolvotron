@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 MutationParameters::MutationParameters(uint seed,QObject* parent)
   :QObject(parent)
   ,_r01(seed)
+  ,_r_negexp(seed,1.0)
 {
   reset();
 }
@@ -183,7 +184,6 @@ void MutationParameters::randomize_function_weightings_for_classifications(uint 
 
   emit changed();
 }
-
 
 const real MutationParameters::get_weighting(const FunctionRegistration* fn)
 {

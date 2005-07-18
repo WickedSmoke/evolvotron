@@ -40,12 +40,6 @@ FUNCTION_BEGIN(FunctionPostTransform,12,1,false,0)
     return transform.transformed(arg(0)(p));
   }
 
-  //! Has the same const-ness as arg(0)
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();
-    }
-
   //! Override in specific class
   virtual const FunctionPostTransform*const is_a_FunctionPostTransform() const
     {

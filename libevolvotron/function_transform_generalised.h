@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2005 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -16,28 +16,27 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-/*! \file 
-  \brief Interface for class FunctionNull 
-  This class would normally live in functions.h (and is included and registered there), 
-  but is split out so it can be efficiently used by MutatableImage.
+/*! \file
+  \brief Interfaces and implementation for FunctionTransformGeneralised
 */
 
-#ifndef _function_null_h_
-#define _function_null_h_
+#ifndef _function_transform_generalised_h_
+#define _function_transform_generalised_h_
 
-#include "xyz.h"
-#include "function_node.h"
+#include "useful.h"
+#include "function_registry.h"
 #include "function_boilerplate.h"
 
-//! Function class simply forwarding to leaf node
-FUNCTION_BEGIN(FunctionNull,0,1,false,0)
+FUNCTION_BEGIN(FunctionTransformGeneralised,0,4,false,0)
 
-  //! Simply return the position argument.
+  //! Return the transformed position argument.
   virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return arg(0)(p);
-    }
+  {
+    const Transform transform(arg(0)(p),arg(1)(p),arg(2)(p),arg(3)(p));
+    return transform.transformed(p);
+  }
 
-FUNCTION_END(FunctionNull)
+FUNCTION_END(FunctionTransformGeneralised)
 
 #endif
+

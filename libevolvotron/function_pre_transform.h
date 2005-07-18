@@ -40,12 +40,6 @@ FUNCTION_BEGIN(FunctionPreTransform,12,1,false,0)
     return arg(0)(transform.transformed(p));
   }
 
-  //! Has the same const-ness as arg(0)
-  virtual const bool is_constant() const
-  {
-    return arg(0).is_constant();
-  }
-
   //! Override in specific class
   virtual const FunctionPreTransform*const is_a_FunctionPreTransform() const
     {
