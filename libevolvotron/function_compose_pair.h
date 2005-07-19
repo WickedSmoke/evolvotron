@@ -35,12 +35,12 @@ FUNCTION_BEGIN(FunctionComposePair,0,2,false,0)
       return arg(1)(arg(0)(p));
     }
 
-  //! Is constant if the "leftmost" function is.
+  //! Is constant if any (rather than default "all") function is constant.
   /*! One of the few cases it's worth overriding this method
    */
   virtual const bool is_constant() const
     {
-      return (arg(1).is_constant());
+      return (arg(0).is_constant() || arg(1).is_constant());
     }
 
 FUNCTION_END(FunctionComposePair)

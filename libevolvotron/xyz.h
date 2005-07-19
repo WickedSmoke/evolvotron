@@ -38,15 +38,15 @@ class XYZ
 
   //@{
   //! Accessor.
-  real x() const
+  const real x() const
     {
       return rep[0];
     }
-  real y() const
+  const real y() const
     {
       return rep[1];
     }
-  real z() const
+  const real z() const
     {
       return rep[2];
     }
@@ -148,6 +148,12 @@ class XYZ
   const real magnitude() const
     {
       return sqrt(magnitude2());
+    }
+
+  //! Returns sum of x, y and z components.
+  const real sum_of_components() const
+    {
+      return x()+y()+z();
     }
 
   //! Return the vector normalised.

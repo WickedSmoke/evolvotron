@@ -748,27 +748,27 @@ FUNCTION_END(FunctionWindmillTwist)
 //------------------------------------------------------------------------------------------
 
 // Strip of one function across another
-FUNCTION_BEGIN(FunctionFriezeStrip,0,3,false,FnStructure)
+FUNCTION_BEGIN(FunctionStrip,0,3,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      if (fabs(p.y()) > arg(2)(p).magnitude()) return arg(1)(p);
+      if (fabs(p.y()) > fabs(arg(2)(p).sum_of_components())) return arg(1)(p);
       else return arg(0)(p);
     }
   
-FUNCTION_END(FunctionFriezeStrip)
+FUNCTION_END(FunctionStrip)
 
 //------------------------------------------------------------------------------------------
 
 // Strip of one function across another
-FUNCTION_BEGIN(FunctionFriezeStripBlend,0,4,false,FnStructure)
+FUNCTION_BEGIN(FunctionStripBlend,0,4,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const real r0=arg(2)(p).magnitude();
-      const real r1=arg(3)(p).magnitude();
+      const real r0=fabs(arg(2)(p).sum_of_components());
+      const real r1=fabs(arg(3)(p).sum_of_components());
       const real inner=std::min(r0,r1);
       const real outer=std::max(r0,r1);
 
@@ -782,7 +782,8 @@ FUNCTION_BEGIN(FunctionFriezeStripBlend,0,4,false,FnStructure)
       return v0+(v1-v0)*(ay-inner)/(outer-inner);
     }
   
-FUNCTION_END(FunctionFriezeStripBlend)
+FUNCTION_END(FunctionStripBlend)
+
 //------------------------------------------------------------------------------------------
 
 // Frieze group 1
@@ -801,6 +802,26 @@ FUNCTION_END(FunctionFriezeGroup1)
 
 //------------------------------------------------------------------------------------------
 
+// Frieze group 1, with cut
+FUNCTION_BEGIN(FunctionFriezeGroup1Cut,0,2,false,FnStructure)
+  
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      // HOP
+      const real cx=modulusf(p.x(),1.0);
+      const real cy=p.y();
+      const XYZ c(arg(0)(XYZ(cx,cy,p.z())));
+      
+      const real mx=modulusf(p.x()-c.x(),1.0)+c.x();
+      const real my=p.y();
+      return arg(1)(XYZ(mx,my,p.z()));
+    }
+  
+FUNCTION_END(FunctionFriezeGroup1Cut)
+
+//------------------------------------------------------------------------------------------
+
 // Frieze group 2
 FUNCTION_BEGIN(FunctionFriezeGroup2,0,1,false,FnStructure)
 
@@ -812,8 +833,28 @@ FUNCTION_BEGIN(FunctionFriezeGroup2,0,1,false,FnStructure)
       const real y=fabs(p.y());
       return arg(0)(XYZ(x,y,p.z()));
     }
-  
+
 FUNCTION_END(FunctionFriezeGroup2)
+
+//------------------------------------------------------------------------------------------
+
+// Frieze group 2
+FUNCTION_BEGIN(FunctionFriezeGroup2Cut,0,1,false,FnStructure)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      // SPINHOP
+      const real cx=(p.y()>0.0 ? modulusf(p.x(),1.0) : 1.0-modulusf(p.x(),1.0));
+      const real cy=fabs(p.y());
+      const XYZ c(arg(0)(XYZ(cx,cy,p.z())));
+      
+      const real mx=(p.y()>0.0 ? modulusf(p.x()-c.x(),1.0)+c.x() : 1.0-(modulusf(p.x()-c.x(),1.0)+c.x()));
+      const real my=(modulusf(p.x(),1.0)<0.5 ? fabs(p.y()-c.y()) : fabs(p.y()+c.y()));
+      return arg(0)(XYZ(mx,my,p.z()));
+    }
+
+FUNCTION_END(FunctionFriezeGroup2Cut)
 
 //------------------------------------------------------------------------------------------
 

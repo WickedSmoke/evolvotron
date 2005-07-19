@@ -341,7 +341,7 @@ void FunctionNode::mutate(const MutationParameters& parameters)
   // Perturb any parameters we have
   for (std::vector<real>::iterator it=params().begin();it!=params().end();it++)
     {
-      (*it)+=parameters.magnitude()*(-1.0+2.0*parameters.r01());
+      (*it)+=parameters.magnitude()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
     }
 
   // Perturb iteration count if any

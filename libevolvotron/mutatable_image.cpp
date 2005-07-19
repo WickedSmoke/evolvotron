@@ -155,7 +155,7 @@ void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
   // Scale nominal -1.0 to 1.0 range to 0-255
   XYZ v(127.5*(pv+XYZ(1.0,1.0,1.0)));
 
-  // Clamp out of range values just in case
+  // Clamp out of range values 
   v.x(clamped(v.x(),0.0,255.0));
   v.y(clamped(v.y(),0.0,255.0));
   v.z(clamped(v.z(),0.0,255.0));

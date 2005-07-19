@@ -35,12 +35,12 @@ FUNCTION_BEGIN(FunctionComposeTriple,0,3,false,0)
       return arg(2)(arg(1)(arg(0)(p)));
     }
 
-  //! Is constant if the "leftmost" function is.
+  //! Is constant if any (rather than default "all") function is constant.
   /*! One of the few cases it's worth overriding this method
    */
   virtual const bool is_constant() const
     {
-      return (arg(2).is_constant());
+      return (arg(0).is_constant() || arg(1).is_constant() || arg(2).is_constant());
     }
 
 FUNCTION_END(FunctionComposeTriple)
