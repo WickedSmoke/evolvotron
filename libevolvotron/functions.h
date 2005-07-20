@@ -839,10 +839,10 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarp,6,3,false,FnStructure)
     {
       const real dx=(p.y()>0.0 ? 1.0 : -1.0)*XYZ(param(0),param(1),param(2))%arg(1)(XYZ(0.0,fabs(p.y()),0.0));
       const real x=(p.y()>0.0 ? modulusf(p.x()-dx,1.0)+dx : 1.0-(modulusf(p.x()-dx,1.0)+dx));
-      //const real wx=(p.y()>0.0 ? modulusf(p.x()-dx,1.0)+dx : 1.0-(modulusf(p.x()-dx,1.0)+dx));
-      const real y=fabs(p.y());
+      //const real wx=modulusf(p.x()-dx,1.0)-0.5;
+      //const real dy=(wx>0.0 ? 1.0 : -1.0)*fabs(wx);  //(XYZ(param(3),param(4),param(5))%arg(2)(XYZ(fabs(wx),0.0,0.0)));
+      const real y=fabs(p.y())/*-dy*/;
       return arg(0)(XYZ(x,y,p.z()));
-
     }
 
 FUNCTION_END(FunctionFriezeGroupSpinhopWarp)
