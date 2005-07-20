@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2004 Tim Day
+// Copyright (C) 2002,2003,2004,2005 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -186,7 +186,8 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
   the second function as being the "actual" image (we use an "exciting" stub to avoid boring constants or identities),
   and the final function as being a colour-space transform.
   Basically the idea is to give lots of opportunities for stuff to happen.
-  If a specific function's registration (ie meta info) is provided then that will be used as the wrapped function type, but this overrides the constant checking (as a constant might have been specified).
+  If a specific function's registration (ie meta info) is provided then that
+  will be used as the wrapped function type, but this overrides the constant checking (as a constant might have been specified).
  */
 FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn)
 {
@@ -244,7 +245,7 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
       
       assert(root->ok());
       
-      if (root->is_constant() && !specific_fn)
+      if (root->is_constant() && specific_fn->name()!="FunctionConstant")
 	{
 	  delete root;
 	  root=0;
