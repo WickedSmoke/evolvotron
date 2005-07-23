@@ -832,14 +832,14 @@ FUNCTION_END(FunctionFriezeGroupSpinhop)
 //------------------------------------------------------------------------------------------
 
 // Frieze group 2
-FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarp,6,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarp,6,3,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const real wx=modulusf(p.x(),1.0)-0.5;
+      const real dx=p.y()*(XYZ(param(0),param(1),param(2))%arg(2)(XYZ(0.0,fabs(p.y()),0.0)));
+      const real wx=modulusf(p.x()-dx,1.0)-0.5;
       const real dy=(wx>0.0 ? 1.0 : -1.0)*(XYZ(param(3),param(4),param(5))%arg(1)(XYZ(fabs(wx),0.0,0.0)));
-      const real dx=p.y()*(XYZ(param(0),param(1),param(2))%arg(1)(XYZ(0.0,fabs(p.y()),0.0)));
 
       const bool upper_domain=(p.y()>dy);
       real x;
