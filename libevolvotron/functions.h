@@ -786,10 +786,8 @@ FUNCTION_END(FunctionStripBlend)
 
 //------------------------------------------------------------------------------------------
 
-// Frieze group 1
 FUNCTION_BEGIN(FunctionFriezeGroupHop,0,1,false,FnStructure)
 
-  //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const real x=modulusf(p.x(),1.0);
@@ -803,7 +801,6 @@ FUNCTION_END(FunctionFriezeGroupHop)
 
 FUNCTION_BEGIN(FunctionFriezeGroupHopWarp,3,2,false,FnStructure)
   
-  //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const real dx=XYZ(param(0),param(1),param(2))%arg(1)(XYZ(0.0,p.y(),0.0));
@@ -816,10 +813,8 @@ FUNCTION_END(FunctionFriezeGroupHopWarp)
 
 //------------------------------------------------------------------------------------------
 
-// Frieze group 2
 FUNCTION_BEGIN(FunctionFriezeGroupSpinhop,0,1,false,FnStructure)
 
-  //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const real x=(p.y()>0.0 ? modulusf(p.x(),1.0) : 1.0-modulusf(p.x(),1.0));
@@ -831,10 +826,8 @@ FUNCTION_END(FunctionFriezeGroupSpinhop)
 
 //------------------------------------------------------------------------------------------
 
-// Frieze group 2
 FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarp,6,3,false,FnStructure)
 
-  //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const real dx=p.y()*(XYZ(param(0),param(1),param(2))%arg(2)(XYZ(0.0,fabs(p.y()),0.0)));
@@ -862,52 +855,71 @@ FUNCTION_END(FunctionFriezeGroupSpinhopWarp)
 
 //------------------------------------------------------------------------------------------
 
-// Frieze group 3
-FUNCTION_BEGIN(FunctionFriezeGroup3,0,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupJump,0,1,false,FnStructure)
 
-  //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      // JUMP
       const real x=modulusf(p.x(),1.0);
       const real y=fabs(p.y());
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-FUNCTION_END(FunctionFriezeGroup3)
+FUNCTION_END(FunctionFriezeGroupJump)
 
 //------------------------------------------------------------------------------------------
 
-// Frieze group 4
-FUNCTION_BEGIN(FunctionFriezeGroup4,0,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupJumpWarp,3,2,false,FnStructure)
 
-  //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      // SIDLE
+      const real dx=XYZ(param(0),param(1),param(2))%arg(1)(XYZ(0.0,fabs(p.y()),0.0));
+      const real x=modulusf(p.x()-dx,1.0)+dx;
+      const real y=fabs(p.y());
+      return arg(0)(XYZ(x,y,p.z()));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpWarp)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupSidle,0,1,false,FnStructure)
+  // Don't think this form can be warped without breaking symmetry
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
       const real x=trianglef(p.x(),1.0);
       const real y=p.y();
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-FUNCTION_END(FunctionFriezeGroup4)
+FUNCTION_END(FunctionFriezeGroupSidle)
 
 //------------------------------------------------------------------------------------------
 
-// Frieze group 5
-FUNCTION_BEGIN(FunctionFriezeGroup5,0,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupStep,0,1,false,FnStructure)
 
-  //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      // STEP
       const real x=(p.y()>0.0 ? modulusf(p.x(),1.0) : modulusf(p.x()+0.5,1.0));
       const real y=fabs(p.y());
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-FUNCTION_END(FunctionFriezeGroup5)
+FUNCTION_END(FunctionFriezeGroupStep)
 
+//------------------------------------------------------------------------------------------
+/*
+FUNCTION_BEGIN(FunctionFriezeGroupStepWarp,0,1,false,FnStructure)
+     HERE!!!!!!
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const real x=(p.y()>0.0 ? modulusf(p.x(),1.0) : modulusf(p.x()+0.5,1.0));
+      const real y=fabs(p.y());
+      return arg(0)(XYZ(x,y,p.z()));
+    }
+
+FUNCTION_END(FunctionFriezeGroupStepWarp)
+*/
 //------------------------------------------------------------------------------------------
 
 // Frieze group 6
