@@ -12,6 +12,10 @@ Conventional Mode
 - Not entirely happy about preponderance of bright primary colours in images
   (ie saturating RGB components).  Need to give this some thought; something
   a bit more restricting than tanh on each component needed ?
+  Maybe do tanh before colour basis vectors (would limit colours to
+  basis-vector defined rhomboid).  Build this into image function instead
+  of doing post-transform thing ?  What else could we possibly want for
+  a final "colourising" function ???
 - QFileDialog seems to support previewing; enable it.
 - Use isotropic scale more in initial setup (instead of identity).
   Add isotropic scale and translate too.
