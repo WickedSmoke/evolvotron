@@ -152,6 +152,8 @@ Conventional Mode
     Generalised rotations
     Square "Bhuddist mandala" versions of kaleidascope
     Concentric rings
+    Iterative function generating a list of point co-ordinates... then test for blobs or make paths
+    (would be more efficient with a cached/precomputed element to functions).
 
 Animation
 ---------

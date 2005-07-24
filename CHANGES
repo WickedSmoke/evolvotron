@@ -4,7 +4,7 @@ From release 0.4.0:
  - Version to 0.4.1-devel
  - Lists of functions in alphabetic order
  - New functions: Frieze groups
- - Constantness of functions more conservative (and hopefully less buggy)
+ - Constantness of functions more conservative (few overrides) and hopefully less buggy
  - Code clean up.
 
 From release 0.3.1:
