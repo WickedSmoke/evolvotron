@@ -831,20 +831,20 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarp,6,3,false,FnStructure)
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const real dx=p.y()*(XYZ(param(0),param(1),param(2))%arg(2)(XYZ(0.0,fabs(p.y()),0.0)));
-      const real wx=modulusf(p.x()-dx,1.0)-0.5;
-      const real dy=(wx>0.0 ? 1.0 : -1.0)*(XYZ(param(3),param(4),param(5))%arg(1)(XYZ(fabs(wx),0.0,0.0)));
+      const real wx1=modulusf(p.x()-dx,1.0);
+      const real dy=(wx1>0.5 ? 1.0 : -1.0)*(XYZ(param(3),param(4),param(5))%arg(1)(XYZ(fabs(wx1-0.5),0.0,0.0)));
 
       const bool upper_domain=(p.y()>dy);
       real x;
       real y;
       if (upper_domain)
 	{
-	  x=modulusf(p.x()-dx,1.0)+dx;
+	  x=wx1+dx;
 	  y=p.y();
 	}
       else
 	{
-	  x=1.0-(modulusf(p.x()-dx,1.0)+dx);
+	  x=1.0-(wx1+dx);
 	  y=-p.y();
 	}
 
@@ -908,18 +908,33 @@ FUNCTION_BEGIN(FunctionFriezeGroupStep,0,1,false,FnStructure)
 FUNCTION_END(FunctionFriezeGroupStep)
 
 //------------------------------------------------------------------------------------------
-/*
-FUNCTION_BEGIN(FunctionFriezeGroupStepWarp,0,1,false,FnStructure)
-     HERE!!!!!!
+
+FUNCTION_BEGIN(FunctionFriezeGroupStepWarp,6,3,false,FnStructure)
+
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const real x=(p.y()>0.0 ? modulusf(p.x(),1.0) : modulusf(p.x()+0.5,1.0));
-      const real y=fabs(p.y());
+      const real dx=fabs(p.y())*(XYZ(param(0),param(1),param(2))%arg(2)(XYZ(0.0,fabs(p.y()),0.0)));
+      const real wx1=modulusf(p.x()-dx,1.0);
+      const real wx2=modulusf(p.x()-dx,0.5);
+      const real dy=(wx1>0.5 ? 1.0 : -1.0)*(XYZ(param(3),param(4),param(5))%arg(1)(XYZ(wx2,0.0,0.0)));
+      const bool upper_domain=(p.y()>dy);
+      real x;
+      real y;
+      if (upper_domain)
+	{
+	  x=wx1+dx;
+	  y=p.y();
+	}
+      else
+	{
+	  x=modulusf(p.x()+0.5-dx,1.0)+dx;
+	  y=-p.y();
+	}
       return arg(0)(XYZ(x,y,p.z()));
     }
 
 FUNCTION_END(FunctionFriezeGroupStepWarp)
-*/
+
 //------------------------------------------------------------------------------------------
 
 // Frieze group 6
