@@ -1,6 +1,5 @@
 Soon
 ====
-FunctionNode::initial : need more sensible behaviour when a specific_fn is set
 File contents previewing in file dialog.
 
 Sometime
@@ -10,15 +9,28 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
+- Not entirely happy about preponderance of bright primary colours in images
+  (ie saturating RGB components).  Need to give this some thought; something
+  a bit more restricting than tanh on each component needed ?
 - QFileDialog seems to support previewing; enable it.
+- Use isotropic scale more in initial setup (instead of identity).
+  Add isotropic scale and translate too.
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
   Presumably there are 3D versions too.
+- Internationalization.
+  Make it as easy as possible for contributors to submit new languages.
+- Ability to set animation mode from GUI (property of an image function ?)
+- Ability to set spheremap mode from GUI (property of an image function ?)
+- Keyboard shortcuts for all of reset/restart/remix
+- Display mutation parameters permanently on status bar.
+- Scripts entry on context menu; pipes XML to things in ~/.evolvotron/scripts directory
 - Better way of choosing where to "cut" in freize groups ?
 - Make middle-mose-button adjustments work sensibly with -spheremap 
 - Option for save function to also generate thumbnail at the same time ?
   (Maybe not with previewing)
 - Look into mime-type registration and auto-thumbnailing in nautilus, KDE etc
+  (pipe through evolvotron_render)
 - Browse window to show thumbnails for all .xml files in  a directory.
 - DialogFunctions and DialogMutationParameters don't notice when the other dialog modifies MutationParameters.
   Fortunately this doesn't matter because they (will) control completely disjoint aspects of it.

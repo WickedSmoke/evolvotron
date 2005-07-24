@@ -245,7 +245,7 @@ FunctionNode*const FunctionNode::initial(const MutationParameters& parameters,co
       
       assert(root->ok());
       
-      if (root->is_constant() && specific_fn->name()!="FunctionConstant")
+      if (root->is_constant() && !(specific_fn && specific_fn->name()=="FunctionConstant"))
 	{
 	  delete root;
 	  root=0;
