@@ -799,7 +799,7 @@ FUNCTION_END(FunctionFriezeGroupHop)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopWarp,3,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopWarped,3,2,false,FnStructure)
   
   virtual const XYZ evaluate(const XYZ& p) const
     {
@@ -809,7 +809,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopWarp,3,2,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-FUNCTION_END(FunctionFriezeGroupHopWarp)
+FUNCTION_END(FunctionFriezeGroupHopWarped)
 
 //------------------------------------------------------------------------------------------
 
@@ -826,7 +826,7 @@ FUNCTION_END(FunctionFriezeGroupSpinhop)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarp,6,3,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarped,6,3,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
@@ -851,7 +851,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarp,6,3,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
 
-FUNCTION_END(FunctionFriezeGroupSpinhopWarp)
+FUNCTION_END(FunctionFriezeGroupSpinhopWarped)
 
 //------------------------------------------------------------------------------------------
 
@@ -868,7 +868,7 @@ FUNCTION_END(FunctionFriezeGroupJump)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupJumpWarp,3,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupJumpWarped,3,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
@@ -878,7 +878,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupJumpWarp,3,2,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-FUNCTION_END(FunctionFriezeGroupJumpWarp)
+FUNCTION_END(FunctionFriezeGroupJumpWarped)
 
 //------------------------------------------------------------------------------------------
 
@@ -909,7 +909,7 @@ FUNCTION_END(FunctionFriezeGroupStep)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupStepWarp,6,3,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupStepWarped,6,3,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
@@ -933,40 +933,62 @@ FUNCTION_BEGIN(FunctionFriezeGroupStepWarp,6,3,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
 
-FUNCTION_END(FunctionFriezeGroupStepWarp)
+FUNCTION_END(FunctionFriezeGroupStepWarped)
 
 //------------------------------------------------------------------------------------------
 
-// Frieze group 6
-//! \todo But this is the same as 4!
-FUNCTION_BEGIN(FunctionFriezeGroup6,0,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupSpinjump,0,1,false,FnStructure)
+  // Don't think this form can be warped without breaking symmetry
 
-  //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      // SPINJUMP
       const real x=trianglef(p.x(),1.0);
       const real y=fabs(p.y());
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-FUNCTION_END(FunctionFriezeGroup6)
+FUNCTION_END(FunctionFriezeGroupSpinjump)
 
 //------------------------------------------------------------------------------------------
 
-// Frieze group 7
-FUNCTION_BEGIN(FunctionFriezeGroup7,0,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupSpinsidle,0,1,false,FnStructure)
 
-  //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      // SPINSIDLE
-      const real x=trianglef(p.x(),1.0);
-      const real y=(modulusf(p.x()+1.0,4.0)<2.0 ? p.y() : -p.y());
+      const real x=trianglef(p.x(),0.5);
+      const real y=(modulusf(p.x()+0.5,2.0)<1.0 ? p.y() : -p.y());
       return arg(0)(XYZ(x,y,p.z()));
     }
   
-FUNCTION_END(FunctionFriezeGroup7)
+FUNCTION_END(FunctionFriezeGroupSpinsidle)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupSpinsidleWarped,3,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const real dx=p.y()*(XYZ(param(0),param(1),param(2))%arg(1)(XYZ(0.0,fabs(p.y()),0.0)));
+      const bool flipped_unit=(modulusf(p.x(),2.0)>1.0);
+      const bool flipped_element=(modulusf(p.x(),1.0)>0.5+(flipped_unit ? -dx : dx));
+
+      real x;
+      real y;
+      if (flipped_unit)
+	{
+	  if (flipped_element) {x=modulusf(1.0-p.x(),1.0);y=p.y();}
+	  else {x=modulusf(p.x(),1.0);y=-p.y();}
+	}
+      else
+	{
+	  if (flipped_element) {x=modulusf(1.0-p.x(),1.0);y=-p.y();}
+	  else {x=modulusf(p.x(),1.0);y=p.y();}
+	}
+
+      return arg(0)(XYZ(x,y,p.z()));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupSpinsidleWarped)
 
 //------------------------------------------------------------------------------------------
 
