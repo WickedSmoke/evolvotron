@@ -33,6 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "evolvotron_main.h"
 #include "xyz.h"
 #include "function_node.h"
+#include "function_top.h"
 #include "function_pre_transform.h"
 #include "function_post_transform.h"
 
@@ -404,38 +405,30 @@ void EvolvotronMain::spawn_normal(const MutatableImage* image,MutatableImageDisp
 
 void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImageDisplay* display)
 {  
-  history().replacing(display);
-
-  std::vector<FunctionNode*> args;
-  args.push_back(image->root()->deepclone());
-
-  //! \todo Option to use a FunctionPostTransformQuadratic might be interesting. How about a FunctionPostTransform*Generalised ?
-  display->image
-    (
-     new MutatableImage
-     (
-      new FunctionPostTransform
-      (
-       FunctionNode::stubparams(mutation_parameters(),12),
-       args,
-       0
-       ),
-      image->sinusoidal_z(),
-      image->spheremap()
-      )
-     );
+  FunctionNode*const new_root=image->root()->deepclone();
+  
+  if (FunctionTop*const fn_top=new_root->is_a_FunctionTop())
+    {
+      fn_top->mutate_colours_only(mutation_parameters());
+      history().replacing(display);
+      display->image(new MutatableImage(fn_top,image->sinusoidal_z(),image->spheremap()));
+    }
+  else
+    {
+      std::clog << "Internal error: Needed a FunctionTop to do spawn_recoloured";
+      delete new_root;
+    }
 }
 
 void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisplay* display)
 {
-  // Get the transform from whatever factory is currently set
-  const Transform transform(transform_factory()(mutation_parameters().rng01()));
-
-  FunctionNode* new_root;
-  if (image->root()->is_a_FunctionPreTransform())
+  FunctionNode* new_root=image->root()->deepclone();
+  if (FunctionTop*const fn_top=new_root->is_a_FunctionTop())
     {
-      // If the image root is a transform wrapper then we can just concatentate transforms.
-      new_root=image->root()->deepclone();
+      // Get the transform from whatever factory is currently set
+      const Transform transform(transform_factory()(mutation_parameters().rng01()));
+      
+      fn_top->concatenate_pretransform_on_right(transform);
 
       FunctionPreTransform*const new_root_as_transform=new_root->is_a_FunctionPreTransform();
       assert(new_root_as_transform!=0);
@@ -446,17 +439,15 @@ void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisp
       Transform current_transform(const_new_root_as_transform->params());
       current_transform.concatenate_on_right(transform);
       new_root_as_transform->params(current_transform.get_columns());
+
+      history().replacing(display);
+      display->image(new MutatableImage(fn_top,image->sinusoidal_z(),image->spheremap()));
     }
   else
     {
-      // Otherwise have to create a new wrapper for the transform
-      std::vector<FunctionNode*> args;
-      args.push_back(image->root()->deepclone());
-      new_root=new FunctionPreTransform(transform.get_columns(),args,0);
+      std::clog << "Internal error: Needed a FunctionTop to do spawn_warped";
+      delete new_root;
     }
-  
-  history().replacing(display);
-  display->image(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
 }
 
 void EvolvotronMain::restore(MutatableImageDisplay* display,MutatableImage* image)
@@ -725,9 +716,11 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
       root=FunctionNode::initial(mutation_parameters(),FunctionRegistry::get()->lookup(_dialog_favourite->favourite_function()));
     }
 
+  FunctionTop*const fn_top=FunctionTop::create(mutation_parameters(),root);
+
   history().replacing(display);
   //! \todo sinz and spheremap should be obtained from mutation parameters
-  display->image(new MutatableImage(root,!Args::global().option("-linz"),Args::global().option("-spheremap")));
+  display->image(new MutatableImage(fn_top,!Args::global().option("-linz"),Args::global().option("-spheremap")));
 }
 
 void EvolvotronMain::undo()

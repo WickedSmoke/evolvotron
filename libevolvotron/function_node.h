@@ -37,7 +37,7 @@
 #include "function_registry.h"
 
 class FunctionNodeInfo;
-
+class FunctionTop;
 class FunctionPreTransform;
 class FunctionPostTransform;
 class MutatableImage;
@@ -115,10 +115,15 @@ class FunctionNode
   //@{
   //! Query the node as to whether it is a FunctionPostTransform (return null if not).
   /*! This is useful for accumulating colour transforms at the back end of a function tree without creating a new transform each time.
-    This isn't actually used currently.
    */
   virtual const FunctionPostTransform*const is_a_FunctionPostTransform() const;
   virtual FunctionPostTransform*const is_a_FunctionPostTransform();
+  //@}
+
+  //@{
+  //! Query the node as to whether it is a FunctionTop (return null if not).
+  virtual const FunctionTop*const is_a_FunctionTop() const;
+  virtual FunctionTop*const is_a_FunctionTop();
   //@}
 
   //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
@@ -192,7 +197,7 @@ class FunctionNode
     }
 
   //! Scramble this node and its leaves up a bit.
-  virtual void mutate(const MutationParameters&);
+  virtual void mutate(const MutationParameters&,bool mutate_own_parameters=true);
   
   //! Return an clone of this image node and all its children.
   virtual FunctionNode*const deepclone() const

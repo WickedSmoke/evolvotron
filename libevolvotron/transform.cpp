@@ -44,14 +44,14 @@ Transform::Transform(const XYZ& t,const XYZ& x,const XYZ& y,const XYZ& z)
    ,_basis_z(z)
 {}
 
-Transform::Transform(const std::vector<real>& v)
+Transform::Transform(const std::vector<real>& v,uint s)
 {
-  assert(v.size()==12);
+  assert(starting_element+11<v.size());
 
-  _translate.x(v[ 0]);_translate.y(v[ 1]);_translate.z(v[ 2]);
-  _basis_x.x(  v[ 3]);_basis_x.y(  v[ 4]);_basis_x.z(  v[ 5]);
-  _basis_y.x(  v[ 6]);_basis_y.y(  v[ 7]);_basis_y.z(  v[ 8]);
-  _basis_z.x(  v[ 9]);_basis_z.y(  v[10]);_basis_z.z(  v[11]);
+  _translate.x(v[s+ 0]);_translate.y(v[s+ 1]);_translate.z(v[s+ 2]);
+  _basis_x.x(  v[s+ 3]);_basis_x.y(  v[s+ 4]);_basis_x.z(  v[s+ 5]);
+  _basis_y.x(  v[s+ 6]);_basis_y.y(  v[s+ 7]);_basis_y.z(  v[s+ 8]);
+  _basis_z.x(  v[s+ 9]);_basis_z.y(  v[s+10]);_basis_z.z(  v[s+11]);
 }
 
 Transform::~Transform()

@@ -42,6 +42,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_null.h"
 #include "functions_noise.h"
 #include "functions.h"
+#include "function_top.h"
 
 const std::vector<FunctionNode*> FunctionNode::cloneargs() const
 {
@@ -181,6 +182,7 @@ FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool 
 }
 
 /*! The choice of initial structure to start from is quite crucial to giving a good user experience.
+  
   We concatenate 3 functions.  The outer 2 are transforms.
   You can think of the first function as a co-ordinate transform,
   the second function as being the "actual" image (we use an "exciting" stub to avoid boring constants or identities),
@@ -333,16 +335,19 @@ FunctionNode::~FunctionNode()
 
   And of course all children have to be mutated too.
  */
-void FunctionNode::mutate(const MutationParameters& parameters)
+void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_parameters)
 {
   // First mutate all child nodes.
   for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
     (*it)->mutate(parameters);
   
   // Perturb any parameters we have
-  for (std::vector<real>::iterator it=params().begin();it!=params().end();it++)
+  if (mutate_own_parameters)
     {
-      (*it)+=parameters.magnitude()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
+      for (std::vector<real>::iterator it=params().begin();it!=params().end();it++)
+	{
+	  (*it)+=parameters.magnitude()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
+	}
     }
 
   // Perturb iteration count if any
@@ -519,6 +524,16 @@ const FunctionPostTransform*const FunctionNode::is_a_FunctionPostTransform() con
 }
 
 FunctionPostTransform*const FunctionNode::is_a_FunctionPostTransform()
+{
+  return 0;
+}
+
+const FunctionTop*const FunctionNode::is_a_FunctionTop() const
+{
+  return 0;
+}
+
+FunctionTop*const FunctionNode::is_a_FunctionTop()
 {
   return 0;
 }

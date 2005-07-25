@@ -36,6 +36,7 @@ extern "C"
 #include "args.h"
 #include "mutatable_image.h"
 #include "mutation_parameters.h"
+#include "function_top.h"
 
 //! Application code
 int main(int argc,char* argv[])
@@ -67,15 +68,17 @@ int main(int argc,char* argv[])
   if (args.option("-g"))
     {
       
-      FunctionNode* fn=0;
+      FunctionNode* root=0;
       do
 	{
-	  if (fn) delete fn;
-	  fn=FunctionNode::stub(mutation_parameters,true);
+	  if (root) delete root;
+	  root=FunctionNode::stub(mutation_parameters,true);
 	}
-      while (fn->is_constant());
+      while (root->is_constant());
+      
+      FunctionTop* fn_top=FunctionTop::create(mutation_parameters,root);
 
-      imagefn_out=new MutatableImage(fn,!args.option("-linz"),args.option("-spheremap"));
+      imagefn_out=new MutatableImage(fn_top,!args.option("-linz"),args.option("-spheremap"));
     }
   else
     {

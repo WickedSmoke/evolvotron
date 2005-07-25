@@ -39,6 +39,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image_computer_task.h"
 #include "transform_factory.h"
 #include "function_pre_transform.h"
+#include "function_top.h"
 
 /*! The constructor is passed:
     - the owning widget (probably either a QGrid or null if top-level),
@@ -570,40 +571,21 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	      std::clog << "[Pan]";
 	    }
 	  
-	  FunctionNode* new_root;
-	  if (image()->root()->is_a_FunctionPreTransform())
+	  FunctionNode* new_root=image()->root()->deepclone();
+	  if (FunctionTop*const fn_top=new_root->is_a_FunctionTop())
 	    {
-	      // If the image root is a transform wrapper then we can just concatentate transforms.
-	      new_root=image()->root()->deepclone();
-	      
-	      FunctionPreTransform*const new_root_as_transform=new_root->is_a_FunctionPreTransform();
-	      assert(new_root_as_transform!=0);
-	      
-	      // Have to access params() through this to avoid protected scope of non-const version creating an error.
-	      const FunctionPreTransform*const const_new_root_as_transform=new_root_as_transform;
-	      
-	      Transform current_transform(const_new_root_as_transform->params());
-	      //std::clog << "[Was: " << current_transform;
-	      //std::clog << ", concatenate: " << transform;
-	      current_transform.concatenate_on_right(transform);
-	      //std::clog << ", now: " << current_transform << "]";
-	      new_root_as_transform->params(current_transform.get_columns());
+	      fn_top->concatenate_pretransform_on_right(transform);
+
+	      // Install new image (triggers recompute).
+	      image(new MutatableImage(fn_top,image()->sinusoidal_z(),image()->spheremap()));	  
 	    }
 	  else
 	    {
-	      // Otherwise have to create a new wrapper for the transform:
-	      
-	      std::vector<real> params=transform.get_columns();
-	      
-	      std::vector<FunctionNode*> args;	  
-	      args.push_back(image()->root()->deepclone());
-	      
-	      new_root=new FunctionPreTransform(params,args,0);
+	      std::clog << "Internal error: Needed a FunctionTop to do spawn_recoloured";
+	      delete new_root;
 	    }
 
-	  // Install new image (triggers recompute).
-	  image(new MutatableImage(new_root,image()->sinusoidal_z(),image()->spheremap()));
-	  
+
 	  // Finally, record position of this event as last event
 	  _mid_button_adjust_last_pos=event->pos();
 	}

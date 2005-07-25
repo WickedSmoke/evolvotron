@@ -1,5 +1,10 @@
 Soon
 ====
+Replace function null, function pre-transform, function post transform with function top.
+Eliminate recurring FunctionTop*const c=root()->deepclone()->is_a_FunctionTop();  pattern
+probably by adding FunctionTop* MutatableImage::deepclone_root()
+New more sensible initial setup.
+
 File contents previewing in file dialog.
 
 Sometime

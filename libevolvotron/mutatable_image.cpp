@@ -28,49 +28,45 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "mutatable_image.h"
 #include "function_node_info.h"
-#include "function_null.h"
+#include "function_top.h"
 #include "mutatable_image_display_big.h"
 
-MutatableImage::MutatableImage(FunctionNode* r,bool sinz,bool sm)
-  :_root_holder(0)
+MutatableImage::MutatableImage(FunctionTop* r,bool sinz,bool sm)
+  :_root(r)
   ,_sinusoidal_z(sinz)
   ,_spheremap(sm)
   ,_locked(false)
 {
   assert(r!=0);
-  std::vector<real> pv;
-  std::vector<FunctionNode*> av;
-  av.push_back(r);
-  _root_holder=new FunctionNull(pv,av,0);
 }
 
 MutatableImage::MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm)
-  :_root_holder(0)
+  :_root(0)
   ,_sinusoidal_z(true)
   ,_spheremap(sm)
   ,_locked(false)
-{      
-  std::vector<real> pv;
+{
+  std::vector<real> pv(FunctionNode::stubparams(parameters,12));
   std::vector<FunctionNode*> av;
   av.push_back(FunctionNode::stub(parameters,exciting));
-  _root_holder=new FunctionNull(pv,av,0);
+  _root=new FunctionTop(pv,av,0);
   //! \todo _sinusoidal_z should be obtained from AnimationParameters when it exists
 }
 
 MutatableImage::~MutatableImage()
 {
-  delete _root_holder;
+  delete _root;
 }
 
 //! Accessor.
-const FunctionNode*const MutatableImage::root() const
+const FunctionTop*const MutatableImage::root() const
 {
-  return _root_holder->argptr(0);
+  return _root;
 }
 
 MutatableImage*const MutatableImage::deepclone() const
 {
-  return new MutatableImage(root()->deepclone(),sinusoidal_z(),spheremap()); 
+  return new MutatableImage(root()->deepclone()->is_a_FunctionTop(),sinusoidal_z(),spheremap()); 
 }
 
 const XYZ MutatableImage::operator()(const XYZ& p) const
@@ -129,16 +125,16 @@ const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint 
 
 MutatableImage*const MutatableImage::mutated(const MutationParameters& p) const
 {
-  FunctionNode*const c=_root_holder->deepclone();  
+  FunctionTop*const c=root()->deepclone()->is_a_FunctionTop();  
   c->mutate(p);
-  return new MutatableImage(c->argptr(0),sinusoidal_z(),spheremap());
+  return new MutatableImage(c,sinusoidal_z(),spheremap());
 }
 
 MutatableImage*const MutatableImage::simplified() const
 {
-  FunctionNode*const c=_root_holder->deepclone();  
+  FunctionTop*const c=root()->deepclone()->is_a_FunctionTop();  
   c->simplify_constants();
-  return new MutatableImage(c->argptr(0),sinusoidal_z(),spheremap());  
+  return new MutatableImage(c,sinusoidal_z(),spheremap());  
 }
 
 void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
@@ -147,14 +143,9 @@ void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
   // The nominal range is -1.0 to 1.0
   XYZ pv((*root())(p));
 
-  // Use smooth tanh to avoid hard clamping.
-  pv.x(tanh(pv.x()));
-  pv.y(tanh(pv.y()));
-  pv.z(tanh(pv.z()));
-
   // Scale nominal -1.0 to 1.0 range to 0-255
   XYZ v(127.5*(pv+XYZ(1.0,1.0,1.0)));
-
+  
   // Clamp out of range values 
   v.x(clamped(v.x(),0.0,255.0));
   v.y(clamped(v.y(),0.0,255.0));
@@ -504,7 +495,17 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
       
       if (root)
 	{
-	  return new MutatableImage(root,sinusoidal_z,spheremap);
+	  FunctionTop* fn_top=root->is_a_FunctionTop();
+	  if (fn_top)
+	    {
+	      return new MutatableImage(fn_top,sinusoidal_z,spheremap);
+	    }
+	  else
+	    {
+	      delete root;
+	      report="Loaded functions must have FunctionTop for their root node";
+	      return 0;
+	    }
 	}
       else
 	{

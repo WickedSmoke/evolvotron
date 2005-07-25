@@ -43,7 +43,7 @@ class Transform
   Transform(const XYZ& t,const XYZ& x,const XYZ& y,const XYZ& z);
 
   //! Constructor specifying column-wise elements.
-  Transform(const std::vector<real>& v);
+  Transform(const std::vector<real>& v,uint starting_element=0);
 
   //! virtual destructor in case of extension
   virtual ~Transform();

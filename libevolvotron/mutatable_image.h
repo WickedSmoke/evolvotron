@@ -28,6 +28,7 @@
 #include "function_node.h"
 
 class FunctionNull;
+class FunctionTop;
 
 //! Class to hold the base FunctionNode of an image.
 /*! Once it owns a root FunctionNode* the whole structure should be fixed (mutate isn't available, only mutated).
@@ -38,11 +39,12 @@ class MutatableImage
 {
  protected:
 
-  //! Holds the top level FunctionNode of the image.
-  /*! This is only used because FunctionNode::mutate can't change the type of the node it is invoked on,
-    but child nodes can be zapped.
+  //! The top level FunctionNode of the image.
+  /*! This is partly here FunctionNode::mutate can't change the type of
+    the node it is invoked on (only child nodes can be zapped), partly so we
+    can keep colour and space transforms under control.
    */
-  FunctionNull* _root_holder;
+  FunctionTop* _root;
 
   //! Whether to sweep z sinusoidally (vs linearly)
   bool _sinusoidal_z;
@@ -55,11 +57,11 @@ class MutatableImage
  public:
   
   //! Take ownership of the image tree with the specified root node.
-  MutatableImage(FunctionNode* r,bool sinz,bool sm);
-
+  MutatableImage(FunctionTop* r,bool sinz,bool sm);
+  
   //! Create a new random image tree.
   MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm);
-
+  
   //! Destructor.  NB Deletes owned image function tree.
   virtual ~MutatableImage();
 
@@ -69,7 +71,7 @@ class MutatableImage
   const XYZ sampling_coordinate(uint x,uint y,uint z,uint sx,uint sy,uint sz) const;
 
   //! Accessor.
-  const FunctionNode*const root() const;
+  const FunctionTop*const root() const;
 
   //! Accessor.
   /*
