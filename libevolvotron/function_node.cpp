@@ -313,7 +313,6 @@ FunctionNode*const FunctionNode::create(const FunctionNodeInfo* info,std::string
     }
 }
 
-
 /*! Deletes all arguments.  No one else should be referencing nodes except the root node of an image.
  */
 FunctionNode::~FunctionNode()
@@ -505,27 +504,6 @@ void FunctionNode::impose(std::vector<real>& p,std::vector<FunctionNode*>& a)
   params()=p;
 
   assert(ok());
-}
-
-
-const FunctionPreTransform*const FunctionNode::is_a_FunctionPreTransform() const
-{
-  return 0;
-}
-
-FunctionPreTransform*const FunctionNode::is_a_FunctionPreTransform()
-{
-  return 0;
-}
-
-const FunctionPostTransform*const FunctionNode::is_a_FunctionPostTransform() const
-{
-  return 0;
-}
-
-FunctionPostTransform*const FunctionNode::is_a_FunctionPostTransform()
-{
-  return 0;
 }
 
 const FunctionTop*const FunctionNode::is_a_FunctionTop() const

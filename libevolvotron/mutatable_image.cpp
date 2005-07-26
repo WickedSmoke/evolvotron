@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image_display_big.h"
 
 MutatableImage::MutatableImage(FunctionTop* r,bool sinz,bool sm)
-  :_root(r)
+  :_top(r)
   ,_sinusoidal_z(sinz)
   ,_spheremap(sm)
   ,_locked(false)
@@ -41,7 +41,7 @@ MutatableImage::MutatableImage(FunctionTop* r,bool sinz,bool sm)
 }
 
 MutatableImage::MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm)
-  :_root(0)
+  :_top(0)
   ,_sinusoidal_z(true)
   ,_spheremap(sm)
   ,_locked(false)
@@ -49,40 +49,40 @@ MutatableImage::MutatableImage(const MutationParameters& parameters,bool excitin
   std::vector<real> pv(FunctionNode::stubparams(parameters,12));
   std::vector<FunctionNode*> av;
   av.push_back(FunctionNode::stub(parameters,exciting));
-  _root=new FunctionTop(pv,av,0);
+  _top=new FunctionTop(pv,av,0);
   //! \todo _sinusoidal_z should be obtained from AnimationParameters when it exists
 }
 
 MutatableImage::~MutatableImage()
 {
-  delete _root;
+  delete _top;
 }
 
 //! Accessor.
-const FunctionTop*const MutatableImage::root() const
+const FunctionTop*const MutatableImage::top() const
 {
-  return _root;
+  return _top;
 }
 
 MutatableImage*const MutatableImage::deepclone() const
 {
-  return new MutatableImage(root()->deepclone()->is_a_FunctionTop(),sinusoidal_z(),spheremap()); 
+  return new MutatableImage(top()->typed_deepclone(),sinusoidal_z(),spheremap()); 
 }
 
 const XYZ MutatableImage::operator()(const XYZ& p) const
 {
-  assert(root()!=0);
-  return (*root())(p);
+  assert(top()!=0);
+  return (*top())(p);
 }
 
 const bool MutatableImage::is_constant() const
 {
-  return root()->is_constant();
+  return top()->is_constant();
 }
 
 const bool MutatableImage::ok() const
 {
-  return root()->ok();
+  return top()->ok();
 }  
 
 const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint sy,uint sz) const
@@ -125,14 +125,14 @@ const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint 
 
 MutatableImage*const MutatableImage::mutated(const MutationParameters& p) const
 {
-  FunctionTop*const c=root()->deepclone()->is_a_FunctionTop();  
+  FunctionTop*const c=top()->typed_deepclone();  
   c->mutate(p);
   return new MutatableImage(c,sinusoidal_z(),spheremap());
 }
 
 MutatableImage*const MutatableImage::simplified() const
 {
-  FunctionTop*const c=root()->deepclone()->is_a_FunctionTop();  
+  FunctionTop*const c=top()->typed_deepclone();  
   c->simplify_constants();
   return new MutatableImage(c,sinusoidal_z(),spheremap());  
 }
@@ -141,7 +141,7 @@ void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
 {
   // Actually calculate a pixel value from the image.
   // The nominal range is -1.0 to 1.0
-  XYZ pv((*root())(p));
+  XYZ pv((*top())(p));
 
   // Scale nominal -1.0 to 1.0 range to 0-255
   XYZ v(127.5*(pv+XYZ(1.0,1.0,1.0)));
@@ -158,7 +158,7 @@ void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
 
 void MutatableImage::get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const
 {
-  root()->get_stats(total_nodes,total_parameters,depth,width,proportion_constant);
+  top()->get_stats(total_nodes,total_parameters,depth,width,proportion_constant);
 }
 
 std::ostream& MutatableImage::save_function(std::ostream& out) const
@@ -176,7 +176,7 @@ std::ostream& MutatableImage::save_function(std::ostream& out) const
     << "\""
     << ">\n";
   
-  root()->save_function(out,1);
+  top()->save_function(out,1);
 
   out << "</evolvotron-image-function>\n";
 
@@ -488,14 +488,14 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
   if (ok)
     {
       // Might be a warning message in there.
-      report = load_handler.errorString().latin1();
+      report=load_handler.errorString().latin1();
 
       FunctionNode*const root=FunctionNode::create(info,report);
       delete info;
       
       if (root)
 	{
-	  FunctionTop* fn_top=root->is_a_FunctionTop();
+	  FunctionTop*const fn_top=root->is_a_FunctionTop();
 	  if (fn_top)
 	    {
 	      return new MutatableImage(fn_top,sinusoidal_z,spheremap);

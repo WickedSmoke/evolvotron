@@ -405,49 +405,23 @@ void EvolvotronMain::spawn_normal(const MutatableImage* image,MutatableImageDisp
 
 void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImageDisplay* display)
 {  
-  FunctionNode*const new_root=image->root()->deepclone();
+  FunctionTop*const new_root=image->top()->typed_deepclone();
   
-  if (FunctionTop*const fn_top=new_root->is_a_FunctionTop())
-    {
-      fn_top->mutate_colours_only(mutation_parameters());
-      history().replacing(display);
-      display->image(new MutatableImage(fn_top,image->sinusoidal_z(),image->spheremap()));
-    }
-  else
-    {
-      std::clog << "Internal error: Needed a FunctionTop to do spawn_recoloured";
-      delete new_root;
-    }
+  new_root->mutate_colours_only(mutation_parameters());
+  history().replacing(display);
+  display->image(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
 }
 
 void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisplay* display)
 {
-  FunctionNode* new_root=image->root()->deepclone();
-  if (FunctionTop*const fn_top=new_root->is_a_FunctionTop())
-    {
-      // Get the transform from whatever factory is currently set
-      const Transform transform(transform_factory()(mutation_parameters().rng01()));
+  FunctionTop*const new_root=image->top()->typed_deepclone();
+
+  // Get the transform from whatever factory is currently set
+  const Transform transform(transform_factory()(mutation_parameters().rng01()));
       
-      fn_top->concatenate_pretransform_on_right(transform);
-
-      FunctionPreTransform*const new_root_as_transform=new_root->is_a_FunctionPreTransform();
-      assert(new_root_as_transform!=0);
-
-      // Have to access params() through this to avoid protected scope of non-const version creating an error.
-      const FunctionPreTransform*const const_new_root_as_transform=new_root_as_transform;
-
-      Transform current_transform(const_new_root_as_transform->params());
-      current_transform.concatenate_on_right(transform);
-      new_root_as_transform->params(current_transform.get_columns());
-
-      history().replacing(display);
-      display->image(new MutatableImage(fn_top,image->sinusoidal_z(),image->spheremap()));
-    }
-  else
-    {
-      std::clog << "Internal error: Needed a FunctionTop to do spawn_warped";
-      delete new_root;
-    }
+  new_root->concatenate_pretransform_on_right(transform);  
+  history().replacing(display);
+  display->image(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
 }
 
 void EvolvotronMain::restore(MutatableImageDisplay* display,MutatableImage* image)

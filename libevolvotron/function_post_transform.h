@@ -40,18 +40,6 @@ FUNCTION_BEGIN(FunctionPostTransform,12,1,false,0)
     return transform.transformed(arg(0)(p));
   }
 
-  //! Override in specific class
-  virtual const FunctionPostTransform*const is_a_FunctionPostTransform() const
-    {
-      return this;
-    }
-
-  //! Override in specific class
-  virtual FunctionPostTransform*const is_a_FunctionPostTransform()
-    {
-      return this;
-    }
-
 FUNCTION_END(FunctionPostTransform)
 
 #endif

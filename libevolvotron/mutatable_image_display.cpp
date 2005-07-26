@@ -571,20 +571,11 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	      std::clog << "[Pan]";
 	    }
 	  
-	  FunctionNode* new_root=image()->root()->deepclone();
-	  if (FunctionTop*const fn_top=new_root->is_a_FunctionTop())
-	    {
-	      fn_top->concatenate_pretransform_on_right(transform);
+	  FunctionTop*const new_root=image()->top()->typed_deepclone();
+	  new_root->concatenate_pretransform_on_right(transform);
 
-	      // Install new image (triggers recompute).
-	      image(new MutatableImage(fn_top,image()->sinusoidal_z(),image()->spheremap()));	  
-	    }
-	  else
-	    {
-	      std::clog << "Internal error: Needed a FunctionTop to do spawn_recoloured";
-	      delete new_root;
-	    }
-
+	  // Install new image (triggers recompute).
+	  image(new MutatableImage(new_root,image()->sinusoidal_z(),image()->spheremap()));	  
 
 	  // Finally, record position of this event as last event
 	  _mid_button_adjust_last_pos=event->pos();

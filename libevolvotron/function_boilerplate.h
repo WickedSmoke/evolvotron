@@ -90,13 +90,19 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
 
       return new FUNCTION(info->params(),args,info->iterations());
     }
-  
+
   //! Return a deeploned copy.
   virtual FunctionNode*const deepclone() const
     {
       return new FUNCTION(cloneparams(),cloneargs(),iterations());
     }
-  
+
+  //! Return a deeploned copy with more specific type (but of course this can't be virtual).
+  FUNCTION*const typed_deepclone() const
+    {
+      return new FUNCTION(cloneparams(),cloneargs(),iterations());      
+    }
+    
   //! Internal self-consistency check.  We can add some extra checks.
   virtual const bool ok() const
     {

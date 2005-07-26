@@ -105,22 +105,6 @@ class FunctionNode
     =0;
 
   //@{
-  //! Query the node as to whether it is a FunctionPreTransform (return null if not).
-  /*! This is useful for accumulating view transforms at the front end of a function tree without creating a new transform each time.
-   */
-  virtual const FunctionPreTransform*const is_a_FunctionPreTransform() const;
-  virtual FunctionPreTransform*const is_a_FunctionPreTransform();
-  //@}
-
-  //@{
-  //! Query the node as to whether it is a FunctionPostTransform (return null if not).
-  /*! This is useful for accumulating colour transforms at the back end of a function tree without creating a new transform each time.
-   */
-  virtual const FunctionPostTransform*const is_a_FunctionPostTransform() const;
-  virtual FunctionPostTransform*const is_a_FunctionPostTransform();
-  //@}
-
-  //@{
   //! Query the node as to whether it is a FunctionTop (return null if not).
   virtual const FunctionTop*const is_a_FunctionTop() const;
   virtual FunctionTop*const is_a_FunctionTop();
@@ -146,7 +130,7 @@ class FunctionNode
    */
   FunctionNode(const std::vector<real>& p,const std::vector<FunctionNode*>& a,uint iter);
   
-  //! Build a MutatableImage given a description
+  //! Build a FunctionNode given a description
   static FunctionNode*const create(const FunctionNodeInfo* info,std::string& report);
   
   //! Destructor.

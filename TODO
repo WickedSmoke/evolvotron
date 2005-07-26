@@ -1,9 +1,11 @@
 Soon
 ====
 Replace function null, function pre-transform, function post transform with function top.
-Eliminate recurring FunctionTop*const c=root()->deepclone()->is_a_FunctionTop();  pattern
-probably by adding FunctionTop* MutatableImage::deepclone_root()
 New more sensible initial setup.
+Decide whether to mutatate colours and/or transforms all the time
+(guess yes, but would be nice to have some axis/isotropic locking maybe ?)
+Maybe colours all the time (with small chance of catastrophic reset ?)
+and transforms more rarely, with occassional reset to simple states.
 
 File contents previewing in file dialog.
 
@@ -14,6 +16,7 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
+- Move LoadHandler out of mutatable image.
 - Not entirely happy about preponderance of bright primary colours in images
   (ie saturating RGB components).  Need to give this some thought; something
   a bit more restricting than tanh on each component needed ?

@@ -40,18 +40,6 @@ FUNCTION_BEGIN(FunctionPreTransform,12,1,false,0)
     return arg(0)(transform.transformed(p));
   }
 
-  //! Override in specific class
-  virtual const FunctionPreTransform*const is_a_FunctionPreTransform() const
-    {
-      return this;
-    }
-
-  //! Override in specific class
-  virtual FunctionPreTransform*const is_a_FunctionPreTransform()
-    {
-      return this;
-    }
-
 FUNCTION_END(FunctionPreTransform)
 
 #endif

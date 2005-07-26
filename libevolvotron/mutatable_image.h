@@ -44,7 +44,7 @@ class MutatableImage
     the node it is invoked on (only child nodes can be zapped), partly so we
     can keep colour and space transforms under control.
    */
-  FunctionTop* _root;
+  FunctionTop* _top;
 
   //! Whether to sweep z sinusoidally (vs linearly)
   bool _sinusoidal_z;
@@ -71,15 +71,7 @@ class MutatableImage
   const XYZ sampling_coordinate(uint x,uint y,uint z,uint sx,uint sy,uint sz) const;
 
   //! Accessor.
-  const FunctionTop*const root() const;
-
-  //! Accessor.
-  /*
-  FunctionNode*const root()
-    {
-      return &(_root_holder->arg(0));
-    }
-  */
+  const FunctionTop*const top() const;
 
   //! Accessor.
   const bool sinusoidal_z() const
