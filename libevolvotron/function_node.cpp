@@ -276,8 +276,6 @@ const std::vector<real> FunctionNode::stubparams(const MutationParameters& param
   std::vector<real> ret;
   for (uint i=0;i<n;i++)
     {
-      //real v=-1.0+2.0*parameters.r01();
-      //while (parameters.r01()<0.125) v*=2.0;
       real v=parameters.rnegexp();
       ret.push_back(parameters.r01() < 0.5 ? -v : v);
     }

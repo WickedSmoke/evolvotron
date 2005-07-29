@@ -407,7 +407,7 @@ void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImage
 {  
   FunctionTop*const new_root=image->top()->typed_deepclone();
   
-  new_root->mutate_colours_only(mutation_parameters());
+  new_root->reset_posttransform_parameters(mutation_parameters());
   history().replacing(display);
   display->image(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
 }

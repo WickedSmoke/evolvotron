@@ -7,6 +7,8 @@ Decide whether to mutatate colours and/or transforms all the time
 Maybe colours all the time (with small chance of catastrophic reset ?)
 and transforms more rarely, with occassional reset to simple states.
 
+New mutation type: probability_parameter_reset
+
 File contents previewing in file dialog.
 
 Sometime

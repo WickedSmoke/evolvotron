@@ -27,6 +27,7 @@ HEADERS += \
         function_post_transform.h \
         function_registration.h \
         function_registry.h \
+        function_top.h \
         function_transform_generalised.h \
 	license.h \
         margin.h \
@@ -68,6 +69,7 @@ SOURCES += \
         function_post_transform.cpp \
         function_registration.cpp \
         function_registry.cpp \
+        function_top.cpp \
         function_transform_generalised.cpp \
 	license.cpp \
         margin.cpp \

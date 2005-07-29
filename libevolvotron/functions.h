@@ -192,7 +192,7 @@ FUNCTION_BEGIN(FunctionRotate,0,1,false,0)
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const XYZ a(arg(0)(p)*M_PI);
-  
+      
       const TransformRotateX rx(a.x());
       const TransformRotateY ry(a.y());
       const TransformRotateZ rz(a.z());

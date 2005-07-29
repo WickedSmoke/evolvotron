@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 class Transform 
 {
  public:
-  //! Default constructor sets up identity.
+  //! Default constructor.  NB Doesn't set up identity or anything.
   Transform();
 
   //! Copy constructor.
@@ -123,6 +123,38 @@ inline std::ostream& operator<<(std::ostream& out,const Transform& t)
   return out << t.translate() << ";" << t.basis_x() << "," << t.basis_y() << "," << t.basis_z();
 }
 
+class TransformIdentity : public Transform
+{
+ public:
+  TransformIdentity()
+    {
+      translate(XYZ(0.0,0.0,0.0));
+      basis_x(XYZ(1.0,0.0,0.0));
+      basis_y(XYZ(0.0,1.0,0.0));
+      basis_z(XYZ(0.0,0.0,1.0));
+    }
+};
+
+class TransformScale : public Transform
+{
+ public:
+  TransformScale(const XYZ& s)
+    {
+      translate(XYZ(0.0,0.0,0.0));
+      basis_x(XYZ(s.x(),0.0,0.0));
+      basis_y(XYZ(0.0,s.y(),0.0));
+      basis_z(XYZ(0.0,0.0,s.z()));
+    }
+  TransformScale(real s)
+    {
+      translate(XYZ(0.0,0.0,0.0));
+      basis_x(XYZ(s,0.0,0.0));
+      basis_y(XYZ(0.0,s,0.0));
+      basis_z(XYZ(0.0,0.0,s));
+    }
+};
+
+
 class TransformRotateX : public Transform
 {
  public:
@@ -130,7 +162,8 @@ class TransformRotateX : public Transform
     {
       const real sa=sin(a);
       const real ca=cos(a);
-      
+
+      translate(XYZ(0.0,0.0,0.0));
       basis_x(XYZ(1.0,0.0,0.0));
       basis_y(XYZ(0.0, ca , sa ));
       basis_z(XYZ(0.0,-sa , ca ));
@@ -145,6 +178,7 @@ class TransformRotateY : public Transform
       const real sa=sin(a);
       const real ca=cos(a);
       
+      translate(XYZ(0.0,0.0,0.0));
       basis_x(XYZ( ca ,0.0,-sa ));
       basis_y(XYZ(0.0,1.0,0.0));
       basis_z(XYZ( sa ,0.0, ca ));
@@ -159,6 +193,7 @@ class TransformRotateZ : public Transform
       const real sa=sin(a);
       const real ca=cos(a);
       
+      translate(XYZ(0.0,0.0,0.0));
       basis_x(XYZ( ca , sa ,0.0));
       basis_y(XYZ(-sa , ca ,0.0));
       basis_z(XYZ(0.0,0.0,1.0));
@@ -166,8 +201,3 @@ class TransformRotateZ : public Transform
 };
 
 #endif
-
-
-
-
-

@@ -24,10 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <iostream>
 
 Transform::Transform()
-  :_translate(0.0,0.0,0.0)
-   ,_basis_x(1.0,0.0,0.0)
-   ,_basis_y(0.0,1.0,0.0)
-   ,_basis_z(0.0,0.0,1.0)
 {}
 
 Transform::Transform(const Transform& t)

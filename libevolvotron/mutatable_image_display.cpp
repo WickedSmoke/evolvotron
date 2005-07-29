@@ -462,7 +462,7 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	  const QPoint pixel_delta(event->pos()-_mid_button_adjust_last_pos);
 	  
 	  // Build the transform caused by the adjustment
-	  Transform transform;
+	  Transform transform=TransformIdentity();
 	  
 	  // Shift button (no ctrl) is various zooms
 	  if (event->state()&ShiftButton && !(event->state()&ControlButton))
