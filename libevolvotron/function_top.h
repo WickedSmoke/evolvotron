@@ -49,7 +49,7 @@ FUNCTION_BEGIN(FunctionTop,24,1,false,0)
     const Transform space_transform(params(),0);
     const XYZ sp(space_transform.transformed(p)); 
     const XYZ v(arg(0)(sp));
-    const XYZ tv(tanh(v.x()),tanh(v.y()),tanh(v.z()));
+    const XYZ tv(tanh(0.25*v.x()),tanh(0.25*v.y()),tanh(0.25*v.z()));
     // ...each component of tv is in [-1,1] so the transform parameters define a rhomboid in colour space.
     const Transform colour_transform(params(),12);
     return colour_transform.transformed(tv);

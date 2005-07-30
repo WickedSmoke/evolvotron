@@ -140,11 +140,11 @@ MutatableImage*const MutatableImage::simplified() const
 void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
 {
   // Actually calculate a pixel value from the image.
-  // The nominal range is -1.0 to 1.0
+  // negexp distribution on colour-space parameters probably means the nominal range is something like -4.0 to 4.0
   XYZ pv((*top())(p));
 
-  // Scale nominal -1.0 to 1.0 range to 0-255
-  XYZ v(127.5*(pv+XYZ(1.0,1.0,1.0)));
+  // Scale nominal -4.0 to 4.0 range to 0-255
+  XYZ v(127.5*(0.25*pv+XYZ(1.0,1.0,1.0)));
   
   // Clamp out of range values 
   v.x(clamped(v.x(),0.0,255.0));
