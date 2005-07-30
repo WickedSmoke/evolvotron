@@ -70,13 +70,23 @@ FUNCTION_BEGIN(FunctionTop,24,1,false,0)
   {
     FunctionNode::mutate(parameters,false);
 
-    const real p0=parameters.r01();
-    if (p0<0.1) reset_pretransform_parameters(parameters);
-    else if (p0<0.5) mutate_pretransform_parameters(parameters);
+    if (parameters.r01()<parameters.probability_parameter_reset())
+      {
+	reset_pretransform_parameters(parameters);
+      }
+    else
+      {
+	if (parameters.r01()<0.5) mutate_pretransform_parameters(parameters);
+      }
 
-    const real p1=parameters.r01();
-    if (p1<0.1) reset_posttransform_parameters(parameters);
-    else if (p1<0.5) mutate_posttransform_parameters(parameters);    
+    if (parameters.r01()<parameters.probability_parameter_reset())
+      {
+	reset_posttransform_parameters(parameters);
+      }
+    else
+      {
+	if (parameters.r01()<0.5) mutate_posttransform_parameters(parameters);
+      }
   }
 
   virtual void concatenate_pretransform_on_right(const Transform& transform)
@@ -90,7 +100,7 @@ FUNCTION_BEGIN(FunctionTop,24,1,false,0)
   virtual void mutate_pretransform_parameters(const MutationParameters& parameters)
   {
     for (uint i=0;i<11;i++)
-      params()[i]+=parameters.magnitude()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
+      params()[i]+=parameters.magnitude_parameter_variation()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
   }
 
   virtual void reset_pretransform_parameters(const MutationParameters& parameters)
@@ -103,7 +113,7 @@ FUNCTION_BEGIN(FunctionTop,24,1,false,0)
   virtual void mutate_posttransform_parameters(const MutationParameters& parameters)
   {
     for (uint i=12;i<23;i++)
-      params()[i]+=parameters.magnitude()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
+      params()[i]+=parameters.magnitude_parameter_variation()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
   }
 
   virtual void reset_posttransform_parameters(const MutationParameters& parameters)

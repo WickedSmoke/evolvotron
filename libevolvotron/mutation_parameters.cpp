@@ -39,8 +39,9 @@ MutationParameters::~MutationParameters()
 
 void MutationParameters::reset()
 {
-  _magnitude=0.5;
-  
+  _magnitude_parameter_variation=0.25;
+
+  _probability_parameter_reset=0.05;
   _probability_glitch=0.02;
   _probability_shuffle=0.02;
   _probability_insert=0.02;
@@ -76,8 +77,9 @@ void MutationParameters::reset()
 
 void MutationParameters::general_cool(real f)
 {
-  _magnitude*=f;
+  _magnitude_parameter_variation*=f;
 
+  _probability_parameter_reset*=f;
   _probability_glitch*=f;
   _probability_shuffle*=f;
   _probability_insert*=f;

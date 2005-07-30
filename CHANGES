@@ -5,6 +5,8 @@ From release 0.4.0:
  - Lists of functions in alphabetic order
  - New functions: Frieze groups
  - Constantness of functions more conservative (few overrides) and hopefully less buggy
+ - Final colour space transform range more constrained to keep colours sane.
+ - New mutation parameter: probability of a function's parameters being reset.
  - Code clean up.
 
 From release 0.3.1:

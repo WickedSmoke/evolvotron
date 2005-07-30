@@ -341,9 +341,16 @@ void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_p
   // Perturb any parameters we have
   if (mutate_own_parameters)
     {
-      for (std::vector<real>::iterator it=params().begin();it!=params().end();it++)
+      if (parameters.r01()<parameters.probability_parameter_reset())
 	{
-	  (*it)+=parameters.magnitude()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
+	  params(stubparams(parameters,params().size()));
+	}
+      else
+	{
+	  for (std::vector<real>::iterator it=params().begin();it!=params().end();it++)
+	    {
+	      (*it)+=parameters.magnitude_parameter_variation()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
+	    }
 	}
     }
 

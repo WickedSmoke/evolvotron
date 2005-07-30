@@ -52,8 +52,11 @@ class MutationParameters : public QObject
   //! Negative-exponential generator might be useful too.
   mutable RandomNegExp _r_negexp;
 
-  //! Specifies the magnitude of random changes to FunctionNodeConstant.
-  real _magnitude;
+  //! Specifies the magnitude of random changes the function parameters.
+  real _magnitude_parameter_variation;
+
+  //! Specifies the probability of a the parameter set being completely reset.
+  real _probability_parameter_reset;
 
   //! Specifies the probability of a child being dropped and replaced with a new random stub.
   real _probability_glitch;
@@ -135,14 +138,26 @@ class MutationParameters : public QObject
     }
 
   //! Accessor.
-  const real magnitude() const
+  const real magnitude_parameter_variation() const
     {
-      return _magnitude;
+      return _magnitude_parameter_variation;
     }
   //! Accessor.
-  void magnitude(real v) 
+  void magnitude_parameter_variation(real v) 
     {
-      _magnitude=v;
+      _magnitude_parameter_variation=v;
+      emit changed();
+    }
+
+  //! Accessor.
+  const real probability_parameter_reset() const
+    {
+      return _probability_parameter_reset;
+    }
+  //! Accessor.
+  void probability_parameter_reset(real v) 
+    {
+      _probability_parameter_reset=v;
       emit changed();
     }
 

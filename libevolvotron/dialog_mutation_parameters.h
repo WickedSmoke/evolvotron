@@ -77,6 +77,7 @@ class DialogMutationParameters : public QDialog
   //@{
   //! Spinners for detailed control of specific parameters
   QSpinBox* _spinbox_magnitude;
+  QSpinBox* _spinbox_parameter_reset;
   QSpinBox* _spinbox_glitch;
   QSpinBox* _spinbox_shuffle;
   QSpinBox* _spinbox_insert;
@@ -117,6 +118,7 @@ class DialogMutationParameters : public QDialog
   //@{
   //! Signalled by spinbox.
   void changed_magnitude(int v);
+  void changed_parameter_reset(int v);
   void changed_glitch(int v);
   void changed_shuffle(int v);
   void changed_insert(int v);
