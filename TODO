@@ -1,6 +1,5 @@
 Soon
 ====
-Use probability_parameter_reset
 New more sensible initial setup.
 Decide whether to mutatate colours and/or transforms all the time
 (guess yes, but would be nice to have some axis/isotropic locking maybe ?)
