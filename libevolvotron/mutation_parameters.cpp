@@ -42,10 +42,10 @@ void MutationParameters::reset()
   _magnitude_parameter_variation=0.25;
 
   _probability_parameter_reset=0.05;
-  _probability_glitch=0.02;
-  _probability_shuffle=0.02;
-  _probability_insert=0.02;
-  _probability_substitute=0.02;
+  _probability_glitch=0.05;
+  _probability_shuffle=0.05;
+  _probability_insert=0.05;
+  _probability_substitute=0.05;
 
   _proportion_basic=0.7;
 

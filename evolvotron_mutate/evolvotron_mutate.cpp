@@ -67,16 +67,7 @@ int main(int argc,char* argv[])
 
   if (args.option("-g"))
     {
-      
-      FunctionNode* root=0;
-      do
-	{
-	  if (root) delete root;
-	  root=FunctionNode::stub(mutation_parameters,true);
-	}
-      while (root->is_constant());
-      
-      FunctionTop* fn_top=FunctionTop::create(mutation_parameters,root);
+      FunctionTop* fn_top=FunctionTop::initial(mutation_parameters);
 
       imagefn_out=new MutatableImage(fn_top,!args.option("-linz"),args.option("-spheremap"));
     }

@@ -675,26 +675,24 @@ void EvolvotronMain::toggle_hide_menu()
  */
 void EvolvotronMain::reset(MutatableImageDisplay* display)
 {
-  FunctionNode* root;
+  FunctionTop* root;
   if (_dialog_favourite->favourite_function().empty())
     {
-      root=FunctionNode::initial(mutation_parameters());
-    }
-  else if (_dialog_favourite->favourite_function_unwrapped())
-    {
-      FunctionNodeStubNewFnPtr rootfn=FunctionRegistry::get()->lookup(_dialog_favourite->favourite_function())->stubnew_fn();
-      root=(*rootfn)(mutation_parameters(),true);
+      root=FunctionTop::initial(mutation_parameters());
     }
   else
     {
-      root=FunctionNode::initial(mutation_parameters(),FunctionRegistry::get()->lookup(_dialog_favourite->favourite_function()));
+      root=FunctionTop::initial
+	(
+	 mutation_parameters(),
+	 FunctionRegistry::get()->lookup(_dialog_favourite->favourite_function()),
+	 _dialog_favourite->favourite_function_unwrapped()
+	 );
     }
-
-  FunctionTop*const fn_top=FunctionTop::create(mutation_parameters(),root);
 
   history().replacing(display);
   //! \todo sinz and spheremap should be obtained from mutation parameters
-  display->image(new MutatableImage(fn_top,!Args::global().option("-linz"),Args::global().option("-spheremap")));
+  display->image(new MutatableImage(root,!Args::global().option("-linz"),Args::global().option("-spheremap")));
 }
 
 void EvolvotronMain::undo()

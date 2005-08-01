@@ -113,9 +113,6 @@ class FunctionNode
   //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
   static FunctionNode*const stub(const MutationParameters& parameters,bool exciting);
 
-  //! This returns a random bit of tree suitable for use as a starting image.
-  static FunctionNode*const initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn=0);
-
   //! This returns a vector of random parameter values.
   static const std::vector<real> stubparams(const MutationParameters& parameters,uint n);
 

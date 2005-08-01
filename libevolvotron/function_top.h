@@ -37,23 +37,11 @@
 */
 FUNCTION_BEGIN(FunctionTop,24,1,false,0)
 
-  static FunctionTop*const create(const MutationParameters& mutation_parameters,FunctionNode* root)
-  {
-    std::vector<FunctionNode*> a;
-    a.push_back(root);
-    return new FunctionTop(stubparams(mutation_parameters,24),a,0);
-  }
+public:
+  //! This returns a random tree suitable for use as a starting image.
+  static FunctionTop*const initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn=0,bool unwrapped=false);
 
-  virtual const XYZ evaluate(const XYZ& p) const
-  {
-    const Transform space_transform(params(),0);
-    const XYZ sp(space_transform.transformed(p)); 
-    const XYZ v(arg(0)(sp));
-    const XYZ tv(tanh(0.25*v.x()),tanh(0.25*v.y()),tanh(0.25*v.z()));
-    // ...each component of tv is in [-1,1] so the transform parameters define a rhomboid in colour space.
-    const Transform colour_transform(params(),12);
-    return colour_transform.transformed(tv);
-  }
+  virtual const XYZ evaluate(const XYZ& p) const;
 
   virtual FunctionTop*const is_a_FunctionTop()
   {
@@ -65,29 +53,8 @@ FUNCTION_BEGIN(FunctionTop,24,1,false,0)
       return this;
   }
 
-  // Override so transform and colours don't keep changing
-  void mutate(const MutationParameters& parameters,bool mutate_own_parameters=true)
-  {
-    FunctionNode::mutate(parameters,false);
-
-    if (parameters.r01()<parameters.probability_parameter_reset())
-      {
-	reset_pretransform_parameters(parameters);
-      }
-    else
-      {
-	if (parameters.r01()<0.5) mutate_pretransform_parameters(parameters);
-      }
-
-    if (parameters.r01()<parameters.probability_parameter_reset())
-      {
-	reset_posttransform_parameters(parameters);
-      }
-    else
-      {
-	if (parameters.r01()<0.5) mutate_posttransform_parameters(parameters);
-      }
-  }
+  //! Overridden so transform and colours don't keep changing
+  virtual void mutate(const MutationParameters& parameters,bool mutate_own_parameters=true);
 
   virtual void concatenate_pretransform_on_right(const Transform& transform)
   {
