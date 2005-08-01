@@ -5,6 +5,7 @@ Decide whether to mutatate colours and/or transforms all the time
 (guess yes, but would be nice to have some axis/isotropic locking maybe ?)
 Maybe colours all the time (with small chance of catastrophic reset ?)
 and transforms more rarely, with occassional reset to simple states.
+Should be a chance of zooming out quite alot.
 
 New mutation type: probability_parameter_reset
 
