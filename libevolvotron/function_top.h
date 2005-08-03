@@ -56,39 +56,16 @@ public:
   //! Overridden so transform and colours don't keep changing
   virtual void mutate(const MutationParameters& parameters,bool mutate_own_parameters=true);
 
-  virtual void concatenate_pretransform_on_right(const Transform& transform)
-  {
-    Transform current_transform(params(),0);
-    current_transform.concatenate_on_right(transform);
-    for (uint i=0;i<12;i++)
-      params()[i]=current_transform.get_columns()[i];
-  }
+  virtual void concatenate_pretransform_on_right(const Transform& transform);
 
-  virtual void mutate_pretransform_parameters(const MutationParameters& parameters)
-  {
-    for (uint i=0;i<11;i++)
-      params()[i]+=parameters.magnitude_parameter_variation()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
-  }
+  virtual void mutate_pretransform_parameters(const MutationParameters& parameters);
+  virtual void reset_pretransform_parameters(const MutationParameters& parameters);
+  virtual void mutate_posttransform_parameters(const MutationParameters& parameters);
+  virtual void reset_posttransform_parameters(const MutationParameters& parameters);
 
-  virtual void reset_pretransform_parameters(const MutationParameters& parameters)
-  {
-    const std::vector<real> p(stubparams(parameters,12));
-    for (uint i=0;i<11;i++)
-      params()[i]=p[i];
-  }
+private:
 
-  virtual void mutate_posttransform_parameters(const MutationParameters& parameters)
-  {
-    for (uint i=12;i<23;i++)
-      params()[i]+=parameters.magnitude_parameter_variation()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
-  }
-
-  virtual void reset_posttransform_parameters(const MutationParameters& parameters)
-  {
-    const std::vector<real> p(stubparams(parameters,12));
-    for (uint i=0;i<11;i++)
-      params()[12+i]=p[i];
-  }
+  const Transform interesting_pretransform(const MutationParameters& parameters,const real k);
 
 FUNCTION_END(FunctionTop)
 

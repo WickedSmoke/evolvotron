@@ -47,7 +47,7 @@ void MutationParameters::reset()
   _probability_insert=0.05;
   _probability_substitute=0.05;
 
-  _proportion_basic=0.5;
+  _proportion_basic=0.6;
 
   _proportion_constant=0.5;
   _identity_supression=1.0;

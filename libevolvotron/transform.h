@@ -135,6 +135,18 @@ class TransformIdentity : public Transform
     }
 };
 
+class TransformTranslate : public Transform
+{
+ public:
+  TransformTranslate(const XYZ& t)
+    {
+      translate(t);
+      basis_x(XYZ(1.0,0.0,0.0));
+      basis_y(XYZ(0.0,1.0,0.0));
+      basis_z(XYZ(0.0,0.0,1.0));
+    }
+};
+
 class TransformScale : public Transform
 {
  public:
