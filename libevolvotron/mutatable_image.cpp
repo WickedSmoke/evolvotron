@@ -495,17 +495,23 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
       
       if (root)
 	{
-	  FunctionTop*const fn_top=root->is_a_FunctionTop();
-	  if (fn_top)
+	  FunctionTop* fn_top=root->is_a_FunctionTop();
+	  if (!fn_top)
 	    {
-	      return new MutatableImage(fn_top,sinusoidal_z,spheremap);
+	      // Build a FunctionTop wrapper for compataibility with old .xml files
+
+	      std::vector<FunctionNode*> a;
+	      a.push_back(root);
+
+	      const TransformIdentity ti;
+	      std::vector<real> tiv=ti.get_columns();
+	      std::vector<real> p;
+	      p.insert(p.end(),tiv.begin(),tiv.end());
+	      p.insert(p.end(),tiv.begin(),tiv.end());
+	      
+	      fn_top=new FunctionTop(p,a,0);
 	    }
-	  else
-	    {
-	      delete root;
-	      report="Loaded functions must have FunctionTop for their root node";
-	      return 0;
-	    }
+	  return new MutatableImage(fn_top,sinusoidal_z,spheremap);
 	}
       else
 	{

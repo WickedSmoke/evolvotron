@@ -1,23 +1,10 @@
-Soon
-====
-New more sensible initial setup.
-Decide whether to mutatate colours and/or transforms all the time
-(guess yes, but would be nice to have some axis/isotropic locking maybe ?)
-Maybe colours all the time (with small chance of catastrophic reset ?)
-and transforms more rarely, with occassional reset to simple states.
-Should be a chance of zooming out quite alot.
-
-New mutation type: probability_parameter_reset
-
-File contents previewing in file dialog.
-
-Sometime
-========
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
+- Add blending versions of symmetry functions.
+- File contents previewing in file dialog.
 - Move LoadHandler out of mutatable image.
 - Not entirely happy about preponderance of bright primary colours in images
   (ie saturating RGB components).  Need to give this some thought; something
