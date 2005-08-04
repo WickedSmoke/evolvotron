@@ -799,6 +799,39 @@ FUNCTION_END(FunctionFriezeGroupHop)
 
 //------------------------------------------------------------------------------------------
 
+FUNCTION_BEGIN(FunctionFriezeGroupHopBlend,2,1,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const real dx=0.5*tanh(fabs(param(1)));  // dx in 0-0.5
+      const real x=modulusf(p.x(),1.0);
+      const real y=p.y();
+      if (x<dx)
+	{
+	  const real x0=x;
+	  const real l0=0.5+0.5*(x/dx);
+	  const real x1=x+1.0;;
+	  const real l1=1.0-l0;
+	  return l0*arg(0)(XYZ(x0,y,param(0)))+l1*arg(0)(XYZ(x1,y,param(0)));
+	}
+      else if (x>1.0-dx)
+	{
+	  const real x0=x;
+	  const real l0=1.0-0.5*(x-(1.0-dx))/dx;
+	  const real x1=x-1.0;
+	  const real l1=1.0-l0;
+	  return l0*arg(0)(XYZ(x0,y,param(0)))+l1*arg(0)(XYZ(x1,y,param(0)));
+	}
+      else
+	{
+	  return arg(0)(XYZ(x,y,param(0)));
+	}
+    }
+  
+FUNCTION_END(FunctionFriezeGroupHopBlend)
+
+//------------------------------------------------------------------------------------------
+
 FUNCTION_BEGIN(FunctionFriezeGroupHopWarped,4,2,false,FnStructure)
   
   virtual const XYZ evaluate(const XYZ& p) const
