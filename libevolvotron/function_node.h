@@ -196,6 +196,12 @@ class FunctionNode
       return evaluate(p);
     }
 
+  //! Weighted evaluate; fastpath for zero weight.
+  const XYZ operator()(const real weight,const XYZ& p) const
+    {
+      return (weight==0.0 ? XYZ(0.0,0.0,0.0) : weight*evaluate(p));
+    }
+
   //! Internal self-consistency check.
   virtual const bool ok() const;
 

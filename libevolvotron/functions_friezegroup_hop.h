@@ -51,28 +51,37 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopBlend,2,1,false,FnStructure)
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const real dx=0.5*tanh(fabs(param(1)));  // dx in 0-0.5
-      const real x=modulusf(p.x(),1.0);
+      const real x1=modulusf(p.x(),1.0);
+      const real x0=x1+1.0;
+      const real x2=x1-1.0;
+
       const real y=p.y();
-      if (x<dx)
+      const real z=param(0);
+
+      real w0,w1,w2;
+      if (x1<dx) 
 	{
-	  const real x0=x;
-	  const real l0=0.5+0.5*(x/dx);
-	  const real x1=x+1.0;;
-	  const real l1=1.0-l0;
-	  return l0*arg(0)(XYZ(x0,y,param(0)))+l1*arg(0)(XYZ(x1,y,param(0)));
+	  w0=0.5-0.5*(x1/dx);
+	  w2=0.0;
+	  w1=1.0-w0;
 	}
-      else if (x>1.0-dx)
+      else if (x1>1.0-dx)
 	{
-	  const real x0=x;
-	  const real l0=1.0-0.5*(x-(1.0-dx))/dx;
-	  const real x1=x-1.0;
-	  const real l1=1.0-l0;
-	  return l0*arg(0)(XYZ(x0,y,param(0)))+l1*arg(0)(XYZ(x1,y,param(0)));
+	  w2=0.5*(x1-(1.0-dx))/dx;
+	  w0=0.0;
+	  w1=1.0-w2;
 	}
       else
 	{
-	  return arg(0)(XYZ(x,y,param(0)));
+	  w0=0.0;
+	  w1=1.0;
+	  w2=0.0;
 	}
+
+      return
+	 arg(0)(w0,XYZ(x0,y,z))
+	+arg(0)(w1,XYZ(x1,y,z))
+	+arg(0)(w2,XYZ(x2,y,z));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopBlend)
@@ -116,28 +125,37 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopBlendFreeZ,1,1,false,FnStructure)
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const real dx=0.5*tanh(fabs(param(0)));  // dx in 0-0.5
-      const real x=modulusf(p.x(),1.0);
+      const real x1=modulusf(p.x(),1.0);
+      const real x0=x1+1.0;
+      const real x2=x1-1.0;
+
       const real y=p.y();
-      if (x<dx)
+      const real z=p.z();
+
+      real w0,w1,w2;
+      if (x1<dx) 
 	{
-	  const real x0=x;
-	  const real l0=0.5+0.5*(x/dx);
-	  const real x1=x+1.0;;
-	  const real l1=1.0-l0;
-	  return l0*arg(0)(XYZ(x0,y,p.z()))+l1*arg(0)(XYZ(x1,y,p.z()));
+	  w0=0.5-0.5*(x1/dx);
+	  w2=0.0;
+	  w1=1.0-w0;
 	}
-      else if (x>1.0-dx)
+      else if (x1>1.0-dx)
 	{
-	  const real x0=x;
-	  const real l0=1.0-0.5*(x-(1.0-dx))/dx;
-	  const real x1=x-1.0;
-	  const real l1=1.0-l0;
-	  return l0*arg(0)(XYZ(x0,y,p.z()))+l1*arg(0)(XYZ(x1,y,p.z()));
+	  w2=0.5*(x1-(1.0-dx))/dx;
+	  w0=0.0;
+	  w1=1.0-w2;
 	}
       else
 	{
-	  return arg(0)(XYZ(x,y,p.z()));
+	  w0=0.0;
+	  w1=1.0;
+	  w2=0.0;
 	}
+
+      return
+	 arg(0)(w0,XYZ(x0,y,z))
+	+arg(0)(w1,XYZ(x1,y,z))
+	+arg(0)(w2,XYZ(x2,y,z));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopBlendFreeZ)
