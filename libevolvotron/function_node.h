@@ -200,9 +200,13 @@ class FunctionNode
   virtual const bool ok() const;
 
   //! Save the function tree.
-  virtual std::ostream& save_function(std::ostream& out,uint indent) const;
+  virtual std::ostream& save_function(std::ostream& out,uint indent) const
+    =0;
 
  protected:
+
+  //! Save the function tree.  Common code needing a function name.
+  std::ostream& save_function(std::ostream& out,uint indent,const std::string& function_name) const;
 
   //! Impose a new set of parameters and arguments on the node.  Existing arguments are cleaned up.
   void impose(std::vector<real>& p,std::vector<FunctionNode*>& a);

@@ -43,6 +43,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "functions_noise.h"
 #include "functions.h"
 #include "function_top.h"
+#include "functions_friezegroup_hop.h"
+#include "functions_friezegroup_spinhop.h"
 
 const std::vector<FunctionNode*> FunctionNode::cloneargs() const
 {
@@ -458,20 +460,23 @@ const bool FunctionNode::ok() const
   The indent number is just the level of recursion, incrementing by 1 each time.
   Outputting multiple spaces per level is handled by the Margin class.
  */
-std::ostream& FunctionNode::save_function(std::ostream& out,uint indent) const
+std::ostream& FunctionNode::save_function(std::ostream& out,uint indent,const std::string& function_name) const
 {
-  if (iterations()!=0)
-    out << Margin(indent) << "<i>" << iterations() << "</i>\n";
+  out << Margin(indent) << "<f>\n";
+  out << Margin(indent+1) << "<type>" << function_name << "</type>\n";
+  
+  if (iterations()!=0) out << Margin(indent+1) << "<i>" << iterations() << "</i>\n";
   
   for (std::vector<real>::const_iterator it=params().begin();it!=params().end();it++)
     {
-      out << Margin(indent) << "<p>" << (*it) << "</p>\n";
+      out << Margin(indent+1) << "<p>" << (*it) << "</p>\n";
     }
 
   for (std::vector<FunctionNode*>::const_iterator it=args().begin();it!=args().end();it++)
     {
-      (*it)->save_function(out,indent);
+      (*it)->save_function(out,indent+1);
     }
-    
+
+  out << Margin(indent) << "</f>\n";  
   return out;
 }

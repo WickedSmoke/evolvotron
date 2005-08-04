@@ -8,23 +8,18 @@ Conventional Mode
 -----------------
 - Add blending versions of symmetry functions.
 - Transform<->vector<real> should output basis vectors first, translation last.
+- is_constant not enough to avoid boring images.
+  Need to actually check amount of variation.
+- Get rid of heat/cool etc buttons cluttering up status bar
+  and just have (new) autocool tick, and reheat button ?
 - Functions with similar names probably do much the same
   thing so reduce their weighting to avoid them dominating.
-- File contents previewing in file dialog.
 - FriezeGroups should add an extra parameter for
   repeat length rather than using 1 all the time.
   Likewise for spheres.
 - Move LoadHandler out of mutatable image.
-- Not entirely happy about preponderance of bright primary colours in images
-  (ie saturating RGB components).  Need to give this some thought; something
-  a bit more restricting than tanh on each component needed ?
-  Maybe do tanh before colour basis vectors (would limit colours to
-  basis-vector defined rhomboid).  Build this into image function instead
-  of doing post-transform thing ?  What else could we possibly want for
-  a final "colourising" function ???
-- QFileDialog seems to support previewing; enable it.
-- Use isotropic scale more in initial setup (instead of identity).
-  Add isotropic scale and translate too.
+- QFileDialog seems to support previewing; enable
+  it for file contents previewing in file dialog.
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
   Presumably there are 3D versions too.
@@ -71,11 +66,7 @@ Conventional Mode
   Best solution probably to offer cropped modes e.g "640x480 from 640x640".
   Alternative solution would be 4:3 mode for the whole app where the evaluation
   range is changed.  Harder to explain though.
-- Add "Properties" to image, brought up by right-click.
-  Careful... what happens if spawn over the image ?  
-  Avoid issue by making it modal ?
 - [Local] Clean up evolvotron_admin/evolvotron_gallery
-- Get rid of heat/cool etc buttons cluttering up status bar and just have (new) autocool tick, and reheat button ?
 - Check qmake can be found by configure.
   Check $(QTDIR)/bin first... RH seem to be unusual in copying it to /usr/bin
 - evolvotron_render default output (or with filename "-") should be to stdout.

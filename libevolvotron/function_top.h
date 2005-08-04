@@ -20,8 +20,7 @@
   \brief Interfaces for class FunctionTop
   This class would normally live in functions.h (and is included and registered there), 
   but is split out so it can be efficiently used by MutatableImageDisplay and EvolvotronMain.
-  NB There is no class heirarchy here as all virtualisation and boilerplate services are supplied when the functions are plugged into the FunctionNode template.
-
+  NB There is no class heirarchy here as all virtualisation and boilerplate services are supplied when the functions are plugged into the FunctionNode template
 */
 
 #ifndef _function_top_h_

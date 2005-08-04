@@ -18,10 +18,8 @@ HEADERS += \
         function_compose_pair.h \
         function_compose_triple.h \
         function_core.h \
-        functions.h \
         function_node.h \
         function_node_info.h \
-        functions_noise.h \
         function_null.h \
         function_pre_transform.h \
         function_post_transform.h \
@@ -29,6 +27,10 @@ HEADERS += \
         function_registry.h \
         function_top.h \
         function_transform_generalised.h \
+        functions.h \
+        functions_friezegroup_hop.h \
+        functions_friezegroup_spinhop.h \
+        functions_noise.h \
 	license.h \
         margin.h \
 	mutatable_image.h \
@@ -60,10 +62,8 @@ SOURCES += \
         function_compose_pair.cpp \
         function_compose_triple.cpp \
         function_core.cpp \
-        functions.cpp \
         function_node.cpp \
         function_node_info.cpp \
-        functions_noise.cpp \
         function_null.cpp \
         function_pre_transform.cpp \
         function_post_transform.cpp \
@@ -71,6 +71,10 @@ SOURCES += \
         function_registry.cpp \
         function_top.cpp \
         function_transform_generalised.cpp \
+        functions.cpp \
+        functions_friezegroup_hop.cpp \
+        functions_friezegroup_spinhop.cpp \
+        functions_noise.cpp \
 	license.cpp \
         margin.cpp \
 	mutatable_image.cpp \

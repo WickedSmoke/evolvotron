@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2004,2005 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -784,176 +784,6 @@ FUNCTION_BEGIN(FunctionStripBlend,6,4,false,FnStructure)
   
 FUNCTION_END(FunctionStripBlend)
 
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupHop,1,1,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real x=modulusf(p.x(),1.0);
-      const real y=p.y();
-      return arg(0)(XYZ(x,y,param(0)));
-    }
-  
-FUNCTION_END(FunctionFriezeGroupHop)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupHopBlend,2,1,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real dx=0.5*tanh(fabs(param(1)));  // dx in 0-0.5
-      const real x=modulusf(p.x(),1.0);
-      const real y=p.y();
-      if (x<dx)
-	{
-	  const real x0=x;
-	  const real l0=0.5+0.5*(x/dx);
-	  const real x1=x+1.0;;
-	  const real l1=1.0-l0;
-	  return l0*arg(0)(XYZ(x0,y,param(0)))+l1*arg(0)(XYZ(x1,y,param(0)));
-	}
-      else if (x>1.0-dx)
-	{
-	  const real x0=x;
-	  const real l0=1.0-0.5*(x-(1.0-dx))/dx;
-	  const real x1=x-1.0;
-	  const real l1=1.0-l0;
-	  return l0*arg(0)(XYZ(x0,y,param(0)))+l1*arg(0)(XYZ(x1,y,param(0)));
-	}
-      else
-	{
-	  return arg(0)(XYZ(x,y,param(0)));
-	}
-    }
-  
-FUNCTION_END(FunctionFriezeGroupHopBlend)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupHopWarped,4,2,false,FnStructure)
-  
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real dx=XYZ(param(0),param(1),param(2))%arg(1)(XYZ(0.0,p.y(),0.0));
-      const real x=modulusf(p.x()-dx,1.0)+dx;
-      const real y=p.y();
-      return arg(0)(XYZ(x,y,param(3)));
-    }
-  
-FUNCTION_END(FunctionFriezeGroupHopWarped)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupHopFreeZ,0,1,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real x=modulusf(p.x(),1.0);
-      const real y=p.y();
-      return arg(0)(XYZ(x,y,p.z()));
-    }
-  
-FUNCTION_END(FunctionFriezeGroupHopFreeZ)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupHopWarpedFreeZ,3,2,false,FnStructure)
-  
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real dx=XYZ(param(0),param(1),param(2))%arg(1)(XYZ(0.0,p.y(),0.0));
-      const real x=modulusf(p.x()-dx,1.0)+dx;
-      const real y=p.y();
-      return arg(0)(XYZ(x,y,p.z()));
-    }
-  
-FUNCTION_END(FunctionFriezeGroupHopWarpedFreeZ)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupSpinhop,1,1,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real x=(p.y()>0.0 ? modulusf(p.x(),1.0) : 1.0-modulusf(p.x(),1.0));
-      const real y=fabs(p.y());
-      return arg(0)(XYZ(x,y,param(0)));
-    }
-
-FUNCTION_END(FunctionFriezeGroupSpinhop)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarped,7,3,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real dx=p.y()*(XYZ(param(0),param(1),param(2))%arg(2)(XYZ(0.0,fabs(p.y()),0.0)));
-      const real wx1=modulusf(p.x()-dx,1.0);
-      const real dy=(wx1>0.5 ? 1.0 : -1.0)*(XYZ(param(3),param(4),param(5))%arg(1)(XYZ(fabs(wx1-0.5),0.0,0.0)));
-
-      const bool upper_domain=(p.y()>dy);
-      real x;
-      real y;
-      if (upper_domain)
-	{
-	  x=wx1+dx;
-	  y=p.y();
-	}
-      else
-	{
-	  x=1.0-(wx1+dx);
-	  y=-p.y();
-	}
-
-      return arg(0)(XYZ(x,y,param(6)));
-    }
-
-FUNCTION_END(FunctionFriezeGroupSpinhopWarped)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupSpinhopFreeZ,0,1,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real x=(p.y()>0.0 ? modulusf(p.x(),1.0) : 1.0-modulusf(p.x(),1.0));
-      const real y=fabs(p.y());
-      return arg(0)(XYZ(x,y,p.z()));
-    }
-
-FUNCTION_END(FunctionFriezeGroupSpinhopFreeZ)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarpedFreeZ,6,3,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real dx=p.y()*(XYZ(param(0),param(1),param(2))%arg(2)(XYZ(0.0,fabs(p.y()),0.0)));
-      const real wx1=modulusf(p.x()-dx,1.0);
-      const real dy=(wx1>0.5 ? 1.0 : -1.0)*(XYZ(param(3),param(4),param(5))%arg(1)(XYZ(fabs(wx1-0.5),0.0,0.0)));
-
-      const bool upper_domain=(p.y()>dy);
-      real x;
-      real y;
-      if (upper_domain)
-	{
-	  x=wx1+dx;
-	  y=p.y();
-	}
-      else
-	{
-	  x=1.0-(wx1+dx);
-	  y=-p.y();
-	}
-
-      return arg(0)(XYZ(x,y,p.z()));
-    }
-
-FUNCTION_END(FunctionFriezeGroupSpinhopWarpedFreeZ)
 
 //------------------------------------------------------------------------------------------
 
@@ -978,6 +808,11 @@ FUNCTION_BEGIN(FunctionFriezeGroupJumpWarped,4,2,false,FnStructure)
       const real x=modulusf(p.x()-dx,1.0)+dx;
       const real y=fabs(p.y());
       return arg(0)(XYZ(x,y,param(3)));
+    }
+
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();  // Warp function makes no difference if primary argument is constant
     }
   
 FUNCTION_END(FunctionFriezeGroupJumpWarped)
@@ -1007,6 +842,11 @@ FUNCTION_BEGIN(FunctionFriezeGroupJumpWarpedFreeZ,3,2,false,FnStructure)
       return arg(0)(XYZ(x,y,p.z()));
     }
   
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();  // Warp function makes no difference if primary argument is constant
+    }
+
 FUNCTION_END(FunctionFriezeGroupJumpWarpedFreeZ)
 
 //------------------------------------------------------------------------------------------
@@ -1076,7 +916,13 @@ FUNCTION_BEGIN(FunctionFriezeGroupStepWarped,7,3,false,FnStructure)
       return arg(0)(XYZ(x,y,param(6)));
     }
 
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();  // Warp function makes no difference if primary argument is constant
+    }
+
 FUNCTION_END(FunctionFriezeGroupStepWarped)
+
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionFriezeGroupStepFreeZ,0,1,false,FnStructure)
@@ -1114,6 +960,11 @@ FUNCTION_BEGIN(FunctionFriezeGroupStepWarpedFreeZ,6,3,false,FnStructure)
 	  y=-p.y();
 	}
       return arg(0)(XYZ(x,y,p.z()));
+    }
+
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();  // Warp function makes no difference if primary argument is constant
     }
 
 FUNCTION_END(FunctionFriezeGroupStepWarpedFreeZ)
@@ -1184,6 +1035,11 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinsidleWarped,4,2,false,FnStructure)
 
       return arg(0)(XYZ(x,y,param(3)));
     }
+
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();  // Warp function makes no difference if primary argument is constant
+    }
   
 FUNCTION_END(FunctionFriezeGroupSpinsidleWarped)
 
@@ -1224,6 +1080,11 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinsidleWarpedFreeZ,3,2,false,FnStructure)
 	}
 
       return arg(0)(XYZ(x,y,p.z()));
+    }
+
+  virtual const bool is_constant() const
+    {
+      return arg(0).is_constant();  // Warp function makes no difference if primary argument is constant
     }
   
 FUNCTION_END(FunctionFriezeGroupSpinsidleWarpedFreeZ)

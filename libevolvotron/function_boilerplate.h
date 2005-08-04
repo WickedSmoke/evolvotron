@@ -94,7 +94,7 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
   //! Return a deeploned copy.
   virtual FunctionNode*const deepclone() const
     {
-      return new FUNCTION(cloneparams(),cloneargs(),iterations());
+      return typed_deepclone(); //new FUNCTION(cloneparams(),cloneargs(),iterations());
     }
 
   //! Return a deeploned copy with more specific type (but of course this can't be virtual).
@@ -121,11 +121,7 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
   //! Save this node.
   virtual std::ostream& save_function(std::ostream& out,uint indent) const
     {
-      out << Margin(indent) << "<f>\n";
-      out << Margin(indent+1) << "<type>" << get_registration().name() << "</type>\n";
-      Superclass::save_function(out,indent+1);
-      out << Margin(indent) << "</f>\n";
-      return out;
+      return Superclass::save_function(out,indent,get_registration().name());
     }
 };
 
