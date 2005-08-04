@@ -124,6 +124,7 @@ const Transform FunctionTop::interesting_pretransform(const MutationParameters& 
   if (k==1.0)
     {
       while (parameters.r01()<0.125) t.concatenate_on_right(TransformScale(2.0));
+      while (parameters.r01()<0.125) t.concatenate_on_right(TransformScale(0.5));
     }
   else if (parameters.r01()<parameters.probability_parameter_reset())
     {
@@ -132,6 +133,10 @@ const Transform FunctionTop::interesting_pretransform(const MutationParameters& 
 	  t.concatenate_on_right(TransformScale(2.0));
 	}
       while (parameters.r01()<0.125);
+      while (parameters.r01()<0.125);
+	{
+	  t.concatenate_on_right(TransformScale(0.5));
+	}
     }
 
   if (k==1.0)
