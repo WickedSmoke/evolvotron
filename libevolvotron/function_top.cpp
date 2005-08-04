@@ -125,6 +125,14 @@ const Transform FunctionTop::interesting_pretransform(const MutationParameters& 
     {
       while (parameters.r01()<0.125) t.concatenate_on_right(TransformScale(2.0));
     }
+  else if (parameters.r01()<parameters.probability_parameter_reset())
+    {
+      do 
+	{
+	  t.concatenate_on_right(TransformScale(2.0));
+	}
+      while (parameters.r01()<0.125);
+    }
 
   if (k==1.0)
     {

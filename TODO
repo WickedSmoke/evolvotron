@@ -7,7 +7,13 @@ Add Blend versions of FriezeGroup functions
 Conventional Mode
 -----------------
 - Add blending versions of symmetry functions.
+- Transform<->vector<real> should output basis vectors first, translation last.
+- Functions with similar names probably do much the same
+  thing so reduce their weighting to avoid them dominating.
 - File contents previewing in file dialog.
+- FriezeGroups should add an extra parameter for
+  repeat length rather than using 1 all the time.
+  Likewise for spheres.
 - Move LoadHandler out of mutatable image.
 - Not entirely happy about preponderance of bright primary colours in images
   (ie saturating RGB components).  Need to give this some thought; something
