@@ -6,6 +6,12 @@ Add Blend versions of FriezeGroup functions
 
 Conventional Mode
 -----------------
+- Move params and args to boost::array in FunctionBoilerplate.
+  FunctionNode's accessors become pure virtual, if needed ?
+  (copy std::vector <-> boost:array ?)
+  Hmmm... is there really any point in doing this ?  Don't want
+  lots of code in FunctionNode to move to FunctionBoilerplate.
+  Maybe something can be done returning range objects for params and args.
 - Use reStructuredText instead of own python txt->html converter.
   (Then use fracplanet htm->qml converter).
 - Add blending versions of symmetry functions.
@@ -57,6 +63,7 @@ Conventional Mode
 - Display properties dialog should have small copy of image
 - "Evolvotron corpus"; publish mode & viewer app to see other users' creations
   How ?  Jabber conference!  (It's all XML).
+- Quick 'n easy way of pushing to Flickr ?
 - Proper dependency and generation by qmake of libevolvotron/usage_text.h
 - Rationalise configure options: fs/nofs (doc/nodoc?)
 - -h & --help option.  Print version and functions supported.
