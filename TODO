@@ -6,7 +6,11 @@ Add Blend versions of FriezeGroup functions
 
 Conventional Mode
 -----------------
+- Use reStructuredText instead of own python txt->html converter.
+  (Then use fracplanet htm->qml converter).
 - Add blending versions of symmetry functions.
+- Mode (genesis mode?) which traverses grid, creating a new image every few seconds.
+  First click stops mode.  Useful for getting started.
 - Transform<->vector<real> should output basis vectors first, translation last.
 - is_constant not enough to avoid boring images.
   Need to actually check amount of variation.
