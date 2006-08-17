@@ -120,7 +120,7 @@ class FunctionNode
   static const std::vector<FunctionNode*> stubargs(const MutationParameters& parameters,uint n,bool exciting=false);
 
   //! Return a suitable starting value for a node's iteration count (assuming it's iterative).
-  static const uint FunctionNode::stubiterations(const MutationParameters& parameters);
+  static const uint stubiterations(const MutationParameters& parameters);
 
   //! Constructor given an array of params and args and an iteration count.
   /*! These MUST be provided; there are no alterative constructors.

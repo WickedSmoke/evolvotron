@@ -289,7 +289,7 @@ class MutationParameters : public QObject
   //! This returns a new random bit of tree.
   /*! Setting the "exciting" flag avoids the most basic node types, but only at the top level of the stub tree.
    */
-  FunctionNode*const MutationParameters::random_function_stub(bool exciting) const;
+  FunctionNode*const random_function_stub(bool exciting) const;
     
   void change_function_weighting(const FunctionRegistration* fn,real w);
 
@@ -300,7 +300,7 @@ class MutationParameters : public QObject
  protected:
 
   //! Return a random function appropriately biased by current settings
-  FunctionNode*const MutationParameters::random_function() const;
+  FunctionNode*const random_function() const;
 
   //! Return a random function registration, appropriately biased by current settings
   const FunctionRegistration*const random_weighted_function_registration() const;
