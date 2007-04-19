@@ -42,8 +42,6 @@ Transform::Transform(const XYZ& t,const XYZ& x,const XYZ& y,const XYZ& z)
 
 Transform::Transform(const std::vector<real>& v,uint s)
 {
-  assert(starting_element+11<v.size());
-
   _translate.x(v[s+ 0]);_translate.y(v[s+ 1]);_translate.z(v[s+ 2]);
   _basis_x.x(  v[s+ 3]);_basis_x.y(  v[s+ 4]);_basis_x.z(  v[s+ 5]);
   _basis_y.x(  v[s+ 6]);_basis_y.y(  v[s+ 7]);_basis_y.z(  v[s+ 8]);

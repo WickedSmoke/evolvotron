@@ -42,7 +42,7 @@ MutatableImage::MutatableImage(FunctionTop* r,bool sinz,bool sm)
 
 MutatableImage::MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm)
   :_top(0)
-  ,_sinusoidal_z(true)
+  ,_sinusoidal_z(sinz)
   ,_spheremap(sm)
   ,_locked(false)
 {
