@@ -56,12 +56,10 @@ int main(int argc,char* argv[])
   uint frames=1;
   uint framerate=8;
 
-  std::ofstream sink("/dev/null");
-
   if (args.option("-v")) 
     std::clog.rdbuf(std::cerr.rdbuf());
   else
-    std::clog.rdbuf(sink.rdbuf());
+    std::clog.rdbuf(sink_ostream.rdbuf());
 
   if (args.option("-g",2)) args.after() >> cols >> rows;
   if (cols*rows<2)

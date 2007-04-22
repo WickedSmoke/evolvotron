@@ -128,12 +128,10 @@ int main(int argc,char* argv[])
 {
   Args args(argc,argv);
 
-  std::ofstream sink("/dev/null");
-
   if (args.option("-v")) 
     std::clog.rdbuf(std::cerr.rdbuf());
   else
-    std::clog.rdbuf(sink.rdbuf());
+    std::clog.rdbuf(sink_ostream.rdbuf());
   
   // Normally would use time(0) to seed random number generator
   // but can imagine several of these starting up virtually simultaneously

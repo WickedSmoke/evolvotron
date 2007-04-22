@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "useful.h"
 
 #include <iostream>
+#include <fstream>
 
 /*! \file
   \brief Code for useful little helper functions..
@@ -56,3 +57,5 @@ void constraint_violation(const char* test,const char* src_file,uint src_line)
     << " ***\n";
   exit(1);
 }
+
+std::ofstream sink_ostream("/dev/null");

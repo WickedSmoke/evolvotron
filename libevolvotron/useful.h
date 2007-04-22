@@ -127,4 +127,7 @@ inline real trianglef(real x,real y)
   return r;
 }
 
+//! Use this to divert clog to supress verbose logging.  Needs longer life than scope of main().
+extern std::ofstream sink_ostream;
+
 #endif
