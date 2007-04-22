@@ -61,7 +61,7 @@ class FunctionRegistry : public Singleton<FunctionRegistry>
 
   //! Register a function.  Handle duplicates gracefully. 
   /*! A copy is taken, but we fill in the name field of the supplied registration, which will be empty.*/
-  const bool name_and_register(const char* n,FunctionRegistration& r);
+  void name_and_register(const char* n,FunctionRegistration& r);
 
  protected:
   //! Dictionary from names to Registration objects

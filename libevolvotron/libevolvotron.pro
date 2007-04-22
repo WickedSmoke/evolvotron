@@ -42,6 +42,7 @@ HEADERS += \
 	mutation_parameters.h \
         noise.h \
 	random.h \
+        register_all_functions.h \
         transform.h \
         transform_factory.h \
 	useful.h \
@@ -86,6 +87,7 @@ SOURCES += \
 	mutation_parameters.cpp \
         noise.cpp \
 	random.cpp \
+        register_all_functions.cpp \
         transform.cpp \
         transform_factory.cpp \
 	useful.cpp \

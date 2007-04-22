@@ -156,13 +156,11 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
      virtual ~FN() {}
  
 //! Macro to push registrations through to registry.
-/*! In practice multiple registrations occur for "framework" classes
-  instantiated in locations other than functions.cpp.  But it
-  doesn't matter.
+/*! Used by auto_functions.h
 */
-#define REGISTER(FN) namespace {const bool registered_ ## FN =FunctionRegistry::get()->name_and_register(#FN,FN::get_registration());}
+#define REGISTER(r,FN) r.name_and_register(#FN,FN::get_registration());
 
-#define FUNCTION_END(FN) };REGISTER(FN)
+#define FUNCTION_END(FN) };
 
 #endif
 

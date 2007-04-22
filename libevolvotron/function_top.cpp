@@ -88,23 +88,27 @@ FunctionTop*const FunctionTop::initial(const MutationParameters& parameters,cons
 void FunctionTop::mutate(const MutationParameters& parameters,bool mutate_own_parameters)
 {
   FunctionNode::mutate(parameters,false);
+
+  if (mutate_own_parameters)
+    {
   
-  if (parameters.r01()<parameters.probability_parameter_reset())
-    {
-      reset_pretransform_parameters(parameters);
-    }
-  else
-    {
-      mutate_pretransform_parameters(parameters);
-    }
-  
-  if (parameters.r01()<parameters.probability_parameter_reset())
-    {
-      reset_posttransform_parameters(parameters);
-    }
-  else
-    {
-      mutate_posttransform_parameters(parameters);
+      if (parameters.r01()<parameters.probability_parameter_reset())
+	{
+	  reset_pretransform_parameters(parameters);
+	}
+      else
+	{
+	  mutate_pretransform_parameters(parameters);
+	}
+      
+      if (parameters.r01()<parameters.probability_parameter_reset())
+	{
+	  reset_posttransform_parameters(parameters);
+	}
+      else
+	{
+	  mutate_posttransform_parameters(parameters);
+	}
     }
 }
 

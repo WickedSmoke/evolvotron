@@ -178,7 +178,7 @@ void DialogFunctions::setup_from_mutation_parameters()
   std::stringstream msg;
   msg 
     << "Undiluted random function branching ratio is " << b << "\n"
-    << "Diliuting in proportion " << s << " to obtain required branching ratio.";
+    << "Diluting in proportion " << s << " to obtain required branching ratio.";
   _branching_ratio->setText(msg.str().c_str());
 
   _slider_target_branching_ratio->setValue(static_cast<int>(100.0*br+0.5));
