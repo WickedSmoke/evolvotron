@@ -10,8 +10,9 @@ From release 0.4.0:
  - More sensible mutation of top level spatial transform (less arbitrary shearing).
  - Note that above changes mean old saved functions will appear different.
  - New mutation parameter: probability of a function's parameters being reset.
- - Code clean up
- - Get rid of hacked static function registration; uses auto-generated register_all_functions
+ - Code clean up:
+   - More std::auto_ptr 
+   - Get rid of hacked static function registration; uses auto-generated register_all_functions
 
 From release 0.3.1:
  - Version to 0.4.0

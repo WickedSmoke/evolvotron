@@ -225,7 +225,6 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
    ,_statusbar_tasks(0)
    ,_last_spawned_image(0)
    ,_last_spawn_method(&EvolvotronMain::spawn_normal)
-   ,_transform_factory(0)
 {
   setMinimumSize(600,400);
 

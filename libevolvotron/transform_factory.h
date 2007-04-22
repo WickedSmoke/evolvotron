@@ -37,7 +37,7 @@ class TransformFactory
     {}
 
   //! Clone functionality needed to retain typed copies of factories.
-  virtual TransformFactory*const clone() const
+  virtual std::auto_ptr<TransformFactory> clone() const
     =0;
 
   //! Method to build a Transform.
@@ -60,9 +60,9 @@ class TransformFactoryRandomWarpXY : public TransformFactory
     {}
 
   //! Clone.
-  virtual TransformFactory*const clone() const
+  virtual std::auto_ptr<TransformFactory> clone() const
     {
-      return new TransformFactoryRandomWarpXY();
+      return std::auto_ptr<TransformFactory>(new TransformFactoryRandomWarpXY());
     }
 
   //! Return a random transform.
@@ -81,9 +81,9 @@ class TransformFactoryRandomScaleXY : public TransformFactory
     {}
 
   //! Clone method.
-  virtual TransformFactory*const clone() const
+  virtual std::auto_ptr<TransformFactory> clone() const
     {
-      return new TransformFactoryRandomScaleXY(_lopow2,_hipow2);
+      return std::auto_ptr<TransformFactory>(new TransformFactoryRandomScaleXY(_lopow2,_hipow2));
     }
 
   //! Return a random scaling transform.
@@ -105,9 +105,9 @@ class TransformFactoryRandomRotateZ : public TransformFactory
     {}
 
   //! Clone method.
-  virtual TransformFactory*const clone() const
+  virtual std::auto_ptr<TransformFactory> clone() const
     {
-      return new TransformFactoryRandomRotateZ();
+      return std::auto_ptr<TransformFactory>(new TransformFactoryRandomRotateZ());
     }
 
   //! Create a transform.
@@ -126,9 +126,9 @@ class TransformFactoryRandomTranslateXYZ : public TransformFactory
     {}
 
   //! Clone method.
-  virtual TransformFactory*const clone() const
+  virtual std::auto_ptr<TransformFactory> clone() const
     {
-      return new TransformFactoryRandomTranslateXYZ(_origin,_range);
+      return std::auto_ptr<TransformFactory>(new TransformFactoryRandomTranslateXYZ(_origin,_range));
     }
 
   //! Return a random Transform

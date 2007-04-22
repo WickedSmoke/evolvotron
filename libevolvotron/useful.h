@@ -29,10 +29,11 @@ extern "C"
 #include <assert.h>
 }
 
-#include <math.h>
+#include <cmath>
 #include <iosfwd>
 #include <string>
 #include <sstream>
+#include <memory>
 
 //! Convenience typedef.
 typedef unsigned int uint;

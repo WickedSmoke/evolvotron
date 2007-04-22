@@ -231,7 +231,7 @@ class EvolvotronMain : public QMainWindow
   SpawnMemberFn _last_spawn_method;
 
   //! An owned pointer to the current transform factory (needed for Respawn).
-  TransformFactory* _transform_factory;
+  std::auto_ptr<TransformFactory> _transform_factory;
 
   //! Accessor.
   const MutatableImage*const last_spawned_image() const
@@ -252,15 +252,14 @@ class EvolvotronMain : public QMainWindow
   const TransformFactory& transform_factory() const
     {
       // We shouldn't be here unless transform_factory has been set to something.
-      assert(_transform_factory!=0);
+      assert(_transform_factory.get()!=0);
 
       return *_transform_factory;
     }
 
-  //! Not just an accessor.  Takes a deepclone and deletes it when replaced.
+  //! Not just an accessor.  Takes ownership of a deepclone of the argument.
   void transform_factory(const TransformFactory& tfactory)
     {
-      delete _transform_factory;
       _transform_factory=tfactory.clone();
     }
 
