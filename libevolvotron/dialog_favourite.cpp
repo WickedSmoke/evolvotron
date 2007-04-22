@@ -44,8 +44,8 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
   _index_to_favourite_fn[_favourite->count()]="";
   _favourite->insertItem("- No preference -");
 
-  for (FunctionRegistry::Registrations::const_iterator it=FunctionRegistry::get()->registrations().begin();
-       it!=FunctionRegistry::get()->registrations().end();
+  for (FunctionRegistry::Registrations::const_iterator it=_parent->mutation_parameters().function_registry().registrations().begin();
+       it!=_parent->mutation_parameters().function_registry().registrations().end();
        it++
        )
     {
@@ -114,7 +114,7 @@ void DialogFavourite::resizeEvent(QResizeEvent* e)
 
 const bool DialogFavourite::favourite_function(const std::string& f)
 {
-  if (FunctionRegistry::get()->lookup(f))
+  if (_parent->mutation_parameters().function_registry().lookup(f))
     {
       _favourite_function=f;
       update_gui_from_state();

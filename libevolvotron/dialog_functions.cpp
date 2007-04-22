@@ -29,11 +29,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "vbox_scrollview.h"
 
 #include "dialog_functions.h"
+#include "evolvotron_main.h"
 #include "function_registry.h"
 
 /*! About dialog displays author info, web addresses and license info.
  */
-DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
+DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParameters* mp)
   :QDialog(parent)
   ,_parent(parent)
   ,_mutation_parameters(mp)
@@ -65,8 +66,8 @@ DialogFunctions::DialogFunctions(QMainWindow* parent,MutationParameters* mp)
       VBoxScrollView* scrollview=new VBoxScrollView(tab_content);
       tab_content->setStretchFactor(scrollview,1);
 
-      for (FunctionRegistry::Registrations::const_iterator it=FunctionRegistry::get()->registrations().begin();
-	   it!=FunctionRegistry::get()->registrations().end();
+      for (FunctionRegistry::Registrations::const_iterator it=_parent->mutation_parameters().function_registry().registrations().begin();
+	   it!=_parent->mutation_parameters().function_registry().registrations().end();
 	   it++)
 	{
 	  const FunctionRegistration*const fn=(*it).second;

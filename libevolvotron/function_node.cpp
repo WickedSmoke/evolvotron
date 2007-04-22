@@ -157,11 +157,11 @@ const bool FunctionNode::is_constant() const
   return true;
 }
 
-const bool FunctionNode::create_args(const FunctionNodeInfo* info,std::vector<FunctionNode*>& args,std::string& report)
+const bool FunctionNode::create_args(const FunctionRegistry& function_registry,const FunctionNodeInfo* info,std::vector<FunctionNode*>& args,std::string& report)
 {
   for (std::vector<FunctionNodeInfo*>::const_iterator it=info->args().begin();it!=info->args().end();it++)
     {
-      args.push_back(FunctionNode::create(*it,report));
+      args.push_back(FunctionNode::create(function_registry,*it,report));
       
       // Check whether something has gone wrong.  If it has, delete everything allocated so far and return false.
       if (args.back()==0)
@@ -220,12 +220,12 @@ FunctionNode::FunctionNode(const std::vector<real>& p,const std::vector<Function
 
 /*! Returns null ptr if there's a problem, in which case there will be an explanation in report.
  */
-FunctionNode*const FunctionNode::create(const FunctionNodeInfo* info,std::string& report)
+FunctionNode*const FunctionNode::create(const FunctionRegistry& function_registry,const FunctionNodeInfo* info,std::string& report)
 {
-  const FunctionRegistration*const reg=FunctionRegistry::get()->lookup(info->type());
+  const FunctionRegistration*const reg=function_registry.lookup(info->type());
   if (reg)
     {
-      return (*(reg->create_fn()))(info,report);
+      return (*(reg->create_fn()))(function_registry,info,report);
     }
   else
     {

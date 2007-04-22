@@ -40,7 +40,9 @@ class FunctionNodeInfo;
 class FunctionTop;
 class FunctionPreTransform;
 class FunctionPostTransform;
+class FunctionRegistry;
 class MutatableImage;
+
 
 //! Abstract base class for all kinds of mutatable image node.
 /*! MutatableImage declared a friend to help constification of the public accessors.
@@ -87,7 +89,7 @@ class FunctionNode
   /*! Return true on success, false on fail with reasons in report string.
     Mainly for use by derived FunctionBoilerplate template to avoid duplicate code proliferation.
    */
-  static const bool create_args(const FunctionNodeInfo* info,std::vector<FunctionNode*>& args,std::string& report);
+  static const bool create_args(const FunctionRegistry&,const FunctionNodeInfo* info,std::vector<FunctionNode*>& args,std::string& report);
 
  public:
 
@@ -128,7 +130,7 @@ class FunctionNode
   FunctionNode(const std::vector<real>& p,const std::vector<FunctionNode*>& a,uint iter);
   
   //! Build a FunctionNode given a description
-  static FunctionNode*const create(const FunctionNodeInfo* info,std::string& report);
+  static FunctionNode*const create(const FunctionRegistry& function_registry,const FunctionNodeInfo* info,std::string& report);
   
   //! Destructor.
   virtual ~FunctionNode();

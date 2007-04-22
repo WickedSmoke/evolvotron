@@ -685,7 +685,7 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
       root=FunctionTop::initial
 	(
 	 mutation_parameters(),
-	 FunctionRegistry::get()->lookup(_dialog_favourite->favourite_function()),
+	 mutation_parameters().function_registry().lookup(_dialog_favourite->favourite_function()),
 	 _dialog_favourite->favourite_function_unwrapped()
 	 );
     }

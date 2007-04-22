@@ -24,20 +24,17 @@
 
 #include "register_all_functions.h"
 
-template <> uint NiftyCounter<FunctionRegistry>::_count=0;
-template <> FunctionRegistry* Singleton<FunctionRegistry>::_singleton_instance=0;
-
 FunctionRegistry::FunctionRegistry()
 {
   register_all_functions(*this);
-  // std::clog << "FunctionRegistry created\n";
+  std::clog << "FunctionRegistry created\n";
 }
 
 FunctionRegistry::~FunctionRegistry()
 {
   for (Registrations::const_iterator it=_registry_by_name.begin();it!=_registry_by_name.end();it++)
     delete (*it).second;
-  // std::clog << "FunctionRegistry destroyed\n";
+  std::clog << "FunctionRegistry destroyed\n";
 }
 
 //! Return the registration for the function named (returns 0 if unknown)

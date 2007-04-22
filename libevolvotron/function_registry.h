@@ -35,7 +35,7 @@
 /*! Intended to be used as singleton; get() obtains instance.
   This holds the "definitive" collection of registrations.  FunctionRegistrations can be compared using pointer identiy.
  */
-class FunctionRegistry : public Singleton<FunctionRegistry>
+class FunctionRegistry
 {
  public:
   //! Constuctor public to Singleton boilerplate can new it.
@@ -67,8 +67,5 @@ class FunctionRegistry : public Singleton<FunctionRegistry>
   //! Dictionary from names to Registration objects
   Registrations _registry_by_name;
 };
-
-//! Yes it's a static instance declared in a header file but that's how nifty counters work.
-static NiftyCounter<FunctionRegistry> nifty_function_registry;
 
 #endif

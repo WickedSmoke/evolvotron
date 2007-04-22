@@ -118,7 +118,7 @@ class MutatableImage
   std::ostream& save_function(std::ostream& out) const;
 
   //! Read a new function tree from the given stream.
-  static MutatableImage*const load_function(std::istream& in,std::string& report);
+  static MutatableImage*const load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report);
 
   //! Obtain some statistics about the image function
   void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const;

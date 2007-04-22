@@ -43,8 +43,10 @@ int main(int argc,char* argv[])
   else
     std::clog.rdbuf(sink.rdbuf());
 
+  FunctionRegistry function_registry;
+
   std::string report;
-  const MutatableImage*const imagefn=MutatableImage::load_function(std::cin,report);
+  const MutatableImage*const imagefn=MutatableImage::load_function(function_registry,std::cin,report);
 
   if (imagefn==0)
     {

@@ -462,7 +462,7 @@ public:
 /*! If NULL is returned, then the import failed: error message in report.
   If an image is returned then report contains warning messages (probably version mismatch).
 */
-MutatableImage*const MutatableImage::load_function(std::istream& in,std::string& report)
+MutatableImage*const MutatableImage::load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report)
 {
   // Don't want to faff with Qt's file classes so just read everything into a string.
 
@@ -490,7 +490,7 @@ MutatableImage*const MutatableImage::load_function(std::istream& in,std::string&
       // Might be a warning message in there.
       report=load_handler.errorString().latin1();
 
-      FunctionNode*const root=FunctionNode::create(info,report);
+      FunctionNode*const root=FunctionNode::create(function_registry,info,report);
       delete info;
       
       if (root)

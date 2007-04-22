@@ -42,6 +42,8 @@ extern "C"
 #include <qlabel.h>
 
 #include "useful.h"
+
+#include "function_registry.h"
 #include "transform_factory.h"
 
 #include "mutatable_image.h"
@@ -56,6 +58,8 @@ class DialogFunctions;
 class DialogFavourite;
 
 //! Utility class to expand "restart with" menu picks
+/*! A boost::bind kind of thing
+ */
 class SignalExpanderRestartWith : public QObject
 {
  private:
@@ -294,7 +298,6 @@ class EvolvotronMain : public QMainWindow
    */
   const MutationParameters& mutation_parameters() const
     {
-      // Have to have this cheesy cast to pick up the non-protected version.
       return _mutation_parameters;
     }
 

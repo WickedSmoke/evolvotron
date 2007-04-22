@@ -39,6 +39,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "useful.h"
 #include "mutation_parameters.h"
 
+class EvolvotronMain;
+
 //! Utility class for DialogFunctions.  Expands changed(int) to changed(src,int)
 /*! Would ideally live in dialog_functions.cpp, but that causes (moc-related?) problems with linking;
   seems to need wider visibility.  \todo Move to own file and only include in dialog_functions.cpp
@@ -94,8 +96,8 @@ class DialogFunctions : public QDialog
   typedef QDialog Superclass;
 
  protected:
-  //! Owner of dialog (probably EvolvotronMain).
-  QMainWindow*const _parent;
+  //! Owner of dialog
+  EvolvotronMain*const _parent;
 
   //! Instance of MutationParameters under dialog control.
   /*! \warning Careful of modifying things which might make DialogMutationParameters get out of sync
@@ -128,7 +130,7 @@ class DialogFunctions : public QDialog
 
  public:
   //! Constructor.
-  DialogFunctions(QMainWindow* parent,MutationParameters* mp);
+  DialogFunctions(EvolvotronMain* parent,MutationParameters* mp);
 
   //! Destructor.
   virtual ~DialogFunctions();

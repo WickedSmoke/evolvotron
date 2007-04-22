@@ -74,7 +74,7 @@ int main(int argc,char* argv[])
   else
     {
 
-      MutatableImage* imagefn_in=MutatableImage::load_function(std::cin,report);
+      MutatableImage* imagefn_in=MutatableImage::load_function(mutation_parameters.function_registry(),std::cin,report);
 
       if (imagefn_in==0)
 	{

@@ -124,9 +124,10 @@ int main(int argc,char* argv[])
     << threads 
     << " compute threads\n";
 
-  FunctionRegistry::get()->status(std::clog);
 
   EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),frames,framerate,threads,start_fullscreen,start_menuhidden);
+
+  main_widget->mutation_parameters().function_registry().status(std::clog);
 
   if (!favourite_function.empty())
     {

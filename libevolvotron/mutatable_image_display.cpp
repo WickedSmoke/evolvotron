@@ -815,7 +815,7 @@ void MutatableImageDisplay::menupick_load_function()
     {
       std::ifstream file(load_filename.local8Bit());
       std::string report;
-      MutatableImage*const new_image=MutatableImage::load_function(file,report);
+      MutatableImage*const new_image=MutatableImage::load_function(_main->mutation_parameters().function_registry(),file,report);
       if (new_image==0)
 	{
 	  QMessageBox::critical(this,"Evolvotron",("Function not loaded due to errors:\n"+report).c_str());

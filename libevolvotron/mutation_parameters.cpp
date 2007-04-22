@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 MutationParameters::MutationParameters(uint seed,QObject* parent)
   :QObject(parent)
+  ,_function_registry(new FunctionRegistry())
   ,_r01(seed)
   ,_r_negexp(seed,1.0)
 {
@@ -59,8 +60,8 @@ void MutationParameters::reset()
 
   _function_weighting.clear();
   for (
-       FunctionRegistry::Registrations::const_iterator it=FunctionRegistry::get()->registrations().begin();
-       it!=FunctionRegistry::get()->registrations().end();
+       FunctionRegistry::Registrations::const_iterator it=_function_registry->registrations().begin();
+       it!=_function_registry->registrations().end();
        it++
        )
     {

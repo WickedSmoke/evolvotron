@@ -30,8 +30,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "useful.h"
 #include "random.h"
 
-class FunctionRegistration;
 class FunctionNode;
+class FunctionRegistration;
+class FunctionRegistry;
 
 //! Class encapsulating mutation parameters.
 /*! For example, magnitude of variations, probability of leaves being dropped.
@@ -43,7 +44,10 @@ class MutationParameters : public QObject
  private:
   Q_OBJECT
 
+  const std::auto_ptr<FunctionRegistry> _function_registry;
+
  protected:
+
   //! A random number generator.
   /*! Declared mutable so we can pass const MutationParameters& around and still do useful work with it.
    */
@@ -111,6 +115,12 @@ class MutationParameters : public QObject
   /*! virtual becuase Q_OBJECT/slot mechanism involves virtual functions
    */
   virtual ~MutationParameters();
+
+  //! Accessor.
+  const FunctionRegistry& function_registry() const
+    {
+      return *_function_registry;
+    }
 
   //! Reset to initial values.
   void reset();
