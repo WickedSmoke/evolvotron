@@ -1,7 +1,7 @@
 [Most recent at top]
 
 From release 0.4.0:
- - Version to 0.4.1-devel
+ - Version to 0.4.1dev
  - Lists of functions in alphabetic order
  - New FunctionTop at top level.
  - New functions: Frieze groups
@@ -10,7 +10,8 @@ From release 0.4.0:
  - More sensible mutation of top level spatial transform (less arbitrary shearing).
  - Note that above changes mean old saved functions will appear different.
  - New mutation parameter: probability of a function's parameters being reset.
- - Code clean up.
+ - Code clean up
+ - Get rid of hacked static function registration; uses auto-generated register_all_functions
 
 From release 0.3.1:
  - Version to 0.4.0
