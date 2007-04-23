@@ -98,13 +98,13 @@ class MutatableImage
     }
 
   //! Clone this image.
-  MutatableImage*const deepclone() const;
+  std::auto_ptr<MutatableImage> deepclone() const;
 
   //! Return a mutated version of this image
-  MutatableImage*const mutated(const MutationParameters& p) const;
+  std::auto_ptr<MutatableImage> mutated(const MutationParameters& p) const;
 
   //! Return a simplified version of this image
-  MutatableImage*const simplified() const;
+  std::auto_ptr<MutatableImage> simplified() const;
 
   //! Evaluate the image at specified coordinate.
   const XYZ operator()(const XYZ& p) const;
@@ -118,7 +118,7 @@ class MutatableImage
   std::ostream& save_function(std::ostream& out) const;
 
   //! Read a new function tree from the given stream.
-  static MutatableImage*const load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report);
+  static std::auto_ptr<MutatableImage> load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report);
 
   //! Obtain some statistics about the image function
   void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const;

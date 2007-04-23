@@ -225,7 +225,7 @@ class EvolvotronMain : public QMainWindow
   std::set<const MutatableImageDisplay*> _resizing;
 
   //! An owned deepclone of the last image spawned (used to regenerate single displays).
-  MutatableImage* _last_spawned_image;
+  std::auto_ptr<MutatableImage> _last_spawned_image;
 
   //! Pointer to member function used for last spawn.
   SpawnMemberFn _last_spawn_method;
@@ -236,7 +236,7 @@ class EvolvotronMain : public QMainWindow
   //! Accessor.
   const MutatableImage*const last_spawned_image() const
     {
-      return _last_spawned_image;
+      return _last_spawned_image.get();
     }
   
   //! Accessor.
@@ -245,7 +245,7 @@ class EvolvotronMain : public QMainWindow
       return _last_spawn_method;
     }
 
-  //! Not just an accessor.  Takes a deepclone and deletes it when replaced.
+  //! Not just an accessor.  Takes ownership of a deepclone of the image
   void last_spawned_image(const MutatableImage* image,SpawnMemberFn method);
 
   //! Accessor
@@ -312,8 +312,8 @@ class EvolvotronMain : public QMainWindow
       return _history;
     }
 
-  //! Called by History when performing undo.
-  void restore(MutatableImageDisplay* display,MutatableImage* image);
+  //! Called by History when performing undo.  If display is unknown, image is deleted.
+  void restore(MutatableImageDisplay* display,std::auto_ptr<MutatableImage>& image);
 
   //! Called by History to change undo menu status.
   void set_undoable(bool v,const std::string& name);

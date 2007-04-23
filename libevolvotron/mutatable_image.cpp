@@ -64,9 +64,9 @@ const FunctionTop*const MutatableImage::top() const
   return _top;
 }
 
-MutatableImage*const MutatableImage::deepclone() const
+std::auto_ptr<MutatableImage> MutatableImage::deepclone() const
 {
-  return new MutatableImage(top()->typed_deepclone(),sinusoidal_z(),spheremap()); 
+  return std::auto_ptr<MutatableImage>(new MutatableImage(top()->typed_deepclone(),sinusoidal_z(),spheremap())); 
 }
 
 const XYZ MutatableImage::operator()(const XYZ& p) const
@@ -123,18 +123,18 @@ const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint 
     }
 }
 
-MutatableImage*const MutatableImage::mutated(const MutationParameters& p) const
+std::auto_ptr<MutatableImage> MutatableImage::mutated(const MutationParameters& p) const
 {
   FunctionTop*const c=top()->typed_deepclone();  
   c->mutate(p);
-  return new MutatableImage(c,sinusoidal_z(),spheremap());
+  return std::auto_ptr<MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap()));
 }
 
-MutatableImage*const MutatableImage::simplified() const
+std::auto_ptr<MutatableImage> MutatableImage::simplified() const
 {
   FunctionTop*const c=top()->typed_deepclone();  
   c->simplify_constants();
-  return new MutatableImage(c,sinusoidal_z(),spheremap());  
+  return std::auto_ptr<MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap())); 
 }
 
 void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
@@ -462,7 +462,7 @@ public:
 /*! If NULL is returned, then the import failed: error message in report.
   If an image is returned then report contains warning messages (probably version mismatch).
 */
-MutatableImage*const MutatableImage::load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report)
+std::auto_ptr<MutatableImage> MutatableImage::load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report)
 {
   // Don't want to faff with Qt's file classes so just read everything into a string.
 
@@ -511,11 +511,11 @@ MutatableImage*const MutatableImage::load_function(const FunctionRegistry& funct
 	      
 	      fn_top=new FunctionTop(p,a,0);
 	    }
-	  return new MutatableImage(fn_top,sinusoidal_z,spheremap);
+	  return std::auto_ptr<MutatableImage>(new MutatableImage(fn_top,sinusoidal_z,spheremap));
 	}
       else
 	{
-	  return 0;
+	  return std::auto_ptr<MutatableImage>();
 	}
     }
   else
@@ -524,7 +524,7 @@ MutatableImage*const MutatableImage::load_function(const FunctionRegistry& funct
       tmp = "Parse error: "+load_handler.errorString()+"\n";
       report=tmp.latin1();
       delete info;
-      return 0;
+      return std::auto_ptr<MutatableImage>();
     }
 }
 

@@ -10,6 +10,10 @@ Rationalize warped and blended versions of FriezeGroup functions
 
 Conventional Mode
 -----------------
+- MutatableImageComputerTask (from MutatableImageDisplay) doesn't use auto_ptr.
+- History doesn't use auto_ptr.
+- Typed_deepclose doesn't use auto_ptr.
+- LoadHandler doesn't use auto_ptr.
 - Move params and args to boost::array in FunctionBoilerplate.
   FunctionNode's accessors become pure virtual, if needed ?
   (copy std::vector <-> boost:array ?)

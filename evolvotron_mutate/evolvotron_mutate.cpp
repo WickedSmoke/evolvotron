@@ -61,20 +61,20 @@ int main(int argc,char* argv[])
   MutationParameters mutation_parameters(seed,0);
 
   std::string report;
-  MutatableImage* imagefn_out=0;
+  std::auto_ptr<const MutatableImage> imagefn_out;
 
   if (args.option("-g"))
     {
       FunctionTop* fn_top=FunctionTop::initial(mutation_parameters);
 
-      imagefn_out=new MutatableImage(fn_top,!args.option("-linz"),args.option("-spheremap"));
+      imagefn_out=std::auto_ptr<MutatableImage>(new MutatableImage(fn_top,!args.option("-linz"),args.option("-spheremap")));
     }
   else
     {
 
-      MutatableImage* imagefn_in=MutatableImage::load_function(mutation_parameters.function_registry(),std::cin,report);
+      const std::auto_ptr<const MutatableImage> imagefn_in(MutatableImage::load_function(mutation_parameters.function_registry(),std::cin,report));
 
-      if (imagefn_in==0)
+      if (imagefn_in.get()==0)
 	{
 	  std::cerr << "evolvotron_render: Error: Function not loaded due to errors:\n" << report;
 	  exit(1);
@@ -88,6 +88,7 @@ int main(int argc,char* argv[])
     }
 
   imagefn_out->save_function(std::cout);
+
 
   exit(0);
 }

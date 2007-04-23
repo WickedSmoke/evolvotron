@@ -131,9 +131,9 @@ void EvolvotronMain::History::replacing(MutatableImageDisplay* display)
 
   if (image!=0)
     {
-      MutatableImage*const saved_image=image->deepclone();  // Deepclone doesn't copy locked state
+      std::auto_ptr<MutatableImage> saved_image(image->deepclone());  // Deepclone doesn't copy locked state
       saved_image->locked(image->locked());
-      _history.front().second.push_back(std::pair<MutatableImageDisplay*,MutatableImage*>(display,saved_image));
+      _history.front().second.push_back(std::pair<MutatableImageDisplay*,MutatableImage*>(display,saved_image.release()));
     }
 }
 
@@ -199,7 +199,8 @@ void EvolvotronMain::History::undo()
 	   it++
 	   )
 	{
-	  _main->restore((*it).first,(*it).second);
+	  std::auto_ptr<MutatableImage> image((*it).second);
+	  _main->restore((*it).first,image);
 	}
       _history.pop_front();
     }
@@ -210,8 +211,9 @@ void EvolvotronMain::History::undo()
 
 void EvolvotronMain::last_spawned_image(const MutatableImage* image,SpawnMemberFn method)
 {
-  delete _last_spawned_image;
-  _last_spawned_image=(image==0 ? 0 : image->deepclone());
+  if (image) _last_spawned_image=image->deepclone();
+  else _last_spawned_image.reset();
+
   _last_spawn_method=method;
 }
 
@@ -223,7 +225,6 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
    ,_history(this)
    ,_mutation_parameters(time(0),this)
    ,_statusbar_tasks(0)
-   ,_last_spawned_image(0)
    ,_last_spawn_method(&EvolvotronMain::spawn_normal)
 {
   setMinimumSize(600,400);
@@ -382,21 +383,13 @@ void EvolvotronMain::favourite_function_unwrapped(bool v)
 
 void EvolvotronMain::spawn_normal(const MutatableImage* image,MutatableImageDisplay* display)
 {
-  MutatableImage* new_image;
-  bool new_image_is_constant;
+  std::auto_ptr<MutatableImage> new_image;
 
   do
     {
       new_image=image->mutated(mutation_parameters());
-
-      new_image_is_constant=new_image->is_constant();
-
-      if (new_image_is_constant)
-	{
-	  delete new_image;
-	}
     }
-  while (new_image_is_constant);
+  while (new_image->is_constant());
 
   history().replacing(display);
   display->image(new_image);
@@ -408,7 +401,8 @@ void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImage
   
   new_root->reset_posttransform_parameters(mutation_parameters());
   history().replacing(display);
-  display->image(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
+  std::auto_ptr<MutatableImage> it(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
+  display->image(it);
 }
 
 void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisplay* display)
@@ -420,10 +414,11 @@ void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisp
       
   new_root->concatenate_pretransform_on_right(transform);  
   history().replacing(display);
-  display->image(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
+  std::auto_ptr<MutatableImage> it(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
+  display->image(it);
 }
 
-void EvolvotronMain::restore(MutatableImageDisplay* display,MutatableImage* image)
+void EvolvotronMain::restore(MutatableImageDisplay* display,std::auto_ptr<MutatableImage>& image)
 {
   if (is_known(display))
     {
@@ -431,7 +426,7 @@ void EvolvotronMain::restore(MutatableImageDisplay* display,MutatableImage* imag
     }
   else
     {
-      delete image;
+      image.reset();
     }
 }
 
@@ -691,7 +686,8 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
 
   history().replacing(display);
   //! \todo sinz and spheremap should be obtained from mutation parameters
-  display->image(new MutatableImage(root,!Args::global().option("-linz"),Args::global().option("-spheremap")));
+  std::auto_ptr<MutatableImage> image(new MutatableImage(root,!Args::global().option("-linz"),Args::global().option("-spheremap")));
+  display->image(image);
 }
 
 void EvolvotronMain::undo()

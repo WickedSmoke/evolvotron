@@ -62,7 +62,6 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
    ,_timer(0)
    ,_resize_in_progress(false)
    ,_current_display_level(0)
-   ,_image(0)
    ,_properties(0)
    ,_menu(0)
    ,_menu_big(0)
@@ -178,7 +177,7 @@ MutatableImageDisplay::~MutatableImageDisplay()
       main()->goodbye(this);
     }
 
-  delete _image;
+  _image.reset();
   for (uint f=0;f<_offscreen_buffer.size();f++)
     {
       delete _offscreen_buffer[f];
@@ -204,7 +203,9 @@ const uint MutatableImageDisplay::simplify_constants(bool single_action)
   _image->get_stats(old_nodes,old_parameters,old_depth,old_width,old_const);
 
   main()->history().replacing(this);
-  image(_image->simplified());
+
+  std::auto_ptr<MutatableImage> it(_image->simplified());
+  image(it);
 
   uint new_nodes;
   uint new_parameters;
@@ -250,10 +251,10 @@ void MutatableImageDisplay::frame_advance()
   repaint(false);
 }
 
-void MutatableImageDisplay::image(MutatableImage* i)
+void MutatableImageDisplay::image(std::auto_ptr<MutatableImage>& i)
 {
-  assert(_image==0 || _image->ok());
-  assert(i==0 || i->ok());
+  assert(_image.get()==0 || _image->ok());
+  assert(i.get()==0 || i->ok());
 
   // New image, so increment serial number so any old incoming stuff which avoids abort is ignored.
   _serial++;
@@ -263,11 +264,11 @@ void MutatableImageDisplay::image(MutatableImage* i)
   // This might have already been done (e.g by resizeEvent), but it can't hurt to be sure.
   main()->farm()->abort_for(this);
 
-  // Careful: we could be passed the same image again 
+  // Careful: we could be passed our own existing (and already owned) image
   // (a trick used by resize to trigger recompute & redisplay)
-  if (i!=_image)
+  // but if the image isn't beig changed we might as well leave what's already shown
+  if (i.get()!=_image.get())
     {
-      delete _image;
       _image=i;
 
       // Clear any existing image data - stops old animations continuing to play 
@@ -282,9 +283,9 @@ void MutatableImageDisplay::image(MutatableImage* i)
   _current_display_level=(uint)(-1);
 
   // Update lock status displayed in menu
-  _menu->setItemChecked(_menu_item_number_lock,(_image ? _image->locked() : false));
+  _menu->setItemChecked(_menu_item_number_lock,(_image.get() ? _image->locked() : false));
   
-  if (i!=0)
+  if (_image.get())
     {
       // Allow for displays up to 4096 pixels high or wide
       for (int level=12;level>=0;level--)
@@ -299,13 +300,12 @@ void MutatableImageDisplay::image(MutatableImage* i)
 		to avoid having to deepclone.
 		On the other hand this seems to work very robustly for now and isn't a killer.
 		*/
-	      const MutatableImage*const task_image=_image->deepclone();
+	      std::auto_ptr<const MutatableImage> task_image(_image->deepclone());
 	      assert(task_image->ok());
 
 	      /*! \todo Should computed frames be constant or reduced c.f spatial resolution ?  (Do full z resolution for now)
 	       */
-	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_image,image_size()/s,_frames,level,_serial);
-
+	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_image.release(),image_size()/s,_frames,level,_serial);
 	      main()->farm()->push_todo(task);
 	    }
 	}
@@ -369,7 +369,7 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
 void MutatableImageDisplay::lock(bool l,bool record_in_history)
 {
   // This might be called (with l=false) with null _image during start-up reset.
-  if (_image)
+  if (_image.get())
     {
       if (record_in_history)
 	{
@@ -575,7 +575,8 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	  new_root->concatenate_pretransform_on_right(transform);
 
 	  // Install new image (triggers recompute).
-	  image(new MutatableImage(new_root,image()->sinusoidal_z(),image()->spheremap()));	  
+	  std::auto_ptr<MutatableImage> new_image(new MutatableImage(new_root,image()->sinusoidal_z(),image()->spheremap()));
+	  image(new_image);
 
 	  // Finally, record position of this event as last event
 	  _mid_button_adjust_last_pos=event->pos();
@@ -815,8 +816,8 @@ void MutatableImageDisplay::menupick_load_function()
     {
       std::ifstream file(load_filename.local8Bit());
       std::string report;
-      MutatableImage*const new_image=MutatableImage::load_function(_main->mutation_parameters().function_registry(),file,report);
-      if (new_image==0)
+      std::auto_ptr<MutatableImage> new_image(MutatableImage::load_function(_main->mutation_parameters().function_registry(),file,report));
+      if (new_image.get()==0)
 	{
 	  QMessageBox::critical(this,"Evolvotron",("Function not loaded due to errors:\n"+report).c_str());
 	}
@@ -939,5 +940,6 @@ void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
   if (main()->isFullScreen()) top_level_widget->showFullScreen();
 
   // Fire up image calculation
-  display->image(_image->deepclone());
+  std::auto_ptr<MutatableImage> cloned_image(_image->deepclone());
+  display->image(cloned_image);
 }

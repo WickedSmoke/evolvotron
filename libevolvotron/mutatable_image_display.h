@@ -91,7 +91,7 @@ class MutatableImageDisplay : public QWidget
   std::vector<uint> _offscreen_image_data;
 
   //! The image function being displayed (its root node).
-  MutatableImage* _image;
+  std::auto_ptr<MutatableImage> _image;
 
   //! Properties dialog.
   DialogMutatableImageDisplay* _properties;
@@ -120,7 +120,7 @@ class MutatableImageDisplay : public QWidget
   unsigned long long int _serial;
 
  public:
-  //! Constructor.
+  //! Constructor.  
   MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full,bool fixed_size,const QSize& image_size,uint f,uint fr);
 
   //! Destructor.
@@ -129,13 +129,13 @@ class MutatableImageDisplay : public QWidget
   //! Accessor.
   MutatableImage*const image()
     {
-      return _image;
+      return _image.get();
     }
 
   //! Accessor.
   const bool locked() const
     {
-      return (_image ? _image->locked() : false);
+      return (_image.get()!=0 ? _image->locked() : false);
     }
 
   //! Accessor.
@@ -158,7 +158,7 @@ class MutatableImageDisplay : public QWidget
     }
 
   //! Load a new image (clears up old image, starts new compute tasks).
-  void image(MutatableImage* image);
+  void image(std::auto_ptr<MutatableImage>& image);
 
   //! Evolvotron main calls this with completed (but possibly aborted) tasks.
   void deliver(MutatableImageComputerTask* task);
