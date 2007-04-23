@@ -2,17 +2,19 @@ Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
 Priority & WIP items:
-Sort out Etch build (crashes on exit)
-Get rid of horrible static registration stuff
+Smart ptrs.  Make code delete free.
 Move all function definitions to .cpps, with one header with all definitions,
 registrations etc built automatically by script scanning them.
 Rationalize warped and blended versions of FriezeGroup functions
 
 Conventional Mode
 -----------------
-- MutatableImageComputerTask (from MutatableImageDisplay) doesn't use auto_ptr.
+- FunctionNodeInfo could use boost/ptr_container/ptr_vector.hpp
+- MutatableImage::load_function uses non-auto_ptr for info
+- FunctionBoilerplate doesn't use auto_ptr in new-ing fns.
+- MutatableImageComputerTask (from MutatableImageDisplay) does use auto_ptr but should probably use shared_ptr
 - History doesn't use auto_ptr.
-- Typed_deepclose doesn't use auto_ptr.
+- Typed_deepclone doesn't use auto_ptr.
 - LoadHandler doesn't use auto_ptr.
 - Move params and args to boost::array in FunctionBoilerplate.
   FunctionNode's accessors become pure virtual, if needed ?

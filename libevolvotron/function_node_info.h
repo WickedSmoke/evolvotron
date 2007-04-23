@@ -23,10 +23,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _function_node_info_h_
 #define _function_node_info_h_
 
+#include <boost/ptr_container/ptr_vector.hpp>
 #include <string>
 #include <vector>
-#include "useful.h"
 
+#include "useful.h"
 
 //! Trivial class used during XML parsing.
 /*! Encapsulates enough info to build a function tree from
@@ -40,10 +41,7 @@ public:
   {}
   
   ~FunctionNodeInfo()
-  {
-    for (std::vector<FunctionNodeInfo*>::const_iterator it=_args.begin();it!=_args.end();it++)
-      delete (*it);
-  }
+  {}
   
   //! Accessor.
   const std::string& type() const
@@ -69,15 +67,14 @@ public:
     return _params;
   }
   
-
   //! Accessor.
-  const std::vector<FunctionNodeInfo*>& args() const
+  const boost::ptr_vector<FunctionNodeInfo>& args() const
     {
       return _args;
     }
 
   //! Accessor.
-  std::vector<FunctionNodeInfo*>& args()
+  boost::ptr_vector<FunctionNodeInfo>& args()
     {
       return _args;
     }
@@ -97,7 +94,7 @@ public:
 protected:
   std::string _type;
   std::vector<real> _params;
-  std::vector<FunctionNodeInfo*> _args;
+  boost::ptr_vector<FunctionNodeInfo> _args;
   uint _iterations;
 };
 

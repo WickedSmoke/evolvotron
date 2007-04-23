@@ -81,14 +81,14 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
   //! Factory method to create a node given contents.
   /*! Returns null if there's a problem, in which case explanation is in report
    */
-  static FunctionNode*const create(const FunctionRegistry& function_registry,const FunctionNodeInfo* info,std::string& report)
+  static FunctionNode*const create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report)
     {
       if (!verify_info(info,PARAMETERS,ARGUMENTS,ITERATIVE,report)) return 0;
 
       std::vector<FunctionNode*> args;
       if (!create_args(function_registry,info,args,report)) return 0;
 
-      return new FUNCTION(info->params(),args,info->iterations());
+      return new FUNCTION(info.params(),args,info.iterations());
     }
 
   //! Return a deeploned copy.

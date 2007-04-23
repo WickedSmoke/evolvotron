@@ -490,18 +490,18 @@ std::auto_ptr<MutatableImage> MutatableImage::load_function(const FunctionRegist
       // Might be a warning message in there.
       report=load_handler.errorString().latin1();
 
-      FunctionNode*const root=FunctionNode::create(function_registry,info,report);
+      assert(info!=0);
+      std::auto_ptr<FunctionNode> root=FunctionNode::create(function_registry,*info,report);
       delete info;
       
-      if (root)
+      if (root.get())
 	{
-	  FunctionTop* fn_top=root->is_a_FunctionTop();
-	  if (!fn_top)
+	  if (!root->is_a_FunctionTop())
 	    {
 	      // Build a FunctionTop wrapper for compataibility with old .xml files
 
 	      std::vector<FunctionNode*> a;
-	      a.push_back(root);
+	      a.push_back(root.release());
 
 	      const TransformIdentity ti;
 	      std::vector<real> tiv=ti.get_columns();
@@ -509,9 +509,10 @@ std::auto_ptr<MutatableImage> MutatableImage::load_function(const FunctionRegist
 	      p.insert(p.end(),tiv.begin(),tiv.end());
 	      p.insert(p.end(),tiv.begin(),tiv.end());
 	      
-	      fn_top=new FunctionTop(p,a,0);
+	      root=std::auto_ptr<FunctionTop>(new FunctionTop(p,a,0));
 	    }
-	  return std::auto_ptr<MutatableImage>(new MutatableImage(fn_top,sinusoidal_z,spheremap));
+	  assert(root->is_a_FunctionTop());
+	  return std::auto_ptr<MutatableImage>(new MutatableImage(root.release()->is_a_FunctionTop(),sinusoidal_z,spheremap));
 	}
       else
 	{

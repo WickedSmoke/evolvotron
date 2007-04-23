@@ -82,13 +82,13 @@ class FunctionNode
   /*! Return true on success, false on fail with reasons in report string.
     Mainly for use by derived FunctionBoilerplate template to avoid duplicate code proliferation.
    */
-  static const bool verify_info(const FunctionNodeInfo* info,unsigned int np,unsigned int na,bool it,std::string& report);
+  static const bool verify_info(const FunctionNodeInfo& info,unsigned int np,unsigned int na,bool it,std::string& report);
 
   //! Build argument list.
   /*! Return true on success, false on fail with reasons in report string.
     Mainly for use by derived FunctionBoilerplate template to avoid duplicate code proliferation.
    */
-  static const bool create_args(const FunctionRegistry&,const FunctionNodeInfo* info,std::vector<FunctionNode*>& args,std::string& report);
+  static const bool create_args(const FunctionRegistry&,const FunctionNodeInfo& info,std::vector<FunctionNode*>& args,std::string& report);
 
  public:
 
@@ -129,7 +129,7 @@ class FunctionNode
   FunctionNode(const std::vector<real>& p,const std::vector<FunctionNode*>& a,uint iter);
   
   //! Build a FunctionNode given a description
-  static FunctionNode*const create(const FunctionRegistry& function_registry,const FunctionNodeInfo* info,std::string& report);
+  static std::auto_ptr<FunctionNode> create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report);
   
   //! Destructor.
   virtual ~FunctionNode();

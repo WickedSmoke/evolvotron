@@ -47,7 +47,7 @@ extern const char*const function_classification_name[FnClassifications];
 
 //! Define FunctionNodeStubNewFnPtr for convenience.
 typedef FunctionNode*const (*FunctionNodeStubNewFnPtr)(const MutationParameters&,bool);
-typedef FunctionNode*const (*FunctionNodeCreateFnPtr)(const FunctionRegistry&,const FunctionNodeInfo*,std::string&);
+typedef FunctionNode*const (*FunctionNodeCreateFnPtr)(const FunctionRegistry&,const FunctionNodeInfo&,std::string&);
 
 //! Class for meta information about functions.
 /*! We use char*'s for the name 'cos they aren't dynamic so might as well use the strings from the object code.

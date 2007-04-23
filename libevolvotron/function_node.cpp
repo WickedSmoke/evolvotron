@@ -114,33 +114,33 @@ void FunctionNode::get_stats(uint& total_nodes,uint& total_parameters,uint& dept
     }
 }
 
-const bool FunctionNode::verify_info(const FunctionNodeInfo* info,unsigned int np,unsigned int na,bool it,std::string& report)
+const bool FunctionNode::verify_info(const FunctionNodeInfo& info,unsigned int np,unsigned int na,bool it,std::string& report)
 {
-  if (info->params().size()!=np)
+  if (info.params().size()!=np)
     {
       std::stringstream msg;
-      msg << "Error: For function " << info->type() << ": expected " << np << " parameters, but found " << info->params().size() << "\n";
+      msg << "Error: For function " << info.type() << ": expected " << np << " parameters, but found " << info.params().size() << "\n";
       report+=msg.str();
       return false;
     }
-  if (info->args().size()!=na)
+  if (info.args().size()!=na)
     {
       std::stringstream msg;
-      msg << "Error: For function " << info->type() << ": expected " << na << " arguments, but found " << info->args().size() << "\n";
+      msg << "Error: For function " << info.type() << ": expected " << na << " arguments, but found " << info.args().size() << "\n";
       report+=msg.str();
       return false;
     }
-  if (info->iterations()!=0 && !it)
+  if (info.iterations()!=0 && !it)
     {
       std::stringstream msg;
-      msg << "Error: For function " << info->type() << ": unexpected iteration count\n";
+      msg << "Error: For function " << info.type() << ": unexpected iteration count\n";
       report+=msg.str();
       return false;
     }
-  if (info->iterations()==0 && it)
+  if (info.iterations()==0 && it)
     {
       std::stringstream msg;
-      msg << "Error: For function " << info->type() << ": expected iteration count but none found\n";
+      msg << "Error: For function " << info.type() << ": expected iteration count but none found\n";
       report+=msg.str();
       return false;
     }
@@ -157,11 +157,11 @@ const bool FunctionNode::is_constant() const
   return true;
 }
 
-const bool FunctionNode::create_args(const FunctionRegistry& function_registry,const FunctionNodeInfo* info,std::vector<FunctionNode*>& args,std::string& report)
+const bool FunctionNode::create_args(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::vector<FunctionNode*>& args,std::string& report)
 {
-  for (std::vector<FunctionNodeInfo*>::const_iterator it=info->args().begin();it!=info->args().end();it++)
+  for (boost::ptr_vector<FunctionNodeInfo>::const_iterator it=info.args().begin();it!=info.args().end();it++)
     {
-      args.push_back(FunctionNode::create(function_registry,*it,report));
+      args.push_back(FunctionNode::create(function_registry,*it,report).release());
       
       // Check whether something has gone wrong.  If it has, delete everything allocated so far and return false.
       if (args.back()==0)
@@ -220,17 +220,17 @@ FunctionNode::FunctionNode(const std::vector<real>& p,const std::vector<Function
 
 /*! Returns null ptr if there's a problem, in which case there will be an explanation in report.
  */
-FunctionNode*const FunctionNode::create(const FunctionRegistry& function_registry,const FunctionNodeInfo* info,std::string& report)
+std::auto_ptr<FunctionNode> FunctionNode::create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report)
 {
-  const FunctionRegistration*const reg=function_registry.lookup(info->type());
+  const FunctionRegistration*const reg=function_registry.lookup(info.type());
   if (reg)
     {
-      return (*(reg->create_fn()))(function_registry,info,report);
+      return std::auto_ptr<FunctionNode>((*(reg->create_fn()))(function_registry,info,report));
     }
   else
     {
-      report+="Error: Unrecognised function name: "+info->type()+"\n";
-      return 0;
+      report+="Error: Unrecognised function name: "+info.type()+"\n";
+      return std::auto_ptr<FunctionNode>();
     }
 }
 
