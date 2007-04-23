@@ -305,7 +305,7 @@ void MutatableImageDisplay::image(std::auto_ptr<MutatableImage>& i)
 
 	      /*! \todo Should computed frames be constant or reduced c.f spatial resolution ?  (Do full z resolution for now)
 	       */
-	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_image.release(),image_size()/s,_frames,level,_serial);
+	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_image,image_size()/s,_frames,level,_serial);
 	      main()->farm()->push_todo(task);
 	    }
 	}

@@ -22,7 +22,7 @@
 
 #include "mutatable_image_computer_task.h"
 
-MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,const MutatableImage* img,const QSize& s,uint f,uint lev,unsigned long long int n)
+MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,std::auto_ptr<const MutatableImage>& img,const QSize& s,uint f,uint lev,unsigned long long int n)
   :_aborted(false)
    ,_display(disp)
    ,_image(img)
@@ -46,7 +46,6 @@ MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*con
 MutatableImageComputerTask::~MutatableImageComputerTask()
 {
   assert(_image->ok());
-  delete _image;
 }
 
 void MutatableImageComputerTask::pixel_advance()
