@@ -31,7 +31,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <cmath>
 
 MutatableImageComputer::MutatableImageComputer(MutatableImageComputerFarm* frm)
-  :_farm(frm)
+  :
+#ifndef NDEBUG
+  InstanceCounted(typeid(this).name(),false),
+#endif
+  _farm(frm)
   ,_task(0)
 {
   start();

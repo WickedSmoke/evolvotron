@@ -28,7 +28,6 @@ Args* Args::_global=0;
 
 Args::Args(int argc,char* argv[])
   :_argc(argc)
-  ,_after(0)
 {
   for (int i=0;i<argc;i++)
     _argv.push_back(std::string(argv[i]));
@@ -36,14 +35,11 @@ Args::Args(int argc,char* argv[])
 }
 
 Args::~Args()
-{
-  delete _after;
-}
+{}
 
 bool Args::option(const std::string& opt,int n)
 {
-  delete _after;
-  _after=0;
+  _after.reset();
 
   int i;
   for (i=1;i<_argc;i++)
@@ -53,7 +49,7 @@ bool Args::option(const std::string& opt,int n)
 
   if (i==_argc) return false;
 
-  _after=new std::istringstream;
+  _after=std::auto_ptr<std::istringstream>(new std::istringstream);
   
   std::string opts_after;
 
@@ -70,7 +66,7 @@ bool Args::option(const std::string& opt,int n)
   
 std::istringstream& Args::after()
 {
-  assert(_after!=0);
+  assert(_after.get());
 
   return *_after;
 }

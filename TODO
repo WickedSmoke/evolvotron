@@ -3,6 +3,8 @@ imply it will be done sooner or later than other items!
 
 Priority & WIP items:
 Smart ptrs.  Make code delete free.
+Review all use of auto_ptr, shared_ptr, deepclone, comments re "owned".  constness of args and returns.
+Constness of MutatableImage in shared_ptrs?
 Move all function definitions to .cpps, with one header with all definitions,
 registrations etc built automatically by script scanning them.
 Rationalize warped and blended versions of FriezeGroup functions
@@ -16,7 +18,12 @@ Conventional Mode
 - History doesn't use auto_ptr.
 - Typed_deepclone doesn't use auto_ptr.
 - LoadHandler doesn't use auto_ptr.
-- Move params and args to boost::array in FunctionBoilerplate.
+- Move InstanceCounted out of useful.h (and #include <map> with it)
+- Changing lock state will trigger a redisplay.
+  Lock state would be better associated with displays than MutatableImages,
+  but the history archive doesn't support anything but changing images; needs
+  additional abstraction of general notion of change of a display's state.
+- Move params and args to boost::array in FunctionBoilerplate (no not possible due to dynamic building)
   FunctionNode's accessors become pure virtual, if needed ?
   (copy std::vector <-> boost:array ?)
   Hmmm... is there really any point in doing this ?  Don't want

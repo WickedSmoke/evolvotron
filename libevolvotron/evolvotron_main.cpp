@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2004 Tim Day
+// Copyright (C) 2002,2003,2004,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \todo Eliminate need to include function.h (and instantiate lots of stuff) by moving more into function_node.h/.cpp
 */
 
+#include <boost/bind.hpp>
 #include <time.h>
 #include <qapplication.h>
 #include <qcursor.h>
@@ -45,21 +46,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void EvolvotronMain::History::purge()
 {
-  if (_history.size()>0)
-    {
-      // Clean up any images at back end of queue
-      for (
-	   std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> >::iterator it=_history.back().second.begin();
-	   it!=_history.back().second.end();
-	   it++
-	   )
-	{
-	  delete (*it).second;
-	}
-
-      // Get rid of the entry
-      _history.pop_back();
-    }
+  if (_archive.size()>0) _archive.pop_back();
 }
 
 EvolvotronMain::History::History(EvolvotronMain* m)
@@ -70,70 +57,49 @@ EvolvotronMain::History::History(EvolvotronMain* m)
 }
 
 EvolvotronMain::History::~History()
+{}
+
+void EvolvotronMain::History::log_status() const
 {
-  while (_history.size()>0)
-    {
-      purge();
-    }  
+  std::clog << "[History: " << _archive.size() << " records (";
+  for (Archive::const_iterator it=_archive.begin();it!=_archive.end();it++)
+    std::clog << (it!=_archive.begin() ? "," : "") << (*it).second.size();
+  std::clog << ")]\n";
 }
 
-void EvolvotronMain::History::goodbye(const MutatableImageDisplay* display)
+void EvolvotronMain::History::goodbye(MutatableImageDisplay* display)
 {
-  // First pass to delete any individual items 
-  for (
-       std::deque<std::pair<std::string,std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> > > >::iterator it_out=_history.begin();
-       it_out!=_history.end();
-       it_out++
-       )
-    {
-      std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> >::iterator it_in=(*it_out).second.begin();
-      while (it_in!=(*it_out).second.end())
-	{
-	  if ((*it_in).first==display)
-	    {
-	      delete (*it_in).second;
-	      it_in=(*it_out).second.erase(it_in);
-	    }
-	  else
-	    {
-	      it_in++;
-	    }
-	}
-    }
+  // First pass to delete any individual items for that display.
+  for (Archive::iterator it=_archive.begin();it!=_archive.end();it++)
+    (*it).second.erase(display);
 
   // Second pass to delete any undo items which are now empty
-  std::deque<std::pair<std::string,std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> > > >::iterator it=_history.begin();
-  while (it!=_history.end())
+  Archive::iterator it=_archive.begin();
+  while (it!=_archive.end())
     {
-      if ((*it).second.empty())
-	{
-	  it=_history.erase(it);
-	}
-      else
-	{
-	  it++;
-	}
+      if ((*it).second.empty()) it=_archive.erase(it);
+      it++;
     }
 
   // Set menu label again in case we've changed the topmost item
-  const std::string action_name(_history.empty() ? "" : _history.front().first);
+  const std::string action_name(_archive.empty() ? "" : _archive.front().first);
   _main->set_undoable(undoable(),action_name);
 }
 
 void EvolvotronMain::History::replacing(MutatableImageDisplay* display)
 {
-  if (_history.size()==0)
+  if (_archive.size()==0)
     {
       begin_action("");
     }
   
-  MutatableImage*const image=display->image();
+  const boost::shared_ptr<const MutatableImage> image=display->image();
 
-  if (image!=0)
+  if (image.get())
     {
-      std::auto_ptr<MutatableImage> saved_image(image->deepclone());  // Deepclone doesn't copy locked state
+      const boost::shared_ptr<MutatableImage> saved_image(image->deepclone());  // Deepclone doesn't copy locked state  // TODO: Deepclone not needed ?  What about locking.
       saved_image->locked(image->locked());
-      _history.front().second.push_back(std::pair<MutatableImageDisplay*,MutatableImage*>(display,saved_image.release()));
+      _archive.front().second.insert(std::make_pair(display,saved_image));
     }
 }
 
@@ -141,16 +107,16 @@ void EvolvotronMain::History::replacing(MutatableImageDisplay* display)
  */
 void EvolvotronMain::History::begin_action(const std::string& action_name)
 {
-  if (_history.size()==0 || _history.front().second.size()!=0)
+  if (_archive.size()==0 || _archive.front().second.size()!=0)
     {
-      _history.push_front(std::pair<std::string,std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> > >());
+      _archive.push_front(ArchiveRecord());
 
-      assert(_history.front().second.size()==0);
+      assert(_archive.front().second.size()==0);
     }
   
-  _history.front().first=action_name;
+  _archive.front().first=action_name;
 
-  while (_history.size()>max_slots)
+  while (_archive.size()>max_slots)
     {
       purge();
     }
@@ -158,19 +124,21 @@ void EvolvotronMain::History::begin_action(const std::string& action_name)
 
 void EvolvotronMain::History::end_action()
 {
-  const std::string action_name(_history.empty() ? "" : _history.front().first);
+  const std::string action_name(_archive.empty() ? "" : _archive.front().first);
   _main->set_undoable(undoable(),action_name);
+
+  log_status();
 }
 
 bool EvolvotronMain::History::undoable()
 {
-  if (_history.size()==0)
+  if (_archive.size()==0)
     {
       return false;
     }
-  else if (_history.front().second.size()==0)
+  else if (_archive.front().second.size()==0)
     {
-      _history.pop_front();
+      _archive.pop_front();
       return undoable();
     }
   else
@@ -181,37 +149,35 @@ bool EvolvotronMain::History::undoable()
 
 void EvolvotronMain::History::undo()
 {
-  if (_history.size()==0)
+  if (_archive.size()==0)
     {
       // Shouldn't ever see this if Undo menu item is correctly greyed out.
       QMessageBox::warning(_main,"Evolvotron","Sorry, cannot undo any further");
     }
-  else if (_history.front().second.size()==0)
+  else if (_archive.front().second.size()==0)
     {
-      _history.pop_front();
+      _archive.pop_front();
       undo();
     }
   else
     {
-      for (
-	   std::vector<std::pair<MutatableImageDisplay*,MutatableImage*> >::iterator it=_history.front().second.begin();
-	   it!=_history.front().second.end();
+      for (ArchiveRecordEntries::iterator it=_archive.front().second.begin();
+	   it!=_archive.front().second.end();
 	   it++
 	   )
 	{
-	  std::auto_ptr<MutatableImage> image((*it).second);
-	  _main->restore((*it).first,image);
+	  _main->restore((*it).first,(*it).second);
 	}
-      _history.pop_front();
+      _archive.pop_front();
     }
 
-  const std::string action_name(_history.empty() ? "" : _history.front().first);
+  const std::string action_name(_archive.empty() ? "" : _archive.front().first);
   _main->set_undoable(undoable(),action_name);
 }
 
-void EvolvotronMain::last_spawned_image(const MutatableImage* image,SpawnMemberFn method)
+void EvolvotronMain::last_spawned_image(const boost::shared_ptr<const MutatableImage>& image,SpawnMemberFn method)
 {
-  if (image) _last_spawned_image=image->deepclone();
+  if (image) _last_spawned_image=image->deepclone();   // TODO: Deepclone not needed ?
   else _last_spawned_image.reset();
 
   _last_spawn_method=method;
@@ -222,7 +188,7 @@ void EvolvotronMain::last_spawned_image(const MutatableImage* image,SpawnMemberF
  */
 EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frames,uint framerate,uint n_threads,bool start_fullscreen,bool start_menuhidden)
   :QMainWindow(parent,0,Qt::WType_TopLevel|Qt::WDestructiveClose)
-   ,_history(this)
+   ,_history(new EvolvotronMain::History(this))
    ,_mutation_parameters(time(0),this)
    ,_statusbar_tasks(0)
    ,_last_spawn_method(&EvolvotronMain::spawn_normal)
@@ -248,7 +214,6 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _dialog_favourite=new DialogFavourite(this);
 
   _menubar=new QMenuBar(this);
-
 
   _popupmenu_file=new QPopupMenu;
   _popupmenu_file->insertItem("Re&set (Reset mutation parameters, clear locks)",this,SLOT(reset_cold()));
@@ -359,14 +324,29 @@ EvolvotronMain::~EvolvotronMain()
 {
   std::clog << "Evolvotron shut down begun...\n";
 
-  // Orphan any displays which outlived us (look out: shutdown order is Qt-determined)
+  // Orphan any displays which outlived us (and clear their images)  (look out: shutdown order is Qt-determined)
   for (std::set<MutatableImageDisplay*>::const_iterator it=_known_displays.begin();it!=_known_displays.end();it++)
     {
+      (*it)->image(boost::shared_ptr<const MutatableImage>());
       (*it)->main(0);
     }
 
+  std::clog << "...cleared displays, deleting farm...\n";
+
   // Shut down the compute farm
   delete _farm;
+
+  std::clog << "...deleted farm, deleting history...\n";
+
+  // Clean up records.
+  _last_spawned_image.reset();
+  _history.reset();
+
+  std::clog << "...deleted history\n";
+
+#ifndef NDEBUG
+  assert(InstanceCounted::is_clear());
+#endif
 
   std::clog << "...completed Evolvotron shutdown\n";  
 }
@@ -381,9 +361,9 @@ void EvolvotronMain::favourite_function_unwrapped(bool v)
   _dialog_favourite->favourite_function_unwrapped(v);
 }
 
-void EvolvotronMain::spawn_normal(const MutatableImage* image,MutatableImageDisplay* display)
+void EvolvotronMain::spawn_normal(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display)
 {
-  std::auto_ptr<MutatableImage> new_image;
+  boost::shared_ptr<const MutatableImage> new_image;
 
   do
     {
@@ -395,17 +375,17 @@ void EvolvotronMain::spawn_normal(const MutatableImage* image,MutatableImageDisp
   display->image(new_image);
 }
 
-void EvolvotronMain::spawn_recoloured(const MutatableImage* image,MutatableImageDisplay* display)
+void EvolvotronMain::spawn_recoloured(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display)
 {  
-  FunctionTop*const new_root=image->top()->typed_deepclone();
+  std::auto_ptr<FunctionTop> new_root=std::auto_ptr<FunctionTop>(image->top()->typed_deepclone());
   
   new_root->reset_posttransform_parameters(mutation_parameters());
   history().replacing(display);
-  std::auto_ptr<MutatableImage> it(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
+  boost::shared_ptr<const MutatableImage> it(new MutatableImage(new_root.release(),image->sinusoidal_z(),image->spheremap()));
   display->image(it);
 }
 
-void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisplay* display)
+void EvolvotronMain::spawn_warped(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display)
 {
   FunctionTop*const new_root=image->top()->typed_deepclone();
 
@@ -414,20 +394,13 @@ void EvolvotronMain::spawn_warped(const MutatableImage* image,MutatableImageDisp
       
   new_root->concatenate_pretransform_on_right(transform);  
   history().replacing(display);
-  std::auto_ptr<MutatableImage> it(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
+  boost::shared_ptr<const MutatableImage> it(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
   display->image(it);
 }
 
-void EvolvotronMain::restore(MutatableImageDisplay* display,std::auto_ptr<MutatableImage>& image)
+void EvolvotronMain::restore(MutatableImageDisplay* display,const boost::shared_ptr<const MutatableImage>& image)
 {
-  if (is_known(display))
-    {
-      display->image(image);
-    }
-  else
-    {
-      image.reset();
-    }
+  if (is_known(display)) display->image(image);
 }
 
 void EvolvotronMain::set_undoable(bool v,const std::string& action_name)
@@ -468,7 +441,7 @@ void EvolvotronMain::spawn_all(MutatableImageDisplay* spawning_display,SpawnMemb
 
   // Issue new images (except to locked displays and to originator)
   // This will cause them to abort any running tasks
-  const MutatableImage*const spawning_image=spawning_display->image();
+  const boost::shared_ptr<const MutatableImage> spawning_image(spawning_display->image());
 
   last_spawned_image(spawning_image,method);
   
@@ -529,7 +502,7 @@ void EvolvotronMain::hello(MutatableImageDisplay* disp)
 
 void EvolvotronMain::goodbye(MutatableImageDisplay* disp)
 {
-  _history.goodbye(disp);
+  _history->goodbye(disp);
   _known_displays.erase(disp);  
 }
 
@@ -686,7 +659,7 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
 
   history().replacing(display);
   //! \todo sinz and spheremap should be obtained from mutation parameters
-  std::auto_ptr<MutatableImage> image(new MutatableImage(root,!Args::global().option("-linz"),Args::global().option("-spheremap")));
+  const boost::shared_ptr<const MutatableImage> image(new MutatableImage(root,!Args::global().option("-linz"),Args::global().option("-spheremap")));
   display->image(image);
 }
 
@@ -732,7 +705,7 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
       _dialog_functions->setup_from_mutation_parameters();
     }
 
-  last_spawned_image(0,&EvolvotronMain::spawn_normal);
+  last_spawned_image(boost::shared_ptr<const MutatableImage>(),&EvolvotronMain::spawn_normal);
 
   history().end_action();
 }

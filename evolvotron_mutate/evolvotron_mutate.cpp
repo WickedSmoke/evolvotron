@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2004 Tim Day
+// Copyright (C) 2002,2003,2004,2007 Tim Day
 /*! \page License License
 
 This program is free software; you can redistribute it and/or
@@ -41,54 +41,59 @@ extern "C"
 //! Application code
 int main(int argc,char* argv[])
 {
-  Args args(argc,argv);
+  {
+    Args args(argc,argv);
 
-  if (args.option("-v")) 
-    std::clog.rdbuf(std::cerr.rdbuf());
-  else
-    std::clog.rdbuf(sink_ostream.rdbuf());
+    if (args.option("-v")) 
+      std::clog.rdbuf(std::cerr.rdbuf());
+    else
+      std::clog.rdbuf(sink_ostream.rdbuf());
   
-  // Normally would use time(0) to seed random number generator
-  // but can imagine several of these starting up virtually simultaneously
-  // so need something with higher resolution.
-  // Adding the process id too to keep things unique.
+    // Normally would use time(0) to seed random number generator
+    // but can imagine several of these starting up virtually simultaneously
+    // so need something with higher resolution.
+    // Adding the process id too to keep things unique.
   
-  QTime t(QTime::currentTime());
-  uint seed=getpid()+t.msec()+1000*t.second()+60000*t.minute()+3600000*t.hour();
+    QTime t(QTime::currentTime());
+    uint seed=getpid()+t.msec()+1000*t.second()+60000*t.minute()+3600000*t.hour();
   
-  std::clog << "Random seed is " << seed << "\n";
+    std::clog << "Random seed is " << seed << "\n";
   
-  MutationParameters mutation_parameters(seed,0);
+    MutationParameters mutation_parameters(seed,0);
 
-  std::string report;
-  std::auto_ptr<const MutatableImage> imagefn_out;
+    std::string report;
+    boost::shared_ptr<const MutatableImage> imagefn_out;
 
-  if (args.option("-g"))
-    {
-      FunctionTop* fn_top=FunctionTop::initial(mutation_parameters);
+    if (args.option("-g"))
+      {
+	FunctionTop* fn_top=FunctionTop::initial(mutation_parameters);
 
-      imagefn_out=std::auto_ptr<MutatableImage>(new MutatableImage(fn_top,!args.option("-linz"),args.option("-spheremap")));
-    }
-  else
-    {
+	imagefn_out=boost::shared_ptr<const MutatableImage>(new MutatableImage(fn_top,!args.option("-linz"),args.option("-spheremap")));
+      }
+    else
+      {
 
-      const std::auto_ptr<const MutatableImage> imagefn_in(MutatableImage::load_function(mutation_parameters.function_registry(),std::cin,report));
+	const boost::shared_ptr<const MutatableImage> imagefn_in(MutatableImage::load_function(mutation_parameters.function_registry(),std::cin,report));
 
-      if (imagefn_in.get()==0)
-	{
-	  std::cerr << "evolvotron_render: Error: Function not loaded due to errors:\n" << report;
-	  exit(1);
-	}
-      else if (!report.empty())
-	{
-	  std::cerr << "evolvotron_render: Warning: Function loaded with warnings:\n" << report;
-	}
+	if (imagefn_in)
+	  {
+	    std::cerr << "evolvotron_render: Error: Function not loaded due to errors:\n" << report;
+	    exit(1);
+	  }
+	else if (!report.empty())
+	  {
+	    std::cerr << "evolvotron_render: Warning: Function loaded with warnings:\n" << report;
+	  }
 
-      imagefn_out=imagefn_in->mutated(mutation_parameters);
-    }
+	imagefn_out=imagefn_in->mutated(mutation_parameters);
+      }
 
-  imagefn_out->save_function(std::cout);
+    imagefn_out->save_function(std::cout);
+  }
 
+#ifndef NDEBUG
+  assert(InstanceCounted::is_clear());
+#endif
 
   exit(0);
 }

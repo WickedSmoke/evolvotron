@@ -167,7 +167,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
  */
 MutatableImageDisplay::~MutatableImageDisplay()
 {
-  assert(_image->ok());
+  assert(!_image.get() || _image->ok());
 
   // During app shutdown EvolvotronMain might have already been destroyed so only call it if it's there.
   // Don't use main() because it asserts non-null.
@@ -204,8 +204,7 @@ const uint MutatableImageDisplay::simplify_constants(bool single_action)
 
   main()->history().replacing(this);
 
-  std::auto_ptr<MutatableImage> it(_image->simplified());
-  image(it);
+  image(_image->simplified());
 
   uint new_nodes;
   uint new_parameters;
@@ -251,7 +250,7 @@ void MutatableImageDisplay::frame_advance()
   repaint(false);
 }
 
-void MutatableImageDisplay::image(std::auto_ptr<MutatableImage>& i)
+void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>& i)
 {
   assert(_image.get()==0 || _image->ok());
   assert(i.get()==0 || i->ok());
@@ -294,17 +293,12 @@ void MutatableImageDisplay::image(std::auto_ptr<MutatableImage>& i)
 	  
 	  if (image_size().width()>=s && image_size().height()>=s)
 	    {
-	      /*! \todo The image tree has no pixel or task specific state, so deepcloning is way overkill.
-		Would just need some referencing counting wrapper
-		(mainly to take ensure images aren't deleted while still being used by tasks) 
-		to avoid having to deepclone.
-		On the other hand this seems to work very robustly for now and isn't a killer.
-		*/
-	      std::auto_ptr<const MutatableImage> task_image(_image->deepclone());
-	      assert(task_image->ok());
-
 	      /*! \todo Should computed frames be constant or reduced c.f spatial resolution ?  (Do full z resolution for now)
 	       */
+	      const boost::shared_ptr<const MutatableImage> task_image(_image);
+	      assert(task_image->ok());
+
+	      // TODO: auto_ptr for task ?
 	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_image,image_size()/s,_frames,level,_serial);
 	      main()->farm()->push_todo(task);
 	    }
@@ -369,14 +363,16 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
 void MutatableImageDisplay::lock(bool l,bool record_in_history)
 {
   // This might be called (with l=false) with null _image during start-up reset.
-  if (_image.get())
+  if (_image && _image->locked()!=l)
     {
       if (record_in_history)
 	{
 	  main()->history().begin_action(l ? "lock" : "unlock");
 	  main()->history().replacing(this);
 	}
-      _image->locked(l);
+      const boost::shared_ptr<MutatableImage> new_image(_image->deepclone());
+      new_image->locked(l);
+      image(new_image);
       if (record_in_history)
 	{
 	  main()->history().end_action();
@@ -571,11 +567,11 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	      std::clog << "[Pan]";
 	    }
 	  
-	  FunctionTop*const new_root=image()->top()->typed_deepclone();
+	  std::auto_ptr<FunctionTop> new_root(image()->top()->typed_deepclone());
 	  new_root->concatenate_pretransform_on_right(transform);
 
 	  // Install new image (triggers recompute).
-	  std::auto_ptr<MutatableImage> new_image(new MutatableImage(new_root,image()->sinusoidal_z(),image()->spheremap()));
+	  const boost::shared_ptr<const MutatableImage> new_image(new MutatableImage(new_root.release(),image()->sinusoidal_z(),image()->spheremap()));
 	  image(new_image);
 
 	  // Finally, record position of this event as last event
@@ -816,7 +812,7 @@ void MutatableImageDisplay::menupick_load_function()
     {
       std::ifstream file(load_filename.local8Bit());
       std::string report;
-      std::auto_ptr<MutatableImage> new_image(MutatableImage::load_function(_main->mutation_parameters().function_registry(),file,report));
+      boost::shared_ptr<const MutatableImage> new_image(MutatableImage::load_function(_main->mutation_parameters().function_registry(),file,report));
       if (new_image.get()==0)
 	{
 	  QMessageBox::critical(this,"Evolvotron",("Function not loaded due to errors:\n"+report).c_str());
@@ -940,6 +936,5 @@ void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
   if (main()->isFullScreen()) top_level_widget->showFullScreen();
 
   // Fire up image calculation
-  std::auto_ptr<MutatableImage> cloned_image(_image->deepclone());
-  display->image(cloned_image);
+  display->image(_image);
 }

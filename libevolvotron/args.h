@@ -42,7 +42,7 @@ class Args
   std::vector<std::string> _argv;
   
   //! The stringstream after the selected option.
-  std::istringstream* _after;
+  std::auto_ptr<std::istringstream> _after;
 
   static Args* _global;
 

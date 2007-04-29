@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -32,7 +32,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image_display_big.h"
 
 MutatableImage::MutatableImage(FunctionTop* r,bool sinz,bool sm)
-  :_top(r)
+  :
+#ifndef NDEBUG
+  InstanceCounted(typeid(this).name(),false),
+#endif
+  _top(r)
   ,_sinusoidal_z(sinz)
   ,_spheremap(sm)
   ,_locked(false)
@@ -41,7 +45,11 @@ MutatableImage::MutatableImage(FunctionTop* r,bool sinz,bool sm)
 }
 
 MutatableImage::MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm)
-  :_top(0)
+  :
+#ifndef NDEBUG
+  InstanceCounted(typeid(this).name(),false),
+#endif
+  _top(0)
   ,_sinusoidal_z(sinz)
   ,_spheremap(sm)
   ,_locked(false)
@@ -64,9 +72,9 @@ const FunctionTop*const MutatableImage::top() const
   return _top;
 }
 
-std::auto_ptr<MutatableImage> MutatableImage::deepclone() const
+boost::shared_ptr<MutatableImage> MutatableImage::deepclone() const
 {
-  return std::auto_ptr<MutatableImage>(new MutatableImage(top()->typed_deepclone(),sinusoidal_z(),spheremap())); 
+  return boost::shared_ptr<MutatableImage>(new MutatableImage(top()->typed_deepclone(),sinusoidal_z(),spheremap())); 
 }
 
 const XYZ MutatableImage::operator()(const XYZ& p) const
@@ -123,18 +131,18 @@ const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint 
     }
 }
 
-std::auto_ptr<MutatableImage> MutatableImage::mutated(const MutationParameters& p) const
+boost::shared_ptr<MutatableImage> MutatableImage::mutated(const MutationParameters& p) const
 {
   FunctionTop*const c=top()->typed_deepclone();  
   c->mutate(p);
-  return std::auto_ptr<MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap()));
+  return boost::shared_ptr<MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap()));
 }
 
-std::auto_ptr<MutatableImage> MutatableImage::simplified() const
+boost::shared_ptr<MutatableImage> MutatableImage::simplified() const
 {
   FunctionTop*const c=top()->typed_deepclone();  
   c->simplify_constants();
-  return std::auto_ptr<MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap())); 
+  return boost::shared_ptr<MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap())); 
 }
 
 void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
@@ -462,7 +470,7 @@ public:
 /*! If NULL is returned, then the import failed: error message in report.
   If an image is returned then report contains warning messages (probably version mismatch).
 */
-std::auto_ptr<MutatableImage> MutatableImage::load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report)
+boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report)
 {
   // Don't want to faff with Qt's file classes so just read everything into a string.
 
@@ -491,7 +499,7 @@ std::auto_ptr<MutatableImage> MutatableImage::load_function(const FunctionRegist
       report=load_handler.errorString().latin1();
 
       assert(info!=0);
-      std::auto_ptr<FunctionNode> root=FunctionNode::create(function_registry,*info,report);
+      std::auto_ptr<FunctionNode> root(FunctionNode::create(function_registry,*info,report));
       delete info;
       
       if (root.get())
@@ -512,11 +520,11 @@ std::auto_ptr<MutatableImage> MutatableImage::load_function(const FunctionRegist
 	      root=std::auto_ptr<FunctionTop>(new FunctionTop(p,a,0));
 	    }
 	  assert(root->is_a_FunctionTop());
-	  return std::auto_ptr<MutatableImage>(new MutatableImage(root.release()->is_a_FunctionTop(),sinusoidal_z,spheremap));
+	  return boost::shared_ptr<const MutatableImage>(new MutatableImage(root.release()->is_a_FunctionTop(),sinusoidal_z,spheremap));
 	}
       else
 	{
-	  return std::auto_ptr<MutatableImage>();
+	  return boost::shared_ptr<const MutatableImage>();
 	}
     }
   else
@@ -525,7 +533,7 @@ std::auto_ptr<MutatableImage> MutatableImage::load_function(const FunctionRegist
       tmp = "Parse error: "+load_handler.errorString()+"\n";
       report=tmp.latin1();
       delete info;
-      return std::auto_ptr<MutatableImage>();
+      return boost::shared_ptr<const MutatableImage>();
     }
 }
 

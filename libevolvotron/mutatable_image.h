@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2004 Tim Day
+// Copyright (C) 2002,2003,2004,2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 
 #include <iosfwd>
 
+#include "useful.h"
 #include "function_node.h"
 
 class FunctionNull;
@@ -36,6 +37,9 @@ class FunctionTop;
   \todo Generally tighten up const-ness of interfaces.
  */
 class MutatableImage
+#ifndef NDEBUG
+: public InstanceCounted
+#endif
 {
  protected:
 
@@ -98,13 +102,13 @@ class MutatableImage
     }
 
   //! Clone this image.
-  std::auto_ptr<MutatableImage> deepclone() const;
+  boost::shared_ptr<MutatableImage> deepclone() const;
 
   //! Return a mutated version of this image
-  std::auto_ptr<MutatableImage> mutated(const MutationParameters& p) const;
+  boost::shared_ptr<MutatableImage> mutated(const MutationParameters& p) const;
 
   //! Return a simplified version of this image
-  std::auto_ptr<MutatableImage> simplified() const;
+  boost::shared_ptr<MutatableImage> simplified() const;
 
   //! Evaluate the image at specified coordinate.
   const XYZ operator()(const XYZ& p) const;
@@ -118,7 +122,7 @@ class MutatableImage
   std::ostream& save_function(std::ostream& out) const;
 
   //! Read a new function tree from the given stream.
-  static std::auto_ptr<MutatableImage> load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report);
+  static boost::shared_ptr<const MutatableImage> load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report);
 
   //! Obtain some statistics about the image function
   void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const;

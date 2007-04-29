@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //! Application code
 int main(int argc,char* argv[])
 {
+  {
   Args args(argc,argv);
 
   if (args.option("-v")) 
@@ -44,7 +45,7 @@ int main(int argc,char* argv[])
   FunctionRegistry function_registry;
 
   std::string report;
-  const std::auto_ptr<const MutatableImage> imagefn(MutatableImage::load_function(function_registry,std::cin,report));
+  const boost::shared_ptr<const MutatableImage> imagefn(MutatableImage::load_function(function_registry,std::cin,report));
 
   if (imagefn.get()==0)
     {
@@ -142,13 +143,18 @@ int main(int argc,char* argv[])
 	      << "\n";
 	    exit(1);
 	  }
-
+	
 	std::clog
 	  << "Wrote file " 
 	  << save_filename.local8Bit()
 	  << "\n";
       }
     }
+  }
+
+#ifndef NDEBUG
+  assert(InstanceCounted::is_clear());
+#endif
   
   exit(0);
 }

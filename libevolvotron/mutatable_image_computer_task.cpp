@@ -22,27 +22,28 @@
 
 #include "mutatable_image_computer_task.h"
 
-MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,std::auto_ptr<const MutatableImage>& img,const QSize& s,uint f,uint lev,unsigned long long int n)
-  :_aborted(false)
-   ,_display(disp)
-   ,_image(img)
-   ,_size(s)
-   ,_frames(f)
-   ,_level(lev)
-   ,_current_pixel(0)
-   ,_current_col(0)
-   ,_current_row(0)
-   ,_current_frame(0)
-   ,_image_data(s.width()*s.height()*f)
-   ,_completed(false)
-   ,_serial(n)
+MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,const boost::shared_ptr<const MutatableImage>& img,const QSize& s,uint f,uint lev,unsigned long long int n)
+  :
+#ifndef NDEBUG
+  InstanceCounted(typeid(this).name(),false),
+#endif
+  _aborted(false)
+  ,_display(disp)
+  ,_image(img)
+  ,_size(s)
+  ,_frames(f)
+  ,_level(lev)
+  ,_current_pixel(0)
+  ,_current_col(0)
+  ,_current_row(0)
+  ,_current_frame(0)
+  ,_image_data(s.width()*s.height()*f)
+  ,_completed(false)
+  ,_serial(n)
 {
   assert(_image->ok());
 }
 
-/*! Destructor currently deletes its image because it owns its deepcloned copy.
-  However, see todo comments in MutatableImageDisplay::image about reference counting plan for this. 
- */
 MutatableImageComputerTask::~MutatableImageComputerTask()
 {
   assert(_image->ok());

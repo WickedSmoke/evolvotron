@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -23,17 +23,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _useful_h_
 #define _useful_h_
 
-extern "C"
-{
-#include <stdlib.h>
-#include <assert.h>
-}
-
+#include <boost/shared_ptr.hpp>
+#include <cassert>
 #include <cmath>
+#include <cstdlib>
 #include <iosfwd>
+#include <map>
+#include <memory>
 #include <string>
 #include <sstream>
-#include <memory>
 
 //! Convenience typedef.
 typedef unsigned int uint;
@@ -130,5 +128,26 @@ inline real trianglef(real x,real y)
 
 //! Use this to divert clog to supress verbose logging.  Needs longer life than scope of main().
 extern std::ofstream sink_ostream;
+
+#ifndef NDEBUG 
+
+//! Inherit from this class (in debug only) and then assert(InstanceCounted::is_clean) at progam exit to check all instances are gone.
+class InstanceCounted
+{
+ public:
+  InstanceCounted(const std::string& what,bool verbose);
+  virtual ~InstanceCounted();
+
+  static const bool is_clear();
+
+ private:
+  const std::string _what;
+  const bool _verbose;
+
+  static std::auto_ptr<std::map<std::string,uint> > _instance_counts;
+};
+
+
+#endif
 
 #endif

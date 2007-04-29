@@ -38,6 +38,9 @@ class MutatableImageComputerTask;
   The parent farm thread can communicate when necessary using the public methods of the class.
  */
 class MutatableImageComputer : public QThread
+#ifndef NDEBUG
+, public InstanceCounted
+#endif
 {
  protected:
   //! Pointer to compute farm of which this thread is part.

@@ -91,7 +91,10 @@ class MutatableImageDisplay : public QWidget
   std::vector<uint> _offscreen_image_data;
 
   //! The image function being displayed (its root node).
-  std::auto_ptr<MutatableImage> _image;
+  /*! The held image is const because references to it could be held by history archive, compute tasks etc,
+    so it should be completely replaced rather than manipulated.
+   */
+  boost::shared_ptr<const MutatableImage> _image;
 
   //! Properties dialog.
   DialogMutatableImageDisplay* _properties;
@@ -127,9 +130,9 @@ class MutatableImageDisplay : public QWidget
   virtual ~MutatableImageDisplay();
 
   //! Accessor.
-  MutatableImage*const image()
+  const boost::shared_ptr<const MutatableImage>& image()
     {
-      return _image.get();
+      return _image;
     }
 
   //! Accessor.
@@ -158,7 +161,7 @@ class MutatableImageDisplay : public QWidget
     }
 
   //! Load a new image (clears up old image, starts new compute tasks).
-  void image(std::auto_ptr<MutatableImage>& image);
+  void image(const boost::shared_ptr<const MutatableImage>& image);
 
   //! Evolvotron main calls this with completed (but possibly aborted) tasks.
   void deliver(MutatableImageComputerTask* task);

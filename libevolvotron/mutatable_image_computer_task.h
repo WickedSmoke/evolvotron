@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -33,6 +33,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 //! Class encapsulating all the parameters of, and output from, a single image generation run.
 class MutatableImageComputerTask
+#ifndef NDEBUG
+: public InstanceCounted
+#endif
 {
  protected:
 
@@ -45,13 +48,9 @@ class MutatableImageComputerTask
   MutatableImageDisplay*const _display;
 
   //! The root node of the image tree to be generated.
-  /*! Currently each task has it's own deepcloned copy of the image node tree.
-    This is complete overkill as the image node tree has no state
-    (although previously it did while I was attempting to optimise away constant branches)
-    so some sort of reference counting scheme should be used.
-    \todo Reference counting scheme to avoid excessive deepcloning of images.
+  /*! Constness of the MutatableImage referenced is important as the instance is shared between all tasks and the original display.
    */
-  const std::auto_ptr<const MutatableImage> _image;
+  const boost::shared_ptr<const MutatableImage> _image;
 
   //! The size of the image to be generated.
   const QSize _size;
@@ -87,7 +86,7 @@ class MutatableImageComputerTask
 
  public:
   //! Constructor.
-  MutatableImageComputerTask(MutatableImageDisplay*const disp,std::auto_ptr<const MutatableImage>& img,const QSize& s,uint f,uint lev,unsigned long long int n);
+  MutatableImageComputerTask(MutatableImageDisplay*const disp,const boost::shared_ptr<const MutatableImage>& img,const QSize& s,uint f,uint lev,unsigned long long int n);
   
   //! Destructor.
   ~MutatableImageComputerTask();
@@ -111,9 +110,9 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
-  const MutatableImage*const image() const
+  const boost::shared_ptr<const MutatableImage>& image() const
     {
-      return _image.get();
+      return _image;
     }
 
   //! Accessor.
