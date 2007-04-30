@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -52,20 +52,7 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
   // Clear all the tasks in queues
   _mutex.lock();
 
-  for (TodoQueue::iterator it=_todo.begin();it!=_todo.end();it++)
-    {
-      delete (*it);
-    }
   _todo.clear();
-
-  for (DoneQueueByDisplay::iterator it0=_done.begin();it0!=_done.end();it0++)
-    {
-      for (DoneQueue::iterator it1=(*it0).second.begin();it1!=(*it0).second.end();it1++)
-	{
-	  delete (*it1);
-	}
-      (*it0).second.clear();
-    }
   _done.clear();
 
   _mutex.unlock();
@@ -74,7 +61,7 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
 }
 
 //! Predicate function to test whether a task has been aborted
-static const bool predicate_aborted(const MutatableImageComputerTask*const t) 
+static const bool predicate_aborted(const boost::shared_ptr<const MutatableImageComputerTask> t) 
 {
   return t->aborted();
 }
@@ -100,7 +87,7 @@ void MutatableImageComputerFarm::fasttrack_aborted()
   _mutex.unlock();
 }
 
-void MutatableImageComputerFarm::push_todo(MutatableImageComputerTask* task)
+void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImageComputerTask>& task)
 {
   _mutex.lock();
   _todo.insert(task);
@@ -114,9 +101,9 @@ void MutatableImageComputerFarm::push_todo(MutatableImageComputerTask* task)
   _mutex.unlock();
 }
 
-MutatableImageComputerTask*const MutatableImageComputerFarm::pop_todo()
+const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_todo()
 {
-  MutatableImageComputerTask* ret=0;
+  boost::shared_ptr<MutatableImageComputerTask> ret;
   _mutex.lock();
   
   TodoQueue::iterator it=_todo.begin();
@@ -130,16 +117,16 @@ MutatableImageComputerTask*const MutatableImageComputerFarm::pop_todo()
   return ret;
 }
 
-void MutatableImageComputerFarm::push_done(MutatableImageComputerTask* task)
+void MutatableImageComputerFarm::push_done(const boost::shared_ptr<MutatableImageComputerTask>& task)
 {
   _mutex.lock();
   _done[task->display()].insert(task);
   _mutex.unlock();
 }
 
-MutatableImageComputerTask* MutatableImageComputerFarm::pop_done()
+const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_done()
 {
-  MutatableImageComputerTask* ret=0;
+  boost::shared_ptr<MutatableImageComputerTask> ret;
   _mutex.lock();
   
   if (_done_position==_done.end())
@@ -181,9 +168,8 @@ void MutatableImageComputerFarm::abort_all()
   for (TodoQueue::iterator it=_todo.begin();it!=_todo.end();it++)
     {
       (*it)->abort();
-      delete (*it);
-      _todo.erase(it);
     }
+  _todo.clear();
 
   for (std::vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
     {
@@ -196,10 +182,9 @@ void MutatableImageComputerFarm::abort_all()
       for (DoneQueue::iterator it1=q.begin();it1!=q.end();it1++)
 	{
 	  (*it1)->abort();
-	  delete (*it1);
-	  q.erase(it1);
 	}
     }
+  _done.clear();
   _mutex.unlock();  
 }
 
@@ -212,14 +197,13 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
       if ((*it)->display()==disp)
 	{
 	  (*it)->abort();
-	  delete (*it);
 	  _todo.erase(it);
 	}
     }
-
+  
   for (std::vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
     {      
-	(*it)->abort_for(disp);
+      (*it)->abort_for(disp);
     }
 
   
@@ -234,7 +218,6 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
 	  if ((*it1)->display()==disp)
 	    {
 	      (*it1)->abort();
-	      delete (*it1);
 	      q.erase(it1);
 	    }
 	}

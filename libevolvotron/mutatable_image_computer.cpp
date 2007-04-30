@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -36,7 +36,6 @@ MutatableImageComputer::MutatableImageComputer(MutatableImageComputerFarm* frm)
   InstanceCounted(typeid(this).name(),false),
 #endif
   _farm(frm)
-  ,_task(0)
 {
   start();
 }
@@ -48,7 +47,7 @@ MutatableImageComputer::~MutatableImageComputer()
   kill();
   wait();
 
-  delete _task;
+  _task.reset();
 
   std::clog << "...deleted a computer\n";
 }
@@ -111,7 +110,7 @@ void MutatableImageComputer::run()
 		  // \todo Optimisation: Add a progress tracker to Task class so deferred tasks can continue from where they left off.
 		  farm()->push_todo(task());
 		  communications().defer(false);
-		  _task=0;
+		  _task.reset();
 		}
 	      else
 		{
@@ -124,7 +123,7 @@ void MutatableImageComputer::run()
 		  communications().abort(false);
 
 		  farm()->push_done(task());	  
-		  _task=0;
+		  _task.reset();
 		}
 	    }
 	}
@@ -134,8 +133,7 @@ void MutatableImageComputer::run()
 
 bool MutatableImageComputer::defer_if_less_important_than(uint pri)
 {
-  //! \todo Need to mutex-lock task here, because it could be changing under us.
-  const MutatableImageComputerTask*const task_tmp=_task;
+  const boost::shared_ptr<const MutatableImageComputerTask> task_tmp=_task;
   if (task_tmp && task_tmp->priority()>pri)
     {
       communications().defer(true);

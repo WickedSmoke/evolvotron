@@ -1,8 +1,9 @@
+
 # Shared definitions included by the other .pro files
 # qmake should NOT be executed on this file directly
 
 # append debug or release
-CONFIG+= qt thread stl exceptions release    #debug
+CONFIG+= qt thread stl exceptions debug    # release
 
 #######################################
 # Version numbering.  VERSION_NUMBER should have been set on the qmake command line (see .configure script)

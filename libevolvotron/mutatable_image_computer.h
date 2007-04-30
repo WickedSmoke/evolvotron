@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -47,7 +47,7 @@ class MutatableImageComputer : public QThread
   MutatableImageComputerFarm*const _farm;
 
   //! The current task.
-  MutatableImageComputerTask* _task;
+  boost::shared_ptr<MutatableImageComputerTask> _task;
 
   //! Class encapsulating mutex-protected flags used for communicating between farm and worker
   class Communications
@@ -157,7 +157,7 @@ class MutatableImageComputer : public QThread
     }
   
   //! Accessor.
-  MutatableImageComputerTask*const task() const
+  const boost::shared_ptr<MutatableImageComputerTask>& task() const
     {
       return _task;
     }

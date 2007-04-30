@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -88,7 +88,7 @@ class MutatableImageDisplay : public QWidget
   std::vector<QImage*> _offscreen_image;
 
   //! Offscreen image data for _offscreen_image.  This must remain alive longer than the QImage.
-  std::vector<uint> _offscreen_image_data;
+  boost::shared_array<uint> _offscreen_image_data;
 
   //! The image function being displayed (its root node).
   /*! The held image is const because references to it could be held by history archive, compute tasks etc,
@@ -164,7 +164,7 @@ class MutatableImageDisplay : public QWidget
   void image(const boost::shared_ptr<const MutatableImage>& image);
 
   //! Evolvotron main calls this with completed (but possibly aborted) tasks.
-  void deliver(MutatableImageComputerTask* task);
+  void deliver(const boost::shared_ptr<const MutatableImageComputerTask>& task);
 
   //! Set the lock state.
   void lock(bool l,bool record_in_history);

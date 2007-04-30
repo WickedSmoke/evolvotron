@@ -37,7 +37,7 @@ MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*con
   ,_current_col(0)
   ,_current_row(0)
   ,_current_frame(0)
-  ,_image_data(s.width()*s.height()*f)
+  ,_image_data(new uint[s.width()*s.height()*f])
   ,_completed(false)
   ,_serial(n)
 {

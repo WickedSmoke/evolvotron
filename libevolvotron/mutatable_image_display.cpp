@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -298,15 +298,14 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
 	      const boost::shared_ptr<const MutatableImage> task_image(_image);
 	      assert(task_image->ok());
 
-	      // TODO: auto_ptr for task ?
-	      MutatableImageComputerTask* task=new MutatableImageComputerTask(this,task_image,image_size()/s,_frames,level,_serial);
+	      const boost::shared_ptr<MutatableImageComputerTask> task(new MutatableImageComputerTask(this,task_image,image_size()/s,_frames,level,_serial));
 	      main()->farm()->push_todo(task);
 	    }
 	}
     }
 }
 
-void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
+void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImageComputerTask>& task)
 {
   // Ignore tasks which were aborted or which have somehow got out of order 
   // (not impossible with multiple compute threads).
@@ -324,8 +323,7 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
       // Copy image data out of task 
       // (do this by swapping to avoid a copy; the task is about to be deleted anyway)
 
-      _offscreen_image_data.clear();
-      _offscreen_image_data.swap(task->image_data());
+      _offscreen_image_data=task->image_data();
       
       for (uint f=0;f<task->frames();f++)
 	{
@@ -355,10 +353,7 @@ void MutatableImageDisplay::deliver(MutatableImageComputerTask* task)
       //! \todo Any case for calling update() instead of repaint() ?  Repaint maybe feels smoother.
       repaint();
     }
-  
-  // This will also delete the task's deepcloned image
-  delete task;
-}
+  }
 
 void MutatableImageDisplay::lock(bool l,bool record_in_history)
 {

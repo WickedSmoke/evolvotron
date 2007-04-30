@@ -536,7 +536,7 @@ void EvolvotronMain::tick()
       _statusbar_tasks=tasks;
     }
 
-  MutatableImageComputerTask* task;
+  boost::shared_ptr<MutatableImageComputerTask> task;
 
   // If there are aborted jobs in the todo queue 
   // shift them straight over to done queue so the compute threads don't have to worry about them.
@@ -555,7 +555,7 @@ void EvolvotronMain::tick()
 	{
 	  // If we don't know who owns it we just have to trash it 
 	  // (probably a top level window which was closed with incomplete tasks).
-	  delete task;
+	  task.reset();
 	}
 
       // Timeout in case we're being swamped by incoming tasks (maintain app responsiveness).

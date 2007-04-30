@@ -15,9 +15,9 @@ Conventional Mode
 - MutatableImage::load_function uses non-auto_ptr for info
 - FunctionBoilerplate doesn't use auto_ptr in new-ing fns.
 - MutatableImageComputerTask (from MutatableImageDisplay) does use auto_ptr but should probably use shared_ptr
-- History doesn't use auto_ptr.
 - Typed_deepclone doesn't use auto_ptr.
 - LoadHandler doesn't use auto_ptr.
+- Mutex lock/unlock could use locker.
 - Move InstanceCounted out of useful.h (and #include <map> with it)
 - Changing lock state will trigger a redisplay.
   Lock state would be better associated with displays than MutatableImages,

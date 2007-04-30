@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -45,22 +45,22 @@ class MutatableImageComputerFarm
  protected:
   
   //! Comparison class for STL template.
-  class CompareTaskPriorityLoResFirst : public std::binary_function<const MutatableImageComputerTask*,const MutatableImageComputerTask*,bool> 
+  class CompareTaskPriorityLoResFirst : public std::binary_function<boost::shared_ptr<const MutatableImageComputerTask>,boost::shared_ptr<const MutatableImageComputerTask>,bool> 
     {
     public:
       //! Compare task priorities.
-      bool operator()(const MutatableImageComputerTask* t0,const MutatableImageComputerTask* t1) 
+      bool operator()(const boost::shared_ptr<const MutatableImageComputerTask>& t0,const boost::shared_ptr<const MutatableImageComputerTask>& t1) 
 	{ 
 	  return (t0->priority() < t1->priority());
 	}
     };
 
   //! Comparison class for STL template.
-  class CompareTaskPriorityHiResFirst : public std::binary_function<const MutatableImageComputerTask*,const MutatableImageComputerTask*,bool> 
+  class CompareTaskPriorityHiResFirst : public std::binary_function<boost::shared_ptr<const MutatableImageComputerTask>,boost::shared_ptr<const MutatableImageComputerTask>,bool> 
     {
     public:
       //! Compare task priorities.
-      bool operator()(const MutatableImageComputerTask* t0,const MutatableImageComputerTask* t1) 
+      bool operator()(const boost::shared_ptr<const MutatableImageComputerTask>& t0,const boost::shared_ptr<const MutatableImageComputerTask>& t1) 
 	{ 
 	  return (t0->priority() > t1->priority());
 	}
@@ -73,13 +73,13 @@ class MutatableImageComputerFarm
   std::vector<MutatableImageComputer*> _computers;
 
   //! Convenience typedef.
-  typedef std::multiset<MutatableImageComputerTask*,CompareTaskPriorityLoResFirst> TodoQueue;
+  typedef std::multiset<boost::shared_ptr<MutatableImageComputerTask>,CompareTaskPriorityLoResFirst> TodoQueue;
 
   //! Queue of tasks to be performed, lowest resolution first
   TodoQueue _todo;
 
   //! Conveniencetypedef.
-  typedef std::multiset<MutatableImageComputerTask*,CompareTaskPriorityHiResFirst> DoneQueue;
+  typedef std::multiset<boost::shared_ptr<MutatableImageComputerTask>,CompareTaskPriorityHiResFirst> DoneQueue;
 
   //! Convenience typedef.  
   /*! const because never needs to do anything other than compare pointers
@@ -111,16 +111,16 @@ class MutatableImageComputerFarm
   void fasttrack_aborted();
 
   //! Enqueue a task for computing.
-  void push_todo(MutatableImageComputerTask*);
+  void push_todo(const boost::shared_ptr<MutatableImageComputerTask>&);
 
   //! Remove a task from the head of the todo queue (returns null if none).
-  MutatableImageComputerTask*const pop_todo();
+  const boost::shared_ptr<MutatableImageComputerTask> pop_todo();
 
   //! Enqueue a task for display.
-  void push_done(MutatableImageComputerTask*);
+  void push_done(const boost::shared_ptr<MutatableImageComputerTask>&);
 
   //! Remove a task from the head of the display queue (returns null if none).
-  MutatableImageComputerTask* pop_done();
+  const boost::shared_ptr<MutatableImageComputerTask> pop_done();
 
   //! Flags all tasks in all queues as aborted, and signals the compute threads to abort their current task.
   void abort_all();

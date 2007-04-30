@@ -76,7 +76,7 @@ class MutatableImageComputerTask
   /*! It might have been nice to use a QImage, but every access would probably have to be qApp mutex protected.
     (Mustn't use Qt library except from main application thread).
    */
-  std::vector<uint> _image_data;
+  boost::shared_array<uint> _image_data;
 
   //! Set true by pixel_advance when it advances off the last frame.
   bool _completed;
@@ -146,13 +146,13 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
-  const std::vector<uint>& image_data() const
+  const boost::shared_array<uint>& image_data() const
     {
       return _image_data;
     }
 
   //! Accessor.
-  std::vector<uint>& image_data()
+  boost::shared_array<uint>& image_data()
     {
       return _image_data;
     }
