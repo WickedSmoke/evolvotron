@@ -708,17 +708,17 @@ void MutatableImageDisplay::menupick_save_image()
 	  
 	  if (!save_filename.isEmpty())
 	    {
-	      QFile* mng_file=0;
+	      std::auto_ptr<QFile> mng_file;
 	      if (save_format=="QT-MNG")
 		{
-		  mng_file=new QFile(save_filename);
+		  mng_file=std::auto_ptr<QFile>(new QFile(save_filename));
 		  if (!mng_file->open(IO_WriteOnly|IO_Truncate))
 		    {
 		      QMessageBox::critical(this,"Evolvotron","Failed to open file "+save_filename);
 		    }
 		  else 
 		    {
-		      QPNGImagePacker packer(mng_file,32,0);
+		      QPNGImagePacker packer(mng_file.get(),32,0);
 		      
 		      for (uint f=0;f<_offscreen_image.size();f++)
 			{
@@ -744,7 +744,6 @@ void MutatableImageDisplay::menupick_save_image()
 			      QMessageBox::critical(this,"Evolvotron","Failed to remove file "+save_filename);
 			    }
 			}
-		      delete mng_file;
 		    }
 		}
 	      else
