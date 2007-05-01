@@ -70,10 +70,10 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParameters* mp)
 	   it!=_parent->mutation_parameters().function_registry().registrations().end();
 	   it++)
 	{
-	  const FunctionRegistration*const fn=(*it).second;
-	  if (c==-1 || fn->classification()&(1<<c))
+	  const FunctionRegistration& fn=*(*it);
+	  if (c==-1 || fn.classification()&(1<<c))
 	    {
-	      QGroupBox* g=new QGroupBox(3,Qt::Horizontal,fn->name(),scrollview->contentParent());
+	      QGroupBox* g=new QGroupBox(3,Qt::Horizontal,fn.name(),scrollview->contentParent());
 	      
 	      QSizePolicy spx(QSizePolicy::Expanding,QSizePolicy::Preferred);
 	      g->setSizePolicy(spx);
@@ -83,7 +83,7 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParameters* mp)
 	      s->setSizePolicy(spx);
 	      new QLabel("1",g);
 	      
-	      _slider_to_function.insert(std::make_pair(s,fn));
+	      _slider_to_function.insert(std::make_pair(s,&fn));
 
 	      SignalExpanderValueChangedQSlider*const sx=new SignalExpanderValueChangedQSlider(this,s);
 	      connect(

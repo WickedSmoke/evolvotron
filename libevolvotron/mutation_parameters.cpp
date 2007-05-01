@@ -66,9 +66,9 @@ void MutationParameters::reset()
        )
     {
       real initial_weight=1.0;
-      if ((*it).second->classification() & FnIterative) initial_weight=1.0/1024.0;  // Ouch iterative functions are expensive
-      if ((*it).second->classification() & FnFractal) initial_weight=1.0/1024.0;  // Yuk fractals are ugly
-      _function_weighting.insert(std::make_pair((*it).second,initial_weight));
+      if ((*it)->classification() & FnIterative) initial_weight=1.0/1024.0;  // Ouch iterative functions are expensive
+      if ((*it)->classification() & FnFractal) initial_weight=1.0/1024.0;  // Yuk fractals are ugly
+      _function_weighting.insert(std::make_pair((*it),initial_weight));
     }
 
   recalculate_function_stuff();

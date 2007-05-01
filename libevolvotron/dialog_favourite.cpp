@@ -49,10 +49,10 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
        it++
        )
     {
-      const FunctionRegistration*const fn=(*it).second;
-      _favourite_fn_to_index[fn->name()]=_favourite->count();
-      _index_to_favourite_fn[_favourite->count()]=fn->name();
-      _favourite->insertItem(fn->name());
+      const FunctionRegistration& fn=*(*it);
+      _favourite_fn_to_index[fn.name()]=_favourite->count();
+      _index_to_favourite_fn[_favourite->count()]=fn.name();
+      _favourite->insertItem(fn.name());
     }
 
   QGroupBox* group1=new QGroupBox(1,Qt::Horizontal,"Wrapping",_dialog_content);

@@ -48,7 +48,7 @@ class FunctionRegistry
   const FunctionRegistration*const lookup(const std::string& f) const;
 
   //! typedefed for convenience
-  typedef std::map<std::string,const FunctionRegistration*> Registrations;
+  typedef boost::ptr_map<std::string,const FunctionRegistration*> Registrations;
   
   //! Just get the collection of registrations.
   const Registrations& registrations() const
