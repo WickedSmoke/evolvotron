@@ -293,7 +293,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
 	  this, SLOT(tick()) 
 	  );
 
-  _farm=new MutatableImageComputerFarm(n_threads);
+  _farm=std::auto_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads));
 
   //! \todo frames and framerate should be retained and modifiable from the GUI
   for (int r=0;r<grid_size.height();r++)
@@ -334,7 +334,7 @@ EvolvotronMain::~EvolvotronMain()
   std::clog << "...cleared displays, deleting farm...\n";
 
   // Shut down the compute farm
-  delete _farm;
+  _farm.reset();;
 
   std::clog << "...deleted farm, deleting history...\n";
 
@@ -524,7 +524,7 @@ void EvolvotronMain::list_known(std::ostream& out) const
  */
 void EvolvotronMain::tick()
 {
-  const uint tasks=farm()->tasks();
+  const uint tasks=farm().tasks();
   if (tasks!=_statusbar_tasks)
     {
       if (tasks==0)
@@ -540,12 +540,12 @@ void EvolvotronMain::tick()
 
   // If there are aborted jobs in the todo queue 
   // shift them straight over to done queue so the compute threads don't have to worry about them.
-  farm()->fasttrack_aborted();
+  farm().fasttrack_aborted();
 
   QTime watchdog;
   watchdog.start();
 
-  while ((task=farm()->pop_done())!=0)
+  while ((task=farm().pop_done())!=0)
     {
       if (is_known(task->display()))
 	{

@@ -11,6 +11,7 @@ Rationalize warped and blended versions of FriezeGroup functions
 
 Conventional Mode
 -----------------
+- shared_array<T> should be convertible to shared_array<const T> surely (like shared_ptr is)
 - FunctionNodeInfo could use boost/ptr_container/ptr_vector.hpp
 - MutatableImage::load_function uses non-auto_ptr for info
 - FunctionBoilerplate doesn't use auto_ptr in new-ing fns.

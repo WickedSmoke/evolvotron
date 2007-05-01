@@ -221,7 +221,7 @@ class EvolvotronMain : public QMainWindow
   QTimer* _timer;
 
   //! Farm of compute threads.
-  MutatableImageComputerFarm* _farm;
+  std::auto_ptr<MutatableImageComputerFarm> _farm;
 
   //! All the displays in the grid.
   std::vector<MutatableImageDisplay*> _displays;
@@ -311,9 +311,9 @@ class EvolvotronMain : public QMainWindow
     }
 
   //! Accessor.
-  MutatableImageComputerFarm*const farm()
+  MutatableImageComputerFarm& farm()
     {
-      return _farm;
+      return *_farm;
     }
 
   //! Accessor.
