@@ -201,11 +201,14 @@ protected:
 
   std::string _report;
 
-  FunctionNodeInfo** _root;
+  std::auto_ptr<FunctionNodeInfo>& _root;
 
   bool* _ret_sinusoidal_z;
   bool* _ret_spheremap;
 
+  //! Stack just used to track our progress through the nested <f>...</f> declarations.
+  /*! Ownership is entirely under _root and the pointr-container in FunctionNodeInfo.
+   */
   std::stack<FunctionNodeInfo*> _stack;
 
   bool _expect_top_level_element;
@@ -216,7 +219,7 @@ protected:
 
 public:
 
-  LoadHandler(FunctionNodeInfo** root,bool* sinz,bool* smap)
+  LoadHandler(std::auto_ptr<FunctionNodeInfo>& root,bool* sinz,bool* smap)
     :_root(root)
      ,_ret_sinusoidal_z(sinz)
      ,_ret_spheremap(smap)
@@ -226,7 +229,7 @@ public:
      ,_expect_characters_iterations(false)
      ,_expect_characters_parameter(false)
   {
-    *_root=0;
+    _root.reset();
   }
 
   bool startDocument()
@@ -238,7 +241,7 @@ public:
   bool endDocument()
   {
     std::clog << "...completed document\n";
-    if (*_root==0)
+    if (_root.get()==0)
       {
 	_report+="Error: No root function node found\n";
 	return false;
@@ -335,12 +338,13 @@ public:
       {
 	if (element=="f")
 	  {
-	    FunctionNodeInfo*const f=new FunctionNodeInfo;
+	    std::auto_ptr<FunctionNodeInfo> f(new FunctionNodeInfo());
 	    if (_stack.empty())
 	      {
-		if (*_root==0)
+		if (_root.get()==0)
 		  {
-		    *_root=f;
+		    _stack.push(f.get());
+		    _root=f;
 		  }
 		else
 		  {
@@ -350,9 +354,10 @@ public:
 	      }
 	    else
 	      {
-		_stack.top()->args().push_back(f);
+		FunctionNodeInfo*const it=f.get();
+		_stack.top()->args().push_back(f.release());
+		_stack.push(it);
 	      }
-	    _stack.push(f);
 	  }
 	else if (element=="type")
 	  {
@@ -482,11 +487,11 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
   xml_source.setData(QString(in_data.c_str()));
 
   // The LoadHandler will set this to point at the root node.  We're responsible for deleting it.
-  FunctionNodeInfo* info=0;
+  std::auto_ptr<FunctionNodeInfo> info;
 
   bool sinusoidal_z;
   bool spheremap;
-  LoadHandler load_handler(&info,&sinusoidal_z,&spheremap);
+  LoadHandler load_handler(info,&sinusoidal_z,&spheremap);
 
   QXmlSimpleReader xml_reader;
   xml_reader.setContentHandler(&load_handler);
@@ -498,9 +503,9 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
       // Might be a warning message in there.
       report=load_handler.errorString().latin1();
 
-      assert(info!=0);
+      assert(info.get());
       std::auto_ptr<FunctionNode> root(FunctionNode::create(function_registry,*info,report));
-      delete info;
+      info.reset();
       
       if (root.get())
 	{
@@ -532,7 +537,6 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
       QString tmp;
       tmp = "Parse error: "+load_handler.errorString()+"\n";
       report=tmp.latin1();
-      delete info;
       return boost::shared_ptr<const MutatableImage>();
     }
 }
