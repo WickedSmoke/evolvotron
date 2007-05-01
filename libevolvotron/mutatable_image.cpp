@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_top.h"
 #include "mutatable_image_display_big.h"
 
-MutatableImage::MutatableImage(FunctionTop* r,bool sinz,bool sm)
+MutatableImage::MutatableImage(std::auto_ptr<FunctionTop>& r,bool sinz,bool sm)
   :
 #ifndef NDEBUG
   InstanceCounted(typeid(this).name(),false),
@@ -41,7 +41,7 @@ MutatableImage::MutatableImage(FunctionTop* r,bool sinz,bool sm)
   ,_spheremap(sm)
   ,_locked(false)
 {
-  assert(r!=0);
+  assert(_top.get()!=0);
 }
 
 MutatableImage::MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm)
@@ -49,48 +49,45 @@ MutatableImage::MutatableImage(const MutationParameters& parameters,bool excitin
 #ifndef NDEBUG
   InstanceCounted(typeid(this).name(),false),
 #endif
-  _top(0)
-  ,_sinusoidal_z(sinz)
+  _sinusoidal_z(sinz)
   ,_spheremap(sm)
   ,_locked(false)
 {
   std::vector<real> pv(FunctionNode::stubparams(parameters,12));
   std::vector<FunctionNode*> av;
   av.push_back(FunctionNode::stub(parameters,exciting));
-  _top=new FunctionTop(pv,av,0);
+  _top=std::auto_ptr<FunctionTop>(new FunctionTop(pv,av,0));
   //! \todo _sinusoidal_z should be obtained from AnimationParameters when it exists
 }
 
 MutatableImage::~MutatableImage()
-{
-  delete _top;
-}
+{}
 
 //! Accessor.
-const FunctionTop*const MutatableImage::top() const
+const FunctionTop& MutatableImage::top() const
 {
-  return _top;
+  return *_top;
 }
 
 boost::shared_ptr<MutatableImage> MutatableImage::deepclone() const
 {
-  return boost::shared_ptr<MutatableImage>(new MutatableImage(top()->typed_deepclone(),sinusoidal_z(),spheremap())); 
+  std::auto_ptr<FunctionTop> root(top().typed_deepclone());
+  return boost::shared_ptr<MutatableImage>(new MutatableImage(root,sinusoidal_z(),spheremap())); 
 }
 
 const XYZ MutatableImage::operator()(const XYZ& p) const
 {
-  assert(top()!=0);
-  return (*top())(p);
+  return top()(p);
 }
 
 const bool MutatableImage::is_constant() const
 {
-  return top()->is_constant();
+  return top().is_constant();
 }
 
 const bool MutatableImage::ok() const
 {
-  return top()->ok();
+  return top().ok();
 }  
 
 const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint sy,uint sz) const
@@ -133,14 +130,14 @@ const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint 
 
 boost::shared_ptr<MutatableImage> MutatableImage::mutated(const MutationParameters& p) const
 {
-  FunctionTop*const c=top()->typed_deepclone();  
+  std::auto_ptr<FunctionTop> c(top().typed_deepclone());  
   c->mutate(p);
   return boost::shared_ptr<MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap()));
 }
 
 boost::shared_ptr<MutatableImage> MutatableImage::simplified() const
 {
-  FunctionTop*const c=top()->typed_deepclone();  
+  std::auto_ptr<FunctionTop> c(top().typed_deepclone());  
   c->simplify_constants();
   return boost::shared_ptr<MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap())); 
 }
@@ -149,7 +146,7 @@ void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
 {
   // Actually calculate a pixel value from the image.
   // negexp distribution on colour-space parameters probably means the nominal range is something like -4.0 to 4.0
-  XYZ pv((*top())(p));
+  XYZ pv(top()(p));
 
   // Scale nominal -2.0 to 2.0 range to 0-255
   XYZ v(127.5*(0.5*pv+XYZ(1.0,1.0,1.0)));
@@ -166,7 +163,7 @@ void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
 
 void MutatableImage::get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const
 {
-  top()->get_stats(total_nodes,total_parameters,depth,width,proportion_constant);
+  top().get_stats(total_nodes,total_parameters,depth,width,proportion_constant);
 }
 
 std::ostream& MutatableImage::save_function(std::ostream& out) const
@@ -184,7 +181,7 @@ std::ostream& MutatableImage::save_function(std::ostream& out) const
     << "\""
     << ">\n";
   
-  top()->save_function(out,1);
+  top().save_function(out,1);
 
   out << "</evolvotron-image-function>\n";
 
@@ -525,7 +522,8 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
 	      root=std::auto_ptr<FunctionTop>(new FunctionTop(p,a,0));
 	    }
 	  assert(root->is_a_FunctionTop());
-	  return boost::shared_ptr<const MutatableImage>(new MutatableImage(root.release()->is_a_FunctionTop(),sinusoidal_z,spheremap));
+	  std::auto_ptr<FunctionTop> root_as_top(root.release()->is_a_FunctionTop());
+	  return boost::shared_ptr<const MutatableImage>(new MutatableImage(root_as_top,sinusoidal_z,spheremap));
 	}
       else
 	{

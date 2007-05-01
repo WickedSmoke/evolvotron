@@ -198,9 +198,9 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
 	}
     }
   
-  for (boost::ptr_vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
+  for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++)
     {      
-      (*it)->abort_for(disp);
+      (*it).abort_for(disp);
     }
 
   

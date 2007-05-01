@@ -549,11 +549,11 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	      std::clog << "[Pan]";
 	    }
 	  
-	  std::auto_ptr<FunctionTop> new_root(image()->top()->typed_deepclone());
+	  std::auto_ptr<FunctionTop> new_root(image()->top().typed_deepclone());
 	  new_root->concatenate_pretransform_on_right(transform);
 
 	  // Install new image (triggers recompute).
-	  const boost::shared_ptr<const MutatableImage> new_image(new MutatableImage(new_root.release(),image()->sinusoidal_z(),image()->spheremap()));
+	  const boost::shared_ptr<const MutatableImage> new_image(new MutatableImage(new_root,image()->sinusoidal_z(),image()->spheremap()));
 	  image(new_image);
 
 	  // Finally, record position of this event as last event

@@ -66,7 +66,7 @@ int main(int argc,char* argv[])
 
     if (args.option("-g"))
       {
-	FunctionTop* fn_top=FunctionTop::initial(mutation_parameters);
+	std::auto_ptr<FunctionTop> fn_top(FunctionTop::initial(mutation_parameters));
 
 	imagefn_out=boost::shared_ptr<const MutatableImage>(new MutatableImage(fn_top,!args.option("-linz"),args.option("-spheremap")));
       }

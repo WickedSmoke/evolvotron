@@ -377,17 +377,17 @@ void EvolvotronMain::spawn_normal(const boost::shared_ptr<const MutatableImage>&
 
 void EvolvotronMain::spawn_recoloured(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display)
 {  
-  std::auto_ptr<FunctionTop> new_root=std::auto_ptr<FunctionTop>(image->top()->typed_deepclone());
+  std::auto_ptr<FunctionTop> new_root=std::auto_ptr<FunctionTop>(image->top().typed_deepclone());
   
   new_root->reset_posttransform_parameters(mutation_parameters());
   history().replacing(display);
-  boost::shared_ptr<const MutatableImage> it(new MutatableImage(new_root.release(),image->sinusoidal_z(),image->spheremap()));
+  boost::shared_ptr<const MutatableImage> it(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
   display->image(it);
 }
 
 void EvolvotronMain::spawn_warped(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display)
 {
-  FunctionTop*const new_root=image->top()->typed_deepclone();
+  std::auto_ptr<FunctionTop> new_root=std::auto_ptr<FunctionTop>(image->top().typed_deepclone());
 
   // Get the transform from whatever factory is currently set
   const Transform transform(transform_factory()(mutation_parameters().rng01()));
@@ -642,18 +642,21 @@ void EvolvotronMain::toggle_hide_menu()
  */
 void EvolvotronMain::reset(MutatableImageDisplay* display)
 {
-  FunctionTop* root;
+  std::auto_ptr<FunctionTop> root;
   if (_dialog_favourite->favourite_function().empty())
     {
-      root=FunctionTop::initial(mutation_parameters());
+      root=std::auto_ptr<FunctionTop>(FunctionTop::initial(mutation_parameters()));
     }
   else
     {
-      root=FunctionTop::initial
+      root=std::auto_ptr<FunctionTop>
 	(
-	 mutation_parameters(),
-	 mutation_parameters().function_registry().lookup(_dialog_favourite->favourite_function()),
-	 _dialog_favourite->favourite_function_unwrapped()
+	 FunctionTop::initial
+	 (
+	  mutation_parameters(),
+	  mutation_parameters().function_registry().lookup(_dialog_favourite->favourite_function()),
+	  _dialog_favourite->favourite_function_unwrapped()
+	  )
 	 );
     }
 
