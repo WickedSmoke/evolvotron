@@ -82,10 +82,10 @@ class MutatableImageDisplay : public QWidget
   uint _current_display_level;
 
   //! Offscreen image buffer.
-  std::vector<QPixmap*> _offscreen_buffer;
+  boost::ptr_vector<QPixmap> _offscreen_buffer;
 
   //! Offscreen image buffer in sensible image format (used for save, as pixmap is in display format which might be less bits).
-  std::vector<QImage*> _offscreen_image;
+  boost::ptr_vector<QImage> _offscreen_image;
 
   //! Offscreen image data for _offscreen_image.  This must remain alive longer than the QImage.
   boost::shared_array<uint> _offscreen_image_data;

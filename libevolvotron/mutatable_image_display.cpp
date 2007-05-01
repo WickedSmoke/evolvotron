@@ -178,15 +178,9 @@ MutatableImageDisplay::~MutatableImageDisplay()
     }
 
   _image.reset();
-  for (uint f=0;f<_offscreen_buffer.size();f++)
-    {
-      delete _offscreen_buffer[f];
-    }
+  _offscreen_buffer.clear();
 
-  for (uint f=0;f<_offscreen_image.size();f++)
-    {
-      delete _offscreen_image[f];
-    }
+  _offscreen_image.clear();
 
   std::clog << "A MutatableImageDisplay was deleted\n";
 }
@@ -272,7 +266,7 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
 
       // Clear any existing image data - stops old animations continuing to play 
       for (uint f=0;f<_offscreen_buffer.size();f++)
-	_offscreen_buffer[f]->fill(black);
+	_offscreen_buffer[f].fill(black);
 
       // Queue a paint so the display will be blacked out
       repaint();
@@ -314,14 +308,7 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
    */
   if (!task->aborted() && task->level()<_current_display_level && task->serial()==_serial)
     {
-      for (uint f=0;f<_offscreen_image.size();f++)
-	{
-	  delete _offscreen_image[f];
-	}
       _offscreen_image.clear();
-
-      // Copy image data out of task 
-      // (do this by swapping to avoid a copy; the task is about to be deleted anyway)
 
       _offscreen_image_data=task->image_data();
       
@@ -343,7 +330,7 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
 	  
 	  //! \todo Pick a scaling mode: smooth or not (or put it under GUI control). 
 	  // Curiously, although smoothscale seems to be noticeably slower, it doesn't look any better.
-	  _offscreen_buffer[f]->convertFromImage(_offscreen_image.back()->scale(image_size()));
+	  _offscreen_buffer[f].convertFromImage(_offscreen_image.back().scale(image_size()));
 	}
 	  
       //! Note the resolution we've displayed so out-of-order low resolution images are dropped
@@ -381,7 +368,7 @@ void MutatableImageDisplay::paintEvent(QPaintEvent*)
 {
   // Repaint the screen from the offscreen buffer
   // (If there have been resizes it will be black)
-  bitBlt(this,0,0,_offscreen_buffer[_current_frame]);
+  bitBlt(this,0,0,&_offscreen_buffer[_current_frame]);
 
   // If this is the first paint event after a resize we can start computing images for the new size.
   if (_resize_in_progress)
@@ -409,8 +396,8 @@ void MutatableImageDisplay::resizeEvent(QResizeEvent* event)
       // Resize and reset our offscreen buffer (something to do while we wait)
       for (uint f=0;f<_offscreen_buffer.size();f++)
 	{
-	  _offscreen_buffer[f]->resize(image_size());
-	  _offscreen_buffer[f]->fill(black);
+	  _offscreen_buffer[f].resize(image_size());
+	  _offscreen_buffer[f].fill(black);
 	}
       
       // Flag for the next paintEvent to tell it a recompute can be started now.
@@ -722,7 +709,7 @@ void MutatableImageDisplay::menupick_save_image()
 		      
 		      for (uint f=0;f<_offscreen_image.size();f++)
 			{
-			  if (!packer.packImage(*(_offscreen_image[f])))
+			  if (!packer.packImage(_offscreen_image[f]))
 			    {
 			      QMessageBox::critical(this,"Evolvotron","Failed while writing file "+save_filename+"\nFile will be removed");
 			      mng_file->close();
@@ -767,7 +754,7 @@ void MutatableImageDisplay::menupick_save_image()
 			    }
 			}
 		      
-		      if (!_offscreen_image[f]->save(actual_save_filename.local8Bit(),save_format))
+		      if (!_offscreen_image[f].save(actual_save_filename.local8Bit(),save_format))
 			{
 			  QMessageBox::critical(this,"Evolvotron","Failed to write file "+actual_save_filename);
 			  if (f<_offscreen_image.size()-1)
