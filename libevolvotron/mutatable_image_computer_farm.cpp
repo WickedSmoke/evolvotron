@@ -44,10 +44,7 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
   std::clog << "Compute farm shut down begun...\n";
 
   // Kill all the computers
-  for (std::vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
-    {
-      delete (*it);
-    }
+  _computers.clear();
 
   // Clear all the tasks in queues
   _mutex.lock();
@@ -93,9 +90,9 @@ void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImag
   _todo.insert(task);
   
   // Check if any of the computers are executing lower priority tasks and if so defer least important one.
-  for (std::vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
+  for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++)
     {
-      ((*it)->defer_if_less_important_than(task->priority()));
+      ((*it).defer_if_less_important_than(task->priority()));
     }
 
   _mutex.unlock();
@@ -171,9 +168,9 @@ void MutatableImageComputerFarm::abort_all()
     }
   _todo.clear();
 
-  for (std::vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
+  for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++)
     {
-      (*it)->abort();
+      (*it).abort();
     }
 
   for (DoneQueueByDisplay::iterator it0=_done.begin();it0!=_done.end();it0++)
@@ -201,7 +198,7 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
 	}
     }
   
-  for (std::vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
+  for (boost::ptr_vector<MutatableImageComputer*>::iterator it=_computers.begin();it!=_computers.end();it++)
     {      
       (*it)->abort_for(disp);
     }
@@ -230,9 +227,9 @@ std::ostream& MutatableImageComputerFarm::write_info(std::ostream& out) const
 {
   uint active_computers=0;
 
-  for (std::vector<MutatableImageComputer*>::const_iterator it=_computers.begin();it!=_computers.end();it++)
+  for (boost::ptr_vector<MutatableImageComputer>::const_iterator it=_computers.begin();it!=_computers.end();it++)
     {      
-      if ((*it)->active())
+      if ((*it).active())
 	{
 	  active_computers++;
 	}
@@ -247,9 +244,9 @@ const uint MutatableImageComputerFarm::tasks() const
 {
   uint ret=0;
   
-  for (std::vector<MutatableImageComputer*>::const_iterator it=_computers.begin();it!=_computers.end();it++)
+  for (boost::ptr_vector<MutatableImageComputer>::const_iterator it=_computers.begin();it!=_computers.end();it++)
     {      
-      if ((*it)->active())
+      if ((*it).active())
 	{
 	  ret++;
 	}

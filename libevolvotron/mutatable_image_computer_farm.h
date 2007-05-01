@@ -70,7 +70,7 @@ class MutatableImageComputerFarm
   mutable QMutex _mutex;
 
   //! The compute threads
-  std::vector<MutatableImageComputer*> _computers;
+  boost::ptr_vector<MutatableImageComputer> _computers;
 
   //! Convenience typedef.
   typedef std::multiset<boost::shared_ptr<MutatableImageComputerTask>,CompareTaskPriorityLoResFirst> TodoQueue;
