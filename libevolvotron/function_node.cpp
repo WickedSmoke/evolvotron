@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2004,2005 Tim Day
+// Copyright (C) 2002,2003,2004,2005,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -46,12 +46,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "functions_friezegroup_hop.h"
 #include "functions_friezegroup_spinhop.h"
 
-const std::vector<FunctionNode*> FunctionNode::cloneargs() const
+std::auto_ptr<boost::ptr_vector<FunctionNode> > FunctionNode::cloneargs() const
 {
-  std::vector<FunctionNode*> ret;
-  for (std::vector<FunctionNode*>::const_iterator it=args().begin();it!=args().end();it++)
+  std::auto_ptr<boost::ptr_vector<FunctionNode> > ret(new boost::ptr_vector<FunctionNode>());
+  for (boost::ptr_vector<FunctionNode>::const_iterator it=args().begin();it!=args().end();it++)
     {
-      ret.push_back((*it)->deepclone());
+      ret->push_back(it->deepclone().release());
     }
   return ret;
 }
@@ -71,7 +71,7 @@ void FunctionNode::get_stats(uint& total_nodes,uint& total_parameters,uint& dept
   real sub_constants=0.0;
 
   // Traverse child nodes.  Need to reconstruct the actual numbers from the proportions
-  for (std::vector<FunctionNode*>::const_iterator it=args().begin();it!=args().end();it++)
+  for (boost::ptr_vector<FunctionNode>::const_iterator it=args().begin();it!=args().end();it++)
     {
       uint sub_nodes;
       uint sub_parameters;
@@ -79,7 +79,7 @@ void FunctionNode::get_stats(uint& total_nodes,uint& total_parameters,uint& dept
       uint sub_width;
       real sub_proportion_constant;
 
-      (*it)->get_stats(sub_nodes,sub_parameters,sub_depth,sub_width,sub_proportion_constant);
+      it->get_stats(sub_nodes,sub_parameters,sub_depth,sub_width,sub_proportion_constant);
 
       total_sub_nodes+=sub_nodes;
       total_sub_parameters+=sub_parameters;
@@ -157,52 +157,52 @@ const bool FunctionNode::is_constant() const
   return true;
 }
 
-const bool FunctionNode::create_args(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::vector<FunctionNode*>& args,std::string& report)
+const bool FunctionNode::ok() const
+{
+  bool good=true;
+  for (boost::ptr_vector<FunctionNode>::const_iterator it=args().begin();good && it!=args().end();it++)
+    {
+      good=(*it).ok();
+    }
+  
+  return good;
+}
+
+const bool FunctionNode::create_args(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,boost::ptr_vector<FunctionNode>& args,std::string& report)
 {
   for (boost::ptr_vector<FunctionNodeInfo>::const_iterator it=info.args().begin();it!=info.args().end();it++)
     {
-      args.push_back(FunctionNode::create(function_registry,*it,report).release());
-      
+      std::auto_ptr<FunctionNode> fn(FunctionNode::create(function_registry,*it,report));
       // Check whether something has gone wrong.  If it has, delete everything allocated so far and return false.
-      if (args.back()==0)
+      if (!fn.get())
 	{
-	  args.pop_back();
-	  
-	  for (std::vector<FunctionNode*>::iterator dit=args.begin();dit!=args.end();dit++)
-	    {
-	      delete (*dit);
-	    }
+	  args.clear();
 	  return false;
 	}
+      args.push_back(fn.release());
     }
   return true;
 }
 
-FunctionNode*const FunctionNode::stub(const MutationParameters& parameters,bool exciting)
+std::auto_ptr<FunctionNode> FunctionNode::stub(const MutationParameters& parameters,bool exciting)
 {
   return parameters.random_function_stub(exciting);
 }
 
-/*! This returns a vector of random bits of stub, used for initialiing nodes with children. 
+/*! This setus up a vector of random bits of stub, used for initialiing nodes with children. 
  */
-const std::vector<FunctionNode*> FunctionNode::stubargs(const MutationParameters& parameters,uint n,bool exciting)
+void FunctionNode::stubargs(boost::ptr_vector<FunctionNode>& v,const MutationParameters& parameters,uint n,bool exciting)
 {
-  std::vector<FunctionNode*> ret;
+  assert(v.empty());
   for (uint i=0;i<n;i++)
-    ret.push_back(stub(parameters,exciting));
-  return ret;
+    v.push_back(stub(parameters,exciting).release());
 }
 
-
-const std::vector<real> FunctionNode::stubparams(const MutationParameters& parameters,uint n)
+void FunctionNode::stubparams(std::vector<real>& v,const MutationParameters& parameters,uint n)
 {
-  std::vector<real> ret;
+  assert(v.empty());
   for (uint i=0;i<n;i++)
-    {
-      real v=parameters.rnegexp();
-      ret.push_back(parameters.r01() < 0.5 ? -v : v);
-    }
-  return ret;
+    v.push_back((parameters.r01() < 0.5f ? -1.0f : 1.0f)*parameters.rnegexp());
 }
 
 const uint FunctionNode::stubiterations(const MutationParameters& parameters)
@@ -210,13 +210,11 @@ const uint FunctionNode::stubiterations(const MutationParameters& parameters)
   return 1+static_cast<uint>(floor(parameters.r01()*parameters.max_initial_iterations()));
 }
 
-FunctionNode::FunctionNode(const std::vector<real>& p,const std::vector<FunctionNode*>& a,uint iter)
-  :_args(a)
+FunctionNode::FunctionNode(const std::vector<real>& p,boost::ptr_vector<FunctionNode>& a,uint iter)
+  :_args(a.release())
    ,_params(p)
    ,_iterations(iter)
-{
-  assert(ok());
-}
+{}
 
 /*! Returns null ptr if there's a problem, in which case there will be an explanation in report.
  */
@@ -237,11 +235,7 @@ std::auto_ptr<FunctionNode> FunctionNode::create(const FunctionRegistry& functio
 /*! Deletes all arguments.  No one else should be referencing nodes except the root node of an image.
  */
 FunctionNode::~FunctionNode()
-{
-  assert(ok());
-  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
-    if (*it) delete (*it);
-}
+{}
 
 /*! There are 2 kinds of mutation:
   - random adjustments to constants 
@@ -258,15 +252,17 @@ FunctionNode::~FunctionNode()
 void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_parameters)
 {
   // First mutate all child nodes.
-  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
-    (*it)->mutate(parameters);
+  for (boost::ptr_vector<FunctionNode>::iterator it=args().begin();it!=args().end();it++)
+    it->mutate(parameters);
   
   // Perturb any parameters we have
   if (mutate_own_parameters)
     {
       if (parameters.r01()<parameters.probability_parameter_reset())
 	{
-	  params(stubparams(parameters,params().size()));
+	std::vector<real> p;
+	stubparams(p,parameters,params().size());
+	params(p);
 	}
       else
 	{
@@ -311,127 +307,112 @@ void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_p
   // Then go to work on the argument structure...
   
   // Think about glitching some nodes.
-  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
+  for (uint i=0;i<args().size();i++)
     {
       if (parameters.r01()<parameters.probability_glitch())
 	{
-	  delete (*it);
-	  (*it)=stub(parameters,false);
+	  args().replace(i,stub(parameters,false).release());
 	}
     }
 
   // Think about substituting some nodes.
   //! \todo Substitution might make more sense if it was for a node with the same/similar number of arguments.
-  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
+  for (uint i=0;i<args().size();i++)
     {
       if (parameters.r01()<parameters.probability_substitute())
 	{
 	  // Take a copy of the nodes parameters and arguments
-	  std::vector<FunctionNode*> a((*it)->deepclone_args());
-	  std::vector<real> p((*it)->params());
+	  std::auto_ptr<boost::ptr_vector<FunctionNode> > a(args()[i].deepclone_args());
+	  std::vector<real> p(args()[i].params());
 	  
 	  // Replace the node with something interesting (maybe this should depend on how complex the original node was)
-	  delete (*it);
-	  (*it)=stub(parameters,true);
+	  args().replace(i,stub(parameters,false).release());
 
+	  FunctionNode& it=args()[i];
 	  // Do we need some extra arguments ?
-	  if (a.size()<(*it)->args().size())
+	  if (a->size()<it.args().size())
 	    {
-	      const std::vector<FunctionNode*> xa(stubargs(parameters,(*it)->args().size()-a.size()));
-	      a.insert(a.end(),xa.begin(),xa.end());
+	      boost::ptr_vector<FunctionNode> xa;
+	      stubargs(xa,parameters,it.args().size()-a->size());
+	      a->transfer(a->end(),xa.begin(),xa.end(),xa);
 	    }
 	  // Shuffle them
-	  std::random_shuffle(a.begin(),a.end());
-	  // Have we go too many arguments ?
-	  while (a.size()>(*it)->args().size())
+	  random_shuffle(*a,parameters.rng01());
+	  // Have we got too many arguments ?
+	  while (a->size()>it.args().size())
 	    {
-	      delete (a.back());
-	      a.pop_back();
+	      a->pop_back();
 	    }
 	  
 	  // Do we need some extra parameters ?
-	  if (p.size()<(*it)->params().size())
+	  if (p.size()<it.params().size())
 	    {
-	      const std::vector<real> xp(stubparams(parameters,(*it)->params().size()-p.size()));
+	      std::vector<real> xp;
+	      stubparams(xp,parameters,it.params().size()-p.size());
 	      p.insert(p.end(),xp.begin(),xp.end());
 	    }
 	  // Shuffle them
-	  std::random_shuffle(p.begin(),p.end());
+	  random_shuffle(p,parameters.rng01());
 	  // Have we go too many arguments ?
-	  while (p.size()>(*it)->params().size())
+	  while (p.size()>it.params().size())
 	    {
 	      p.pop_back();
 	    }
 
 	  // Impose the new parameters and arguments on the new node (iterations not touched)
-	  (*it)->impose(p,a);
+	  it.args()=a;
+	  it.params()=p;
 	}
     }
   
   // Think about randomising child order
   if (parameters.r01()<parameters.probability_shuffle())
     {
-      // This uses rand() (would rather use our own one).
-      // This bit of STL seems a bit up in the air (at least in GNU implementation), but it works so who cares.
-      std::random_shuffle(args().begin(),args().end());
+      random_shuffle(args(),parameters.rng01());
     }
 
-  // Think about inserting a random stub between us and some children
-  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
+  // Think about inserting a random stub between us and some subnodes
+  for (uint i=0;i<args().size();i++)
     {
       if (parameters.r01()<parameters.probability_insert())
 	{
+	  boost::ptr_vector<FunctionNode> a;
+	  a.transfer(a.begin(),args().begin()+i,args());
+	  a.push_back(stub(parameters,false).release());
+	  
 	  std::vector<real> p;
-	  std::vector<FunctionNode*> a;
-
-	  a.push_back((*it));
-	  a.push_back(stub(parameters,false));
-
-	  (*it)=new FunctionComposePair(p,a,0);
+	  args().insert(args().begin()+i,new FunctionComposePair(p,a,0));
 	}
     }
 }
 
 void FunctionNode::simplify_constants() 
 {
-  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
+  for (uint i=0;i<args().size();i++)
     {
-      if ((*it)->is_constant())
+      if (args()[i].is_constant())
 	{
-	  const XYZ v((*(*it))(XYZ(0.0,0.0,0.0)));
+	  const XYZ v(args()[i](XYZ(0.0,0.0,0.0)));
 	  std::vector<real> vp;
 	  vp.push_back(v.x());
 	  vp.push_back(v.y());
 	  vp.push_back(v.z());
-	  std::vector<FunctionNode*> va; 
-	  delete (*it);
-	  (*it)=new FunctionConstant(vp,va,0);
+	  boost::ptr_vector<FunctionNode> va; 
+	  args().replace(i,new FunctionConstant(vp,va,0));
 	}
       else
 	{
-	  (*it)->simplify_constants();
+	  args()[i].simplify_constants();
 	}
     }
 }
 
-const std::vector<FunctionNode*> FunctionNode::deepclone_args() const
+std::auto_ptr<boost::ptr_vector<FunctionNode> > FunctionNode::deepclone_args() const
 {
-  std::vector<FunctionNode*> ret;
-  for (std::vector<FunctionNode*>::const_iterator it=args().begin();it!=args().end();it++)
-    ret.push_back((*it)->deepclone());
+  std::auto_ptr<boost::ptr_vector<FunctionNode> > ret(new boost::ptr_vector<FunctionNode>());
+  for (boost::ptr_vector<FunctionNode>::const_iterator it=args().begin();it!=args().end();it++)
+    ret->push_back(it->deepclone().release());
   return ret;
-}
-
-void FunctionNode::impose(std::vector<real>& p,std::vector<FunctionNode*>& a)
-{
-  for (std::vector<FunctionNode*>::iterator it=args().begin();it!=args().end();it++)
-    delete (*it);
-  args().clear();
-
-  args()=a;
-  params()=p;
-
-  assert(ok());
 }
 
 const FunctionTop*const FunctionNode::is_a_FunctionTop() const
@@ -442,17 +423,6 @@ const FunctionTop*const FunctionNode::is_a_FunctionTop() const
 FunctionTop*const FunctionNode::is_a_FunctionTop()
 {
   return 0;
-}
-
-const bool FunctionNode::ok() const
-{
-  // Args vector should never contain a null or a non-ok argument
-  for (std::vector<FunctionNode*>::const_iterator it=args().begin();it!=args().end();it++)
-    {
-      if ((*it)==0 || !(*it)->ok())
-	return false;
-    }
-  return true;
 }
 
 /*! This function only saves the parameters, iteration count if any and child nodes.
@@ -472,9 +442,9 @@ std::ostream& FunctionNode::save_function(std::ostream& out,uint indent,const st
       out << Margin(indent+1) << "<p>" << (*it) << "</p>\n";
     }
 
-  for (std::vector<FunctionNode*>::const_iterator it=args().begin();it!=args().end();it++)
+  for (boost::ptr_vector<FunctionNode>::const_iterator it=args().begin();it!=args().end();it++)
     {
-      (*it)->save_function(out,indent+1);
+      (*it).save_function(out,indent+1);
     }
 
   out << Margin(indent) << "</f>\n";  

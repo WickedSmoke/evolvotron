@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -46,8 +46,8 @@ enum
 extern const char*const function_classification_name[FnClassifications];
 
 //! Define FunctionNodeStubNewFnPtr for convenience.
-typedef FunctionNode*const (*FunctionNodeStubNewFnPtr)(const MutationParameters&,bool);
-typedef FunctionNode*const (*FunctionNodeCreateFnPtr)(const FunctionRegistry&,const FunctionNodeInfo&,std::string&);
+typedef std::auto_ptr<FunctionNode> (*FunctionNodeStubNewFnPtr)(const MutationParameters&,bool);
+typedef std::auto_ptr<FunctionNode> (*FunctionNodeCreateFnPtr)(const FunctionRegistry&,const FunctionNodeInfo&,std::string&);
 
 //! Class for meta information about functions.
 /*! We use char*'s for the name 'cos they aren't dynamic so might as well use the strings from the object code.

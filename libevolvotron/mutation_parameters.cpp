@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -97,7 +97,7 @@ void MutationParameters::general_cool(real f)
   \warning Too much probability of highly branching nodes could result in infinite sized stubs.
   \todo Compute (statistically) the expected number of nodes in a stub.
  */
-FunctionNode*const MutationParameters::random_function_stub(bool exciting) const
+std::auto_ptr<FunctionNode> MutationParameters::random_function_stub(bool exciting) const
 {
   // Base mutations are Constant or Identity types.  
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
@@ -123,7 +123,7 @@ FunctionNode*const MutationParameters::random_function_stub(bool exciting) const
     }
 }
 
-FunctionNode*const MutationParameters::random_function() const
+std::auto_ptr<FunctionNode> MutationParameters::random_function() const
 {
   const FunctionRegistration*const fn_reg=random_weighted_function_registration();
   return (*(fn_reg->stubnew_fn()))(*this,false);    

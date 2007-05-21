@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -54,7 +54,7 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
   //! Constructor
   /*! \warning Careful to pass an appropriate initial iteration count for iterative functions.
    */
-  FunctionBoilerplate(const std::vector<real>& p,const std::vector<FunctionNode*>& a,uint iter)
+  FunctionBoilerplate(const std::vector<real>& p,boost::ptr_vector<FunctionNode>& a,uint iter)
     :FunctionNode(p,a,iter)
     {
       assert(params().size()==PARAMETERS);
@@ -67,47 +67,54 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
     {}
 
   //! Factory method to create a stub node for this type
-  static FunctionNode*const stubnew(const MutationParameters& mutation_parameters,bool exciting)
+  static std::auto_ptr<FunctionNode> stubnew(const MutationParameters& mutation_parameters,bool exciting)
     {
-      //! \todo Needs attention.  Will need to create then assign.
-      return new FUNCTION
+      std::vector<real> params;
+      stubparams(params,mutation_parameters,PARAMETERS);
+
+      boost::ptr_vector<FunctionNode> args;
+      stubargs(args,mutation_parameters,ARGUMENTS,exciting);
+
+      return std::auto_ptr<FunctionNode>
 	(
-	 stubparams(mutation_parameters,PARAMETERS),
-	 stubargs(mutation_parameters,ARGUMENTS,exciting),
-	 (ITERATIVE ? stubiterations(mutation_parameters) : 0)
+	 new FUNCTION
+	 (
+	  params,
+	  args,
+	  (ITERATIVE ? stubiterations(mutation_parameters) : 0)
+	  )
 	 );
     }
 
   //! Factory method to create a node given contents.
   /*! Returns null if there's a problem, in which case explanation is in report
    */
-  static FunctionNode*const create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report)
+  static std::auto_ptr<FunctionNode> create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report)
     {
-      if (!verify_info(info,PARAMETERS,ARGUMENTS,ITERATIVE,report)) return 0;
+      if (!verify_info(info,PARAMETERS,ARGUMENTS,ITERATIVE,report)) return std::auto_ptr<FunctionNode>();
 
-      std::vector<FunctionNode*> args;
-      if (!create_args(function_registry,info,args,report)) return 0;
+      boost::ptr_vector<FunctionNode> args;
+      if (!create_args(function_registry,info,args,report)) return std::auto_ptr<FunctionNode>();
 
-      return new FUNCTION(info.params(),args,info.iterations());
+      return std::auto_ptr<FunctionNode>(new FUNCTION(info.params(),args,info.iterations()));
     }
 
   //! Return a deeploned copy.
-  virtual FunctionNode*const deepclone() const
+  virtual std::auto_ptr<FunctionNode> deepclone() const
     {
-      return typed_deepclone(); //new FUNCTION(cloneparams(),cloneargs(),iterations());
+      return std::auto_ptr<FunctionNode>(typed_deepclone());
     }
 
   //! Return a deeploned copy with more specific type (but of course this can't be virtual).
-  FUNCTION*const typed_deepclone() const
+  std::auto_ptr<FUNCTION> typed_deepclone() const
     {
-      return new FUNCTION(cloneparams(),cloneargs(),iterations());      
+      return std::auto_ptr<FUNCTION>(new FUNCTION(cloneparams(),*cloneargs(),iterations()));
     }
     
   //! Internal self-consistency check.  We can add some extra checks.
   virtual const bool ok() const
     {
-      return 
-	(
+      return (
 	 params().size()==PARAMETERS
 	 &&
 	 args().size()==ARGUMENTS 
@@ -151,7 +158,7 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
 #define FUNCTION_BEGIN(FN,NP,NA,IT,CL) \
    class FN : public FunctionBoilerplate<FN,NP,NA,IT,CL> \
    {public: \
-     FN(const std::vector<real>& p,const std::vector<FunctionNode*>& a,uint iter) \
+     FN(const std::vector<real>& p,boost::ptr_vector<FunctionNode>& a,uint iter) \
        :FunctionBoilerplate<FN,NP,NA,IT,CL>(p,a,iter) {} \
      virtual ~FN() {}
  

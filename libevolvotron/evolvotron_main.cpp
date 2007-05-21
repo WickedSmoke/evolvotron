@@ -377,7 +377,7 @@ void EvolvotronMain::spawn_normal(const boost::shared_ptr<const MutatableImage>&
 
 void EvolvotronMain::spawn_recoloured(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display)
 {  
-  std::auto_ptr<FunctionTop> new_root=std::auto_ptr<FunctionTop>(image->top().typed_deepclone());
+  std::auto_ptr<FunctionTop> new_root(image->top().typed_deepclone());
   
   new_root->reset_posttransform_parameters(mutation_parameters());
   history().replacing(display);

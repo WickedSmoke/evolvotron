@@ -121,10 +121,35 @@ public:
     }  
 };
 
+template <typename T> void random_shuffle(boost::ptr_vector<T>& v,Random01& r01)
+{
+  boost::ptr_vector<T> nv;
+  while (!v.empty())
+    {
+      const uint n=static_cast<uint>(r01()*v.size());
+      nv.transfer(nv.end(),v.begin()+n,v);
+    }
+  v.transfer(v.end(),nv.begin(),nv.end(),nv);
+}
+
+class RandomInt
+{
+ public:
+  RandomInt(Random01& r01)
+    :_r01(r01)
+    {}
+  uint operator()(uint n)
+    {
+      return static_cast<uint>(_r01()*n);
+    }
+ private:
+  Random01& _r01;
+};
+
+template <typename T> void random_shuffle(std::vector<T>& v,Random01& r01)
+{
+  RandomInt r0n(r01);
+  std::random_shuffle(v.begin(),v.end(),r0n);
+}
+
 #endif
-
-
-
-
-
-

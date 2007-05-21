@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -299,7 +299,7 @@ class MutationParameters : public QObject
   //! This returns a new random bit of tree.
   /*! Setting the "exciting" flag avoids the most basic node types, but only at the top level of the stub tree.
    */
-  FunctionNode*const random_function_stub(bool exciting) const;
+  std::auto_ptr<FunctionNode> random_function_stub(bool exciting) const;
     
   void change_function_weighting(const FunctionRegistration* fn,real w);
 
@@ -310,7 +310,7 @@ class MutationParameters : public QObject
  protected:
 
   //! Return a random function appropriately biased by current settings
-  FunctionNode*const random_function() const;
+  std::auto_ptr<FunctionNode> random_function() const;
 
   //! Return a random function registration, appropriately biased by current settings
   const FunctionRegistration*const random_weighted_function_registration() const;

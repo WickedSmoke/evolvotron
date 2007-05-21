@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2004 Tim Day
+// Copyright (C) 2002,2003,2004,2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ class FunctionNode
 
  private:
   //! The arguments (ie child nodes) for this node.
-  std::vector<FunctionNode*> _args;
+  boost::ptr_vector<FunctionNode> _args;
 
   //! The parameters (ie constant values) for this node.
   std::vector<real> _params;
@@ -66,7 +66,7 @@ class FunctionNode
  protected:
 
   //! This returns a deep-cloned copy of the node's children.
-  const std::vector<FunctionNode*> cloneargs() const;
+  std::auto_ptr<boost::ptr_vector<FunctionNode> > cloneargs() const;
 
   //! This returns a copy of the node's parameters
   const std::vector<real> cloneparams() const;
@@ -88,7 +88,7 @@ class FunctionNode
   /*! Return true on success, false on fail with reasons in report string.
     Mainly for use by derived FunctionBoilerplate template to avoid duplicate code proliferation.
    */
-  static const bool create_args(const FunctionRegistry&,const FunctionNodeInfo& info,std::vector<FunctionNode*>& args,std::string& report);
+  static const bool create_args(const FunctionRegistry&,const FunctionNodeInfo& info,boost::ptr_vector<FunctionNode>& args,std::string& report);
 
  public:
 
@@ -101,6 +101,9 @@ class FunctionNode
    */
   virtual const bool is_constant() const;
 
+  //! Internal self consistency check.
+  virtual const bool ok() const;
+
   //! Bits give some classification of the function type
   virtual const uint self_classification() const
     =0;
@@ -112,13 +115,13 @@ class FunctionNode
   //@}
 
   //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
-  static FunctionNode*const stub(const MutationParameters& parameters,bool exciting);
+  static std::auto_ptr<FunctionNode> stub(const MutationParameters& parameters,bool exciting);
 
   //! This returns a vector of random parameter values.
-  static const std::vector<real> stubparams(const MutationParameters& parameters,uint n);
+  static void stubparams(std::vector<real>&,const MutationParameters& parameters,uint n);
 
   //! This returns a vector of new random bits of tree.
-  static const std::vector<FunctionNode*> stubargs(const MutationParameters& parameters,uint n,bool exciting=false);
+  static void stubargs(boost::ptr_vector<FunctionNode>&,const MutationParameters& parameters,uint n,bool exciting=false);
 
   //! Return a suitable starting value for a node's iteration count (assuming it's iterative).
   static const uint stubiterations(const MutationParameters& parameters);
@@ -126,7 +129,7 @@ class FunctionNode
   //! Constructor given an array of params and args and an iteration count.
   /*! These MUST be provided; there are no alterative constructors.
    */
-  FunctionNode(const std::vector<real>& p,const std::vector<FunctionNode*>& a,uint iter);
+  FunctionNode(const std::vector<real>& p,boost::ptr_vector<FunctionNode>& a,uint iter);
   
   //! Build a FunctionNode given a description
   static std::auto_ptr<FunctionNode> create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report);
@@ -160,36 +163,36 @@ class FunctionNode
     }
 
   //! Accessor.
-  const std::vector<FunctionNode*>& args() const
+  const boost::ptr_vector<FunctionNode>& args() const
     {
       return _args;
     }
   
   //! Accessor.
-  void args(const std::vector<FunctionNode*>& a)
+  void args(boost::ptr_vector<FunctionNode>& a)
     {
-      _args=a;
+      _args=a.release();
     }
 
   //! Accessor. 
   const FunctionNode& arg(uint n) const
     {
       assert(n<args().size());
-      return *(args()[n]);
+      return args()[n];
     }
 
   //! Scramble this node and its leaves up a bit.
   virtual void mutate(const MutationParameters&,bool mutate_own_parameters=true);
   
   //! Return an clone of this image node and all its children.
-  virtual FunctionNode*const deepclone() const
+  virtual std::auto_ptr<FunctionNode> deepclone() const
     =0;
 
   //! Prune any is_constant() nodes and replace them with an actual constant node
   virtual void simplify_constants();
 
   //! Return a deepcloned copy of the node's arguments
-  virtual const std::vector<FunctionNode*> deepclone_args() const;
+  virtual std::auto_ptr<boost::ptr_vector<FunctionNode> > deepclone_args() const;
   
   //! Convenience wrapper for evaluate (actually, evaluate is protected so can't be called externally anyway)
   const XYZ operator()(const XYZ& p) const
@@ -203,9 +206,6 @@ class FunctionNode
       return (weight==0.0 ? XYZ(0.0,0.0,0.0) : weight*evaluate(p));
     }
 
-  //! Internal self-consistency check.
-  virtual const bool ok() const;
-
   //! Save the function tree.
   virtual std::ostream& save_function(std::ostream& out,uint indent) const
     =0;
@@ -215,11 +215,8 @@ class FunctionNode
   //! Save the function tree.  Common code needing a function name.
   std::ostream& save_function(std::ostream& out,uint indent,const std::string& function_name) const;
 
-  //! Impose a new set of parameters and arguments on the node.  Existing arguments are cleaned up.
-  void impose(std::vector<real>& p,std::vector<FunctionNode*>& a);
-
   //! Accessor (non-const).
-  std::vector<FunctionNode*>& args()
+  boost::ptr_vector<FunctionNode>& args()
     {
       return _args;
     }
@@ -231,14 +228,7 @@ class FunctionNode
     }
 
   //! Accessor. 
-  const FunctionNode* argptr(uint n) const
-    {
-      assert(n<args().size());
-      return args()[n];
-    }
-
-  //! Accessor. 
-  FunctionNode* argptr(uint n)
+  FunctionNode& arg(uint n)
     {
       assert(n<args().size());
       return args()[n];

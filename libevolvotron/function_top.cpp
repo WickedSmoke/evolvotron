@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2005 Tim Day
+// Copyright (C) 2005,2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -33,9 +33,9 @@ const XYZ FunctionTop::evaluate(const XYZ& p) const
   return colour_transform.transformed(tv);
 }
 
-FunctionTop*const FunctionTop::initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn,bool unwrapped)
+std::auto_ptr<FunctionTop> FunctionTop::initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn,bool unwrapped)
 {
-  FunctionNode* fn=0;
+  std::auto_ptr<FunctionNode> fn;
   
   do
     {
@@ -53,16 +53,15 @@ FunctionTop*const FunctionTop::initial(const MutationParameters& parameters,cons
       
       if (fn->is_constant() && !(specific_fn && specific_fn->name()=="FunctionConstant"))
 	{
-	  delete fn;
-	  fn=0;
+	  fn.reset();
 	}
     }
-  while (!fn);
+  while (!fn.get());
   
   assert(fn->ok());
   
-  std::vector<FunctionNode*> a;
-  a.push_back(fn);
+  boost::ptr_vector<FunctionNode> a;
+  a.push_back(fn.release());
 
   const TransformIdentity ti;
   std::vector<real> tiv=ti.get_columns();
@@ -70,7 +69,7 @@ FunctionTop*const FunctionTop::initial(const MutationParameters& parameters,cons
   p.insert(p.end(),tiv.begin(),tiv.end());
   p.insert(p.end(),tiv.begin(),tiv.end());
 
-  FunctionTop* fn_top=new FunctionTop(p,a,0);
+  std::auto_ptr<FunctionTop> fn_top(new FunctionTop(p,a,0));
   if (unwrapped)
     {
       // For unwrapped just allow a scale factor and scramble colours
@@ -217,7 +216,8 @@ void FunctionTop::mutate_posttransform_parameters(const MutationParameters& para
 
 void FunctionTop::reset_posttransform_parameters(const MutationParameters& parameters)
 {
-  const std::vector<real> p(stubparams(parameters,12));
+  std::vector<real> p;
+  stubparams(p,parameters,12);
   for (uint i=0;i<11;i++)
     params()[12+i]=p[i];
 }

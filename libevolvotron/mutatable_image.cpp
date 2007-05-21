@@ -53,9 +53,10 @@ MutatableImage::MutatableImage(const MutationParameters& parameters,bool excitin
   ,_spheremap(sm)
   ,_locked(false)
 {
-  std::vector<real> pv(FunctionNode::stubparams(parameters,12));
-  std::vector<FunctionNode*> av;
-  av.push_back(FunctionNode::stub(parameters,exciting));
+  std::vector<real> pv;
+  FunctionNode::stubparams(pv,parameters,12);
+  boost::ptr_vector<FunctionNode> av;
+  av.push_back(FunctionNode::stub(parameters,exciting).release());
   _top=std::auto_ptr<FunctionTop>(new FunctionTop(pv,av,0));
   //! \todo _sinusoidal_z should be obtained from AnimationParameters when it exists
 }
@@ -510,7 +511,7 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
 	    {
 	      // Build a FunctionTop wrapper for compataibility with old .xml files
 
-	      std::vector<FunctionNode*> a;
+	      boost::ptr_vector<FunctionNode> a;
 	      a.push_back(root.release());
 
 	      const TransformIdentity ti;
