@@ -2,17 +2,16 @@ Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
 Priority & WIP items:
-Smart ptrs.  Make code delete free.
 Review all use of auto_ptr, shared_ptr, deepclone, comments re "owned".  constness of args and returns.
 Constness of MutatableImage in shared_ptrs?
 Move all function definitions to .cpps, with one header with all definitions,
 registrations etc built automatically by script scanning them.
 Rationalize warped and blended versions of FriezeGroup functions
+Boost post 1.33 changes usage of ptr_map, apparently.  (Wait for 1.34 to hit Debian Testing).
 
 Conventional Mode
 -----------------
 - shared_array<T> should be convertible to shared_array<const T> surely (like shared_ptr is)
-- FunctionNodeInfo could use boost/ptr_container/ptr_vector.hpp
 - MutatableImage::load_function uses non-auto_ptr for info
 - FunctionBoilerplate doesn't use auto_ptr in new-ing fns.
 - MutatableImageComputerTask (from MutatableImageDisplay) does use auto_ptr but should probably use shared_ptr

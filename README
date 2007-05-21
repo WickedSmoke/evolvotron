@@ -97,10 +97,13 @@ Short story
    you probably need to install a Qt development tools package
    of some sort before you can build evolvotron.
 
+There is probably a requirement your bost library be 1.33.
+Some details associated with boost::ptr_map changed in subsequent versions.
+
 Long story
 ----------
-[These days the author primarily develops on Debian Sarge
-or Etch.  The comments below re RedHat are based on experience
+[These days the author primarily develops on Debian stable
+or testing.  The comments below re RedHat are based on experience
 with RH8&9; they may or may not be applicable to Fedora.]
 
 QTDIR should point to your Qt installation.  Your Qt installation
