@@ -6,7 +6,6 @@ Conventional Mode
 - Rationalize warped and blended versions of FriezeGroup functions
 - Boost post 1.33 changes usage of ptr_map, apparently.  (Wait for 1.34 to hit Debian Testing).
 - Move all function definitions to .cpps, with one header with all definitions,
-- shared_array<T> should be convertible to shared_array<const T> surely (like shared_ptr is)
 
 - Mutex lock/unlock could use auto-locker.
 - Move InstanceCounted out of useful.h (and #include <map> with it)
@@ -198,5 +197,6 @@ Animation
 
 Extras
 ------
-- evolvotron_match doesn't do much but converge towards general overall color of target.
-  Try matching in edge-detected space or somethin.
+- evolvotron_match hasn't been seen to do much but converge
+  towards general overall color of target.  
+  Try matching in edge-detected space or something ?
