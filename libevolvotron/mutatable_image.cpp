@@ -489,7 +489,7 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
   QXmlInputSource xml_source;
   xml_source.setData(QString(in_data.c_str()));
 
-  // The LoadHandler will set this to point at the root node.  We're responsible for deleting it.
+  // The LoadHandler will set this to point at the root node.
   std::auto_ptr<FunctionNodeInfo> info;
 
   bool sinusoidal_z;
@@ -528,7 +528,7 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
 	      root=std::auto_ptr<FunctionTop>(new FunctionTop(p,a,0));
 	    }
 	  assert(root->is_a_FunctionTop());
-	  std::auto_ptr<FunctionTop> root_as_top(root.release()->is_a_FunctionTop());
+	  std::auto_ptr<FunctionTop> root_as_top(root.release()->is_a_FunctionTop());  // Interestingly, if is_a_FunctionTop threw, the root would be leaked.
 	  return boost::shared_ptr<const MutatableImage>(new MutatableImage(root_as_top,sinusoidal_z,spheremap,false));
 	}
       else
@@ -544,5 +544,3 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
       return boost::shared_ptr<const MutatableImage>();
     }
 }
-
-

@@ -107,7 +107,6 @@ class MutatableImage
   //! Clone this image, setting locked state to that specified.
   boost::shared_ptr<const MutatableImage> deepclone(bool lock) const;
 
-
   //! Return a mutated version of this image
   boost::shared_ptr<const MutatableImage> mutated(const MutationParameters& p) const;
 

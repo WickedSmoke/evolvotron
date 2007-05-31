@@ -1,33 +1,20 @@
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
-Priority & WIP items:
-Review all use of auto_ptr, deepclone, comments re "owned".  constness of args and returns.
-registrations etc built automatically by script scanning them.
-Rationalize warped and blended versions of FriezeGroup functions
-Boost post 1.33 changes usage of ptr_map, apparently.  (Wait for 1.34 to hit Debian Testing).
-Move all function definitions to .cpps, with one header with all definitions,
-
 Conventional Mode
 -----------------
+- Rationalize warped and blended versions of FriezeGroup functions
+- Boost post 1.33 changes usage of ptr_map, apparently.  (Wait for 1.34 to hit Debian Testing).
+- Move all function definitions to .cpps, with one header with all definitions,
 - shared_array<T> should be convertible to shared_array<const T> surely (like shared_ptr is)
-- MutatableImage::load_function uses non-auto_ptr for info
-- FunctionBoilerplate doesn't use auto_ptr in new-ing fns.
-- MutatableImageComputerTask (from MutatableImageDisplay) does use auto_ptr but should probably use shared_ptr
-- Typed_deepclone doesn't use auto_ptr.
-- LoadHandler doesn't use auto_ptr.
-- Mutex lock/unlock could use locker.
+
+- Mutex lock/unlock could use auto-locker.
 - Move InstanceCounted out of useful.h (and #include <map> with it)
 - Changing lock state will trigger a redisplay.
   Lock state would be better associated with displays than MutatableImages,
   but the history archive doesn't support anything but changing images; needs
   additional abstraction of general notion of change of a display's state.
-- Move params and args to boost::array in FunctionBoilerplate (no not possible due to dynamic building)
-  FunctionNode's accessors become pure virtual, if needed ?
-  (copy std::vector <-> boost:array ?)
-  Hmmm... is there really any point in doing this ?  Don't want
-  lots of code in FunctionNode to move to FunctionBoilerplate.
-  Maybe something can be done returning range objects for params and args.
+  Can live with this for now.
 - Use reStructuredText instead of own python txt->html converter.
   (Then use fracplanet htm->qml converter).
 - Add blending versions of symmetry functions.
