@@ -97,8 +97,7 @@ void EvolvotronMain::History::replacing(MutatableImageDisplay* display)
 
   if (image.get())
     {
-      const boost::shared_ptr<MutatableImage> saved_image(image->deepclone());  // Deepclone doesn't copy locked state  // TODO: Deepclone not needed ?  What about locking.
-      saved_image->locked(image->locked());
+      const boost::shared_ptr<const MutatableImage> saved_image(image->deepclone(image->locked()));
       _archive.front().second.insert(std::make_pair(display,saved_image));
     }
 }
@@ -381,7 +380,7 @@ void EvolvotronMain::spawn_recoloured(const boost::shared_ptr<const MutatableIma
   
   new_root->reset_posttransform_parameters(mutation_parameters());
   history().replacing(display);
-  boost::shared_ptr<const MutatableImage> it(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
+  boost::shared_ptr<const MutatableImage> it(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap(),false));
   display->image(it);
 }
 
@@ -394,7 +393,7 @@ void EvolvotronMain::spawn_warped(const boost::shared_ptr<const MutatableImage>&
       
   new_root->concatenate_pretransform_on_right(transform);  
   history().replacing(display);
-  boost::shared_ptr<const MutatableImage> it(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap()));
+  boost::shared_ptr<const MutatableImage> it(new MutatableImage(new_root,image->sinusoidal_z(),image->spheremap(),false));
   display->image(it);
 }
 
@@ -662,7 +661,7 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
 
   history().replacing(display);
   //! \todo sinz and spheremap should be obtained from mutation parameters
-  const boost::shared_ptr<const MutatableImage> image(new MutatableImage(root,!Args::global().option("-linz"),Args::global().option("-spheremap")));
+  const boost::shared_ptr<const MutatableImage> image(new MutatableImage(root,!Args::global().option("-linz"),Args::global().option("-spheremap"),false));
   display->image(image);
 }
 

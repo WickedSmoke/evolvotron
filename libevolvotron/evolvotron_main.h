@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2002,2003,2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -97,7 +97,7 @@ class EvolvotronMain : public QMainWindow
       //! Pointer to main app.
       EvolvotronMain*const _main;
 
-      typedef std::map<MutatableImageDisplay*,boost::shared_ptr<MutatableImage> > ArchiveRecordEntries;
+      typedef std::map<MutatableImageDisplay*,boost::shared_ptr<const MutatableImage> > ArchiveRecordEntries;
       typedef std::pair<std::string,ArchiveRecordEntries> ArchiveRecord;
       typedef std::deque<ArchiveRecord> Archive;
 
@@ -235,7 +235,7 @@ class EvolvotronMain : public QMainWindow
   std::set<const MutatableImageDisplay*> _resizing;
 
   //! A deepclone of the last image spawned (used to regenerate single displays).
-  boost::shared_ptr<MutatableImage> _last_spawned_image;
+  boost::shared_ptr<const MutatableImage> _last_spawned_image;
 
   //! Pointer to member function used for last spawn.
   SpawnMemberFn _last_spawn_method;

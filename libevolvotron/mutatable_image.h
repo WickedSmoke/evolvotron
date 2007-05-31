@@ -61,7 +61,7 @@ class MutatableImage
  public:
   
   //! Take ownership of the image tree with the specified root node.
-  MutatableImage(std::auto_ptr<FunctionTop>&,bool sinz,bool sm);
+  MutatableImage(std::auto_ptr<FunctionTop>&,bool sinz,bool sm,bool lock);
   
   //! Create a new random image tree.
   MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm);
@@ -101,14 +101,18 @@ class MutatableImage
       _locked=l;
     }
 
-  //! Clone this image.
-  boost::shared_ptr<MutatableImage> deepclone() const;
+  //! Clone this image.  The cloned image will not have locked state.
+  boost::shared_ptr<const MutatableImage> deepclone() const;
+
+  //! Clone this image, setting locked state to that specified.
+  boost::shared_ptr<const MutatableImage> deepclone(bool lock) const;
+
 
   //! Return a mutated version of this image
-  boost::shared_ptr<MutatableImage> mutated(const MutationParameters& p) const;
+  boost::shared_ptr<const MutatableImage> mutated(const MutationParameters& p) const;
 
   //! Return a simplified version of this image
-  boost::shared_ptr<MutatableImage> simplified() const;
+  boost::shared_ptr<const MutatableImage> simplified() const;
 
   //! Evaluate the image at specified coordinate.
   const XYZ operator()(const XYZ& p) const;

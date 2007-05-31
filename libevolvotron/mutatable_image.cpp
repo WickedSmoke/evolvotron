@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_top.h"
 #include "mutatable_image_display_big.h"
 
-MutatableImage::MutatableImage(std::auto_ptr<FunctionTop>& r,bool sinz,bool sm)
+MutatableImage::MutatableImage(std::auto_ptr<FunctionTop>& r,bool sinz,bool sm,bool lock)
   :
 #ifndef NDEBUG
   InstanceCounted(typeid(this).name(),false),
@@ -39,7 +39,7 @@ MutatableImage::MutatableImage(std::auto_ptr<FunctionTop>& r,bool sinz,bool sm)
   _top(r)
   ,_sinusoidal_z(sinz)
   ,_spheremap(sm)
-  ,_locked(false)
+  ,_locked(lock)
 {
   assert(_top.get()!=0);
 }
@@ -70,10 +70,15 @@ const FunctionTop& MutatableImage::top() const
   return *_top;
 }
 
-boost::shared_ptr<MutatableImage> MutatableImage::deepclone() const
+boost::shared_ptr<const MutatableImage> MutatableImage::deepclone() const
+{
+  return deepclone(false);
+}
+
+boost::shared_ptr<const MutatableImage> MutatableImage::deepclone(bool lock) const
 {
   std::auto_ptr<FunctionTop> root(top().typed_deepclone());
-  return boost::shared_ptr<MutatableImage>(new MutatableImage(root,sinusoidal_z(),spheremap())); 
+  return boost::shared_ptr<const MutatableImage>(new MutatableImage(root,sinusoidal_z(),spheremap(),lock)); 
 }
 
 const XYZ MutatableImage::operator()(const XYZ& p) const
@@ -129,18 +134,18 @@ const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint 
     }
 }
 
-boost::shared_ptr<MutatableImage> MutatableImage::mutated(const MutationParameters& p) const
+boost::shared_ptr<const MutatableImage> MutatableImage::mutated(const MutationParameters& p) const
 {
   std::auto_ptr<FunctionTop> c(top().typed_deepclone());  
   c->mutate(p);
-  return boost::shared_ptr<MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap()));
+  return boost::shared_ptr<const MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap(),false));
 }
 
-boost::shared_ptr<MutatableImage> MutatableImage::simplified() const
+boost::shared_ptr<const MutatableImage> MutatableImage::simplified() const
 {
   std::auto_ptr<FunctionTop> c(top().typed_deepclone());  
   c->simplify_constants();
-  return boost::shared_ptr<MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap())); 
+  return boost::shared_ptr<const MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap(),false));
 }
 
 void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
@@ -524,7 +529,7 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
 	    }
 	  assert(root->is_a_FunctionTop());
 	  std::auto_ptr<FunctionTop> root_as_top(root.release()->is_a_FunctionTop());
-	  return boost::shared_ptr<const MutatableImage>(new MutatableImage(root_as_top,sinusoidal_z,spheremap));
+	  return boost::shared_ptr<const MutatableImage>(new MutatableImage(root_as_top,sinusoidal_z,spheremap,false));
 	}
       else
 	{

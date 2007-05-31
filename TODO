@@ -2,12 +2,11 @@ Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
 Priority & WIP items:
-Review all use of auto_ptr, shared_ptr, deepclone, comments re "owned".  constness of args and returns.
-Constness of MutatableImage in shared_ptrs?
-Move all function definitions to .cpps, with one header with all definitions,
+Review all use of auto_ptr, deepclone, comments re "owned".  constness of args and returns.
 registrations etc built automatically by script scanning them.
 Rationalize warped and blended versions of FriezeGroup functions
 Boost post 1.33 changes usage of ptr_map, apparently.  (Wait for 1.34 to hit Debian Testing).
+Move all function definitions to .cpps, with one header with all definitions,
 
 Conventional Mode
 -----------------

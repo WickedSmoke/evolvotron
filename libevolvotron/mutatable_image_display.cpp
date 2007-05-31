@@ -352,8 +352,7 @@ void MutatableImageDisplay::lock(bool l,bool record_in_history)
 	  main()->history().begin_action(l ? "lock" : "unlock");
 	  main()->history().replacing(this);
 	}
-      const boost::shared_ptr<MutatableImage> new_image(_image->deepclone());
-      new_image->locked(l);
+      const boost::shared_ptr<const MutatableImage> new_image(_image->deepclone(l));
       image(new_image);
       if (record_in_history)
 	{
@@ -553,7 +552,7 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	  new_root->concatenate_pretransform_on_right(transform);
 
 	  // Install new image (triggers recompute).
-	  const boost::shared_ptr<const MutatableImage> new_image(new MutatableImage(new_root,image()->sinusoidal_z(),image()->spheremap()));
+	  const boost::shared_ptr<const MutatableImage> new_image(new MutatableImage(new_root,image()->sinusoidal_z(),image()->spheremap(),false));
 	  image(new_image);
 
 	  // Finally, record position of this event as last event

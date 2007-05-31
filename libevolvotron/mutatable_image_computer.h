@@ -46,7 +46,7 @@ class MutatableImageComputer : public QThread
   //! Pointer to compute farm of which this thread is part.
   MutatableImageComputerFarm*const _farm;
 
-  //! The current task.
+  //! The current task.  Can't be a const MutatableImageComputerTask because the task holds the calculated result.
   boost::shared_ptr<MutatableImageComputerTask> _task;
 
   //! Class encapsulating mutex-protected flags used for communicating between farm and worker
