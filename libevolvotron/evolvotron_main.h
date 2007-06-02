@@ -234,7 +234,7 @@ class EvolvotronMain : public QMainWindow
   //! Keeps track of which displays are still resizing
   std::set<const MutatableImageDisplay*> _resizing;
 
-  //! A deepclone of the last image spawned (used to regenerate single displays).
+  //! The last image spawned (used to regenerate single displays).
   boost::shared_ptr<const MutatableImage> _last_spawned_image;
 
   //! Pointer to member function used for last spawn.

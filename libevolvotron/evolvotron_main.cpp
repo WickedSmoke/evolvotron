@@ -176,9 +176,7 @@ void EvolvotronMain::History::undo()
 
 void EvolvotronMain::last_spawned_image(const boost::shared_ptr<const MutatableImage>& image,SpawnMemberFn method)
 {
-  if (image) _last_spawned_image=image->deepclone();   // TODO: Deepclone not needed ?
-  else _last_spawned_image.reset();
-
+  _last_spawned_image=image;
   _last_spawn_method=method;
 }
 

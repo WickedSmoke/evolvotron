@@ -197,7 +197,7 @@ const Transform FunctionTop::interesting_pretransform(const MutationParameters& 
 void FunctionTop::mutate_pretransform_parameters(const MutationParameters& parameters)
 {
   concatenate_pretransform_on_right(interesting_pretransform(parameters,parameters.magnitude_parameter_variation()));
-  // TODO: Chance of re-othogonalizing basis vectors.
+  //! \todo: Could have a small probability of orthoganalizing the basis vectors.
 }
 
 void FunctionTop::reset_pretransform_parameters(const MutationParameters& parameters)
