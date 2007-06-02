@@ -1,2 +1,0 @@
-?package(evolvotron):needs=X11 section=Apps/Graphics title="evolvotron" command="/usr/bin/evolvotron"
-
