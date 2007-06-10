@@ -1,0 +1,123 @@
+#!/bin/bash -ev
+
+# Before using this you probably need to install
+#   sudo pbuilder yada devscripts lintian linda cdeboostrap (or debootstrap)
+# and maybe dpkg-sig.  Also:
+# set up for sudo
+# set up pbuilder with 
+#   sudo emacs -nw /etc/pbuilderrc
+#   ...change MIRRORSITE & DEBSECSERVER
+#   sudo pbuilder create --distribution sarge/etch/whatever
+# and/or update with 
+#   sudo pbuilder update
+# Expect a lot of warnings re LOGNAME - see Debian bug Bug#275118
+
+# TODO: DEBEMAIL
+
+VER=`./VERSION`
+
+TARBALL=evolvotron-${VER}.tar.gz
+
+if [ ! -s ${TARBALL} ] ; then
+    echo "Could't find ${TARBALL}" ; 
+    exit ;
+fi
+
+export DISTRIBUTION=`lsb_release -s -c`
+
+
+echo "*** Will package ${TARBALL} for distribution \"${DISTRIBUTION}\""
+echo -n "*** Starting in 10 seconds..."
+for t in 10 9 8 7 6 5 4 3 2 1 ; do sleep 1 ; echo -n "." ; done
+
+PROJECT=`echo $TARBALL | sed 's/-.*//'`
+TARBALLORIG="${PROJECT}_${VER}.orig.tar.gz"
+REV="1${DISTRIBUTION}1"
+
+WORKDIR=pkg_${VER}-${REV}
+rm -r -f ${WORKDIR}
+mkdir ${WORKDIR}
+cd ${WORKDIR}
+
+cp ../${TARBALL} ${TARBALLORIG}
+tar xvfz ${TARBALLORIG}
+mv ${PROJECT} ${PROJECT}-${VER}
+cd ${PROJECT}-${VER}
+mv CHANGES changelog          # As per policy manual
+sed -i "s/${VER}/${VER}-${REV}/g" VERSION
+
+mkdir debian
+echo "${PROJECT} (${VER}-${REV}) ${DISTRIBUTION}; urgency=low" > debian/changelog
+echo >> debian/changelog
+echo "  * Package created by ${PROJECT}'s mkdeb script." >> debian/changelog
+echo >> debian/changelog
+DATE=`822-date`
+echo " -- $USER <$EMAIL>  $DATE" >> debian/changelog
+
+# Presumably a dch -i here would increment revision
+
+cat << EOF > debian/packages
+Source: evolvotron
+Section: graphics
+Priority: extra
+Maintainer: Tim Day <timday@bottlenose.demon.co.uk>
+Standards-Version: 3.6.1
+Upstream-Source: <URL:http://sourceforge.net/projects/evolvotron/index.htm>
+Home-Page: <URL:http://www.bottlenose.demon.co.uk/share/evolvotron>
+Description: Interactive evolutionary texture generation application.
+Copyright: GPL
+ Copyright 2007 Tim Day
+Build-Depends: qt3-dev-tools,libqt3-headers,libqt3-mt-dev,libqt3-mt,libboost-dev,python
+Build: sh
+ export QTDIR=/usr/share/qt3
+ # Note: yada install deals with DEB_BUILD_OPTIONS 'nostrip'
+ if [ "${DEB_BUILD_OPTIONS#*noopt}" != "$DEB_BUILD_OPTIONS" ]; then
+   ./configure "CONFIG -= release" "CONFIG += debug"
+ else
+   ./configure # No noticeable advantage in overriding qt optimisation options
+ fi
+ make
+Clean: sh
+ make distclean || make clean || true
+
+Package: evolvotron
+Architecture: any
+Depends: []
+Suggests: gimp
+Description: Interactive evolutionary texture generation application.
+ "Generative art" software to evolve images/textures/patterns through an 
+ iterative process of random mutation and user-selection driven evolution.
+ If you like lava lamps, and never got bored with the Mandelbrot Set,
+ this could be the software for you.
+Install: sh
+ yada install -bin evolvotron/evolvotron
+ yada install -bin evolvotron_mutate/evolvotron_mutate
+ yada install -bin evolvotron_render/evolvotron_render
+ yada install -bin evolvotron/evolvotron
+ yada install -doc evolvotron.html
+ yada install -doc BUGS TODO changelog
+ yada install -man man/man1/evolvotron.1
+ yada install -man man/man1/evolvotron_mutate.1
+ yada install -man man/man1/evolvotron_render.1
+Menu: ?package(evolvotron): needs="x11" section="Apps/Graphics" title="Evolvotron" command="/usr/bin/evolvotron"
+EOF
+
+yada rebuild
+
+cd ..
+dpkg-source -b ${PROJECT}-${VER} ${TARBALLORIG}
+
+# Alternative but inferior approach is apparently to do 
+#   dpkg-buildpackage -rfakeroot
+
+mkdir result
+echo "Building package"
+sudo pbuilder build --buildresult ./result ${PROJECT}_${VER}-${REV}.dsc
+
+sudo chown ${USER}:${USER} result/*
+
+RESULT=`(cd .. ; find ${WORKDIR} -name '*.deb')`
+echo "Results: ${RESULT}"
+echo "Don't forget to lintian and linda"
+echo 'Also dpkg-sig --sign builder -k $DPKGSIG_KEYID any .deb files'
+
