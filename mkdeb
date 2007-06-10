@@ -64,7 +64,7 @@ Maintainer: Tim Day <timday@bottlenose.demon.co.uk>
 Standards-Version: 3.6.1
 Upstream-Source: <URL:http://sourceforge.net/projects/evolvotron/index.htm>
 Home-Page: <URL:http://www.bottlenose.demon.co.uk/share/evolvotron>
-Description: Interactive evolutionary texture generation application.
+Description: Interactive evolutionary texture generator
 Copyright: GPL
  Copyright 2007 Tim Day
 Build-Depends: qt3-dev-tools,libqt3-headers,libqt3-mt-dev,libqt3-mt,libboost-dev,python
@@ -84,8 +84,8 @@ Package: evolvotron
 Architecture: any
 Depends: []
 Suggests: gimp
-Description: Interactive evolutionary texture generation application.
- "Generative art" software to evolve images/textures/patterns through an 
+Description: Interactive evolutionary texture generator
+ A "generative art" application to evolve images/textures/patterns through an 
  iterative process of random mutation and user-selection driven evolution.
  If you like lava lamps, and never got bored with the Mandelbrot Set,
  this could be the software for you.
