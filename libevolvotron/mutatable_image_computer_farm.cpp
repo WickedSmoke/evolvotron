@@ -99,8 +99,7 @@ void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImag
 
 const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_todo(MutatableImageComputer& requester)
 {
-  QMutexLocker lock(&_mutex);
-
+  _mutex.lock();
   boost::shared_ptr<MutatableImageComputerTask> ret;
   while (!ret)
     {
@@ -118,6 +117,7 @@ const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::
 	  if (requester.killed()) break;
 	}
     }
+  _mutex.unlock();
   return ret;
 }
 
@@ -222,23 +222,6 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
 	    }
 	}
     }
-}
-
-std::ostream& MutatableImageComputerFarm::write_info(std::ostream& out) const
-{
-  uint active_computers=0;
-
-  for (boost::ptr_vector<MutatableImageComputer>::const_iterator it=_computers.begin();it!=_computers.end();it++)
-    {      
-      if ((*it).active())
-	{
-	  active_computers++;
-	}
-    }
-
-  //! /todo _done.size() no longer returns number of tasks to be delivered to, but number of displays with pending deliveries.  Fix ?
-  out << "[" << _todo.size() << "/" << active_computers << "/" << _done.size() << "]";
-  return out;
 }
 
 const uint MutatableImageComputerFarm::tasks() const

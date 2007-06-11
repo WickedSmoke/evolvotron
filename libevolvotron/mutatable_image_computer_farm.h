@@ -132,9 +132,6 @@ class MutatableImageComputerFarm
   //! Flags all tasks for a particular display as aborted (including compute threads)
   void abort_for(const MutatableImageDisplay* disp);
 
-  //! Writes some info in queue size
-  std::ostream& write_info(std::ostream& out) const;
-
   //! Number of tasks in queues
   const uint tasks() const;
 };

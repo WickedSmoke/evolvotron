@@ -186,13 +186,10 @@ class MutatableImageComputer : public QThread
    */
   bool killed() const;
 
-  //! Returns whether the computer has a task currently
-  /*! \warning Access to _task not mutex locked.
-    \warning Only intended for debugging & status reporting.
-   */
+  //! Indicate whether computation us taking place (only intended for counting outstanding threads).
   bool active() const
     {
-      return (task()!=0);
+      return _task;
     }
 };
 
