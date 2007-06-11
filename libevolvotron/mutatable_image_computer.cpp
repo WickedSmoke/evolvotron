@@ -61,18 +61,14 @@ void MutatableImageComputer::run()
   // Run until something sets the kill flag 
   while(!communications().kill())
     {
-      // If we don't have a task try and get one
+      // If we don't have a task try and get one.  This will block or return null.
       if (task()==0)
 	{
-	  _task=farm()->pop_todo();
+	  _task=farm()->pop_todo(*this);
 	}
       
       // If we still don't have one might as well wait a bit before retrying
-      if (task()==0)
-	{
-	  msleep(10);
-	}
-      else
+      if (task()!=0)
 	{
 	  // Careful, we could be given an already aborted task
 	  if (!task()->aborted())
@@ -160,4 +156,9 @@ void MutatableImageComputer::abort_for(const MutatableImageDisplay* disp)
 void MutatableImageComputer::kill()
 {
   communications().kill(true);
+}
+
+bool MutatableImageComputer::killed() const
+{
+  return communications().kill();
 }

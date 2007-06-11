@@ -49,7 +49,9 @@ class MutatableImageComputer : public QThread
   //! The current task.  Can't be a const MutatableImageComputerTask because the task holds the calculated result.
   boost::shared_ptr<MutatableImageComputerTask> _task;
 
-  //! Class encapsulating mutex-protected flags used for communicating between farm and worker
+  //! Class encapsulating mutex-protected flags used for communicating between farm and worker.
+  /*! The Mutex is of dubious value (could certainly be eliminated for reads).
+   */
   class Communications
     {
     protected:
@@ -111,12 +113,8 @@ class MutatableImageComputer : public QThread
       //! Mutex-protected accessor.
       void kill(bool v)
 	{
-	  std::clog << "Signalling kill...\n";
-	  {
-	    QMutexLocker lock(&_mutex);
-	    _kill=v;
-	  }
-	  std::clog << "...signalled kill\n";
+	  QMutexLocker lock(&_mutex);
+	  _kill=v;
 	}
       //! Mutex-protected accessor.
       const bool kill() const
@@ -182,6 +180,11 @@ class MutatableImageComputer : public QThread
 
   //! This method called by external thread to kill the thread.
   void kill();
+
+  //! Return kill state.
+  /*! Needs external visibility for deciding what to do when woken from wait for task.
+   */
+  bool killed() const;
 
   //! Returns whether the computer has a task currently
   /*! \warning Access to _task not mutex locked.

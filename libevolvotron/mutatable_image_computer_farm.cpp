@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "mutatable_image_computer_farm.h"
+#include "mutatable_image_computer.h"
 #include <algorithm>
 
 /*! Creates the specified number of threads and store pointers to them.
@@ -43,7 +44,9 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
 {
   std::clog << "Compute farm shut down begun...\n";
 
-  // Kill all the computers
+  // Kill all the computers (care needed to wake any waiting ones).
+  for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++) (*it).kill();
+  _wait_condition.wakeAll();
   _computers.clear();
 
   // Clear all the tasks in queues
@@ -85,24 +88,35 @@ void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImag
 {
   QMutexLocker lock(&_mutex);
   _todo.insert(task);
-  
-  // Check if any of the computers are executing lower priority tasks and if so defer least important one.
+  _wait_condition.wakeOne();
+
+  // \todo: Check if any of the computers are executing lower priority tasks and if so defer least important one (however, we're currently deferring all).
   for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++)
     {
-      ((*it).defer_if_less_important_than(task->priority()));
+      (*it).defer_if_less_important_than(task->priority());
     }
 }
 
-const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_todo()
+const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_todo(MutatableImageComputer& requester)
 {
   QMutexLocker lock(&_mutex);
 
-  boost::shared_ptr<MutatableImageComputerTask> ret;  
-  TodoQueue::iterator it=_todo.begin();
-  if (it!=_todo.end())
+  boost::shared_ptr<MutatableImageComputerTask> ret;
+  while (!ret)
     {
-      ret=(*it);
-      _todo.erase(it);
+      TodoQueue::iterator it=_todo.begin();
+      if (it!=_todo.end())
+	{
+	  ret=(*it);
+	  _todo.erase(it);
+	}
+      else
+	{
+	  std::clog << "Thread waiting\n";
+	  _wait_condition.wait(&_mutex);
+	  std::clog << "Thread woken\n";
+	  if (requester.killed()) break;
+	}
     }
   return ret;
 }

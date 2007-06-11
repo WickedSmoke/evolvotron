@@ -35,6 +35,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image_computer.h"
 #include "mutatable_image_computer_task.h"
 
+class MutatableImageComputer;
 class MutatableImageDisplay;
 
 //! Class encapsulating some compute threads and queues of tasks to be done and tasks completed.
@@ -68,6 +69,9 @@ class MutatableImageComputerFarm
 
   //! Mutex for locking.  This is the ONLY thing the compute threads should ever block on.
   mutable QMutex _mutex;
+
+  //! Wait condition for threads waiting for a new task.
+  QWaitCondition _wait_condition;
 
   //! The compute threads
   boost::ptr_vector<MutatableImageComputer> _computers;
@@ -114,7 +118,7 @@ class MutatableImageComputerFarm
   void push_todo(const boost::shared_ptr<MutatableImageComputerTask>&);
 
   //! Remove a task from the head of the todo queue (returns null if none).
-  const boost::shared_ptr<MutatableImageComputerTask> pop_todo();
+  const boost::shared_ptr<MutatableImageComputerTask> pop_todo(MutatableImageComputer& requester);
 
   //! Enqueue a task for display.
   void push_done(const boost::shared_ptr<MutatableImageComputerTask>&);
