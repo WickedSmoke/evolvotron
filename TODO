@@ -7,7 +7,6 @@ Conventional Mode
 - Boost post 1.33 changes usage of ptr_map, apparently.  (Wait for 1.34 to hit Debian Testing).
 - Move all function definitions to .cpps, with one header with all definitions,
 
-- Mutex lock/unlock could use auto-locker.
 - Move InstanceCounted out of useful.h (and #include <map> with it)
 - Changing lock state will trigger a redisplay.
   Lock state would be better associated with displays than MutatableImages,
