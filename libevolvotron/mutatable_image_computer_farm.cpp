@@ -47,12 +47,11 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
   _computers.clear();
 
   // Clear all the tasks in queues
-  _mutex.lock();
-
-  _todo.clear();
-  _done.clear();
-
-  _mutex.unlock();
+  {
+    QMutexLocker lock(&_mutex);    
+    _todo.clear();
+    _done.clear();
+  }
 
   std::clog << "...completed compute farm shut down\n";
 }
@@ -65,7 +64,7 @@ static const bool predicate_aborted(const boost::shared_ptr<const MutatableImage
 
 void MutatableImageComputerFarm::fasttrack_aborted()
 {
-  _mutex.lock();
+  QMutexLocker lock(&_mutex);
   
   // \todo: Inefficient starting search again each time.  Some problem with erase otherwise though, but might have been task abort mem leak.
   TodoQueue::iterator it;
@@ -79,14 +78,12 @@ void MutatableImageComputerFarm::fasttrack_aborted()
     {
       _done[(*it)->display()].insert(*it);
       _todo.erase(it);
-    }
-  
-  _mutex.unlock();
+    }  
 }
 
 void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImageComputerTask>& task)
 {
-  _mutex.lock();
+  QMutexLocker lock(&_mutex);
   _todo.insert(task);
   
   // Check if any of the computers are executing lower priority tasks and if so defer least important one.
@@ -94,38 +91,33 @@ void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImag
     {
       ((*it).defer_if_less_important_than(task->priority()));
     }
-
-  _mutex.unlock();
 }
 
 const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_todo()
 {
-  boost::shared_ptr<MutatableImageComputerTask> ret;
-  _mutex.lock();
-  
+  QMutexLocker lock(&_mutex);
+
+  boost::shared_ptr<MutatableImageComputerTask> ret;  
   TodoQueue::iterator it=_todo.begin();
   if (it!=_todo.end())
     {
       ret=(*it);
       _todo.erase(it);
     }
-
-  _mutex.unlock();
   return ret;
 }
 
 void MutatableImageComputerFarm::push_done(const boost::shared_ptr<MutatableImageComputerTask>& task)
 {
-  _mutex.lock();
+  QMutexLocker lock(&_mutex);
   _done[task->display()].insert(task);
-  _mutex.unlock();
 }
 
 const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_done()
 {
-  boost::shared_ptr<MutatableImageComputerTask> ret;
-  _mutex.lock();
-  
+  QMutexLocker lock(&_mutex); 
+
+  boost::shared_ptr<MutatableImageComputerTask> ret;  
   if (_done_position==_done.end())
     {
       _done_position=_done.begin();
@@ -154,13 +146,12 @@ const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::
 	}
     }
 
-  _mutex.unlock();
   return ret;
 }
 
 void MutatableImageComputerFarm::abort_all()
 {
-  _mutex.lock();
+  QMutexLocker lock(&_mutex); 
 
   for (TodoQueue::iterator it=_todo.begin();it!=_todo.end();it++)
     {
@@ -182,12 +173,11 @@ void MutatableImageComputerFarm::abort_all()
 	}
     }
   _done.clear();
-  _mutex.unlock();  
 }
 
 void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
 {
-  _mutex.lock();
+  QMutexLocker lock(&_mutex); 
 
   for (TodoQueue::iterator it=_todo.begin();it!=_todo.end();it++)
     {
@@ -202,7 +192,6 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
     {      
       (*it).abort_for(disp);
     }
-
   
   DoneQueueByDisplay::iterator it0=_done.find(disp);
   if (it0!=_done.end())
@@ -219,8 +208,6 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
 	    }
 	}
     }
-  
-  _mutex.unlock();  
 }
 
 std::ostream& MutatableImageComputerFarm::write_info(std::ostream& out) const
@@ -252,14 +239,12 @@ const uint MutatableImageComputerFarm::tasks() const
 	}
     }
 
-  _mutex.lock();
+  QMutexLocker lock(&_mutex); 
 
   ret+=_todo.size();
 
   for (DoneQueueByDisplay::const_iterator it=_done.begin();it!=_done.end();it++)
     ret+=(*it).second.size();
-
-  _mutex.unlock();
 
   return ret;
 }

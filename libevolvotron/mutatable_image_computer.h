@@ -85,56 +85,51 @@ class MutatableImageComputer : public QThread
       //! Mutex-protected accessor.
       void defer(bool v)
 	{
-	  _mutex.lock();
+	  QMutexLocker lock(&_mutex);
 	  _defer=v;
-	  _mutex.unlock();
 	}
       //! Mutex-protected accessor.
       const bool defer() const
 	{
-	  _mutex.lock();
+	  QMutexLocker lock(&_mutex);
 	  const bool ret=_defer;
-	  _mutex.unlock();
 	  return ret;
 	}
       //! Mutex-protected accessor.
       void abort(bool v)
 	{
-	  _mutex.lock();
+	  QMutexLocker lock(&_mutex);
 	  _abort=v;
-	  _mutex.unlock();	  
 	}
       //! Mutex-protected accessor.
       const bool abort() const
 	{
-	  _mutex.lock();
+	  QMutexLocker lock(&_mutex);
 	  const bool ret=_abort;
-	  _mutex.unlock();
 	  return ret;
 	}
       //! Mutex-protected accessor.
       void kill(bool v)
 	{
 	  std::clog << "Signalling kill...\n";
-	  _mutex.lock();
-	  _kill=v;
-	  _mutex.unlock();
+	  {
+	    QMutexLocker lock(&_mutex);
+	    _kill=v;
+	  }
 	  std::clog << "...signalled kill\n";
 	}
       //! Mutex-protected accessor.
       const bool kill() const
 	{
-	  _mutex.lock();
+	  QMutexLocker lock(&_mutex);
 	  const bool ret=_kill;
-	  _mutex.unlock();
 	  return ret;
 	}
       //! Check union of all flags with only one mutex lock.
       const bool kill_or_abort_or_defer() const
 	{
-	  _mutex.lock();
+	  QMutexLocker lock(&_mutex);
 	  const bool ret=(_kill || _abort || _defer);
-	  _mutex.unlock();
 	  return ret;
 	}
     };

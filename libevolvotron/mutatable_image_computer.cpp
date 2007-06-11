@@ -107,7 +107,6 @@ void MutatableImageComputer::run()
 	    {
 	      if (communications().defer() && !communications().abort())
 		{
-		  // \todo Optimisation: Add a progress tracker to Task class so deferred tasks can continue from where they left off.
 		  farm()->push_todo(task());
 		  communications().defer(false);
 		  _task.reset();
