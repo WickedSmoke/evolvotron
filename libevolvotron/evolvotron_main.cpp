@@ -688,6 +688,14 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
 {
   history().begin_action("reset/restart");
 
+  if (reset_mutation_parameters)
+    {
+      // Invoking reset on the 1st dialog actually resets the parameters 
+      _dialog_mutation_parameters->reset();
+      // This one just serves to setup the dialog from the now reset parameters
+      _dialog_functions->setup_from_mutation_parameters();
+    }
+
   for (std::vector<MutatableImageDisplay*>::iterator it=displays().begin();it!=displays().end();it++)
     {
       if (clear_locks)
@@ -695,14 +703,6 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
 
       if (!(*it)->locked())
 	reset(*it);
-    }
-
-  if (reset_mutation_parameters)
-    {
-      // Invoking reset on the 1st dialog actually resets the parameters 
-      _dialog_mutation_parameters->reset();
-      // This one just serves to setup the dialog from the now reset parameters
-      _dialog_functions->setup_from_mutation_parameters();
     }
 
   last_spawned_image(boost::shared_ptr<const MutatableImage>(),&EvolvotronMain::spawn_normal);
