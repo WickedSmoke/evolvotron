@@ -22,9 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "dialog_about.h"
 
-static const char*const about_string="\nEvolvotron " EVOLVOTRON_BUILD "\n\nAuthor: timday@timday.com\n\nHome page: http://evolvotron.sourceforge.net\n\nProject page: http://sourceforge.net/projects/evolvotron\n\nLicense:";
-
-DialogAbout::DialogAbout(QWidget* parent)
+DialogAbout::DialogAbout(QWidget* parent,int n_threads)
   :QDialog(parent)
 {
   setCaption("About evolvotron");
@@ -32,9 +30,16 @@ DialogAbout::DialogAbout(QWidget* parent)
 
   _vbox=new QVBox(this);
 
-  // This should be the ONLY place a release number appears (other than CHANGES and the tar file name).  
-  // I can't be doing with changing release numbers in a zillion places... one ALWAYS gets missed.
-  _label=new QLabel(about_string,_vbox);
+  std::ostringstream about_string;
+  about_string
+    << "\nEvolvotron "
+    << EVOLVOTRON_BUILD
+    << "\n"
+    << n_threads << " compute thread" << (n_threads>1 ? "s" : "") << "\n\n"
+    << "Author: timday@timday.com\nHome page: http://evolvotron.sourceforge.net\nProject page: http://sourceforge.net/projects/evolvotron\n\n"
+    << "License:";
+
+  _label=new QLabel(about_string.str().c_str(),_vbox);
   _label->setAlignment(Qt::AlignHCenter|_label->alignment());
   
   _license=new QTextEdit(_vbox);

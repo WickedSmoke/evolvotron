@@ -1,7 +1,7 @@
 [Most recent at top]
 
 From release 0.4.0:
- - Version to 0.4.1dev
+ - Version to 0.5.0dev
  - Lists of functions in alphabetic order
  - New FunctionTop at top level.
  - New functions: Frieze groups
@@ -16,6 +16,7 @@ From release 0.4.0:
  - Compute threads use QWaitCondition, not polling.
  - Default number of threads is number of processors.
  - Compute threads run at lower priority.
+ - About dialog displays number of threads.
 
 From release 0.3.1:
  - Version to 0.4.0

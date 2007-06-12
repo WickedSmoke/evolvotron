@@ -200,7 +200,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _statusbar_tasks_label=new QLabel("Ready",_statusbar);
   _statusbar->addWidget(_statusbar_tasks_label,0,true);
 
-  _dialog_about=new DialogAbout(this);
+  _dialog_about=new DialogAbout(this,n_threads);
   _dialog_help_short=new DialogHelp(this,false);
   _dialog_help_long=new DialogHelp(this,true);
 

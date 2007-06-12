@@ -1,5 +1,9 @@
 Known bugs:
 
+- Simplifying functions sometimes changes their appearance
+  (implies "is_constant" probably buggy for some functions).
+  Some random testing of functions before and after simplify would help.
+
 - When using -spheremap mode, middle mouse-button adjustments don't work
   as expected (this is because they're not compensated for the projection).
   Live with it.
@@ -38,9 +42,6 @@ Known bugs:
 
 - Once image colours become saturated there's not much which will cause
   them to scale back down to sensible ranges, unless you're lucky.
-
-- Simplifying functions sometimes changes their appearance
-  (implies "is_constant" probably buggy for some functions).
 
 - Recolour behaves strangely sometimes (?)
   (e.g spawns all-black images or subtly warped images)
