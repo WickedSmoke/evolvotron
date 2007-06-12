@@ -11,8 +11,11 @@ From release 0.4.0:
  - Note that above changes mean old saved functions will appear different.
  - New mutation parameter: probability of a function's parameters being reset.
  - Code clean up:
-   - More std::auto_ptr 
+   - More std::auto_ptr, boost::shared_ptr, boost::ptr_vector.  Code is now delete free.
    - Get rid of hacked static function registration; uses auto-generated register_all_functions
+ - Compute threads use QWaitCondition, not polling.
+ - Default number of threads is number of processors.
+ - Compute threads run at lower priority.
 
 From release 0.3.1:
  - Version to 0.4.0
