@@ -86,20 +86,26 @@ void MutatableImageComputerFarm::fasttrack_aborted()
 
 void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImageComputerTask>& task)
 {
-  QMutexLocker lock(&_mutex);
-  _todo.insert(task);
+  {
+    QMutexLocker lock(&_mutex);
 
-  // \todo: Check if any of the computers are executing lower priority tasks and if so defer least important one (however, we're currently deferring all).
-  bool any_deferred=false;
-  for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++)
-    {
-      if ((*it).defer_if_less_important_than(task->priority()))
-	{
-	  any_deferred=true;
-	}
-    }
+    // We could be in a situation where there are tasks with lower priority which should be defered in favour of this one.
+    // Currently we simply defer everything with a lower priority and let the queue sort them out.
+    //! \todo: It would be better to just defer the lowest priority task if there's any less than the queued task.
+    bool any_deferred=false;
+    for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++)
+      {
+	if ((*it).defer_if_less_important_than(task->priority()))
+	  {
+	    any_deferred=true;
+	  }
+      }
 
-  if (!any_deferred) _wait_condition.wakeOne();
+    _todo.insert(task);
+  }
+
+  // If there any threads waiting, we should wake one up.
+  _wait_condition.wakeOne();
 }
 
 const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_todo(MutatableImageComputer& requester)
