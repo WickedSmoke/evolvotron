@@ -5,6 +5,7 @@ Conventional Mode
 -----------------
 - Thread wait condition seems to work well, but strange behaviour on startup.
   (Although maybe it makes sense as subsequent displays low res displace earlier high res ?)
+  push_todo a mess at the moment
 - Rationalize warped and blended versions of FriezeGroup functions
 - Boost post 1.33 changes usage of ptr_map, apparently.  (Wait for 1.34 to hit Debian Testing).
 - Move all function definitions to .cpps, with one header with all definitions,

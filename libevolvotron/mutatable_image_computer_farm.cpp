@@ -88,13 +88,18 @@ void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImag
 {
   QMutexLocker lock(&_mutex);
   _todo.insert(task);
-  _wait_condition.wakeOne();
 
   // \todo: Check if any of the computers are executing lower priority tasks and if so defer least important one (however, we're currently deferring all).
+  bool any_deferred=false;
   for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++)
     {
-      (*it).defer_if_less_important_than(task->priority());
+      if ((*it).defer_if_less_important_than(task->priority()))
+	{
+	  any_deferred=true;
+	}
     }
+
+  if (!any_deferred) _wait_condition.wakeOne();
 }
 
 const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_todo(MutatableImageComputer& requester)

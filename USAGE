@@ -44,7 +44,14 @@ USER OPTIONS
 	Sets number of image display cells (defaults to 6 by 5)
 
   -t <threads>
-	Sets number of compute threads (defaults to 2)
+	Sets number of compute threads.
+        If this is not specified, as many compute threads are created
+        as there are processors on the system (unless this cannot be
+        discovered, in which case only a single compute thread is created).
+        Compute threads run at a slightly lower priority ("nice +4")
+        than the main (GUI) part of the program (note that this means other
+        normal/lowish priority tasks running on your machine may slow
+        evolvotron down a bit more than expected).
 
   -F
 	Start in "fullscreen" mode (NB for Qt on X11 this means 

@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <iostream>
 #include <fstream>
+#include <sched.h>
 
 #include <qapplication.h>
 
@@ -51,8 +52,7 @@ int main(int argc,char* argv[])
   // A 4:3 ratio would nice to get square images on most screens, but isn't many images
   uint cols=6;
   uint rows=5;
-  uint threads=2;
-
+  
   uint frames=1;
   uint framerate=8;
 
@@ -67,13 +67,39 @@ int main(int argc,char* argv[])
       std::cerr << "Must be at least 2 display grid cells (options: -g <cols> <rows>)\n";
       exit(1);
     }
+
+  
+  uint threads=1;
     
-  if (args.option("-t",1)) args.after() >> threads;
-  if (threads<1)
+  if (args.option("-t",1))
     {
-      std::cerr << "Must specify at least one compute thread (option: -t <threads>)\n";
-      exit(1);
+      args.after() >> threads;
+      if (threads<1)
+	{
+	  std::cerr << "Must specify at least one compute thread (option: -t <threads>)\n";
+	  exit(1);
+	}
     }
+  else
+    {
+      /*! \todo: People porting to non-Linux (BSD, MacOS, Fink etc) please send 
+	a suitable #ifdef-able patch if you need something different here.
+      */
+      cpu_set_t cpus;
+      if (sched_getaffinity(0,sizeof(cpu_set_t),&cpus)!=0)
+	{
+	  std::cerr << "Could not determine number of CPUs; defaulting to " << threads << " compute thread\n";
+	}
+      else
+	{
+	  threads=0;
+	  for (int i=0;i<CPU_SETSIZE;i++)
+	    {
+	      if (CPU_ISSET(i,&cpus)) threads++;
+	    }
+	}
+    }
+  std::clog << "Using " << threads << " threads\n";
 
   if (args.option("-f",1)) args.after() >> frames;
   if (frames<1)

@@ -30,6 +30,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // This is needed for tanh
 #include <cmath>
 
+// Needed for getpriority/setprioirty
+#include <sys/resource.h>
+
 MutatableImageComputer::MutatableImageComputer(MutatableImageComputerFarm* frm)
   :
 #ifndef NDEBUG
@@ -57,6 +60,14 @@ MutatableImageComputer::~MutatableImageComputer()
 void MutatableImageComputer::run()
 {
   std::clog << "Thread starting\n";
+
+  // Lower compute thread priority slightly;
+  // computing is less important than displaying the results.
+  /*! \todo: People porting to non-Linux (BSD, MacOS, Fink etc) please send
+    a suitable #ifdef-able patch if you need something different here.
+  */
+  const int current_priority=getpriority(PRIO_PROCESS,0);
+  setpriority(PRIO_PROCESS,0,std::min(19,current_priority+4));
 
   // Run until something sets the kill flag 
   while(!communications().kill())
