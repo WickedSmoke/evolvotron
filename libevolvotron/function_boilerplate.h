@@ -170,4 +170,3 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
 #define FUNCTION_END(FN) };
 
 #endif
-
