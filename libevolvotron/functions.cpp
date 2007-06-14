@@ -20,5 +20,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of specific Function classes.
   Except there's nothing here because it's all in the header.
 */
- 
+
+#define INSTANTIATE_FN
 #include "functions.h"

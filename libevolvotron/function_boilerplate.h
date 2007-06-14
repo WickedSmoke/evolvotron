@@ -166,7 +166,14 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
 /*! Used by auto_functions.h
 */
 #define REGISTER(r,FN) r.name_and_register(#FN,FN::get_registration());
+#define REGISTER_DCL(FN) extern void register_ ## FN(FunctionRegistry&);
 
-#define FUNCTION_END(FN) };
+#ifdef INSTANTIATE_FN
+#define REGISTER_IMP(FN) void register_ ## FN(FunctionRegistry& r){REGISTER(r,FN);}
+#else
+#define REGISTER_IMP(FN)
+#endif
+
+#define FUNCTION_END(FN) };REGISTER_DCL(FN);REGISTER_IMP(FN);
 
 #endif

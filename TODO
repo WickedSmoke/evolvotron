@@ -6,6 +6,8 @@ Conventional Mode
 - Rationalize warped and blended versions of FriezeGroup functions
 - Add blending versions of symmetry functions.
 
+- Register_all_functions shouldn't need to #include all the function headers;
+just have an extern to the necessary code in the .cpps.
 - Move all function definitions to .cpps, with one header with all definitions.
 - Move all functions to a separate library.
 - register_all_functions needs >300MByte to compile.

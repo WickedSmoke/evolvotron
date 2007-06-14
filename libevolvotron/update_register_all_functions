@@ -8,13 +8,23 @@ cat <<EOF >> register_all_functions.cpp
 /* Should be updated by update_register_all_functions script when new functions are added */
 
 #include "register_all_functions.h"
+#include "function_boilerplate.h"
 
 EOF
 
 HEADERS=`grep -l FUNCTION_BEGIN *.h | sed 's/function_boilerplate.h//'`
 
+#for f in $HEADERS ; do
+#  echo "#include \"$f\"" >> register_all_functions.cpp
+#done
+
 for f in $HEADERS ; do
-  echo "#include \"$f\"" >> register_all_functions.cpp
+    sed -f stripcomments.sed "$f" \
+	| grep FUNCTION_BEGIN \
+	| sed 's/FUNCTION_BEGIN(//' \
+	| sed 's/,.*//' \
+	| awk '{printf("REGISTER_DCL(%s);\n",$0);}' \
+	>> register_all_functions.cpp
 done
 
 cat <<EOF >> register_all_functions.cpp
@@ -24,7 +34,12 @@ void register_all_functions(FunctionRegistry& r)
 EOF
 
 for f in $HEADERS ; do
-  sed -f stripcomments.sed "$f" | grep FUNCTION_BEGIN | sed 's/FUNCTION_BEGIN(//' | sed 's/,.*//' | awk '{printf("  REGISTER(r,%s);\n",$0);}' >> register_all_functions.cpp
+    sed -f stripcomments.sed "$f" \
+	| grep FUNCTION_BEGIN \
+	| sed 's/FUNCTION_BEGIN(//' \
+	| sed 's/,.*//' \
+	| awk '{printf("  register_%s(r);\n",$0);}' \
+	>> register_all_functions.cpp
 done
 
 cat <<EOF >> register_all_functions.cpp
