@@ -6,11 +6,9 @@ Conventional Mode
 - Rationalize warped and blended versions of FriezeGroup functions
 - Add blending versions of symmetry functions.
 
-- Register_all_functions shouldn't need to #include all the function headers;
-just have an extern to the necessary code in the .cpps.
-- Move all function definitions to .cpps, with one header with all definitions.
+- Clean up FunctionBoilerplate
+  Before: build from make distclean in 2m22s realtime, 33MByte.  After: the same!
 - Move all functions to a separate library.
-- register_all_functions needs >300MByte to compile.
 
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
