@@ -6,8 +6,6 @@ Conventional Mode
 - Rationalize warped and blended versions of FriezeGroup functions
 - Add blending versions of symmetry functions.
 
-- Clean up FunctionBoilerplate
-  Before: build from make distclean in 2m22s realtime, 33MByte.  After: the same!
 - Move all functions to a separate library.
 
 - Add functions for the 17 "wallpaper" symmetry groups.
