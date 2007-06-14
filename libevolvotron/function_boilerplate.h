@@ -132,6 +132,7 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
     }
 };
 
+#ifdef INSTANTIATE_FN
 /*! We could obtain a type name obtained from typeid BUT:
   - it has some strange numbers attached (with gcc 3.2 anyway).
   - the strings returned from it seem to bomb if you try and do anything with them too soon (ie during static initialisation).
@@ -154,26 +155,28 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
      );
   return reg;
 }
+#endif
+
+#define FN_DTOR_DCL(FN) virtual ~FN();
+#define FN_DTOR_IMP(FN) FN::~FN() {}
 
 #define FUNCTION_BEGIN(FN,NP,NA,IT,CL) \
    class FN : public FunctionBoilerplate<FN,NP,NA,IT,CL> \
    {public: \
-     FN(const std::vector<real>& p,boost::ptr_vector<FunctionNode>& a,uint iter) \
-       :FunctionBoilerplate<FN,NP,NA,IT,CL>(p,a,iter) {} \
-     virtual ~FN() {}
- 
+     FN(const std::vector<real>& p,boost::ptr_vector<FunctionNode>& a,uint iter) :FunctionBoilerplate<FN,NP,NA,IT,CL>(p,a,iter) {} \
+     FN_DTOR_DCL(FN)
+
 //! Macro to push registrations through to registry.
 /*! Used by auto_functions.h
 */
 #define REGISTER(r,FN) r.name_and_register(#FN,FN::get_registration());
 #define REGISTER_DCL(FN) extern void register_ ## FN(FunctionRegistry&);
+#define REGISTER_IMP(FN) void register_ ## FN(FunctionRegistry& r){REGISTER(r,FN);}
 
 #ifdef INSTANTIATE_FN
-#define REGISTER_IMP(FN) void register_ ## FN(FunctionRegistry& r){REGISTER(r,FN);}
+#define FUNCTION_END(FN) };FN_DTOR_IMP(FN);REGISTER_IMP(FN);
 #else
-#define REGISTER_IMP(FN)
+#define FUNCTION_END(FN) };REGISTER_DCL(FN);
 #endif
-
-#define FUNCTION_END(FN) };REGISTER_DCL(FN);REGISTER_IMP(FN);
 
 #endif
