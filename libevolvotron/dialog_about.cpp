@@ -32,12 +32,16 @@ DialogAbout::DialogAbout(QWidget* parent,int n_threads)
 
   std::ostringstream about_string;
   about_string
-    << "\nEvolvotron "
+    << "Evolvotron "
     << EVOLVOTRON_BUILD
     << "\n"
-    << n_threads << " compute thread" << (n_threads>1 ? "s" : "") << "\n\n"
-    << "Author: timday@timday.com\nHome page: http://evolvotron.sourceforge.net\nProject page: http://sourceforge.net/projects/evolvotron\n\n"
-    << "License:";
+    << "Using "
+    << n_threads
+    << " compute thread" 
+    << (n_threads>1 ? "s" : "") << "\n\n"
+    << "Author: timday@timday.com\n"
+    << "Home page: http://evolvotron.sourceforge.net\n"
+    << "Project page: http://sourceforge.net/projects/evolvotron\n";
 
   _label=new QLabel(about_string.str().c_str(),_vbox);
   _label->setAlignment(Qt::AlignHCenter|_label->alignment());
@@ -45,7 +49,7 @@ DialogAbout::DialogAbout(QWidget* parent,int n_threads)
   _license=new QTextEdit(_vbox);
   _license->setReadOnly(true);
   _license->setTextFormat(PlainText);
-  _license->setText(license_string);
+  _license->setText((std::string("License:\n")+std::string(license_string)).c_str());
 
   _ok=new QPushButton("OK",_vbox);
 
