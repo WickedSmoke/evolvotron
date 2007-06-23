@@ -31,8 +31,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_node.h"
 #include "function_node_info.h"
 
-#include "mutatable_image.h"
-
 #include "function_core.h"
 #include "function_transform_generalised.h"
 #include "function_compose_triple.h"

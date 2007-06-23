@@ -3,10 +3,9 @@ TEMPLATE = app
 include (../common.pro)
 
 SOURCES += evolvotron_mutate.cpp
-DEPENDPATH += ../libevolvotron
 
-TARGETDEPS += ../libevolvotron/libevolvotron.a
-LIBS       += ../libevolvotron/libevolvotron.a
+DEPENDPATH += ../libevolvotron ../libfunction
+INCLUDEPATH += ../libevolvotron ../libfunction
 
-QMAKE_CXXFLAGS_RELEASE += -I../libevolvotron
-QMAKE_CXXFLAGS_DEBUG   += -I../libevolvotron
+TARGETDEPS += ../libevolvotron/libevolvotron.a ../libfunction/libfunction.a
+LIBS       += ../libevolvotron/libevolvotron.a ../libfunction/libfunction.a
