@@ -23,6 +23,7 @@ HEADERS += \
         functions_arithmetic.h \
         functions_friezegroup_hop.h \
         functions_friezegroup_spinhop.h \
+        functions_gradient.h \
         functions_noise.h \
         functions_transform.h \
         margin.h \
@@ -52,6 +53,7 @@ SOURCES += \
         functions_arithmetic.cpp \
         functions_friezegroup_hop.cpp \
         functions_friezegroup_spinhop.cpp \
+        functions_gradient.cpp \
         functions_noise.cpp \
         functions_transform.cpp \
         margin.cpp \
