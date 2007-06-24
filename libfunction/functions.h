@@ -30,47 +30,6 @@
 
 //------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionSpiralLinear,0,1,false,FnStructure)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real r=p.magnitude();
-      real theta=atan2(p.y(),p.x());
-      if (theta<0.0) theta+=2.0*M_PI;
-      const real winding=floorf(r-theta/(2.0*M_PI));
-      
-      const real x=2.0*winding+theta/M_PI;
-      const real y=2.0*r-x;
-      
-      return arg(0)(XYZ(x,y,p.z()));
-    }
-  
-FUNCTION_END(FunctionSpiralLinear)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionSpiralLogarithmic,0,1,false,FnStructure)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real r=p.magnitude();
-      real theta=atan2(p.y(),p.x());
-      if (theta<0.0) theta+=2.0*M_PI;
-      const real lnr=log(r);
-      const real winding=floorf(lnr-theta/(2.0*M_PI));
-      
-      const real x=2.0*winding+theta/M_PI;
-      const real y=2.0*lnr-x;
-      
-      return arg(0)(XYZ(x,y,p.z()));
-    }
-  
-FUNCTION_END(FunctionSpiralLogarithmic)
-
-//------------------------------------------------------------------------------------------
-
 FUNCTION_BEGIN(FunctionCross,0,2,false,0)
 
   //! Evaluate function.
