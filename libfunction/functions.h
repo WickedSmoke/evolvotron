@@ -28,63 +28,6 @@
 #include "function_registry.h"
 #include "function_boilerplate.h"
 
-//------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionCross,0,2,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ v0(arg(0)(p));
-      const XYZ v1(arg(1)(p));
-      return v0*v1;
-    }
-  
-FUNCTION_END(FunctionCross)
-
-//------------------------------------------------------------------------------------------
-
-//! Invert the leaf function using a radius-one origin centred sphere.
-FUNCTION_BEGIN(FunctionGeometricInversion,0,1,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real radius2=p.magnitude2();
-      const XYZ ip(p/radius2);
-
-      return arg(0)(ip);
-    }
-  
-FUNCTION_END(FunctionGeometricInversion)
-
-//------------------------------------------------------------------------------------------
-
-//! Implements reflection of sampling point about a plane
-FUNCTION_BEGIN(FunctionReflect,0,3,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ pt_in_plane(arg(0)(p));
-      const XYZ normal(arg(1)(p).normalised());
-      
-      XYZ pos(arg(2)(p));
-      
-      const real distance_from_plane=(pos-pt_in_plane)%normal;
-      
-      // If pos is on the wrong side of the plane, reflect it over
-      // Check: normal (0,0,1), pos (0,0,-1) => distance -1, pos-=(2*-1)*(0,0,1) => pos-=(0,0,-2)
-      if (distance_from_plane<0.0)
-	{
-	  pos-=(2.0*distance_from_plane)*normal;
-	}
-      
-      return pos;
-    }
-  
-FUNCTION_END(FunctionReflect)
-
 //------------------------------------------------------------------------------------------
 
 //! Implements reflection of sampling point about multiple planes
