@@ -25,6 +25,7 @@ HEADERS += \
         functions_friezegroup_spinhop.h \
         functions_gradient.h \
         functions_noise.h \
+        functions_spherical.h \
         functions_transform.h \
         margin.h \
 	mutation_parameters.h \
@@ -55,6 +56,7 @@ SOURCES += \
         functions_friezegroup_spinhop.cpp \
         functions_gradient.cpp \
         functions_noise.cpp \
+        functions_spherical.cpp \
         functions_transform.cpp \
         margin.cpp \
 	mutation_parameters.cpp \

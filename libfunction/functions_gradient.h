@@ -28,13 +28,6 @@
 #include "function_registry.h"
 #include "function_boilerplate.h"
 
-//! Used when some small sampling step is required (e.g gradient operators).
-#define epsilon (1e-6)
-#define epsilon2 (2.0*epsilon)
-#define inv_epsilon (1.0/epsilon)
-#define inv_epsilon2 (1.0/epsilon2)
-#define big_epsilon (sqrt(epsilon))
-
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionDerivative,3,1,false,0)
