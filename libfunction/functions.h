@@ -104,30 +104,6 @@ FUNCTION_END(FunctionEvaluateInSpherical)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionSin,0,0,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return XYZ(sin(p.x()),sin(p.y()),sin(p.z()));
-    }
-  
-FUNCTION_END(FunctionSin)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionCos,0,0,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return XYZ(cos(p.x()),cos(p.y()),cos(p.z()));
-    }
-  
-FUNCTION_END(FunctionCos)
-
-//------------------------------------------------------------------------------------------
-
 FUNCTION_BEGIN(FunctionSpiralLinear,0,1,false,FnStructure)
 
   //! Evaluate function.
@@ -344,53 +320,6 @@ FUNCTION_END(FunctionScalarLaplacian)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionAdd,0,2,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return arg(0)(p)+arg(1)(p);
-    }
-  
-FUNCTION_END(FunctionAdd)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionMultiply,0,2,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ v0(arg(0)(p));
-      const XYZ v1(arg(1)(p));
-      // NB Don't use v0*v1 as it would be cross-product.
-      return XYZ(v0.x()*v1.x(),v0.y()*v1.y(),v0.z()*v1.z());
-    }
-  
-FUNCTION_END(FunctionMultiply)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionDivide,0,2,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ v0(arg(0)(p));
-      const XYZ v1(arg(1)(p));
-
-      return XYZ(
-		 (v1.x()==0.0 ? 0.0 : v0.x()/v1.x()),
-		 (v1.y()==0.0 ? 0.0 : v0.y()/v1.y()),
-		 (v1.z()==0.0 ? 0.0 : v0.z()/v1.z())
-		 );
-
-    }
-  
-FUNCTION_END(FunctionDivide)
-
-//------------------------------------------------------------------------------------------
-
 FUNCTION_BEGIN(FunctionCross,0,2,false,0)
 
   //! Evaluate function.
@@ -403,74 +332,6 @@ FUNCTION_BEGIN(FunctionCross,0,2,false,0)
   
 FUNCTION_END(FunctionCross)
 
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionMax,0,2,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ v0(arg(0)(p));
-      const XYZ v1(arg(1)(p));
-      return XYZ(
-		 std::max(v0.x(),v1.x()),
-		 std::max(v0.y(),v1.y()),
-		 std::max(v0.z(),v1.z())
-		 );
-    }
-  
-FUNCTION_END(FunctionMax)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionMin,0,2,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ v0(arg(0)(p));
-      const XYZ v1(arg(1)(p));
-      return XYZ(
-		 std::min(v0.x(),v1.x()),
-		 std::min(v0.y(),v1.y()),
-		 std::min(v0.z(),v1.z())
-		 );
-    }
-  
-FUNCTION_END(FunctionMin)
-
-//------------------------------------------------------------------------------------------
-
-//! Function returning components of one function modulus thos of another.
-/*! Sane always-positive modulus used to avoid funny business at zero.
- */
-FUNCTION_BEGIN(FunctionModulus,0,2,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ v0(arg(0)(p));
-      const XYZ v1(arg(1)(p));
-      return XYZ(
-		 modulusf(v0.x(),fabs(v1.x())),
-		 modulusf(v0.y(),fabs(v1.y())),
-		 modulusf(v0.z(),fabs(v1.z()))
-		 );
-    }
-  
-FUNCTION_END(FunctionModulus)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionExp,0,0,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return XYZ(exp(p.x()),exp(p.y()),exp(p.z()));
-    }
-  
-FUNCTION_END(FunctionExp)
 
 //------------------------------------------------------------------------------------------
 

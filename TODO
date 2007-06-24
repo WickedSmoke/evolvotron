@@ -6,7 +6,8 @@ Conventional Mode
 - Rationalize warped and blended versions of FriezeGroup functions
 - Add blending versions of symmetry functions.
 
-- Move all functions to a separate library.
+- Break up big function*.h files.
+- Use boost random number generator in random.h
 
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html

@@ -20,9 +20,11 @@ HEADERS += \
         function_top.h \
         function_transform_generalised.h \
         functions.h \
+        functions_arithmetic.h \
         functions_friezegroup_hop.h \
         functions_friezegroup_spinhop.h \
         functions_noise.h \
+        functions_transform.h \
         margin.h \
 	mutation_parameters.h \
         noise.h \
@@ -47,9 +49,11 @@ SOURCES += \
         function_top.cpp \
         function_transform_generalised.cpp \
         functions.cpp \
+        functions_arithmetic.cpp \
         functions_friezegroup_hop.cpp \
         functions_friezegroup_spinhop.cpp \
         functions_noise.cpp \
+        functions_transform.cpp \
         margin.cpp \
 	mutation_parameters.cpp \
         noise.cpp \
