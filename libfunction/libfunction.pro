@@ -25,6 +25,7 @@ HEADERS += \
         functions_friezegroup_spinhop.h \
         functions_geometry.h \
         functions_gradient.h \
+        functions_kaleidoscope.h \
         functions_noise.h \
         functions_spherical.h \
         functions_spiral.h \
@@ -58,6 +59,7 @@ SOURCES += \
         functions_friezegroup_spinhop.cpp \
         functions_geometry.cpp \
         functions_gradient.cpp \
+        functions_kaleidoscope.h \
         functions_noise.cpp \
         functions_spherical.cpp \
         functions_spiral.cpp \
