@@ -391,14 +391,14 @@ FUNCTION_END(FunctionMagnitudes)
 
 //------------------------------------------------------------------------------------------
 
-//! Function returns position magnitude.
-FUNCTION_BEGIN(FunctionMagnitude,0,0,false,0)
+//! Function returns leaf function value magnitude scaled by position magnitude.
+FUNCTION_BEGIN(FunctionMagnitude,3,1,false,0)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const real m=p.magnitude();
-      return XYZ(m,m,m);
+      const real m=arg(0)(p).magnitude();
+      return XYZ(m*param(0),m*param(1),m*param(2));
     }
   
 FUNCTION_END(FunctionMagnitude)
@@ -406,7 +406,7 @@ FUNCTION_END(FunctionMagnitude)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on the relative magnitudes of 2 other functions
-FUNCTION_BEGIN(FunctionChooseSphere,0,4,false,0)
+FUNCTION_BEGIN(FunctionChooseSphere,0,4,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
@@ -422,7 +422,7 @@ FUNCTION_END(FunctionChooseSphere)
 //------------------------------------------------------------------------------------------
 
 //! Function implements selection between 2 functions based on whether a rectangle contains a point
-FUNCTION_BEGIN(FunctionChooseRect,0,4,false,0)
+FUNCTION_BEGIN(FunctionChooseRect,0,4,false,FnStructure)
 
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
