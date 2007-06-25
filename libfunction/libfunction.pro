@@ -26,6 +26,7 @@ HEADERS += \
         functions_geometry.h \
         functions_gradient.h \
         functions_kaleidoscope.h \
+        functions_magnitude.h \
         functions_noise.h \
         functions_spherical.h \
         functions_spiral.h \
@@ -60,6 +61,7 @@ SOURCES += \
         functions_geometry.cpp \
         functions_gradient.cpp \
         functions_kaleidoscope.h \
+        functions_magnitude.cpp \
         functions_noise.cpp \
         functions_spherical.cpp \
         functions_spiral.cpp \

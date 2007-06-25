@@ -374,37 +374,6 @@ FUNCTION_END(FunctionFriezeGroupSpinsidleWarpedFreeZ)
 
 //------------------------------------------------------------------------------------------
 
-//! Function returns a value comprising the magnitude of three leaf functions.
-FUNCTION_BEGIN(FunctionMagnitudes,0,3,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return XYZ(
-		 arg(0)(p).magnitude(),
-		 arg(1)(p).magnitude(),
-		 arg(2)(p).magnitude()
-		 );
-    }
-  
-FUNCTION_END(FunctionMagnitudes)
-
-//------------------------------------------------------------------------------------------
-
-//! Function returns leaf function value magnitude scaled by position magnitude.
-FUNCTION_BEGIN(FunctionMagnitude,3,1,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real m=arg(0)(p).magnitude();
-      return XYZ(m*param(0),m*param(1),m*param(2));
-    }
-  
-FUNCTION_END(FunctionMagnitude)
-
-//------------------------------------------------------------------------------------------
-
 //! Function implements selection between 2 functions based on the relative magnitudes of 2 other functions
 FUNCTION_BEGIN(FunctionChooseSphere,0,4,false,FnStructure)
 
