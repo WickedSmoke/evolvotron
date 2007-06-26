@@ -389,13 +389,13 @@ FUNCTION_BEGIN(FunctionOrthoSphereShadedBumpMapped,3,3,false,FnRender)
 	  const XYZ east((XYZ(0.0,1.0,0.0)*n).normalised());
 	  const XYZ north(n*east);
 
-	  const real e0=(arg(2)(n-epsilon*east)).magnitude2();
-	  const real e1=(arg(2)(n+epsilon*east)).magnitude2();
-	  const real n0=(arg(2)(n-epsilon*north)).magnitude2();
-	  const real n1=(arg(2)(n+epsilon*north)).magnitude2();
+	  const real e0=(arg(2)(n-epsilon()*east)).magnitude2();
+	  const real e1=(arg(2)(n+epsilon()*east)).magnitude2();
+	  const real n0=(arg(2)(n-epsilon()*north)).magnitude2();
+	  const real n1=(arg(2)(n+epsilon()*north)).magnitude2();
 
-	  const real de=(e1-e0)*inv_epsilon2;
-	  const real dn=(n1-n0)*inv_epsilon2;
+	  const real de=(e1-e0)*inv_epsilon2();
+	  const real dn=(n1-n0)*inv_epsilon2();
 
 	  const XYZ perturbed_n((n-east*de-north*dn).normalised());
 
@@ -475,13 +475,13 @@ FUNCTION_BEGIN(FunctionOrthoSphereReflectBumpMapped,0,3,false,FnRender)
 	  const XYZ east((XYZ(0.0,1.0,0.0)*n).normalised());
 	  const XYZ north(n*east);
 
-	  const real e0=(arg(2)(n-epsilon*east)).magnitude2();
-	  const real e1=(arg(2)(n+epsilon*east)).magnitude2();
-	  const real n0=(arg(2)(n-epsilon*north)).magnitude2();
-	  const real n1=(arg(2)(n+epsilon*north)).magnitude2();
+	  const real e0=(arg(2)(n-epsilon()*east)).magnitude2();
+	  const real e1=(arg(2)(n+epsilon()*east)).magnitude2();
+	  const real n0=(arg(2)(n-epsilon()*north)).magnitude2();
+	  const real n1=(arg(2)(n+epsilon()*north)).magnitude2();
 
-	  const real de=(e1-e0)*inv_epsilon2;
-	  const real dn=(n1-n0)*inv_epsilon2;
+	  const real de=(e1-e0)*inv_epsilon2();
+	  const real dn=(n1-n0)*inv_epsilon2();
 
 	  const XYZ perturbed_n((n-east*de-north*dn).normalised());
 

@@ -23,12 +23,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _random_h_
 #define _random_h_
 
+#include <boost/random.hpp>
+
 #include "useful.h"
 
 //! Abstract base class for random number generation
 class Random
 {
-protected:
 public:
   
   //! Constructor (nothing to do in base class)
@@ -47,39 +48,8 @@ public:
 };
 
 //! Generates random numbers in the range [0,1).
-/*! Code lifted from 1999/10/28 version of MT19937 (Mersenne Twister)
-  at http://www.math.keio.ac.jp/~nisimura/random/int/mt19937int.c
-  (which is LGPL-ed code)
- */
 class Random01 : public Random   
 {
-protected:
-  static const unsigned long N=624;
-  static const unsigned long M=397;
-
-  //! Constant vector a
-  static const unsigned long MATRIX_A=0x9908b0df;   
-
-  //! Most significant w-r bits
-  static const unsigned long UPPER_MASK=0x80000000; 
-
-  //! Least significant r bits
-  static const unsigned long LOWER_MASK=0x7fffffff; 
-
-  static const unsigned long TEMPERING_MASK_B=0x9d2c5680;
-  static const unsigned long TEMPERING_MASK_C=0xefc60000;
-
-  static const unsigned long TEMPERING_SHIFT_U(unsigned long y) {return (y >> 11);}
-  static const unsigned long TEMPERING_SHIFT_S(unsigned long y) {return (y << 7);}
-  static const unsigned long TEMPERING_SHIFT_T(unsigned long y) {return (y << 15);}
-  static const unsigned long TEMPERING_SHIFT_L(unsigned long y) {return (y >> 18);}
-
-  //! the array for the state vector  */
-  unsigned long mt[N]; 
-
-  //! mti==N+1 means mt[N] is not initialized 
-  uint mti; 
-
 public:
   //! Constructor
   Random01(uint seed);
@@ -89,6 +59,16 @@ public:
   
   //! Return next number in sequence.
   virtual const double operator()();
+private:
+
+  //! Base generator
+  boost::mt19937 _rng;
+
+  //! Distribution
+  boost::uniform_real<> _dist;
+
+  //! Actual generator
+  boost::variate_generator<boost::mt19937,boost::uniform_real<> > _gen;
 };
 
 //! Return negative-exponentially distributed random numbers.
@@ -132,6 +112,7 @@ template <typename T> void random_shuffle(boost::ptr_vector<T>& v,Random01& r01)
   v.transfer(v.end(),nv.begin(),nv.end(),nv);
 }
 
+//! Adapter to use our random number generator to feed std::random_shuffle
 class RandomInt
 {
  public:

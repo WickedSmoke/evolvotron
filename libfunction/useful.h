@@ -98,13 +98,6 @@ extern void constraint_violation(const char* test,const char* src_file,uint src_
 //! Use this to provide assert-like behaviour which is never disabled.
 #define constraint(TEST) {if (!TEST) {constraint_violation(#TEST,__FILE__,__LINE__);}}
 
-//! Used when some small sampling step is required (e.g gradient operators).
-#define epsilon (1e-6)
-#define epsilon2 (2.0*epsilon)
-#define inv_epsilon (1.0/epsilon)
-#define inv_epsilon2 (1.0/epsilon2)
-#define big_epsilon (sqrt(epsilon))
-
 //! Sane modulus function always returning a number in the range [0,y)
 inline real modulusf(real x,real y)
 {

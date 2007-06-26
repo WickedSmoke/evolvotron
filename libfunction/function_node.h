@@ -233,6 +233,15 @@ class FunctionNode
       assert(n<args().size());
       return args()[n];
     }
+ protected:
+  //@{
+  //! Useful constants used when some small sampling step is required (e.g gradient operators).
+  const real epsilon() const {return 1e-6;}
+  const real epsilon2() const {return 2.0*epsilon();}
+  const real inv_epsilon() const {return 1.0/epsilon();}
+  const real inv_epsilon2() const {return 1.0/epsilon2();}
+  const real big_epsilon() const {return sqrt(epsilon());}
+  //@}
 };
 
 #endif

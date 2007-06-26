@@ -35,12 +35,12 @@ FUNCTION_BEGIN(FunctionDerivative,3,1,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ d(epsilon*XYZ(param(0),param(1),param(2)).normalised());
+      const XYZ d(epsilon()*XYZ(param(0),param(1),param(2)).normalised());
       
       const XYZ v0(arg(0)(p-d));
       const XYZ v1(arg(0)(p+d));
 
-      return (v1-v0)*inv_epsilon2;
+      return (v1-v0)*inv_epsilon2();
     }
   
 FUNCTION_END(FunctionDerivative)
@@ -52,12 +52,12 @@ FUNCTION_BEGIN(FunctionDerivativeGeneralised,0,2,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ d(epsilon*(arg(1)(p)).normalised());
+      const XYZ d(epsilon()*(arg(1)(p)).normalised());
       
       const XYZ v0(arg(0)(p-d));
       const XYZ v1(arg(0)(p+d));
 
-      return (v1-v0)*inv_epsilon2;
+      return (v1-v0)*inv_epsilon2();
     }
   
 FUNCTION_END(FunctionDerivativeGeneralised)
@@ -73,15 +73,15 @@ FUNCTION_BEGIN(FunctionGradient,3,1,false,0)
     {
       const XYZ k(param(0),param(1),param(2));
 
-      const real vx0=k%arg(0)(p-XYZ(epsilon,0.0,0.0));
-      const real vy0=k%arg(0)(p-XYZ(0.0,epsilon,0.0));
-      const real vz0=k%arg(0)(p-XYZ(0.0,0.0,epsilon));
+      const real vx0=k%arg(0)(p-XYZ(epsilon(),0.0,0.0));
+      const real vy0=k%arg(0)(p-XYZ(0.0,epsilon(),0.0));
+      const real vz0=k%arg(0)(p-XYZ(0.0,0.0,epsilon()));
 
-      const real vx1=k%arg(0)(p+XYZ(epsilon,0.0,0.0));
-      const real vy1=k%arg(0)(p+XYZ(0.0,epsilon,0.0));
-      const real vz1=k%arg(0)(p+XYZ(0.0,0.0,epsilon));
+      const real vx1=k%arg(0)(p+XYZ(epsilon(),0.0,0.0));
+      const real vy1=k%arg(0)(p+XYZ(0.0,epsilon(),0.0));
+      const real vz1=k%arg(0)(p+XYZ(0.0,0.0,epsilon()));
 
-      return XYZ(vx1-vx0,vy1-vy0,vz1-vz0)*inv_epsilon2;
+      return XYZ(vx1-vx0,vy1-vy0,vz1-vz0)*inv_epsilon2();
     }
   
 FUNCTION_END(FunctionGradient)
@@ -97,15 +97,15 @@ FUNCTION_BEGIN(FunctionGradientGeneralised,0,2,false,0)
     {
       const XYZ k(arg(1)(p));
 
-      const real vx0=k%arg(0)(p-XYZ(epsilon,0.0,0.0));
-      const real vy0=k%arg(0)(p-XYZ(0.0,epsilon,0.0));
-      const real vz0=k%arg(0)(p-XYZ(0.0,0.0,epsilon));
+      const real vx0=k%arg(0)(p-XYZ(epsilon(),0.0,0.0));
+      const real vy0=k%arg(0)(p-XYZ(0.0,epsilon(),0.0));
+      const real vz0=k%arg(0)(p-XYZ(0.0,0.0,epsilon()));
 
-      const real vx1=k%arg(0)(p+XYZ(epsilon,0.0,0.0));
-      const real vy1=k%arg(0)(p+XYZ(0.0,epsilon,0.0));
-      const real vz1=k%arg(0)(p+XYZ(0.0,0.0,epsilon));
+      const real vx1=k%arg(0)(p+XYZ(epsilon(),0.0,0.0));
+      const real vy1=k%arg(0)(p+XYZ(0.0,epsilon(),0.0));
+      const real vz1=k%arg(0)(p+XYZ(0.0,0.0,epsilon()));
 
-      return XYZ(vx1-vx0,vy1-vy0,vz1-vz0)*inv_epsilon2;
+      return XYZ(vx1-vx0,vy1-vy0,vz1-vz0)*inv_epsilon2();
     }
   
 FUNCTION_END(FunctionGradientGeneralised)
@@ -119,15 +119,15 @@ FUNCTION_BEGIN(FunctionDivergence,0,1,false,0)
    */
   virtual const XYZ evaluate(const XYZ& p) const
     {      
-      const XYZ vx0(arg(0)(p-XYZ(epsilon,0.0,0.0)));
-      const XYZ vy0(arg(0)(p-XYZ(0.0,epsilon,0.0)));
-      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,epsilon)));
+      const XYZ vx0(arg(0)(p-XYZ(epsilon(),0.0,0.0)));
+      const XYZ vy0(arg(0)(p-XYZ(0.0,epsilon(),0.0)));
+      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,epsilon())));
 
-      const XYZ vx1(arg(0)(p+XYZ(epsilon,0.0,0.0)));
-      const XYZ vy1(arg(0)(p+XYZ(0.0,epsilon,0.0)));
-      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,epsilon)));
+      const XYZ vx1(arg(0)(p+XYZ(epsilon(),0.0,0.0)));
+      const XYZ vy1(arg(0)(p+XYZ(0.0,epsilon(),0.0)));
+      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,epsilon())));
 
-      return (vx1-vx0+vy1-vy0+vz1-vz0)*inv_epsilon2;
+      return (vx1-vx0+vy1-vy0+vz1-vz0)*inv_epsilon2();
     }
   
 FUNCTION_END(FunctionDivergence)
@@ -141,17 +141,17 @@ FUNCTION_BEGIN(FunctionCurl,0,1,false,0)
    */
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ vx0(arg(0)(p-XYZ(epsilon,0.0,0.0)));
-      const XYZ vy0(arg(0)(p-XYZ(0.0,epsilon,0.0)));
-      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,epsilon)));
+      const XYZ vx0(arg(0)(p-XYZ(epsilon(),0.0,0.0)));
+      const XYZ vy0(arg(0)(p-XYZ(0.0,epsilon(),0.0)));
+      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,epsilon())));
 
-      const XYZ vx1(arg(0)(p+XYZ(epsilon,0.0,0.0)));
-      const XYZ vy1(arg(0)(p+XYZ(0.0,epsilon,0.0)));
-      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,epsilon)));
+      const XYZ vx1(arg(0)(p+XYZ(epsilon(),0.0,0.0)));
+      const XYZ vy1(arg(0)(p+XYZ(0.0,epsilon(),0.0)));
+      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,epsilon())));
 
-      const XYZ d_dx((vx1-vx0)*inv_epsilon2);
-      const XYZ d_dy((vy1-vy0)*inv_epsilon2);
-      const XYZ d_dz((vz1-vz0)*inv_epsilon2);
+      const XYZ d_dx((vx1-vx0)*inv_epsilon2());
+      const XYZ d_dy((vy1-vy0)*inv_epsilon2());
+      const XYZ d_dz((vz1-vz0)*inv_epsilon2());
 
       const real dzdy=d_dy.z();
       const real dydz=d_dz.y();
@@ -180,15 +180,15 @@ FUNCTION_BEGIN(FunctionScalarLaplacian,0,1,false,0)
   virtual const XYZ evaluate(const XYZ& p) const
     {
       // Need to use a bigger baseline to avoid noise being amplified
-      const XYZ vx0(arg(0)(p-XYZ(big_epsilon,0.0,0.0)));
-      const XYZ vy0(arg(0)(p-XYZ(0.0,big_epsilon,0.0)));
-      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,big_epsilon)));
+      const XYZ vx0(arg(0)(p-XYZ(big_epsilon(),0.0,0.0)));
+      const XYZ vy0(arg(0)(p-XYZ(0.0,big_epsilon(),0.0)));
+      const XYZ vz0(arg(0)(p-XYZ(0.0,0.0,big_epsilon())));
 
       const XYZ v(arg(0)(p));
 
-      const XYZ vx1(arg(0)(p+XYZ(big_epsilon,0.0,0.0)));
-      const XYZ vy1(arg(0)(p+XYZ(0.0,big_epsilon,0.0)));
-      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,big_epsilon)));
+      const XYZ vx1(arg(0)(p+XYZ(big_epsilon(),0.0,0.0)));
+      const XYZ vy1(arg(0)(p+XYZ(0.0,big_epsilon(),0.0)));
+      const XYZ vz1(arg(0)(p+XYZ(0.0,0.0,big_epsilon())));
 
       const XYZ dx0(v-vx0);
       const XYZ dy0(v-vy0);
@@ -198,7 +198,7 @@ FUNCTION_BEGIN(FunctionScalarLaplacian,0,1,false,0)
       const XYZ dy1(vy1-v);
       const XYZ dz1(vz1-v);
 
-      return XYZ(dx1-dx0+dy1-dy0+dz1-dz0)/(big_epsilon*big_epsilon);
+      return XYZ(dx1-dx0+dy1-dy0+dz1-dz0)/(big_epsilon()*big_epsilon());
     }
   
 FUNCTION_END(FunctionScalarLaplacian)
