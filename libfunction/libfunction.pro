@@ -26,6 +26,7 @@ HEADERS += \
         functions_friezegroup_spinhop.h \
         functions_geometry.h \
         functions_gradient.h \
+        functions_juliabrot.h \
         functions_kaleidoscope.h \
         functions_magnitude.h \
         functions_noise.h \
@@ -62,7 +63,8 @@ SOURCES += \
         functions_friezegroup_spinhop.cpp \
         functions_geometry.cpp \
         functions_gradient.cpp \
-        functions_kaleidoscope.h \
+        functions_juliabrot.cpp \
+        functions_kaleidoscope.cpp \
         functions_magnitude.cpp \
         functions_noise.cpp \
         functions_spherical.cpp \

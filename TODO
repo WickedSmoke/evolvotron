@@ -9,6 +9,8 @@ Conventional Mode
 - Break up big function*.h files.
 - Use boost random number generator in random.h
 
+- "Favourite function" doesn't work ?
+
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
   Presumably there are 3D versions too.
