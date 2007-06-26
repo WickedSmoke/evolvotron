@@ -53,8 +53,7 @@ FUNCTION_BEGIN(FunctionMagnitude,3,1,false,0)
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const real m=arg(0)(p).magnitude();
-      return XYZ(m*param(0),m*param(1),m*param(2));
+      return arg(0)(p).magnitude()*XYZ(param(0),param(1),param(2));
     }
   
 FUNCTION_END(FunctionMagnitude)

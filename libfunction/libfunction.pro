@@ -21,6 +21,7 @@ HEADERS += \
         function_transform_generalised.h \
         functions.h \
         functions_arithmetic.h \
+        functions_choose.h \
         functions_friezegroup_hop.h \
         functions_friezegroup_spinhop.h \
         functions_geometry.h \
@@ -56,6 +57,7 @@ SOURCES += \
         function_transform_generalised.cpp \
         functions.cpp \
         functions_arithmetic.cpp \
+        functions_choose.cpp \
         functions_friezegroup_hop.cpp \
         functions_friezegroup_spinhop.cpp \
         functions_geometry.cpp \
