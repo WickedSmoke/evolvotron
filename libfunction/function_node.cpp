@@ -31,18 +31,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_node.h"
 #include "function_node_info.h"
 
-#include "function_core.h"
-#include "function_transform_generalised.h"
-#include "function_compose_triple.h"
 #include "function_compose_pair.h"
-#include "function_pre_transform.h"
-#include "function_post_transform.h"
-#include "function_null.h"
-#include "functions_noise.h"
-#include "functions.h"
-#include "function_top.h"
-#include "functions_friezegroup_hop.h"
-#include "functions_friezegroup_spinhop.h"
+#include "function_core.h"
 
 std::auto_ptr<boost::ptr_vector<FunctionNode> > FunctionNode::cloneargs() const
 {

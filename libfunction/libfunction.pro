@@ -30,6 +30,7 @@ HEADERS += \
         functions_kaleidoscope.h \
         functions_magnitude.h \
         functions_noise.h \
+        functions_render.h \
         functions_spherical.h \
         functions_spiral.h \
         functions_transform.h \
@@ -67,6 +68,7 @@ SOURCES += \
         functions_kaleidoscope.cpp \
         functions_magnitude.cpp \
         functions_noise.cpp \
+        functions_render.cpp \
         functions_spherical.cpp \
         functions_spiral.cpp \
         functions_transform.cpp \

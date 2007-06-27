@@ -25,6 +25,7 @@
 #define _function_core_h_
 
 #include "useful.h"
+#include "function_node.h"
 #include "function_boilerplate.h"
 
 //------------------------------------------------------------------------------------------
