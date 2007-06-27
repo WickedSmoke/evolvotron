@@ -6,14 +6,16 @@ VERSION=`./VERSION`
 
 cd ..
 
-FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,CHANGES,VERSION,USAGE,BUGS,configure,doxygen.cfg,mktgz,mkdoc,text_to_markup.py}`
+# NB Don't ship automatically generated .h file or contents of pkg
+PRUNE='-name moc -prune -o -name obj -prune -o -name pkg_* -prune -o -name usage_text.h -prune'
+
+FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,CHANGES,VERSION,USAGE,BUGS,configure,doxygen.cfg,mktgz,mkdoc,text_to_markup.py} evolvotron/libfunction/update_register_all_functions`
 FILES_EXTRAS=`ls evolvotron/extras/{README,spheremap.pov,spheremap.sh}`
 
-# NB Don't ship automatically generated .h file or contents of pkg
-FILES_H=`find evolvotron -name pkg -prune -o -name moc -prune -o -name usage_text.h -prune -o -name '*.h' -print`
-FILES_CPP=`find evolvotron -name pkg -prune -o -name moc -prune -o -name '*.cpp' -print`
-FILES_PRO=`find evolvotron -name pkg -prune -o -name moc -prune -o -name '*.pro' -print`
-FILES_MAN=`find evolvotron/man -name '*.1' -print`
+FILES_H=`find evolvotron ${PRUNE} -o -name '*.h' -print`
+FILES_CPP=`find evolvotron ${PRUNE} -o -name '*.cpp' -print`
+FILES_PRO=`find evolvotron ${PRUNE} -o -name '*.pro' -print`
+FILES_MAN=`find evolvotron/man ${PRUNE} -name '*.1' -print`
 
 FILES="$FILES_MISC $FILES_EXTRAS $FILES_H $FILES_CPP $FILES_PRO $FILES_MAN"
 
