@@ -14,8 +14,9 @@ Conventional Mode
     real    2m15.379s
     user    1m33.862s
     sys     0m9.645s
-  and there's further to go with Qt headers, and headers for end-products
-  (only evolvotron has own precompiled; is needed as Qt changes root name .h -> .gch)
+  and there's further to go with Qt headers (qwidget, qstring, qvbox obvious contenders),
+  and headers for end-products (only evolvotron has own precompiled; is needed as Qt changes
+  root name .h -> .gch)
 
 - Rationalize warped and blended versions of FriezeGroup functions
 - Add blending versions of symmetry functions.
