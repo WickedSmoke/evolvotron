@@ -26,7 +26,6 @@
 #include <qthread.h>
 #include <qmutex.h>
 
-#include "useful.h"
 #include "mutatable_image.h"
 
 class MutatableImageDisplay;

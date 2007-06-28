@@ -21,8 +21,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class MutatableImageDisplay.
 */
 
-#include <iostream>
-#include <fstream>
+#include "libevolvotron_precompiled.h"
+
+#include "mutatable_image_display.h"
 
 #include <qstring.h>
 #include <qimage.h>
@@ -33,7 +34,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qfiledialog.h>
 #include <qpngio.h>
 
-#include "mutatable_image_display.h"
 #include "mutatable_image_display_big.h"
 #include "evolvotron_main.h"
 #include "mutatable_image_computer_task.h"

@@ -24,8 +24,6 @@
 #ifndef _functions_kaleidoscope_h_
 #define _functions_kaleidoscope_h_
 
-#include "useful.h"
-#include "function_registry.h"
 #include "function_boilerplate.h"
 
 //------------------------------------------------------------------------------------------

@@ -20,8 +20,13 @@
   \brief Implementation for FunctionTop
 */
 
+#include "libfunction_precompiled.h"
+
 #define INSTANTIATE_FN
 #include "function_top.h"
+
+#include "mutation_parameters.h"
+#include "transform.h"
 
 const XYZ FunctionTop::evaluate(const XYZ& p) const
 {

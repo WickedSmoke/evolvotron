@@ -21,8 +21,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \todo Eliminate need to include function.h (and instantiate lots of stuff) by moving more into function_node.h/.cpp
 */
 
-#include <boost/bind.hpp>
+#include "libevolvotron_precompiled.h"
+
+#include "evolvotron_main.h"
+
 #include <time.h>
+
 #include <qapplication.h>
 #include <qcursor.h>
 #include <qdatetime.h>
@@ -31,18 +35,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qregexp.h>
 
 #include "args.h"
-#include "evolvotron_main.h"
-#include "xyz.h"
-#include "function_node.h"
-#include "function_top.h"
-#include "function_pre_transform.h"
-#include "function_post_transform.h"
-
 #include "dialog_about.h"
 #include "dialog_help.h"
 #include "dialog_mutation_parameters.h"
 #include "dialog_functions.h"
 #include "dialog_favourite.h"
+#include "function_node.h"
+#include "function_post_transform.h"
+#include "function_pre_transform.h"
+#include "function_top.h"
 
 void EvolvotronMain::History::purge()
 {

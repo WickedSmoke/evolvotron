@@ -27,8 +27,6 @@
 #ifndef _functions_friezegroup_hop_h_
 #define _functions_friezegroup_hop_h_
 
-#include "useful.h"
-#include "function_registry.h"
 #include "function_boilerplate.h"
 
 //------------------------------------------------------------------------------------------

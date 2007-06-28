@@ -20,5 +20,7 @@
   \brief Implementation for FunctionFriezeGroupSpinhop functions.
 */
 
+#include "libfunction_precompiled.h"
+
 #define INSTANTIATE_FN
 #include "functions_friezegroup_spinhop.h"

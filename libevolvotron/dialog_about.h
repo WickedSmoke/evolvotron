@@ -29,9 +29,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qtextedit.h>
 #include <qpushbutton.h>
 
-#include "useful.h"
-#include "license.h"
-
 //! Provides an "About" dialog box.
 /*! About dialog displays author info, web addresses and license info.
  */

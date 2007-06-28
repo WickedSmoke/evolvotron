@@ -23,16 +23,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   Trying to leave registration in functions.cpp doesn't trigger a link.
 */
 
-#include <algorithm>
-#include <iostream>
-
-#include "margin.h"
-
+#include "libfunction_precompiled.h"
 #include "function_node.h"
-#include "function_node_info.h"
 
 #include "function_compose_pair.h"
 #include "function_core.h"
+#include "function_node_info.h"
+#include "function_registry.h"
+#include "margin.h"
+#include "mutation_parameters.h"
 
 std::auto_ptr<boost::ptr_vector<FunctionNode> > FunctionNode::cloneargs() const
 {

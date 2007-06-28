@@ -20,16 +20,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class MutatableImage.
 */
 
-#include <iostream>
-#include <vector>
+#include "libevolvotron_precompiled.h"
+
+#include "mutatable_image.h"
+
 #include <stack>
 
 #include <qxml.h>
 
-#include "mutatable_image.h"
 #include "function_node_info.h"
 #include "function_top.h"
 #include "mutatable_image_display_big.h"
+#include "transform.h"
 
 MutatableImage::MutatableImage(std::auto_ptr<FunctionTop>& r,bool sinz,bool sm,bool lock)
   :

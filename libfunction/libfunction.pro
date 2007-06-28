@@ -5,6 +5,8 @@ include (../common.pro)
 
 CONFIG += staticlib
 
+PRECOMPILED_HEADER = libfunction_precompiled.h
+
 HEADERS += \
         function_boilerplate.h \
         function_compose_pair.h \

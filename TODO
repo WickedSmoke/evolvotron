@@ -3,13 +3,28 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
+- Precompiled headers:
+  tricky because of #define INSTANTIATE_FN but can put some stuff in
+  Before, takes 
+    real    2m44.362s
+    user    2m28.961s
+    sys     0m11.573s
+  to ./BUILD from distclean.
+  First attempt reaches:
+    real    2m15.379s
+    user    1m33.862s
+    sys     0m9.645s
+  and there's further to go with Qt headers,
+  plus it's not clear end-products are actually picking up PCHs
+  (pretty sure they're not).
+
 - Rationalize warped and blended versions of FriezeGroup functions
 - Add blending versions of symmetry functions.
 
 - Break up big function*.h files.
 - Use boost random number generator in random.h
 
-- "Favourite function" doesn't work ?
+- "Favourite function" pulldown doesn't work ?
 
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
@@ -18,6 +33,8 @@ Conventional Mode
 - Boost post-1.33 changes usage of ptr_map, apparently.  (Waiting for 1.34 to hit Debian Testing).
 - MutatableImageComputer::push_todo could handle defer a bit better.
   Actually, complete overhaul of queue/computer kill/defer/abort would be better.
+  Computers should check priority on head of queue periodically and switch if there's
+  something better to work on.
 - Move InstanceCounted out of useful.h (and #include <map> with it)
 - Changing lock state will trigger a redisplay.
   Lock state would be better associated with displays than MutatableImages,

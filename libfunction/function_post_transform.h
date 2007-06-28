@@ -26,9 +26,8 @@
 #ifndef _function_post_transform_h_
 #define _function_post_transform_h_
 
-#include "xyz.h"
-#include "function_node.h"
 #include "function_boilerplate.h"
+#include "transform.h"
 
 //! Function class returning leaf node evaluated at given position; result is then transfomed by a 12-component linear transform.
 FUNCTION_BEGIN(FunctionPostTransform,12,1,false,0)

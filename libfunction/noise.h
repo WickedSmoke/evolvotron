@@ -23,9 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _noise_h_
 #define _noise_h_
 
-#include "useful.h"
-#include "xyz.h"
-
 //! Perlin noise generator.
 class Noise
 {

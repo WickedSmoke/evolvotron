@@ -27,7 +27,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qpixmap.h>
 #include <qpopupmenu.h>
 
-#include "useful.h"
 #include "mutatable_image.h"
 #include "mutatable_image_computer.h"
 #include "dialog_mutatable_image_display.h"

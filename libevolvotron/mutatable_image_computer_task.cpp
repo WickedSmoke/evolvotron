@@ -20,6 +20,8 @@
   \brief Implementation of class MutatableImageComputerTask
 */
 
+#include "libevolvotron_precompiled.h"
+
 #include "mutatable_image_computer_task.h"
 
 MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,const boost::shared_ptr<const MutatableImage>& img,const QSize& s,uint f,uint lev,unsigned long long int n)

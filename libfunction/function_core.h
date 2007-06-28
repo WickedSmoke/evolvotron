@@ -24,9 +24,8 @@
 #ifndef _function_core_h_
 #define _function_core_h_
 
-#include "useful.h"
-#include "function_node.h"
 #include "function_boilerplate.h"
+#include "transform.h"
 
 //------------------------------------------------------------------------------------------
 
@@ -40,7 +39,7 @@ FUNCTION_BEGIN(FunctionConstant,3,0,false,FnCore)
     }
 
   //! Returns true, obviously.
-  /*! One of the few cases this method is overriden; most (all) other no-argument functions should return false*/
+  /*! One of the few cases this method is overriden; most (all?) other no-argument functions should return false*/
   virtual const bool is_constant() const
     {
       return true;

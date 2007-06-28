@@ -23,11 +23,6 @@
 #ifndef _mutatable_image_h_
 #define _mutatable_image_h_
 
-#include <iosfwd>
-
-#include "useful.h"
-#include "function_node.h"
-
 class FunctionNull;
 class FunctionTop;
 

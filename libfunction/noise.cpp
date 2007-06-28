@@ -20,7 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of Noise class
 */
 
+#include "libfunction_precompiled.h"
+
 #include "noise.h"
+#include "random.h"
 
 Noise::Noise(uint seed)
 {

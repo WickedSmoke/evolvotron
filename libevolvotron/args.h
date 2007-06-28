@@ -24,12 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _args_h_
 #define _args_h_
 
-#include <sstream>
-
-#include "useful.h"
-#include <vector>
-#include <string>
-
 //! Class for sanitizing access to commandline arguments.
 /*! The main purpose is to allow >> operators to be used to read args into parameters.
  */

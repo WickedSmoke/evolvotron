@@ -23,11 +23,8 @@
 #ifndef _functions_noise_h_
 #define _functions_noise_h_
 
-#include "useful.h"
 #include "noise.h"
-#include "function_registry.h"
 #include "function_boilerplate.h"
-
 
 //------------------------------------------------------------------------------------------
 
@@ -127,7 +124,5 @@ FUNCTION_BEGIN(FunctionMultiscaleNoiseThreeChannel,0,0,false,0)
   static Noise _noise2;
 
 FUNCTION_END(FunctionMultiscaleNoiseThreeChannel)
-
-
 
 #endif

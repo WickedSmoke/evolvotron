@@ -20,17 +20,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class DialogFunctions.
 */
 
-#include <iostream>
+#include "libevolvotron_precompiled.h"
+
+#include "dialog_functions.h"
 
 #include <qtooltip.h>
 #include <qgroupbox.h>
 #include <qtabwidget.h>
 
-#include "vbox_scrollview.h"
-
-#include "dialog_functions.h"
 #include "evolvotron_main.h"
 #include "function_registry.h"
+#include "vbox_scrollview.h"
 
 /*! About dialog displays author info, web addresses and license info.
  */

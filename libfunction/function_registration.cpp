@@ -20,6 +20,8 @@
   \brief Implementation for class FunctionRegistration
 */
 
+#include "libfunction_precompiled.h"
+
 #include "function_registration.h"
 
 const char*const function_classification_name[FnClassifications]=

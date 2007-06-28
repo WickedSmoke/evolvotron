@@ -23,9 +23,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _transform_factory_h_
 #define _transform_factory_h_
 
-#include "useful.h"
-#include "random.h"
-#include "transform.h"
+class Random01;
+class Transform;
 
 //! Abstract base class for classes creating Transforms
 class TransformFactory 

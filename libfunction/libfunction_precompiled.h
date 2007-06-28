@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -17,25 +17,16 @@
 */
 
 /*! \file 
-  \brief Interface for class FunctionNull 
-  This class would normally live in functions.h (and is included and registered there), 
-  but is split out so it can be efficiently used by MutatableImage.
+  \brief Precompiled header for libfunction
 */
 
-#ifndef _function_null_h_
-#define _function_null_h_
+#ifndef _libfunction_precompiled_h_
+#define _libfunction_precompiled_h_
 
-#include "function_boilerplate.h"
+#include "useful.h"
+#include "function_node.h"
+#include "xyz.h"
 
-//! Function class simply forwarding to leaf node
-FUNCTION_BEGIN(FunctionNull,0,1,false,0)
-
-  //! Simply return the position argument.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return arg(0)(p);
-    }
-
-FUNCTION_END(FunctionNull)
+// NB Don't include function_boilerplate.h because the details depend on INSTANTIATE_FN define
 
 #endif

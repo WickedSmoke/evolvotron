@@ -20,6 +20,8 @@
   \brief Implementation for class Margin
 */
 
+#include "libfunction_precompiled.h"
+
 #include "margin.h"
 
 std::ostream& Margin::write(std::ostream& out) const

@@ -23,10 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _transform_h_
 #define _transform_h_
 
-#include "useful.h"
-#include "xyz.h"
-#include <vector>
-
 //! Class representing 3d linear transforms.
 /*! Not much functionality currently because is used mainly to pass info around for warp functionality
  */

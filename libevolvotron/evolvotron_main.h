@@ -23,16 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _evolvotron_main_h_
 #define _evolvotron_main_h_
 
-extern "C"
-{
 #include <time.h>
-}
-
-#include <boost/shared_ptr.hpp>
-#include <deque>
-#include <map>
-#include <set>
-#include <vector>
 
 #include <qmenubar.h>
 #include <qstatusbar.h>
@@ -42,8 +33,6 @@ extern "C"
 #include <qtimer.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
-
-#include "useful.h"
 
 #include "function_registry.h"
 #include "transform_factory.h"

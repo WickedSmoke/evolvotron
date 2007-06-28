@@ -21,11 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Mutate functions searching for a match to a given image.
 */
 
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <string>
-#include <memory>
+#include "libevolvotron_precompiled.h"
+
 #include <unistd.h>
 
 #include <qimage.h>
@@ -34,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "args.h"
 #include "mutatable_image.h"
+#include "mutation_parameters.h"
 
 //! A QImage which deletes it's data on destruction
 class QImageWithData

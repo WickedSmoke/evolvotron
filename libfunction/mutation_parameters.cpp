@@ -20,10 +20,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class MutationParameters.
 */
 
+#include "libfunction_precompiled.h"
+
 #include "mutation_parameters.h"
 #include "function_registration.h"
 #include "function_registry.h"
-#include "function_boilerplate.h"
 #include "function_core.h"
 
 MutationParameters::MutationParameters(uint seed,QObject* parent)

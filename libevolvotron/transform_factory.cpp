@@ -20,7 +20,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation for class TransformFactory.
 */
 
+#include "libevolvotron_precompiled.h"
+
 #include "transform_factory.h"
+
+#include "random.h"
+#include "transform.h"
 
 const Transform TransformFactoryRandomWarpXY::operator()(Random01& r01) const
 {

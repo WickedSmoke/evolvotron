@@ -23,12 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _function_node_info_h_
 #define _function_node_info_h_
 
-#include <boost/ptr_container/ptr_vector.hpp>
-#include <string>
-#include <vector>
-
-#include "useful.h"
-
 //! Trivial class used during XML parsing.
 /*! Encapsulates enough info to build a function tree from
  */

@@ -5,6 +5,8 @@ include (../common.pro)
 
 CONFIG += staticlib
 
+PRECOMPILED_HEADER = libevolvotron_precompiled.h
+
 INCLUDEPATH += ../libfunction
 
 HEADERS += \

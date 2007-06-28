@@ -25,8 +25,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <qwidget.h>
 
-#include "useful.h"
-
 class EvolvotronMain;
 
 //! Intended to be used as a top-level widget holding a single MutatableImageDisplay

@@ -7,9 +7,11 @@ cat <<EOF >> register_all_functions.cpp
 
 /* Should be updated by update_register_all_functions script when new functions are added */
 
-#include "register_all_functions.h"
-#include "function_boilerplate.h"
+#include "libfunction_precompiled.h"
 
+#include "register_all_functions.h"
+
+#include "function_boilerplate.h"
 EOF
 
 HEADERS=`grep -l FUNCTION_BEGIN *.h | sed 's/function_boilerplate.h//'`

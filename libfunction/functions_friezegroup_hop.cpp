@@ -20,6 +20,8 @@
   \brief Implementation for FunctionFriezeGroupHop
 */
 
+#include "libfunction_precompiled.h"
+
 #define INSTANTIATE_FN
 #include "functions_friezegroup_hop.h"
 

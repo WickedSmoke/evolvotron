@@ -20,10 +20,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class DialogFavourite.
 */
 
+#include "libevolvotron_precompiled.h"
+
+#include "dialog_favourite.h"
+
 #include <qgroupbox.h>
 #include <qpushbutton.h>
 
-#include "dialog_favourite.h"
 #include "function_registry.h"
 #include "evolvotron_main.h"
 

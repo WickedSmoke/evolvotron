@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -22,9 +22,6 @@
 
 #ifndef _margin_h_
 #define _margin_h_
-
-#include <iostream>
-#include "useful.h"
 
 //! Utility class for outputting the margin for a given level of indentation.
 class Margin

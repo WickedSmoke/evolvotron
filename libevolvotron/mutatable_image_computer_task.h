@@ -23,11 +23,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _mutatable_image_computer_task_h_
 #define _mutatable_image_computer_task_h_
 
-#include <vector>
-
 #include <qsize.h>
 
-#include "useful.h"
 #include "mutatable_image.h"
 #include "mutatable_image_display.h"
 

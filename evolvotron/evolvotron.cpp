@@ -32,14 +32,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \todo For new features to be added, see the TODO file.
  */
 
-#include <iostream>
-#include <fstream>
+#include "libevolvotron_precompiled.h"
+
 #include <sched.h>
 
 #include <qapplication.h>
 
 #include "args.h"
-
 #include "evolvotron_main.h"
 
 //! Application code

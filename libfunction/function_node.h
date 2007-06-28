@@ -23,25 +23,15 @@
 #ifndef _function_node_h_
 #define _function_node_h_
 
-#include <vector>
-#include <map>
-#include <iostream>
-#include <string>
-
-#include "useful.h"
-#include "xyz.h"
-#include "transform.h"
-
-#include "mutation_parameters.h"
-
-#include "function_registry.h"
-
 class FunctionNodeInfo;
 class FunctionTop;
 class FunctionPreTransform;
 class FunctionPostTransform;
 class FunctionRegistry;
 class MutatableImage;
+class MutationParameters;
+
+#include "xyz.h"
 
 //! Abstract base class for all kinds of mutatable image node.
 /*! MutatableImage declared a friend to help constification of the public accessors.

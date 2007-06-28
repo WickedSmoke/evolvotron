@@ -34,7 +34,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qmainwindow.h>
 #include <qstatusbar.h>
 
-#include "useful.h"
 #include "mutation_parameters.h"
 
 //! Provides an "About" dialog box, manages an instance of MutationParameters.

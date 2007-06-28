@@ -20,18 +20,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class MutatableImageComputer.
 */
 
-#include <iostream>
+#include "libevolvotron_precompiled.h"
 
 #include "mutatable_image_computer.h"
-#include "mutatable_image.h"
-#include "mutatable_image_computer_farm.h"
-#include "mutatable_image_computer_task.h"
-
-// This is needed for tanh
-#include <cmath>
 
 // Needed for getpriority/setprioirty
 #include <sys/resource.h>
+
+#include "mutatable_image.h"
+#include "mutatable_image_computer_farm.h"
+#include "mutatable_image_computer_task.h"
 
 MutatableImageComputer::MutatableImageComputer(MutatableImageComputerFarm* frm)
   :

@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class DialogMutatableImageDisplay.
 */
 
+#include "libevolvotron_precompiled.h"
+
 #include "dialog_mutatable_image_display.h"
 
 DialogMutatableImageDisplay::DialogMutatableImageDisplay(QWidget* parent)

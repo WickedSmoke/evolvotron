@@ -24,8 +24,6 @@
 #ifndef _functions_magnitude_h_
 #define _functions_magnitude_h_
 
-#include "useful.h"
-#include "function_registry.h"
 #include "function_boilerplate.h"
 
 //------------------------------------------------------------------------------------------

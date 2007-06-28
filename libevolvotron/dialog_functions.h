@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _dialog_functions_h_
 #define _dialog_functions_h_
 
-#include <iostream>
-
 #include <qdialog.h>
 #include <qvbox.h>
 #include <qgrid.h>
@@ -36,7 +34,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qmainwindow.h>
 #include <qstatusbar.h>
 
-#include "useful.h"
 #include "mutation_parameters.h"
 
 class EvolvotronMain;

@@ -26,9 +26,8 @@
 #ifndef _function_top_h_
 #define _function_top_h_
 
-#include "xyz.h"
-#include "transform.h"
-#include "function_node.h"
+class Transform;
+
 #include "function_boilerplate.h"
 
 //! Function intended primarily to be the top level function node.

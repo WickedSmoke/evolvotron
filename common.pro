@@ -3,7 +3,7 @@
 # qmake should NOT be executed on this file directly
 
 # append debug or release
-CONFIG+= qt thread stl exceptions release       #release  #debug
+CONFIG+= qt thread stl precompile_header exceptions release       #release  #debug
 
 #######################################
 # Version numbering.  VERSION_NUMBER should have been set on the qmake command line (see .configure script)

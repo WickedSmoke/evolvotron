@@ -21,5 +21,7 @@
   Except there's nothing here because it's all in the header.
 */
 
+#include "libfunction_precompiled.h"
+
 #define INSTANTIATE_FN
 #include "function_pre_transform.h"

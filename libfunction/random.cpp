@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class Random and derived classes.
 */
 
+#include "libfunction_precompiled.h"
+
 #include "random.h"
 
 Random01::Random01(uint seed)

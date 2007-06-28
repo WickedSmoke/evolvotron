@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2003 Tim Day
+// Copyright (C) 2007 Tim Day
 /*! \page License License
 
 This program is free software; you can redistribute it and/or
@@ -21,8 +21,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class Args.
 */
 
+#include "libevolvotron_precompiled.h"
+
 #include "args.h"
-#include <iostream>
 
 Args* Args::_global=0;
 

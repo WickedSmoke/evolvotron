@@ -23,8 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _xyz_h_
 #define _xyz_h_
 
-#include "useful.h"
-#include "random.h"
+class Random01;
 
 //! Class to hold vectors in 3D cartesian co-ordinates.
 /*! Direct access to the x,y,z members is not permitted.

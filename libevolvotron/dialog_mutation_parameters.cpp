@@ -20,10 +20,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class DialogMutationParameters.
 */
 
-#include <iostream>
-#include <qtooltip.h>
+#include "libevolvotron_precompiled.h"
 
 #include "dialog_mutation_parameters.h"
+
+#include <qtooltip.h>
 
 /*! About dialog displays author info, web addresses and license info.
  */

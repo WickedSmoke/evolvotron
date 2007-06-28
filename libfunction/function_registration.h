@@ -23,10 +23,6 @@
 #ifndef _function_registration_h_
 #define _function_registration_h_
 
-#include "useful.h"
-
-#include <string>
-
 class FunctionNode;
 class FunctionRegistry;
 class MutationParameters;

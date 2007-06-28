@@ -21,5 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   Except there's virtually nothing here because it's all in the header (templates).
 */
 
-#include "function_boilerplate.h"
+#include "libfunction_precompiled.h"
 
+#include "function_boilerplate.h"

@@ -20,8 +20,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation for class XYZ.
 */
 
+#include "libfunction_precompiled.h"
+
 #include "xyz.h"
-#include <iostream>
+
+#include "random.h"
 
 /*! Outputs whitespace-separated co-ordinates.
  */

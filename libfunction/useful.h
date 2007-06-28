@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2007 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -23,18 +23,25 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _useful_h_
 #define _useful_h_
 
+#include <algorithm>
+//#include <boost/bind.hpp>
 #include <boost/ptr_container/ptr_map.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/random.hpp>
 #include <boost/shared_array.hpp>
 #include <boost/shared_ptr.hpp>
 #include <cassert>
 #include <cmath>
 #include <cstdlib>
-#include <iosfwd>
+#include <deque>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
 #include <sstream>
+#include <vector>
 
 //! Convenience typedef.
 typedef unsigned int uint;

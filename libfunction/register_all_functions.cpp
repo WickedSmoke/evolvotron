@@ -2,9 +2,11 @@
 
 /* Should be updated by update_register_all_functions script when new functions are added */
 
-#include "register_all_functions.h"
-#include "function_boilerplate.h"
+#include "libfunction_precompiled.h"
 
+#include "register_all_functions.h"
+
+#include "function_boilerplate.h"
 REGISTER_DCL(FunctionComposePair);
 REGISTER_DCL(FunctionComposeTriple);
 REGISTER_DCL(FunctionConstant);

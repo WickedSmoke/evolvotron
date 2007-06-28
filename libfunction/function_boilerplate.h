@@ -24,10 +24,8 @@
 #ifndef _function_boilerplate_h_
 #define _function_boilerplate_h_
 
-#include "useful.h"
-#include "function_registry.h"
-#include "function_node.h"
 #include "function_node_info.h"
+#include "function_registry.h"
 #include "margin.h"
 
 //! Template class to generate boilerplate for virtual methods.

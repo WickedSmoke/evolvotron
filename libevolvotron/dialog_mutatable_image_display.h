@@ -28,8 +28,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qlabel.h>
 #include <qpushbutton.h>
 
-#include "useful.h"
-
 //! Provides a "Properties" style dialog box for manipulating 
 /*! Make this modal for simplicity: 
   avoids spawned images changing underneath us, 

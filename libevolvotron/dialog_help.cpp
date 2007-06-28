@@ -20,7 +20,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Implementation of class DialogHelp.
 */
 
+#include "libevolvotron_precompiled.h"
+
 #include "dialog_help.h"
+
+#include "license.h"
 
 //! The text to be displayed
 /*! \todo Should obtain this from processing external (X)HTML docs, if there were any.

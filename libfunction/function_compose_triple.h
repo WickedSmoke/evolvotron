@@ -23,8 +23,6 @@
 #ifndef _function_compose_triple_h_
 #define _function_compose_triple_h_
 
-#include "useful.h"
-#include "function_registry.h"
 #include "function_boilerplate.h"
 
 FUNCTION_BEGIN(FunctionComposeTriple,0,3,false,0)

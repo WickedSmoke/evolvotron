@@ -21,5 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   Except there's nothing here because it's all in the header.
 */
 
+#include "libfunction_precompiled.h"
+
 #define INSTANTIATE_FN
 #include "functions_transform.h"

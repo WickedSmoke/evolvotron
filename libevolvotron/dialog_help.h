@@ -28,9 +28,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qtextbrowser.h>
 #include <qpushbutton.h>
 
-#include "useful.h"
-#include "license.h"
-
 //! Provides a dialog box with some user documentation.
 /*! More of a quick reference guide than a manual.
  */
