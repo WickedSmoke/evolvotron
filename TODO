@@ -223,3 +223,10 @@ Extras
 - evolvotron_match hasn't been seen to do much but converge
   towards general overall color of target.  
   Try matching in edge-detected space or something ?
+
+Rejected
+--------
+- Add #ifdef INSTANTIATE_FN (or move to .cpp) around evaluate methods
+  implemented in .h ?  Only really justifiable for fn .h included in multiple
+  places (not that many of them; NB function registration doesn't see these).
+  Not worth bothering with.
