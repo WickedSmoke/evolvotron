@@ -25,6 +25,7 @@ HEADERS += \
 	mutatable_image_computer_task.h \
 	mutatable_image_display.h \
 	mutatable_image_display_big.h \
+        mutation_parameters_qobject.h \
         transform_factory.h \
         usage_text.h \
         vbox_scrollview.h
@@ -45,6 +46,7 @@ SOURCES += \
 	mutatable_image_computer_task.cpp \
 	mutatable_image_display.cpp \
 	mutatable_image_display_big.cpp \
+        mutation_parameters_qobject.cpp \
         transform_factory.cpp \
         vbox_scrollview.cpp
 

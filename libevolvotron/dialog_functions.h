@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qmainwindow.h>
 #include <qstatusbar.h>
 
-#include "mutation_parameters.h"
+#include "mutation_parameters_qobject.h"
 
 class EvolvotronMain;
 
@@ -96,7 +96,7 @@ class DialogFunctions : public QDialog
   //! Instance of MutationParameters under dialog control.
   /*! \warning Careful of modifying things which might make DialogMutationParameters get out of sync
    */
-  MutationParameters*const _mutation_parameters;
+  MutationParametersQObject*const _mutation_parameters;
 
   //! Top level holder of all the dialog content.
   QVBox* _dialog_content;
@@ -124,7 +124,7 @@ class DialogFunctions : public QDialog
 
  public:
   //! Constructor.
-  DialogFunctions(EvolvotronMain* parent,MutationParameters* mp);
+  DialogFunctions(EvolvotronMain* parent,MutationParametersQObject* mp);
 
   //! Destructor.
   virtual ~DialogFunctions();

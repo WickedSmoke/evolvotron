@@ -23,13 +23,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "libfunction_precompiled.h"
 
 #include "mutation_parameters.h"
+
 #include "function_registration.h"
 #include "function_registry.h"
 #include "function_core.h"
 
-MutationParameters::MutationParameters(uint seed,QObject* parent)
-  :QObject(parent)
-  ,_function_registry(new FunctionRegistry())
+MutationParameters::MutationParameters(uint seed)
+  :_function_registry(new FunctionRegistry())
   ,_r01(seed)
   ,_r_negexp(seed,1.0)
 {
@@ -74,7 +74,7 @@ void MutationParameters::reset()
 
   recalculate_function_stuff();
 
-  emit changed();
+  report_change();
 }
 
 void MutationParameters::general_cool(real f)
@@ -90,7 +90,7 @@ void MutationParameters::general_cool(real f)
   _probability_iterations_change_step*=f;
   _probability_iterations_change_jump*=f;
 
-  emit changed();
+  report_change();
 }
 
 /*! This returns a random bit of image tree.
@@ -166,7 +166,7 @@ void MutationParameters::change_function_weighting(const FunctionRegistration* f
 {
   _function_weighting[fn]=w;
   recalculate_function_stuff();
-  emit changed();
+  report_change();
 }
 
 void MutationParameters::randomize_function_weightings_for_classifications(uint classification_mask)
@@ -186,7 +186,7 @@ void MutationParameters::randomize_function_weightings_for_classifications(uint 
 
   recalculate_function_stuff();
 
-  emit changed();
+  report_change();
 }
 
 const real MutationParameters::get_weighting(const FunctionRegistration* fn)
@@ -218,3 +218,7 @@ void MutationParameters::recalculate_function_stuff()
       _function_pick.insert(std::make_pair(normalised,(*it).first));
     }
 }
+
+void MutationParameters::report_change()
+{}
+

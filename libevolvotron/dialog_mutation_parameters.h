@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qmainwindow.h>
 #include <qstatusbar.h>
 
-#include "mutation_parameters.h"
+#include "mutation_parameters_qobject.h"
 
 //! Provides an "About" dialog box, manages an instance of MutationParameters.
 class DialogMutationParameters : public QDialog
@@ -50,7 +50,7 @@ class DialogMutationParameters : public QDialog
   /*! NB it's fairly important no-one modifies this except through methods of this class
     (or another class responsible for another part), else GUI components will get out of sync
    */
-  MutationParameters*const _mutation_parameters;
+  MutationParametersQObject*const _mutation_parameters;
 
   //! Vertical layout.
   QVBox* _vbox;
@@ -94,7 +94,7 @@ class DialogMutationParameters : public QDialog
 
  public:
   //! Constructor.
-  DialogMutationParameters(QMainWindow* parent,MutationParameters* mp);
+  DialogMutationParameters(QMainWindow* parent,MutationParametersQObject* mp);
 
   //! Destructor.
   virtual ~DialogMutationParameters()

@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2007 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _mutation_parameters_h_
 #define _mutation_parameters_h_
 
-#include <qobject.h>
-
 #include "random.h"
 
 class FunctionNode;
@@ -34,12 +32,10 @@ class FunctionRegistry;
 //! Class encapsulating mutation parameters.
 /*! For example, magnitude of variations, probability of leaves being dropped.
   Also provides a random number generator.
-  Is a QObject so we can use signals to notify clients of state changes.
  */
-class MutationParameters : public QObject
+class MutationParameters
 {
  private:
-  Q_OBJECT
 
   const std::auto_ptr<FunctionRegistry> _function_registry;
 
@@ -106,11 +102,9 @@ class MutationParameters : public QObject
 
  public:
   //! Trivial constructor.
-  MutationParameters(uint seed,QObject* parent);
+  MutationParameters(uint seed);
 
   //! Trivial destructor.
-  /*! virtual becuase Q_OBJECT/slot mechanism involves virtual functions
-   */
   virtual ~MutationParameters();
 
   //! Accessor.
@@ -153,7 +147,7 @@ class MutationParameters : public QObject
   void magnitude_parameter_variation(real v) 
     {
       _magnitude_parameter_variation=v;
-      emit changed();
+      report_change();
     }
 
   //! Accessor.
@@ -165,7 +159,7 @@ class MutationParameters : public QObject
   void probability_parameter_reset(real v) 
     {
       _probability_parameter_reset=v;
-      emit changed();
+      report_change();
     }
 
   //! Accessor.
@@ -177,7 +171,7 @@ class MutationParameters : public QObject
   void probability_glitch(real v)
     {
       _probability_glitch=v;
-      emit changed();
+      report_change();
     }
 
   //! Accessor.
@@ -189,7 +183,7 @@ class MutationParameters : public QObject
   void probability_shuffle(real v)
     {
       _probability_shuffle=v;
-      emit changed();
+      report_change();
     }
 
   //! Accessor.
@@ -201,7 +195,7 @@ class MutationParameters : public QObject
   void probability_insert(real v)
     {
       _probability_insert=v;
-      emit changed();
+      report_change();
     }
 
   //! Accessor.
@@ -213,7 +207,7 @@ class MutationParameters : public QObject
   void probability_substitute(real v)
     {
       _probability_substitute=v;
-      emit changed();
+      report_change();
     }
 
   //! Accessor.
@@ -225,7 +219,7 @@ class MutationParameters : public QObject
   void proportion_constant(real v)
     {
       _proportion_constant=v;
-      emit changed();
+      report_change();
     }
 
   //! Accessor.
@@ -237,7 +231,7 @@ class MutationParameters : public QObject
   void identity_supression(real v)
     {
       _identity_supression=v;
-      emit changed();
+      report_change();
     }
 
   //! Accessor.
@@ -249,7 +243,7 @@ class MutationParameters : public QObject
   void max_initial_iterations(uint v)
     {
       _max_initial_iterations=v;
-      emit changed();
+      report_change();
     }
 
   //! Accessor.
@@ -261,7 +255,7 @@ class MutationParameters : public QObject
   void probability_iterations_change_step(real v)
     {
       _probability_iterations_change_step=v;
-      emit changed();
+      report_change();
     }
 
   //! Accessor.
@@ -273,7 +267,7 @@ class MutationParameters : public QObject
   void probability_iterations_change_jump(real v)
     {
       _probability_iterations_change_jump=v;
-      emit changed();
+      report_change();
     }
 
   //! Accessor.
@@ -285,7 +279,7 @@ class MutationParameters : public QObject
   void proportion_basic(real p)
     {
       _proportion_basic=p;
-      emit changed();
+      report_change();
     }
 
   //! Calculate branching ratio for above calls
@@ -312,9 +306,9 @@ class MutationParameters : public QObject
   //! Return a random function registration, appropriately biased by current settings
   const FunctionRegistration*const random_weighted_function_registration() const;
 
+  //! Intended for Qt-world subclass to override to emit signal. 
+  virtual void report_change();
  public:
- signals:
-  void changed();
 };
 
 #endif

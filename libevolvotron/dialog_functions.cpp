@@ -34,7 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /*! About dialog displays author info, web addresses and license info.
  */
-DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParameters* mp)
+DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObject* mp)
   :QDialog(parent)
   ,_parent(parent)
   ,_mutation_parameters(mp)
