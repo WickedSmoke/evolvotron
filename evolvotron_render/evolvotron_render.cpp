@@ -1,5 +1,5 @@
-// Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Source file for evolvotron_render
+// Copyright (C) 2007 Tim Day
 /*! \page License License
 
 This program is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Standalone renderer for evolvotron function files.
 */
 
-#include "libevolvotron_precompiled.h"
+#include "evolvotron_render_precompiled.h"
 
 #include <qimage.h>
 #include <qstring.h>

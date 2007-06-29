@@ -21,9 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Mutate functions searching for a match to a given image.
 */
 
-#include "libevolvotron_precompiled.h"
-
-#include <unistd.h>
+#include "evolvotron_match_precompiled.h"
 
 #include <qimage.h>
 #include <qstring.h>

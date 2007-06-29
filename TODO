@@ -14,6 +14,10 @@ Conventional Mode
     real    2m15.379s
     user    1m33.862s
     sys     0m9.645s
+  Bit more effort gets to:
+    real    1m48.742s
+    user    1m38.266s
+   sys     0m7.692s
   and there's further to go with Qt headers (qwidget, qstring, qvbox obvious contenders),
   and headers for end-products (only evolvotron has own precompiled; is needed as Qt changes
   root name .h -> .gch)

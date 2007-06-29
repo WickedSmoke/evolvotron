@@ -2,6 +2,8 @@ TEMPLATE = app
 
 include (../common.pro)
 
+PRECOMPILED_HEADER = evolvotron_mutate_precompiled.h
+
 SOURCES += evolvotron_mutate.cpp
 
 DEPENDPATH += ../libevolvotron ../libfunction

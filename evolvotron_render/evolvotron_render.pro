@@ -2,6 +2,8 @@ TEMPLATE = app
 
 include (../common.pro)
 
+PRECOMPILED_HEADER = evolvotron_render_precompiled.h
+
 SOURCES += evolvotron_render.cpp
 
 DEPENDPATH += ../libevolvotron ../libfunction

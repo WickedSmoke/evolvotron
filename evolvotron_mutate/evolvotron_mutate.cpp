@@ -21,15 +21,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   \brief Standalone mutator for evolvotron function files.
 */
 
-#include "libevolvotron_precompiled.h"
+#include "evolvotron_mutate_precompiled.h"
 
 #include <qstring.h>
 #include <qdatetime.h>
-
-extern "C"
-{
-#include <unistd.h>
-}
 
 #include "args.h"
 #include "mutatable_image.h"
