@@ -23,16 +23,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _evolvotron_main_h_
 #define _evolvotron_main_h_
 
-#include <time.h>
-
 #include <qmenubar.h>
 #include <qstatusbar.h>
-#include <qvbox.h>
 #include <qmainwindow.h>
 #include <qgrid.h>
 #include <qtimer.h>
 #include <qpushbutton.h>
-#include <qlabel.h>
 
 #include "function_registry.h"
 #include "transform_factory.h"

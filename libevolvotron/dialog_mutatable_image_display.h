@@ -23,9 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _dialog_mutatable_image_display_h_
 #define _dialog_mutatable_image_display_h_
 
-#include <qdialog.h>
-#include <qvbox.h>
-#include <qlabel.h>
 #include <qpushbutton.h>
 
 //! Provides a "Properties" style dialog box for manipulating 

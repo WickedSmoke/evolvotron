@@ -23,10 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _dialog_functions_h_
 #define _dialog_functions_h_
 
-#include <qdialog.h>
-#include <qvbox.h>
 #include <qgrid.h>
-#include <qlabel.h>
 #include <qspinbox.h>
 #include <qslider.h>
 #include <qpushbutton.h>

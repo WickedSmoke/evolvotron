@@ -23,10 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "evolvotron_match_precompiled.h"
 
-#include <qimage.h>
-#include <qstring.h>
-#include <qdatetime.h>
-
 #include "args.h"
 #include "mutatable_image.h"
 #include "mutation_parameters.h"

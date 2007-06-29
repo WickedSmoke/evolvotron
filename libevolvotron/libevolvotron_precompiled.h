@@ -26,6 +26,14 @@
 
 #include "libfunction_precompiled.h"
 
+#include <qcursor.h>
+#include <qdatetime.h>
+#include <qdialog.h>
+#include <qimage.h>
+#include <qlabel.h>
 #include <qobject.h>
+#include <qstring.h>
+#include <qvbox.h>
+#include <qwidget.h>
 
 #endif
