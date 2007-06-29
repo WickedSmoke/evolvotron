@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2004 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define _dialog_help_h_
 
 #include <qtextbrowser.h>
-#include <qpushbutton.h>
 
 //! Provides a dialog box with some user documentation.
 /*! More of a quick reference guide than a manual.

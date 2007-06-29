@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2005 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "dialog_favourite.h"
 
 #include <qgroupbox.h>
-#include <qpushbutton.h>
 
 #include "function_registry.h"
 #include "evolvotron_main.h"

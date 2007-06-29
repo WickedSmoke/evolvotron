@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "Multiple header include counts (consider move to precompiled):"
+fgrep -h '#include' */*.h */*.cpp  | sort | uniq -c | sort -n | awk '($1>1){print $0;}'

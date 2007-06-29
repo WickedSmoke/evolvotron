@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -22,8 +22,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifndef _dialog_mutatable_image_display_h_
 #define _dialog_mutatable_image_display_h_
-
-#include <qpushbutton.h>
 
 //! Provides a "Properties" style dialog box for manipulating 
 /*! Make this modal for simplicity: 

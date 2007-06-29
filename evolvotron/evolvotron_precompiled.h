@@ -28,6 +28,4 @@
 // Used for determining number of processors.
 #include <sched.h>
 
-#include <qapplication.h>
-
 #endif
