@@ -1,0 +1,84 @@
+#!/bin/bash
+
+FN="$1"
+FN_LOW=`echo "${FN}" | awk '{print tolower($1);}'`
+if [ "${FN}" != "${FN_LOW}" ] ; then echo "Expecting single lower case word" ; exit ; fi
+if [ "${F:0:8}" = "function" ] ; then echo "Not expecting argument to be prefixed 'function' (it will be added)" ; exit ; fi 
+
+F="functions_${FN}"
+Y=`date +%Y`
+WHO=${DEBEMAIL%<*>}
+
+if [ -e ${F}.h ] ; then echo "${F}.h already exists" ; exit ; fi
+if [ -e ${F}.cpp ] ; then echo "${F}.cpp already exists" ; exit ; fi
+
+cat > ${F}.h <<EOF
+// Source file for evolvotron
+// Copyright (C) ${Y} ${WHO}
+/*
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
+/*! \file
+  \brief Interfaces and implementation for specific Function classes.
+*/
+
+#ifndef _functions_${FN}_h_
+#define _functions_${FN}_h_
+
+//------------------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------------------
+
+#endif
+EOF
+
+cat > ${F}.cpp <<EOF
+// Source file for evolvotron
+// Copyright (C) ${Y} ${WHO}
+/*
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
+/*! \file
+  \brief Implementation of specific Function classes.
+  Except there's nothing here because it's all in the header.
+*/
+
+#include "libfunction_precompiled.h"
+
+#include "function_boilerplate_instantiate.h"
+#include "${F}.h"
+
+EOF
+
+echo "Don't forget: "
+echo "  cvs add ${F}.h ${F}.cpp"
+echo "and add to sources and headers in libfunction.pro"
+echo "and"
+echo "  ./update_register_all_functions"
+echo "when done"
