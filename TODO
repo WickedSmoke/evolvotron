@@ -3,28 +3,6 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
-- Precompiled headers:
-  tricky because of #define INSTANTIATE_FN but can put some stuff in
-  Before, takes 
-    real    2m44.362s
-    user    2m28.961s
-    sys     0m11.573s
-  to ./BUILD from distclean.
-  First attempt reaches:
-    real    2m15.379s
-    user    1m33.862s
-    sys     0m9.645s
-  Bit more effort (PCHs for end-products) gets to:
-    real    1m48.742s
-    user    1m38.266s
-    sys     0m7.692s
-  and there's further to go with Qt headers (qwidget, qstring, qvbox obvious contenders)
-  which gets to:
-    real    1m46.201s
-    user    1m37.386s
-    sys     0m7.856s
-  which isn't much better.
-
 - Make libfunction not have any Qt dependencies (just mutation parameters)
 
 - Rationalize warped and blended versions of FriezeGroup functions

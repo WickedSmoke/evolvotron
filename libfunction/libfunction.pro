@@ -14,7 +14,6 @@ HEADERS += \
         function_core.h \
         function_node.h \
         function_node_info.h \
-        function_null.h \
         function_pre_transform.h \
         function_post_transform.h \
         function_registration.h \
@@ -24,6 +23,7 @@ HEADERS += \
         functions.h \
         functions_arithmetic.h \
         functions_choose.h \
+        functions_filter.h \
         functions_friezegroup_hop.h \
         functions_friezegroup_spinhop.h \
         functions_geometry.h \
@@ -52,7 +52,6 @@ SOURCES += \
         function_core.cpp \
         function_node.cpp \
         function_node_info.cpp \
-        function_null.cpp \
         function_pre_transform.cpp \
         function_post_transform.cpp \
         function_registration.cpp \
@@ -62,6 +61,7 @@ SOURCES += \
         functions.cpp \
         functions_arithmetic.cpp \
         functions_choose.cpp \
+        functions_filter.cpp \
         functions_friezegroup_hop.cpp \
         functions_friezegroup_spinhop.cpp \
         functions_geometry.cpp \
