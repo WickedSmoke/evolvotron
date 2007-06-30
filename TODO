@@ -13,6 +13,11 @@ Conventional Mode
 
 - "Favourite function" pulldown doesn't work ?
 
+- Add an icon.  QWidget::setIcon to a QPixmap.
+  Can be set up from xpm in source.  Create using KIconEdit.
+  Better still, set the icon to the last image the user spawned.
+  Would spawn a special compute task, or just rescale completed tasks ?
+  
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
   Presumably there are 3D versions too.

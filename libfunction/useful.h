@@ -53,9 +53,7 @@ typedef unsigned short ushort;
 //! Convenience typedef.
 typedef unsigned char uchar;
 
-//! float turns out to not be sufficient for some noise-amplifying ops (e.g gradient type things) so migrate to double.
-/*! Unfortunately probably kills any potential speed-ups from pre-SSE2 hardware, but it didn't provide much benefit anyway.
- */
+//! float turns out to not be sufficient for some noise-amplifying ops (e.g gradient type things) so choice of double is deliberate.
 typedef double real;
 
 //! Maximum of 2 arguments.
