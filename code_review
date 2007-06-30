@@ -1,4 +1,22 @@
 #!/bin/bash
 
-echo "Multiple header include counts (consider move to precompiled):"
+# Add checks for dumb/bad things in code here.
+
+echo "Multiple header include counts (consider moving common ones to precompileds):"
 fgrep -h '#include' */*.h */*.cpp  | sort | uniq -c | sort -n | awk '($1>1){print $0;}'
+
+echo "Checking .cpp files first include is precompiled header:"
+for F in */*.cpp ; do
+  D=`dirname "${F}"`
+  EXPECT="#include \"${D}_precompiled.h\""
+  ACTUAL=`cat ${F} | grep '#include' | head -1`
+  if [ "${EXPECT}" != "${ACTUAL}" ] ; then echo "${F} :"; echo "  Expected ${EXPECT}, found ${ACTUAL}" ; fi
+done
+
+echo "Checking library .cpp files second include is own header:"
+for F in lib*/*.cpp ; do
+  B=`basename "${F}" .cpp`
+  EXPECT="#include \"${B}.h\""
+  ACTUAL=`cat ${F} | grep '#include' | head -2 | tail -1`
+  if [ "${EXPECT}" != "${ACTUAL}" ] ; then echo "${F} :" ; echo "  Expected ${EXPECT}, found ${ACTUAL}" ; fi
+done
