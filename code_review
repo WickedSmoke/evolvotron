@@ -20,3 +20,9 @@ for F in lib*/*.cpp ; do
   ACTUAL=`cat ${F} | fgrep '#include' | fgrep -v '#include "function_boilerplate_instantiate.h"' | head -2 | tail -1`
   if [ "${EXPECT}" != "${ACTUAL}" ] ; then echo "${F} :" ; echo "  Expected ${EXPECT}, found ${ACTUAL}" ; fi
 done
+
+echo "Checking libfunction/function_*.h files include at most one function definition"
+for F in libfunction/function_*.h ; do
+  N=`fgrep 'FUNCTION_BEGIN(' ${F} | wc -l`
+  if [ ${N} -ge "2" ] ; then echo "${F} :" ; echo "  ${N} function definitions found (expected 1 at most)" ; fi
+done
