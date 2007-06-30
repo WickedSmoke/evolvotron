@@ -184,14 +184,17 @@ std::ostream& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSI
   return Superclass::save_function(out,indent,get_registration().name());
 }
 
+#define FN_CTOR_DCL(FN) FN(const std::vector<real>& p,boost::ptr_vector<FunctionNode>& a,uint iter);
+#define FN_CTOR_IMP(FN) FN::FN(const std::vector<real>& p,boost::ptr_vector<FunctionNode>& a,uint iter) :Superclass(p,a,iter) {}
+
 #define FN_DTOR_DCL(FN) virtual ~FN();
 #define FN_DTOR_IMP(FN) FN::~FN() {}
 
-//! Can't break ctor out easily because it needs all the macro parameters later (solution: use a typedef).
 #define FUNCTION_BEGIN(FN,NP,NA,IT,CL) \
    class FN : public FunctionBoilerplate<FN,NP,NA,IT,CL> \
    {public: \
-     FN(const std::vector<real>& p,boost::ptr_vector<FunctionNode>& a,uint iter) :FunctionBoilerplate<FN,NP,NA,IT,CL>(p,a,iter) {} \
+     typedef FunctionBoilerplate<FN,NP,NA,IT,CL> Superclass; \
+     FN_CTOR_DCL(FN) \
      FN_DTOR_DCL(FN)
 
 //! Macro to push registrations through to registry.
