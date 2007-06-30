@@ -9,6 +9,7 @@ PRECOMPILED_HEADER = libfunction_precompiled.h
 
 HEADERS += \
         function_boilerplate.h \
+        function_boilerplate_instantiate.h \
         function_compose_pair.h \
         function_compose_triple.h \
         function_constant.h \
@@ -22,7 +23,6 @@ HEADERS += \
         function_top.h \
         function_transform.h \
         function_transform_generalised.h \
-        functions.h \
         functions_arithmetic.h \
         functions_choose.h \
         functions_filter.h \
@@ -33,8 +33,10 @@ HEADERS += \
         functions_juliabrot.h \
         functions_kaleidoscope.h \
         functions_magnitude.h \
+        functions_misc.h \
         functions_noise.h \
         functions_render.h \
+        functions_shadow.h \
         functions_spherical.h \
         functions_spiral.h \
         functions_transform.h \
@@ -62,7 +64,6 @@ SOURCES += \
         function_top.cpp \
         function_transform.cpp \
         function_transform_generalised.cpp \
-        functions.cpp \
         functions_arithmetic.cpp \
         functions_choose.cpp \
         functions_filter.cpp \
@@ -73,8 +74,10 @@ SOURCES += \
         functions_juliabrot.cpp \
         functions_kaleidoscope.cpp \
         functions_magnitude.cpp \
+        functions_misc.cpp \
         functions_noise.cpp \
         functions_render.cpp \
+        functions_shadow.cpp \
         functions_spherical.cpp \
         functions_spiral.cpp \
         functions_transform.cpp \
@@ -92,5 +95,5 @@ SOURCES += \
 # 
 asm.target = asm
 asm.commands = $(CXX) -S $(CXXFLAGS) $(INCPATH) $<
-asm.depends =  functions.cpp
+asm.depends =  functions_magnitude.cpp
 QMAKE_EXTRA_UNIX_TARGETS += asm

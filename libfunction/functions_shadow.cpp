@@ -24,4 +24,4 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "libfunction_precompiled.h"
 
 #include "function_boilerplate_instantiate.h"
-#include "functions.h"
+#include "functions_shadow.h"

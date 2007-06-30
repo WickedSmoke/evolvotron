@@ -200,7 +200,7 @@ std::ostream& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSI
 //! Macro to push registrations through to registry.
 /*! Used by auto_functions.h
 */
-#define REGISTER(r,FN) r.name_and_register(#FN,FN::get_registration());
+#define REGISTER(R,FN) R.name_and_register(#FN,FN::get_registration());
 #define REGISTER_DCL(FN) extern void register_ ## FN(FunctionRegistry&);
 #define REGISTER_IMP(FN) void register_ ## FN(FunctionRegistry& r){REGISTER(r,FN);}
 

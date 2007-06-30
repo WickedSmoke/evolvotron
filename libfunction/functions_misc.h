@@ -18,11 +18,12 @@
 
 /*! \file
   \brief Interfaces and implementation for specific Function classes.
-  As much as possible of the implementation should be pushed into the FunctionBoilerplate template.
+Use this for functions under development, but they should really be split
+out into separate files eventually.
 */
 
-#ifndef _functions_h_
-#define _functions_h_
+#ifndef _functions_misc_h_
+#define _functions_misc_h_
 
 #include "function_boilerplate.h"
 
@@ -332,36 +333,7 @@ FUNCTION_END(FunctionFriezeGroupSpinsidleWarpedFreeZ)
 
 //------------------------------------------------------------------------------------------
 
-//! Sum of two evaluations of a function, one sampled at an offset and weighted.
-FUNCTION_BEGIN(FunctionShadow,4,1,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return
-	arg(0)(p)+param(3)*arg(0)(p+XYZ(param(0),param(1),param(2)));
-    }
-  
-FUNCTION_END(FunctionShadow)
-
-
-//------------------------------------------------------------------------------------------
-
-//! Like FunctionShadow but the offset is obtained from a function.
-FUNCTION_BEGIN(FunctionShadowGeneralised,1,2,false,0)
-
-  //! Evaluate function.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return
-	arg(0)(p)+param(0)*arg(0)(p+arg(1)(p));
-    }
-  
-FUNCTION_END(FunctionShadowGeneralised)
-
-//------------------------------------------------------------------------------------------
-
-//! Multiply x and y by z
+//! Multiply x and y by z.
 FUNCTION_BEGIN(FunctionCone,0,0,false,0)
 
   //! Evaluate function.
