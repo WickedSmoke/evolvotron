@@ -11,7 +11,8 @@ HEADERS += \
         function_boilerplate.h \
         function_compose_pair.h \
         function_compose_triple.h \
-        function_core.h \
+        function_constant.h \
+        function_identity.h \
         function_node.h \
         function_node_info.h \
         function_pre_transform.h \
@@ -19,6 +20,7 @@ HEADERS += \
         function_registration.h \
         function_registry.h \
         function_top.h \
+        function_transform.h \
         function_transform_generalised.h \
         functions.h \
         functions_arithmetic.h \
@@ -49,7 +51,8 @@ SOURCES += \
         function_boilerplate.cpp \
         function_compose_pair.cpp \
         function_compose_triple.cpp \
-        function_core.cpp \
+        function_constant.h \
+        function_identity.h \
         function_node.cpp \
         function_node_info.cpp \
         function_pre_transform.cpp \
@@ -57,6 +60,7 @@ SOURCES += \
         function_registration.cpp \
         function_registry.cpp \
         function_top.cpp \
+        function_transform.cpp \
         function_transform_generalised.cpp \
         functions.cpp \
         functions_arithmetic.cpp \

@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -17,48 +17,14 @@
 */
 
 /*! \file
-  \brief Interfaces and implementation for certain core Function classes.
-  Split out from functions.h as included in mutation_parameters.cpp
+  \brief Interfaces and implementation for specific Function class.
 */
 
-#ifndef _function_core_h_
-#define _function_core_h_
+#ifndef _function_transform_h_
+#define _function_transform_h_
 
 #include "function_boilerplate.h"
 #include "transform.h"
-
-//------------------------------------------------------------------------------------------
-
-//! Function class representing a constant value.
-FUNCTION_BEGIN(FunctionConstant,3,0,false,FnCore)
-  
-  //! Returns the constant value
-  virtual const XYZ evaluate(const XYZ&) const
-    {
-      return XYZ(param(0),param(1),param(2));
-    }
-
-  //! Returns true, obviously.
-  /*! One of the few cases this method is overriden; most (all?) other no-argument functions should return false*/
-  virtual const bool is_constant() const
-    {
-      return true;
-    }
-
-FUNCTION_END(FunctionConstant)
-
-//------------------------------------------------------------------------------------------
-
-//! Function class simply returning the position argument.
-FUNCTION_BEGIN(FunctionIdentity,0,0,false,FnCore)
-
-  //! Simply return the position argument.
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return p;
-    }
-
-FUNCTION_END(FunctionIdentity)
 
 //------------------------------------------------------------------------------------------
 
