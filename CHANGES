@@ -18,6 +18,7 @@ From release 0.4.0:
  - Compute threads run at lower priority.
  - About dialog displays number of threads.
  - Use precompiled headers (2m45s down to 1m45s).
+ - code_review script
 
 From release 0.3.1:
  - Version to 0.4.0

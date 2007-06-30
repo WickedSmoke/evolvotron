@@ -26,7 +26,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "function_registration.h"
 #include "function_registry.h"
-#include "function_core.h"
+#include "function_constant.h"
+#include "function_identity.h"
+#include "function_transform.h"
 
 MutationParameters::MutationParameters(uint seed)
   :_function_registry(new FunctionRegistry())

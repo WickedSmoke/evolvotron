@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2004,2005,2007 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -18,16 +18,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /*! \file
   \brief Implementation of class FunctionNode and derived classes.
-  Also include all function definition headers here becuase code from this compile module
-  is included in any built executable and this sucks all the classes in.
-  Trying to leave registration in functions.cpp doesn't trigger a link.
 */
 
 #include "libfunction_precompiled.h"
 #include "function_node.h"
 
 #include "function_compose_pair.h"
-#include "function_core.h"
+#include "function_constant.h"
 #include "function_node_info.h"
 #include "function_registry.h"
 #include "margin.h"
