@@ -24,7 +24,7 @@
 #ifndef _functions_spherical_h_
 #define _functions_spherical_h_
 
-#include "function_boilerplate.h"
+ 
 
 //------------------------------------------------------
 

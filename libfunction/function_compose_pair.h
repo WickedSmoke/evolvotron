@@ -23,7 +23,7 @@
 #ifndef _function_compose_pair_h_
 #define _function_compose_pair_h_
 
-#include "function_boilerplate.h"
+ 
 
 FUNCTION_BEGIN(FunctionComposePair,0,2,false,0)
 

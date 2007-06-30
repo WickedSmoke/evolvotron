@@ -24,7 +24,7 @@
 #ifndef _functions_kaleidoscope_h_
 #define _functions_kaleidoscope_h_
 
-#include "function_boilerplate.h"
+ 
 
 //------------------------------------------------------------------------------------------
 

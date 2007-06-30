@@ -21,8 +21,8 @@ for F in lib*/*.cpp ; do
   if [ "${EXPECT}" != "${ACTUAL}" ] ; then echo "${F} :" ; echo "  Expected ${EXPECT}, found ${ACTUAL}" ; fi
 done
 
-echo "Checking libfunction/function_*.h files include at most one function definition"
+echo "Checking libfunction/function_*.h files include at most one function definition:"
 for F in libfunction/function_*.h ; do
   N=`fgrep 'FUNCTION_BEGIN(' ${F} | wc -l`
-  if [ ${N} -ge "2" ] ; then echo "${F} :" ; echo "  ${N} function definitions found (expected 1 at most)" ; fi
+  if [ ${N} -ge "2" ] ; then echo "${F} :" ; echo "  ${N} function definitions found (filename suggests one at the most)" ; fi
 done

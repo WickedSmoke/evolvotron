@@ -23,7 +23,7 @@
 #ifndef _function_constant_h_
 #define _function_constant_h_
 
-#include "function_boilerplate.h"
+ 
 
 //------------------------------------------------------------------------------------------
 

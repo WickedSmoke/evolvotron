@@ -6,7 +6,7 @@
 
 #include "register_all_functions.h"
 
-#include "function_boilerplate.h"
+ 
 REGISTER_DCL(FunctionComposePair);
 REGISTER_DCL(FunctionComposeTriple);
 REGISTER_DCL(FunctionConstant);

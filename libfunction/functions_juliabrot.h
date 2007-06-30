@@ -24,7 +24,7 @@
 #ifndef _functions_juliabrot_h_
 #define _functions_juliabrot_h_
 
-#include "function_boilerplate.h"
+ 
 
 //------------------------------------------------------------------------------------------
 

@@ -24,7 +24,7 @@
 #define _functions_noise_h_
 
 #include "noise.h"
-#include "function_boilerplate.h"
+ 
 
 //------------------------------------------------------------------------------------------
 

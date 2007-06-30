@@ -24,7 +24,7 @@
 #ifndef _functions_spiral_h_
 #define _functions_spiral_h_
 
-#include "function_boilerplate.h"
+ 
 
 //------------------------------------------------------
 

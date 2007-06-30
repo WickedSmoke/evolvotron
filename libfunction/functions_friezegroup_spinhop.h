@@ -27,7 +27,7 @@
 #ifndef _functions_friezegroup_spinhop_h_
 #define _functions_friezegroup_spinhop_h_
 
-#include "function_boilerplate.h"
+ 
 
 //------------------------------------------------------------------------------------------
 
