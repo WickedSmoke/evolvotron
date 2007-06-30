@@ -22,7 +22,7 @@
 
 #include "libfunction_precompiled.h"
 
-#define INSTANTIATE_FN
+#include "function_boilerplate_instantiate.h"
 #include "function_top.h"
 
 #include "mutation_parameters.h"

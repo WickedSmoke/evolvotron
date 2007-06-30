@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2005,2007 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -16,12 +16,19 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-/*! \file
-  \brief Implementation for FunctionPreTransform
-  Except there's nothing here because it's all in the header.
+/*! \file 
+  \brief Modifications to function_boilerplate macros.
+  Include this in function .cpp files before the header is included.
+  (This used to be simulated by putting #define INSTANTIATE_FN in front of function_boilerplate.h,
+  but we wanted function_boilerplate.h to go in precompiled header.
 */
 
-#include "libfunction_precompiled.h"
+#ifndef _function_boilerplate_instantiate_h_
+#define _function_boilerplate_instantiate_h_
 
-#include "function_boilerplate_instantiate.h"
-#include "function_pre_transform.h"
+#undef FUNCTION_END
+
+//! Replace definition to obtain concrete implementations
+#define FUNCTION_END(FN) };FN_DTOR_IMP(FN);REGISTER_IMP(FN);
+
+#endif

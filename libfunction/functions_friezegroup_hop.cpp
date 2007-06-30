@@ -22,6 +22,6 @@
 
 #include "libfunction_precompiled.h"
 
-#define INSTANTIATE_FN
+#include "function_boilerplate_instantiate.h"
 #include "functions_friezegroup_hop.h"
 

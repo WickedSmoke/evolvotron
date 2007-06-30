@@ -3,9 +3,9 @@
 From release 0.4.0:
  - Version to 0.5.0dev
  - Lists of functions in alphabetic order.
- - New FunctionTop at top level.
+ - New FunctionTop always at top level.
  - New functions: Frieze groups.
- - Constantness of functions more conservative (less overrides) and hopefully not buggy.
+ - Constantness of functions more conservative (less overrides) and hopefully less buggy.
  - Final colour space transform range more constrained to keep colours sane.
  - More sensible mutation of top level spatial transform (less arbitrary shearing).
  - Note that above changes mean old saved functions will appear different.

@@ -31,8 +31,6 @@ class FunctionRegistry;
 class MutatableImage;
 class MutationParameters;
 
-#include "xyz.h"
-
 //! Abstract base class for all kinds of mutatable image node.
 /*! MutatableImage declared a friend to help constification of the public accessors.
  */

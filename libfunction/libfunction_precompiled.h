@@ -23,10 +23,10 @@
 #ifndef _libfunction_precompiled_h_
 #define _libfunction_precompiled_h_
 
+// Ordering is important here because all headers assume all precompiled headers preceed them.
 #include "useful.h"
-#include "function_node.h"
 #include "xyz.h"
-
-// NB Don't include function_boilerplate.h because the details depend on INSTANTIATE_FN define
+#include "function_node.h"
+#include "function_boilerplate.h"
 
 #endif

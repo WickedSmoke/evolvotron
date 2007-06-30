@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2007 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #ifndef _function_boilerplate_h_
 #define _function_boilerplate_h_
 
+#include "function_node.h"
 #include "function_node_info.h"
 #include "function_registry.h"
 #include "margin.h"
@@ -77,8 +78,6 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
   //! Save this node.
   virtual std::ostream& save_function(std::ostream& out,uint indent) const;
 };
-
-#ifdef INSTANTIATE_FN
 
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION> 
 FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::FunctionBoilerplate(const std::vector<real>& p,boost::ptr_vector<FunctionNode>& a,uint iter)
@@ -185,12 +184,10 @@ std::ostream& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSI
   return Superclass::save_function(out,indent,get_registration().name());
 }
 
-
-#endif
-
 #define FN_DTOR_DCL(FN) virtual ~FN();
 #define FN_DTOR_IMP(FN) FN::~FN() {}
 
+//! Can't break ctor out easily because it needs all the macro parameters later (solution: use a typedef).
 #define FUNCTION_BEGIN(FN,NP,NA,IT,CL) \
    class FN : public FunctionBoilerplate<FN,NP,NA,IT,CL> \
    {public: \
@@ -204,10 +201,6 @@ std::ostream& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSI
 #define REGISTER_DCL(FN) extern void register_ ## FN(FunctionRegistry&);
 #define REGISTER_IMP(FN) void register_ ## FN(FunctionRegistry& r){REGISTER(r,FN);}
 
-#ifdef INSTANTIATE_FN
-#define FUNCTION_END(FN) };FN_DTOR_IMP(FN);REGISTER_IMP(FN);
-#else
 #define FUNCTION_END(FN) };REGISTER_DCL(FN);
-#endif
 
 #endif
