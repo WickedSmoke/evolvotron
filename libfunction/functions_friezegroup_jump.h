@@ -41,61 +41,11 @@ FUNCTION_BEGIN(FunctionFriezeGroupJump,1,1,false,FnStructure)
     {
       const real x=modulusf(p.x(),1.0);
       const real y=fabs(p.y());
-      return arg(0)(XYZ(x,y,param(0)));
+      const real z=maximum(0.0,param(0))*p.z();
+      return arg(0)(XYZ(x,y,z));
     }
   
 FUNCTION_END(FunctionFriezeGroupJump)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupJumpWarped,4,2,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real dx=XYZ(param(0),param(1),param(2))%arg(1)(XYZ(0.0,fabs(p.y()),0.0));
-      const real x=modulusf(p.x()-dx,1.0)+dx;
-      const real y=fabs(p.y());
-      return arg(0)(XYZ(x,y,param(3)));
-    }
-
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();  // Warp function makes no difference if primary argument is constant
-    }
-  
-FUNCTION_END(FunctionFriezeGroupJumpWarped)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupJumpFreeZ,0,1,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real x=modulusf(p.x(),1.0);
-      const real y=fabs(p.y());
-      return arg(0)(XYZ(x,y,p.z()));
-    }
-  
-FUNCTION_END(FunctionFriezeGroupJumpFreeZ)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupJumpWarpedFreeZ,3,2,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real dx=XYZ(param(0),param(1),param(2))%arg(1)(XYZ(0.0,fabs(p.y()),0.0));
-      const real x=modulusf(p.x()-dx,1.0)+dx;
-      const real y=fabs(p.y());
-      return arg(0)(XYZ(x,y,p.z()));
-    }
-  
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();  // Warp function makes no difference if primary argument is constant
-    }
-
-FUNCTION_END(FunctionFriezeGroupJumpWarpedFreeZ)
 
 //------------------------------------------------------------------------------------------
 

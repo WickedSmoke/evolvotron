@@ -44,89 +44,11 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinsidle,1,1,false,FnStructure)
     {
       const real x=trianglef(p.x(),0.5);
       const real y=(modulusf(p.x()+0.5,2.0)<1.0 ? p.y() : -p.y());
-      return arg(0)(XYZ(x,y,param(0)));
+      const real z=maximum(0.0,param(0))*p.z();
+      return arg(0)(XYZ(x,y,z));
     }
   
 FUNCTION_END(FunctionFriezeGroupSpinsidle)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupSpinsidleWarped,4,2,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real dx=p.y()*(XYZ(param(0),param(1),param(2))%arg(1)(XYZ(0.0,fabs(p.y()),0.0)));
-      const bool flipped_unit=(modulusf(p.x(),2.0)>1.0);
-      const bool flipped_element=(modulusf(p.x(),1.0)>0.5+(flipped_unit ? -dx : dx));
-
-      real x;
-      real y;
-      if (flipped_unit)
-	{
-	  if (flipped_element) {x=modulusf(1.0-p.x(),1.0);y=p.y();}
-	  else {x=modulusf(p.x(),1.0);y=-p.y();}
-	}
-      else
-	{
-	  if (flipped_element) {x=modulusf(1.0-p.x(),1.0);y=-p.y();}
-	  else {x=modulusf(p.x(),1.0);y=p.y();}
-	}
-
-      return arg(0)(XYZ(x,y,param(3)));
-    }
-
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();  // Warp function makes no difference if primary argument is constant
-    }
-  
-FUNCTION_END(FunctionFriezeGroupSpinsidleWarped)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupSpinsidleFreeZ,0,1,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real x=trianglef(p.x(),0.5);
-      const real y=(modulusf(p.x()+0.5,2.0)<1.0 ? p.y() : -p.y());
-      return arg(0)(XYZ(x,y,p.z()));
-    }
-  
-FUNCTION_END(FunctionFriezeGroupSpinsidleFreeZ)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupSpinsidleWarpedFreeZ,3,2,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const real dx=p.y()*(XYZ(param(0),param(1),param(2))%arg(1)(XYZ(0.0,fabs(p.y()),0.0)));
-      const bool flipped_unit=(modulusf(p.x(),2.0)>1.0);
-      const bool flipped_element=(modulusf(p.x(),1.0)>0.5+(flipped_unit ? -dx : dx));
-
-      real x;
-      real y;
-      if (flipped_unit)
-	{
-	  if (flipped_element) {x=modulusf(1.0-p.x(),1.0);y=p.y();}
-	  else {x=modulusf(p.x(),1.0);y=-p.y();}
-	}
-      else
-	{
-	  if (flipped_element) {x=modulusf(1.0-p.x(),1.0);y=-p.y();}
-	  else {x=modulusf(p.x(),1.0);y=p.y();}
-	}
-
-      return arg(0)(XYZ(x,y,p.z()));
-    }
-
-  virtual const bool is_constant() const
-    {
-      return arg(0).is_constant();  // Warp function makes no difference if primary argument is constant
-    }
-  
-FUNCTION_END(FunctionFriezeGroupSpinsidleWarpedFreeZ)
 
 //------------------------------------------------------------------------------------------
 
