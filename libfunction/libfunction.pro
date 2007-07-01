@@ -27,7 +27,12 @@ HEADERS += \
         functions_choose.h \
         functions_filter.h \
         functions_friezegroup_hop.h \
+        functions_friezegroup_jump.h \
+        functions_friezegroup_sidle.h \
         functions_friezegroup_spinhop.h \
+        functions_friezegroup_spinjump.h \
+        functions_friezegroup_spinsidle.h \
+        functions_friezegroup_step.h \
         functions_geometry.h \
         functions_gradient.h \
         functions_juliabrot.h \
@@ -68,7 +73,12 @@ SOURCES += \
         functions_choose.cpp \
         functions_filter.cpp \
         functions_friezegroup_hop.cpp \
+        functions_friezegroup_jump.cpp \
+        functions_friezegroup_sidle.cpp \
         functions_friezegroup_spinhop.cpp \
+        functions_friezegroup_spinjump.cpp \
+        functions_friezegroup_spinsidle.cpp \
+        functions_friezegroup_step.cpp \
         functions_geometry.cpp \
         functions_gradient.cpp \
         functions_juliabrot.cpp \

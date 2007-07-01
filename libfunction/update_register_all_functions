@@ -16,10 +16,6 @@ EOF
 
 HEADERS=`grep -l FUNCTION_BEGIN *.h | sed 's/function_boilerplate.h//'`
 
-#for f in $HEADERS ; do
-#  echo "#include \"$f\"" >> register_all_functions.cpp
-#done
-
 for f in $HEADERS ; do
     sed -f stripcomments.sed "$f" \
 	| grep FUNCTION_BEGIN \
