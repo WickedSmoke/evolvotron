@@ -18,16 +18,19 @@
 
 /*! \file
   \brief Interfaces and implementation for specific Function classes.
-  As much as possible of the implementation should be pushed into the FunctionBoilerplate template.
-  \warning This file should ONLY be included in function_node.cpp, which instantiates everything.
-  A few functions are allowed to escape "into the wild" (e.g FunctionPreTransform and FunctionPostTransform 
-  which have their own header file)
 */
 
 #ifndef _functions_friezegroup_hop_h_
 #define _functions_friezegroup_hop_h_
 
+/*
+  Hop (Conway p111): no reflections or rotation
+  Just have to cycle x range.
+  
+    o    o    o
+  ---  ---  ---
  
+*/
 
 //------------------------------------------------------------------------------------------
 

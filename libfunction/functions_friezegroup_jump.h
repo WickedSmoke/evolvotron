@@ -23,6 +23,16 @@
 #ifndef _functions_friezegroup_jump_h_
 #define _functions_friezegroup_jump_h_
 
+/* Jump (Conway p1m1): horizontal reflection only
+   Just cycle x range and reflect in y.
+
+     o    o    o
+   ---  ---  ---
+   ---  ---  ---
+     o    o    o
+
+*/
+
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionFriezeGroupJump,1,1,false,FnStructure)

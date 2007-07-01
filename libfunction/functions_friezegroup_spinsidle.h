@@ -23,6 +23,19 @@
 #ifndef _functions_friezegroup_spinsidle_h_
 #define _functions_friezegroup_spinsidle_h_
 
+/*
+  Spinsidle (Conway pma2): Glide reflection with half rotation.
+  Oscillate x, reflect y in alternate x cycles.
+   
+  |oo|    |oo|
+  |  |    |  |
+  |  |    |  |
+      |  |
+      |  |
+      |oo|
+
+*/
+
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionFriezeGroupSpinsidle,1,1,false,FnStructure)

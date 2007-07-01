@@ -23,6 +23,17 @@
 #ifndef _functions_friezegroup_spinjump_h_
 #define _functions_friezegroup_spinjump_h_
 
+/*
+  Spinjump (Conway pmm2): vertical & horizontal reflection and half-rotation.
+  Oscillate x and reflect y.  
+
+    o o     o o
+  --- --- --- ---
+  --- --- --- ---
+    o o     o o
+ */
+
+
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionFriezeGroupSpinjump,1,1,false,FnStructure)

@@ -23,6 +23,15 @@
 #ifndef _functions_friezegroup_sidle_h_
 #define _functions_friezegroup_sidle_h_
 
+/* 
+   Sidle (Conway pm11):  vertical reflection
+   Bounce x backwards and forwards.
+
+  o| |o o| |o
+   | |   | |
+   | |   | |
+*/
+
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionFriezeGroupSidle,1,1,false,FnStructure)

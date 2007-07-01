@@ -18,16 +18,20 @@
 
 /*! \file
   \brief Interfaces and implementation for specific Function classes.
-  As much as possible of the implementation should be pushed into the FunctionBoilerplate template.
-  \warning This file should ONLY be included in function_node.cpp, which instantiates everything.
-  A few functions are allowed to escape "into the wild" (e.g FunctionPreTransform and FunctionPostTransform 
-  which have their own header file)
 */
 
 #ifndef _functions_friezegroup_spinhop_h_
 #define _functions_friezegroup_spinhop_h_
 
- 
+/*
+  Spinhop (Conway p112): Half turn rotation only.
+  Sawtooth x increasing or decreasing depending on which side, with y reflected.
+
+    o     o
+  ---   ---
+     ---   ---
+     o     o
+ */ 
 
 //------------------------------------------------------------------------------------------
 
