@@ -4,15 +4,8 @@ imply it will be done sooner or later than other items!
 Conventional Mode
 -----------------
 
-- Work out to warp and blend (frieze) symmetry groups so they dont look so "cut".
-
-- "Favourite function" pulldown doesn't work ?
-
-- Add an icon.  QWidget::setIcon to a QPixmap.
-  Can be set up from xpm in source.  Create using KIconEdit.
-  Better still, set the icon to the last image the user spawned.
-  Would spawn a special compute task, or just rescale completed tasks ?
-  (Rescale with averaging probably best to avoid trouble).
+- Work out how to add warping/blending to the (frieze) symmetry groups so they dont look so "cut".
+  (Perhaps by some sort of f'(s(f)) wrapper.
   
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
@@ -20,13 +13,17 @@ Conventional Mode
   Presumably there are 3D versions too.
 
 - GPLv3.
+- Set icon from first image bigger than 32x32 rather than fullres.
+  Would need to retain that level specially.
+- Set the icon on enlargement windows to the enlargement's image.
+
 - Boost post-1.33 changes usage of ptr_map, apparently.  (Waiting for 1.34 to hit Debian Testing).
 - MutatableImageComputer::push_todo could handle defer a bit better.
   Actually, complete overhaul of queue/computer kill/defer/abort would be better.
   Computers should check priority on head of queue periodically and switch if there's
   something better to work on.
 - Move InstanceCounted out of useful.h (and #include <map> with it)
-- Changing lock state will trigger a redisplay.
+- Changing lock state triggers a redisplay.
   Lock state would be better associated with displays than MutatableImages,
   but the history archive doesn't support anything but changing images; needs
   additional abstraction of general notion of change of a display's state.

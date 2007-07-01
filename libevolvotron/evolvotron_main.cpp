@@ -363,7 +363,7 @@ void EvolvotronMain::spawn_normal(const boost::shared_ptr<const MutatableImage>&
       new_image=image->mutated(mutation_parameters());
     }
   while (new_image->is_constant());
-
+  
   history().replacing(display);
   display->image(new_image);
 }
@@ -497,6 +497,11 @@ void EvolvotronMain::goodbye(MutatableImageDisplay* disp)
 {
   _history->goodbye(disp);
   _known_displays.erase(disp);  
+}
+
+void EvolvotronMain::set_application_icon(QPixmap& icon)
+{
+  setIcon(icon);
 }
 
 bool EvolvotronMain::is_known(MutatableImageDisplay* disp) const

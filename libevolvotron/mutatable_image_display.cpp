@@ -419,6 +419,14 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
   else if (_full_functionality && event->button()==LeftButton)
     {
       menupick_spawn();
+
+      const QSize icon_size(32,32);
+      const QImage icon_image(_offscreen_image[_offscreen_image.size()/2].smoothScale(icon_size));
+	  
+      QPixmap icon(icon_size);
+      icon.convertFromImage(icon_image,QPixmap::Color);
+
+      _main->set_application_icon(icon);
     }
 }
 
