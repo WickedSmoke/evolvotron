@@ -5,7 +5,13 @@ Conventional Mode
 -----------------
 
 - Work out how to add warping/blending to the (frieze) symmetry groups so they dont look so "cut".
-  (Perhaps by some sort of f'(s(f)) wrapper.
+  (Perhaps by some sort of f'(s(f)) wrapper.  The wrapper would have to have the same symmetry... maybe
+  some trick involving nesting friezegroup functions ?)
+
+- Institute free & clamped-z variants across all friezegroup functions.
+  (Don't like current way it's done with clamped z-scale).
+  But figure out how to get 'em without cut-and-paste (subclass clamped-z ?  Make z-clamp a wrapper function ?)
+  Is this really that big a deal ?
   
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
