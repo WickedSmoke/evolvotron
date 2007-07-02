@@ -499,11 +499,6 @@ void EvolvotronMain::goodbye(MutatableImageDisplay* disp)
   _known_displays.erase(disp);  
 }
 
-void EvolvotronMain::set_application_icon(QPixmap& icon)
-{
-  setIcon(icon);
-}
-
 bool EvolvotronMain::is_known(MutatableImageDisplay* disp) const
 {
   return (_known_displays.find(disp)!=_known_displays.end());

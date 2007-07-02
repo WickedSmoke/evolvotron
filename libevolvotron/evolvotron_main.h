@@ -330,9 +330,6 @@ class EvolvotronMain : public QMainWindow
   //! Called from display destructor to indicate the display is no longer available for the disposal of its completed tasks.
   void goodbye(MutatableImageDisplay*);
 
-  //! Called by displays to set the application icon
-  void set_application_icon(QPixmap&);
-
   //! Returns true if the display is known.
   bool is_known(MutatableImageDisplay* disp) const;
 

@@ -58,6 +58,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
    ,_timer(0)
    ,_resize_in_progress(false)
    ,_current_display_level(0)
+   ,_icon_serial(0LL)
    ,_properties(0)
    ,_menu(0)
    ,_menu_big(0)
@@ -209,6 +210,8 @@ const uint MutatableImageDisplay::simplify_constants(bool single_action)
 
   if (single_action)
     {
+      if (_icon.get()) _main->setIcon(*_icon);
+
       std::stringstream msg;
       msg << "Eliminated " << nodes_eliminated << " redundant function nodes\n";
       QMessageBox::information(this,"Evolvotron",msg.str().c_str(),QMessageBox::Ok);
@@ -328,6 +331,19 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
 	  // Curiously, although smoothscale seems to be noticeably slower, it doesn't look any better.
 	  _offscreen_buffer[f].convertFromImage(_offscreen_image.back().scale(image_size()));
 	}
+
+      // For an icon, take the first image big enough to (hopefully) be filtered down nicely.
+      // The converter seems to auto-create an alpha mask sometimes (images with const-color areas), which is quite cool.
+      const QSize icon_size(32,32);
+      if (task->serial()!=_icon_serial && (task->level()==0 || (task->size().width()>=2*icon_size.width() && task->size().height()>=2*icon_size.height())))
+	{
+	  const QImage icon_image(_offscreen_image[_offscreen_image.size()/2].smoothScale(icon_size));
+	  
+	  _icon=std::auto_ptr<QPixmap>(new QPixmap(icon_size));
+	  _icon->convertFromImage(icon_image,QPixmap::Color);
+
+	  _icon_serial=task->serial();
+	}
 	  
       //! Note the resolution we've displayed so out-of-order low resolution images are dropped
       _current_display_level=task->level();
@@ -418,15 +434,9 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
     }
   else if (_full_functionality && event->button()==LeftButton)
     {
+      if (_icon.get()) _main->setIcon(*_icon);
+
       menupick_spawn();
-
-      const QSize icon_size(32,32);
-      const QImage icon_image(_offscreen_image[_offscreen_image.size()/2].smoothScale(icon_size));
-	  
-      QPixmap icon(icon_size);
-      icon.convertFromImage(icon_image,QPixmap::Color);
-
-      _main->set_application_icon(icon);
     }
 }
 
@@ -662,6 +672,8 @@ void MutatableImageDisplay::menupick_simplify()
  */
 void MutatableImageDisplay::menupick_save_image()
 {
+  if (_icon.get()) _main->setIcon(*_icon);
+
   std::clog << "Save requested...\n";
 
   if (_current_display_level!=0)
@@ -776,6 +788,8 @@ void MutatableImageDisplay::menupick_save_image()
 
 void MutatableImageDisplay::menupick_save_function()
 {
+  if (_icon.get()) _main->setIcon(*_icon);
+
   QString save_filename=QFileDialog::getSaveFileName(".","Functions (*.xml)",this,"Save function","Save image function to an XML file");
   if (!save_filename.isEmpty())
     {
@@ -888,6 +902,8 @@ void MutatableImageDisplay::menupick_properties()
   msg << "Width           \t" << width << "\n";
   msg << "Constant        \t" << 100.0*proportion_constant << "%\n";
 
+  if (_icon.get()) _properties->setIcon(*_icon);
+
   _properties->set_message(msg.str());
   _properties->exec();
 }
@@ -898,6 +914,7 @@ void MutatableImageDisplay::menupick_properties()
 void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
 {
   MutatableImageDisplayBig*const top_level_widget=new MutatableImageDisplayBig(0,main());
+  if (_icon.get()) top_level_widget->setIcon(*_icon);
 
   MutatableImageDisplay* display=0;
   

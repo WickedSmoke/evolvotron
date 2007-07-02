@@ -19,7 +19,7 @@ From release 0.4.0:
  - About dialog displays number of threads.
  - Use precompiled headers (2m45s down to 1m45s).
  - code_review script
- - Set application icon when spawning.
+ - Set an icon on various dialogs and main frame.
 
 From release 0.3.1:
  - Version to 0.4.0
