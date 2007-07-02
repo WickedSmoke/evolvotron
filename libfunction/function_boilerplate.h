@@ -198,7 +198,7 @@ std::ostream& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSI
      FN_DTOR_DCL(FN)
 
 //! Macro to push registrations through to registry.
-/*! Used by auto_functions.h
+/*! Used by register_all_functions.h/register_all_functions.cpp
 */
 #define REGISTER(R,FN) R.name_and_register(#FN,FN::get_registration());
 #define REGISTER_DCL(FN) extern void register_ ## FN(FunctionRegistry&);

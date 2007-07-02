@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2004,2005 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -23,28 +23,44 @@
 #ifndef _functions_friezegroup_hop_h_
 #define _functions_friezegroup_hop_h_
 
-/*
-  Hop (Conway p111): no reflections or rotation
-  Just have to cycle x range.
-  
+//! Hop (Conway p111): no reflections or rotation.
+/* Just have to cycle x range.   
+\verbatim
     o    o    o
-  ---  ---  ---
- 
+  ---  ---  --- 
+\endverbatim
 */
+inline XYZ friezegroup_hop(const XYZ& p)
+{
+  return XYZ
+    (
+     modulusf(p.x(),1.0),
+     p.y(),
+     p.z()
+     );
+}
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHop,1,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const real x=modulusf(p.x(),1.0);
-      const real y=p.y();
-      const real z=maximum(0.0,param(0))*p.z();
-      return arg(0)(XYZ(x,y,z));
+      return arg(0)(friezegroup_hop(p));
     }
   
-FUNCTION_END(FunctionFriezeGroupHop)
+FUNCTION_END(FunctionFriezeGroupHopFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupHopClampZ,1,1,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return arg(0)(friezegroup_hop(XYZ(p.x(),p.y(),param(0))));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupHopClampZ)
 
 //------------------------------------------------------------------------------------------
 

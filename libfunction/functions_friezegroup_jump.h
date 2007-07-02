@@ -23,29 +23,46 @@
 #ifndef _functions_friezegroup_jump_h_
 #define _functions_friezegroup_jump_h_
 
-/* Jump (Conway p1m1): horizontal reflection only
-   Just cycle x range and reflect in y.
-
+//! Jump (Conway p1m1): horizontal reflection only
+/* Just cycle x range and reflect in y.
+\verbatim
      o    o    o
    ---  ---  ---
    ---  ---  ---
      o    o    o
-
+\endverbatim
 */
+inline XYZ friezegroup_jump(const XYZ& p)
+{
+  return XYZ
+    (
+     modulusf(p.x(),1.0),
+     fabs(p.y()),
+     p.z()
+     );
+}
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupJump,1,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupJumpFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const real x=modulusf(p.x(),1.0);
-      const real y=fabs(p.y());
-      const real z=maximum(0.0,param(0))*p.z();
-      return arg(0)(XYZ(x,y,z));
+      return arg(0)(friezegroup_jump(p));
     }
   
-FUNCTION_END(FunctionFriezeGroupJump)
+FUNCTION_END(FunctionFriezeGroupJumpFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupJumpClampZ,1,1,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return arg(0)(friezegroup_jump(XYZ(p.x(),p.y(),param(0))));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpClampZ)
 
 //------------------------------------------------------------------------------------------
 
