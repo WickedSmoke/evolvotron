@@ -41,8 +41,13 @@ inline const XY friezegroup_hop(const XY& p)
 
 //! Something which can be added to friezegroup_hop without breaking symmetry.
 /*
-  f(x,y) has spinhop symmetry if f(xmod1,y)=f(x,y) for all x,y.
-  f(x+dx(x,y),y+dy(x,y)) has spinhop symmetry if d is purely a function of y.
+  A function f(p) has hop symmetry if f(xmod1,y)=f(x,y) for all x,y.
+  This is true for friezegroup_hop.
+  Let g(p)=-d(p)+f(p+d(p)) where f has hop symmetry.
+  If d(p) depends purely on y then g(p) has hop symmetry because then
+  g(xmod1,y)=-d(y)+f(xmod1+dx(y),y+dy(y))
+  g(x,y)    =-d(y)+f(x    +dx(y),y+dy(y))
+  ...hmmm, not convincing...
  */
 inline const XY friezegroup_hop_invariant(const FunctionNode& f,const XYZ& p,const XYZ& k)
 {
