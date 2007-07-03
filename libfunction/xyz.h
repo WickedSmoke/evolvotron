@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -49,6 +49,10 @@ class XYZ
     {
       return rep[2];
     }
+  const XY xy() const
+    {
+      return XY(x(),y());
+    }
 
   void x(real v)
     {
@@ -76,6 +80,14 @@ class XYZ
       rep[0]=v.rep[0];
       rep[1]=v.rep[1];
       rep[2]=v.rep[2];
+    }
+
+  //! Initialise from an XY and a z component.
+  XYZ(const XY& p,real vz)
+    {
+      rep[0]=p.x();
+      rep[1]=p.y();
+      rep[2]=vz;
     }
   
   //! Initialise from separate components.

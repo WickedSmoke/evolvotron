@@ -25,6 +25,7 @@
 
 // Ordering is important here because all headers assume all precompiled headers preceed them.
 #include "useful.h"
+#include "xy.h"
 #include "xyz.h"
 #include "function_node.h"
 #include "function_boilerplate.h" 

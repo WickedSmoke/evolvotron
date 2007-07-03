@@ -30,14 +30,23 @@
   ---  ---  --- 
 \endverbatim
 */
-inline XYZ friezegroup_hop(const XYZ& p)
+inline const XY friezegroup_hop(const XY& p)
 {
-  return XYZ
+  return XY
     (
      modulusf(p.x(),1.0),
-     p.y(),
-     p.z()
+     p.y()
      );
+}
+
+//! Something which can be added to friezegroup_hop without breaking symmetry.
+/*
+  f(x,y) has spinhop symmetry if f(xmod1,y)=f(x,y) for all x,y.
+  f(x+dx(x,y),y+dy(x,y)) has spinhop symmetry if d is purely a function of y.
+ */
+inline const XY friezegroup_hop_invariant(const FunctionNode& f,const XYZ& p,const XYZ& k)
+{
+  return f(p.y()*k).xy();
 }
 
 //------------------------------------------------------------------------------------------
@@ -46,7 +55,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return arg(0)(friezegroup_hop(p));
+      return arg(0)(XYZ(friezegroup_hop(p.xy()),p.z()));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopFreeZ)
@@ -57,10 +66,34 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return arg(0)(friezegroup_hop(XYZ(p.x(),p.y(),param(0))));
+      return arg(0)(XYZ(friezegroup_hop(p.xy()),param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupHopWarpFreeZ,3,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const XY d(friezegroup_hop_invariant(arg(0),p,XYZ(param(0),param(1),param(2))));
+      return arg(1)(XYZ(-d+friezegroup_hop(p.xy()+d),p.z()));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupHopWarpFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupHopWarpClampZ,4,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const XY d(friezegroup_hop_invariant(arg(0),p,XYZ(param(0),param(1),param(2))));
+      return arg(1)(XYZ(-d+friezegroup_hop(p.xy()+d),param(3)));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupHopWarpClampZ)
 
 //------------------------------------------------------------------------------------------
 

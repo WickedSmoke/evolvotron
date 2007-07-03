@@ -52,6 +52,7 @@ HEADERS += \
         register_all_functions.h \
         transform.h \
 	useful.h \
+	xy.h \
 	xyz.h
 
 SOURCES += \
@@ -98,6 +99,7 @@ SOURCES += \
         register_all_functions.cpp \
         transform.cpp \
 	useful.cpp \
+	xy.cpp \
 	xyz.cpp
 
 #########################
