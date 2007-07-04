@@ -102,12 +102,6 @@ FUNCTION_BEGIN(FunctionCellular,0,1,true,FnIterative)
       return XYZ(0.0,0.0,0.0);
     }
   
-  //! Not constant.
-  virtual const bool is_constant()
-    {
-      return false;
-    }
-
  protected:
 
 };

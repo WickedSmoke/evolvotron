@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2005 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -22,8 +22,6 @@
 
 #ifndef _function_compose_triple_h_
 #define _function_compose_triple_h_
-
- 
 
 FUNCTION_BEGIN(FunctionComposeTriple,0,3,false,0)
   
