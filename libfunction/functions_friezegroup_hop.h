@@ -107,4 +107,21 @@ FUNCTION_END(FunctionFriezeGroupHopWarpClampZ)
 
 //------------------------------------------------------------------------------------------
 
+FUNCTION_BEGIN(FunctionFriezeGroupHopBlendClampZ,1,1,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const XY p0(friezegroup_hop(p.xy()));
+      const XY p1(friezegroup_hop(p.xy()+XY(0.5,0.0)));
+      const real a=2.0*trianglef(p0.x(),0.5);
+      const XYZ v0(arg(0)(XYZ(p0,param(0))));
+      const XYZ v1(arg(0)(XYZ(p1,param(0))));
+      return a*v0+(1.0-a)*v1;
+    }
+  
+FUNCTION_END(FunctionFriezeGroupHopBlendClampZ)
+
+
+//------------------------------------------------------------------------------------------
+
 #endif
