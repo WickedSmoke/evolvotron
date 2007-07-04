@@ -23,29 +23,46 @@
 #ifndef _functions_friezegroup_sidle_h_
 #define _functions_friezegroup_sidle_h_
 
-/* 
-   Sidle (Conway pm11):  vertical reflection
-   Bounce x backwards and forwards.
-
+//! Sidle (Conway pm11):  vertical reflection
+/*! Bounce x backwards and forwards.
+\verbatim
   o| |o o| |o
    | |   | |
    | |   | |
+\verbatim
 */
+inline const XY friezegroup_sidle(const XY& p)
+{
+  return XY
+    (
+     trianglef(p.x(),1.0),
+     p.y()
+     );
+}
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupSidle,1,0,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupSidleFreeZ,0,0,false,FnStructure)
   // Don't think this form can be warped without breaking symmetry
      
   virtual const XYZ evaluate(const XYZ& p) const
     {  
-      const real x=trianglef(p.x(),1.0);
-      const real y=p.y();
-      const real z=maximum(0.0,param(0))*p.z();
-      return XYZ(x,y,z);
+      return XYZ(friezegroup_sidle(p.xy()),p.z());
     }
   
-FUNCTION_END(FunctionFriezeGroupSidle)
+FUNCTION_END(FunctionFriezeGroupSidleFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupSidleClampZ,1,0,false,FnStructure)
+  // Don't think this form can be warped without breaking symmetry
+     
+  virtual const XYZ evaluate(const XYZ& p) const
+    {  
+      return XYZ(friezegroup_sidle(p.xy()),param(0));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupSidleClampZ)
 
 //------------------------------------------------------------------------------------------
 

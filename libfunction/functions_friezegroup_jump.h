@@ -24,7 +24,7 @@
 #define _functions_friezegroup_jump_h_
 
 //! Jump (Conway p1m1): horizontal reflection only
-/* Just cycle x range and reflect in y.
+/*! Just cycle x range and reflect in y.
 \verbatim
      o    o    o
    ---  ---  ---

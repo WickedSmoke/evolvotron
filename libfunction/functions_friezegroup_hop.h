@@ -24,7 +24,7 @@
 #define _functions_friezegroup_hop_h_
 
 //! Hop (Conway p111): no reflections or rotation.
-/* Just have to cycle x range.   
+/*! Just have to cycle x range.   
 \verbatim
     o    o    o
   ---  ---  --- 
