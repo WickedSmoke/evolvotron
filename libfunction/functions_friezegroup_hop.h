@@ -43,6 +43,11 @@ inline const XY friezegroup_hop(const XY& p)
 /*
   A function f(p) has hop symmetry if f(xmod1,y)=f(x,y) for all x,y.
   This is true for friezegroup_hop.
+
+  [What do we mean by added ?
+  If f has hop symmetry then f(g(p)) and g(f(p)) for any g do too.
+  f+g has hop symmetry if f and g have hop symmetry]
+
   Let g(p)=-d(p)+f(p+d(p)) where f has hop symmetry.
   If d(p) depends purely on y then g(p) has hop symmetry because then
   g(xmod1,y)=-d(y)+f(xmod1+dx(y),y+dy(y))
@@ -56,46 +61,46 @@ inline const XY friezegroup_hop_invariant(const FunctionNode& f,const XYZ& p,con
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopFreeZ,0,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopFreeZ,0,0,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return arg(0)(XYZ(friezegroup_hop(p.xy()),p.z()));
+      return XYZ(friezegroup_hop(p.xy()),p.z());
     }
   
 FUNCTION_END(FunctionFriezeGroupHopFreeZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopClampZ,1,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopClampZ,1,0,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return arg(0)(XYZ(friezegroup_hop(p.xy()),param(0)));
+      return XYZ(friezegroup_hop(p.xy()),param(0));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopClampZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopWarpFreeZ,3,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopWarpFreeZ,3,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const XY d(friezegroup_hop_invariant(arg(0),p,XYZ(param(0),param(1),param(2))));
-      return arg(1)(XYZ(-d+friezegroup_hop(p.xy()+d),p.z()));
+      return XYZ(-d+friezegroup_hop(p.xy()+d),p.z());
     }
   
 FUNCTION_END(FunctionFriezeGroupHopWarpFreeZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopWarpClampZ,4,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopWarpClampZ,4,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const XY d(friezegroup_hop_invariant(arg(0),p,XYZ(param(0),param(1),param(2))));
-      return arg(1)(XYZ(-d+friezegroup_hop(p.xy()+d),param(3)));
+      return XYZ(-d+friezegroup_hop(p.xy()+d),param(3));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopWarpClampZ)

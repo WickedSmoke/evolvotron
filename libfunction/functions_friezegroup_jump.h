@@ -32,34 +32,33 @@
      o    o    o
 \endverbatim
 */
-inline XYZ friezegroup_jump(const XYZ& p)
+inline XY friezegroup_jump(const XY& p)
 {
-  return XYZ
+  return XY
     (
      modulusf(p.x(),1.0),
-     fabs(p.y()),
-     p.z()
+     fabs(p.y())
      );
 }
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupJumpFreeZ,0,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupJumpFreeZ,0,0,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return arg(0)(friezegroup_jump(p));
+      return XYZ(friezegroup_jump(p.xy()),p.z());
     }
   
 FUNCTION_END(FunctionFriezeGroupJumpFreeZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupJumpClampZ,1,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupJumpClampZ,1,0,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return arg(0)(friezegroup_jump(XYZ(p.x(),p.y(),param(0))));
+      return XYZ(friezegroup_jump(p.xy()),param(0));
     }
   
 FUNCTION_END(FunctionFriezeGroupJumpClampZ)

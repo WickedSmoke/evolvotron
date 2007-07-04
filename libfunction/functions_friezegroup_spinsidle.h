@@ -38,14 +38,14 @@
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupSpinsidle,1,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupSpinsidle,1,0,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const real x=trianglef(p.x(),0.5);
       const real y=(modulusf(p.x()+0.5,2.0)<1.0 ? p.y() : -p.y());
       const real z=maximum(0.0,param(0))*p.z();
-      return arg(0)(XYZ(x,y,z));
+      return XYZ(x,y,z);
     }
   
 FUNCTION_END(FunctionFriezeGroupSpinsidle)

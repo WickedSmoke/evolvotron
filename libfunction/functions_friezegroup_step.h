@@ -35,14 +35,14 @@
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupStep,1,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupStep,1,0,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const real x=(p.y()>0.0 ? modulusf(p.x(),1.0) : modulusf(p.x()+0.5,1.0));
       const real y=fabs(p.y());
       const real z=maximum(0.0,param(0))*p.z();
-      return arg(0)(XYZ(x,y,z));
+      return XYZ(x,y,z);
     }
   
 FUNCTION_END(FunctionFriezeGroupStep)

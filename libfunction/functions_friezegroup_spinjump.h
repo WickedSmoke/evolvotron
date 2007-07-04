@@ -36,7 +36,7 @@
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupSpinjump,1,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupSpinjump,1,0,false,FnStructure)
   // Don't think this form can be warped without breaking symmetry
 
   virtual const XYZ evaluate(const XYZ& p) const
@@ -44,7 +44,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinjump,1,1,false,FnStructure)
       const real x=trianglef(p.x(),1.0);
       const real y=fabs(p.y());
       const real z=maximum(0.0,param(0))*p.z();
-      return arg(0)(XYZ(x,y,z));
+      return XYZ(x,y,z);
     }
   
 FUNCTION_END(FunctionFriezeGroupSpinjump)
