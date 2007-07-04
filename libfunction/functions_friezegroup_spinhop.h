@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2004,2005 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -23,29 +23,45 @@
 #ifndef _functions_friezegroup_spinhop_h_
 #define _functions_friezegroup_spinhop_h_
 
-/*
-  Spinhop (Conway p112): Half turn rotation only.
-  Sawtooth x increasing or decreasing depending on which side, with y reflected.
-
+//! Spinhop (Conway p112): Half turn rotation only.
+/*! Sawtooth x increasing or decreasing depending on which side, with y reflected.
+\verbatim
     o     o
   ---   ---
      ---   ---
      o     o
- */ 
+\verbatim
+*/
+inline const XY friezegroup_spinhop(const XY& p)
+{
+  return XY
+    (
+     (p.y()>0.0 ? modulusf(p.x(),1.0) : 1.0-modulusf(p.x(),1.0)),
+     fabs(p.y())
+     );
+}
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupSpinhop,1,0,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupSpinhopFreeZ,0,0,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const real x=(p.y()>0.0 ? modulusf(p.x(),1.0) : 1.0-modulusf(p.x(),1.0));
-      const real y=fabs(p.y());
-      const real z=maximum(0.0,param(0))*p.z();
-      return XYZ(x,y,z);
+      return XYZ(friezegroup_spinhop(p.xy()),p.z());
     }
 
-FUNCTION_END(FunctionFriezeGroupSpinhop)
+FUNCTION_END(FunctionFriezeGroupSpinhopFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupSpinhopClampZ,1,0,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return XYZ(friezegroup_spinhop(p.xy()),param(0));
+    }
+
+FUNCTION_END(FunctionFriezeGroupSpinhopClampZ)
 
 //------------------------------------------------------------------------------------------
 
