@@ -3,18 +3,8 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
-- Next 2 things have been done for hop and jump.
-
 - Work out how to add warping/blending to the (frieze) symmetry groups so they dont look so "cut".
-  (Perhaps by some sort of f'(s(f)) wrapper.  The wrapper would have to have the same symmetry... maybe
-  some trick involving nesting friezegroup functions ?)
-  Try this:
-  Generate a warp field d(p) with same symmetry....
-
-- Institute free & clamped-z variants across all friezegroup functions.
-  (Don't like current way it's done with clamped z-scale).
-  But figure out how to get 'em without cut-and-paste (subclass clamped-z ?  Make z-clamp a wrapper function ?)
-  Is this really that big a deal ?
+  (Have this for Hop so far).
   
 - Read http://www.mi.sanu.ac.yu/vismath/ana/ana5.htm
 
@@ -23,9 +13,6 @@ Conventional Mode
   Wikipedia http://en.wikipedia.org/wiki/Wallpaper_group is good.
   Presumably there are 3D versions too.
 
-- Look for functions where any child fn being const makes whole fn const.
-  They may benefit from being changed so that all child fns must be const
-  (c.f friezegroup warp fns).
 - GPLv3.
 - Maybe icon setting could do with some more attention; probably there are more things which should set it
   (e.g respawn coloured) and loading could set a flag defering icon setting until that view is ready.
