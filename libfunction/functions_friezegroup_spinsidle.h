@@ -23,32 +23,47 @@
 #ifndef _functions_friezegroup_spinsidle_h_
 #define _functions_friezegroup_spinsidle_h_
 
-/*
-  Spinsidle (Conway pma2): Glide reflection with half rotation.
-  Oscillate x, reflect y in alternate x cycles.
-   
+//! Spinsidle (Conway pma2): Glide reflection with half rotation.
+/*! Oscillate x, reflect y in alternate x cycles.
+\verbatim
   |oo|    |oo|
   |  |    |  |
   |  |    |  |
       |  |
       |  |
       |oo|
-
+\endverbatim
 */
+inline const XY friezegroup_spinsidle(const XY& p)
+{
+  return XY
+    (
+     trianglef(p.x(),0.5),
+     modulusf(p.x()+0.5,2.0)<1.0 ? p.y() : -p.y()
+     );
+}
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupSpinsidle,1,0,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupSpinsidleFreeZ,0,0,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const real x=trianglef(p.x(),0.5);
-      const real y=(modulusf(p.x()+0.5,2.0)<1.0 ? p.y() : -p.y());
-      const real z=maximum(0.0,param(0))*p.z();
-      return XYZ(x,y,z);
+      return XYZ(friezegroup_spinsidle(p.xy()),p.z());
     }
   
-FUNCTION_END(FunctionFriezeGroupSpinsidle)
+FUNCTION_END(FunctionFriezeGroupSpinsidleFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupSpinsidleClampZ,1,0,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return XYZ(friezegroup_spinsidle(p.xy()),param(0));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupSpinsidleClampZ)
 
 //------------------------------------------------------------------------------------------
 

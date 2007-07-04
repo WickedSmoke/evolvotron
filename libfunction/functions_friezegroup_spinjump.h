@@ -23,31 +23,47 @@
 #ifndef _functions_friezegroup_spinjump_h_
 #define _functions_friezegroup_spinjump_h_
 
-/*
-  Spinjump (Conway pmm2): vertical & horizontal reflection and half-rotation.
-  Oscillate x and reflect y.  
-
+//! Spinjump (Conway pmm2): vertical & horizontal reflection and half-rotation.
+/*! Oscillate x and reflect y.  
+\verbatim
     o o     o o
   --- --- --- ---
   --- --- --- ---
     o o     o o
- */
-
+\endverbatim
+*/
+inline const XY friezegroup_spinjump(const XY& p)
+{
+  return XY
+    (
+     trianglef(p.x(),1.0),
+     fabs(p.y())
+     );
+}
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupSpinjump,1,0,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupSpinjumpFreeZ,0,0,false,FnStructure)
   // Don't think this form can be warped without breaking symmetry
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const real x=trianglef(p.x(),1.0);
-      const real y=fabs(p.y());
-      const real z=maximum(0.0,param(0))*p.z();
-      return XYZ(x,y,z);
+      return XYZ(friezegroup_spinjump(p.xy()),p.z());
     }
   
-FUNCTION_END(FunctionFriezeGroupSpinjump)
+FUNCTION_END(FunctionFriezeGroupSpinjumpFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupSpinjumpClampZ,1,0,false,FnStructure)
+  // Don't think this form can be warped without breaking symmetry
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return XYZ(friezegroup_spinjump(p.xy()),param(0));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupSpinjumpClampZ)
 
 //------------------------------------------------------------------------------------------
 

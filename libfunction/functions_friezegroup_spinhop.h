@@ -30,7 +30,7 @@
   ---   ---
      ---   ---
      o     o
-\verbatim
+\endverbatim
 */
 inline const XY friezegroup_spinhop(const XY& p)
 {

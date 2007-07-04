@@ -29,7 +29,7 @@
   o| |o o| |o
    | |   | |
    | |   | |
-\verbatim
+\endverbatim
 */
 inline const XY friezegroup_sidle(const XY& p)
 {
