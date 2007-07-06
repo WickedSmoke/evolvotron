@@ -30,14 +30,39 @@
   ---  ---  --- 
 \endverbatim
 */
-inline const XY friezegroup_hop(const XY& p)
+struct Hop
 {
-  return XY
-    (
-     modulusf(p.x(),1.0),
-     p.y()
-     );
-}
+  const XY operator()(const XY& p) const
+  {
+    return XY
+      (
+       modulusf(p.x(),1.0),
+       p.y()
+       );
+  }
+};
+
+struct FreeZ
+{
+  const float operator()(float z) const
+  {
+    return z;
+  }
+};
+
+struct ClampZ
+{
+  ClampZ(float z)
+    :_z(z)
+  {}
+  const float operator()(float) const
+  {
+    return _z;
+  }
+
+  private:
+  const float _z;
+};
 
 //! Something which can be added to friezegroup_hop without breaking symmetry.
 /*
@@ -54,12 +79,52 @@ inline const XY friezegroup_hop(const XY& p)
   g(x,y)    =-d(y)+f(x    +dx(y),y+dy(y))
   ...hmmm, not convincing...
  */
-inline const XY friezegroup_hop_invariant(const FunctionNode& f,const XYZ& p,const XYZ& k)
+struct HopInvariant
 {
-  return f(p.y()*k).xy();
+  HopInvariant(const FunctionNode& f,const XYZ& k)
+    :_f(f)
+    ,_k(k)
+  {}
+  const XY operator()(const XY& p) const
+  {
+    return _f(_k*p.y()).xy();
+  }
+private:
+  const FunctionNode& _f;
+  const XYZ& _k;
+};
+
+struct HopBlend
+{
+  const boost::tuple<float,XY,XY> operator()(const XY& p) const
+  {
+    return boost::tuple<float,XY,XY>
+      (
+       2.0*trianglef(p.x(),0.5),
+       Hop()(p),
+       Hop()(p+XY(0.5,0.0))
+       );
+  }
+};
+
+template <class SYMMETRY,class ZPOLICY> const XYZ Friezegroup(const XYZ& p,const SYMMETRY& sym,const ZPOLICY& zpol)
+{
+  return XYZ(sym(p.xy()),zpol(p.z()));
 }
 
+template<class SYMMETRY,class WARP,class ZPOLICY> const XYZ Friezegroup(const XYZ& p,const SYMMETRY& sym,const WARP& warp,const ZPOLICY& zpol)
+{
+  const XY d(warp(p.xy()));
+  return XYZ(d+sym(p.xy()-d),zpol(p.z()));
+}
 
+template<class SYMMETRY,class BLEND,class ZPOLICY> const XYZ Friezegroup(const FunctionNode& f,const XYZ& p,const SYMMETRY& sym,const BLEND& blend,const ZPOLICY& zpol)
+{
+  const boost::tuple<float,XY,XY> b(blend(p.xy()));
+  return
+    b.get<0>()*f(XYZ(sym(b.get<1>()),zpol(p.z())))
+    +(1.0-b.get<0>())*f(XYZ(sym(b.get<2>()),zpol(p.z())));
+}
 
 //------------------------------------------------------------------------------------------
 
@@ -67,7 +132,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopFreeZ,0,0,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return XYZ(friezegroup_hop(p.xy()),p.z());
+      return Friezegroup(p,Hop(),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupHopFreeZ)
@@ -78,7 +143,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopClampZ,1,0,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return XYZ(friezegroup_hop(p.xy()),param(0));
+      return Friezegroup(p,Hop(),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopClampZ)
@@ -89,8 +154,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopWarpFreeZ,3,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XY d(friezegroup_hop_invariant(arg(0),p,XYZ(param(0),param(1),param(2))));
-      return XYZ(-d+friezegroup_hop(p.xy()+d),p.z());
+      return Friezegroup(p,Hop(),HopInvariant(arg(0),XYZ(param(0),param(1),param(2))),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupHopWarpFreeZ)
@@ -101,11 +165,21 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopWarpClampZ,4,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XY d(friezegroup_hop_invariant(arg(0),p,XYZ(param(0),param(1),param(2))));
-      return XYZ(-d+friezegroup_hop(p.xy()+d),param(3));
+      return Friezegroup(p,Hop(),HopInvariant(arg(0),XYZ(param(0),param(1),param(2))),ClampZ(param(3)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopWarpClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupHopBlendFreeZ,0,1,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return Friezegroup(arg(0),p,Hop(),HopBlend(),FreeZ());
+    }
+  
+FUNCTION_END(FunctionFriezeGroupHopBlendFreeZ)
 
 //------------------------------------------------------------------------------------------
 
@@ -113,16 +187,10 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopBlendClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XY p0(friezegroup_hop(p.xy()));
-      const XY p1(friezegroup_hop(p.xy()+XY(0.5,0.0)));
-      const real a=2.0*trianglef(p0.x(),0.5);
-      const XYZ v0(arg(0)(XYZ(p0,param(0))));
-      const XYZ v1(arg(0)(XYZ(p1,param(0))));
-      return a*v0+(1.0-a)*v1;
+      return Friezegroup(arg(0),p,Hop(),HopBlend(),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopBlendClampZ)
-
 
 //------------------------------------------------------------------------------------------
 

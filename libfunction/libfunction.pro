@@ -107,5 +107,5 @@ SOURCES += \
 # 
 asm.target = asm
 asm.commands = $(CXX) -S $(CXXFLAGS) $(INCPATH) $<
-asm.depends =  function_identity.cpp
+asm.depends =  functions_friezegroup_hop.cpp
 QMAKE_EXTRA_UNIX_TARGETS += asm

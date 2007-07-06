@@ -13,6 +13,7 @@ Conventional Mode
   Wikipedia http://en.wikipedia.org/wiki/Wallpaper_group is good.
   Presumably there are 3D versions too.
 
+- Debian transitioning Apps to Applications (post Etch) see bug 361418
 - GPLv3.
 - Maybe icon setting could do with some more attention; probably there are more things which should set it
   (e.g respawn coloured) and loading could set a flag defering icon setting until that view is ready.
