@@ -108,6 +108,6 @@ SOURCES += \
 # Target to build assembler listings for specific files of interest
 # 
 asm.target = asm
-asm.commands = $(CXX) -S $(CXXFLAGS) $(INCPATH) $<
-asm.depends =  functions_friezegroup_hop.cpp
+asm.commands = $(CXX) -S $(CXXFLAGS) $(INCPATH) $^
+asm.depends = functions_friezegroup_jump.cpp functions_friezegroup_hop.cpp
 QMAKE_EXTRA_UNIX_TARGETS += asm

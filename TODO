@@ -3,18 +3,18 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
+- Complete moving friezegroup functions over to new regime.
 - Work out how to add warping/blending to the (frieze) symmetry groups so they dont look so "cut".
-  (Have this for Hop so far).
+  (Have this for Hop and Jump so far).
   
-- Read http://www.mi.sanu.ac.yu/vismath/ana/ana5.htm
-
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
   Wikipedia http://en.wikipedia.org/wiki/Wallpaper_group is good.
   Presumably there are 3D versions too.
+  See also http://www.mi.sanu.ac.yu/vismath/ana/ana5.htm
 
 - Debian transitioning Apps to Applications (post Etch) see bug 361418
-- GPLv3.
+- GPLv3 ?  Don't understand what else needs to be (e.g Qt3 etc)
 - Maybe icon setting could do with some more attention; probably there are more things which should set it
   (e.g respawn coloured) and loading could set a flag defering icon setting until that view is ready.
 - Boost post-1.33 changes usage of ptr_map, apparently.  (Waiting for 1.34 to hit Debian Testing).
@@ -52,7 +52,6 @@ Conventional Mode
 - Keyboard shortcuts for all of reset/restart/remix
 - Display mutation parameters permanently on status bar.
 - Scripts entry on context menu; pipes XML to things in ~/.evolvotron/scripts directory
-- Better way of choosing where to "cut" in freize groups ?
 - Make middle-mose-button adjustments work sensibly with -spheremap 
 - Option for save function to also generate thumbnail at the same time ?
   (Maybe not with previewing)

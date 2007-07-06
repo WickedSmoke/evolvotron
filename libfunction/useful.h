@@ -125,8 +125,8 @@ inline uint modulusi(int x,int y)
   return r;
 }
 
-//! Triangle function: like modulus, but ramps down instead of discontinuity at y
-/*! Setting y=1 ensures x in [0,1]
+//! Triangle function: like modulus, but ramps down instead of discontinuity at y.
+/*! Always has slope 1.  Setting y=1 ensures x in [0,1]
  */
 inline real trianglef(real x,real y)
 {
@@ -157,7 +157,6 @@ class InstanceCounted
 
   static std::auto_ptr<std::map<std::string,uint> > _instance_counts;
 };
-
 
 #endif
 
