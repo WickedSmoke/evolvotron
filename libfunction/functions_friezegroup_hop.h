@@ -59,6 +59,8 @@ inline const XY friezegroup_hop_invariant(const FunctionNode& f,const XYZ& p,con
   return f(p.y()*k).xy();
 }
 
+
+
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionFriezeGroupHopFreeZ,0,0,false,FnStructure)
