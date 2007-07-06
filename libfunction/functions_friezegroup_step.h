@@ -54,7 +54,7 @@ FUNCTION_END(FunctionFriezeGroupStepFreeZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupStepClampZ,0,0,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupStepClampZ,1,0,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {

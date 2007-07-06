@@ -31,10 +31,34 @@ class FunctionRegistry;
 class MutatableImage;
 class MutationParameters;
 
+class Function : boost::noncopyable
+{
+ public:
+
+  virtual ~Function()
+    {}
+
+  //! Convenience wrapper for evaluate (actually, evaluate is protected so can't be called externally anyway)
+  const XYZ operator()(const XYZ& p) const
+    {
+      return evaluate(p);
+    }
+
+  //! Weighted evaluate; fastpath for zero weight.
+  const XYZ operator()(const real weight,const XYZ& p) const
+    {
+      return (weight==0.0 ? XYZ(0.0,0.0,0.0) : weight*evaluate(p));
+    }
+
+  //! This what distinguishes different types of function.
+  virtual const XYZ evaluate(const XYZ&) const
+    =0;
+};
+
 //! Abstract base class for all kinds of mutatable image node.
 /*! MutatableImage declared a friend to help constification of the public accessors.
  */
-class FunctionNode
+class FunctionNode : public Function
 {
  public:
   friend class MutatableImage;
@@ -58,10 +82,6 @@ class FunctionNode
 
   //! This returns a copy of the node's parameters
   const std::vector<real> cloneparams() const;
-
-  //! This what distinguishes different types of node.
-  virtual const XYZ evaluate(const XYZ& p) const
-    =0;
 
   //! Obtain some statistics about the image function
   void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const;
@@ -182,18 +202,6 @@ class FunctionNode
   //! Return a deepcloned copy of the node's arguments
   virtual std::auto_ptr<boost::ptr_vector<FunctionNode> > deepclone_args() const;
   
-  //! Convenience wrapper for evaluate (actually, evaluate is protected so can't be called externally anyway)
-  const XYZ operator()(const XYZ& p) const
-    {
-      return evaluate(p);
-    }
-
-  //! Weighted evaluate; fastpath for zero weight.
-  const XYZ operator()(const real weight,const XYZ& p) const
-    {
-      return (weight==0.0 ? XYZ(0.0,0.0,0.0) : weight*evaluate(p));
-    }
-
   //! Save the function tree.
   virtual std::ostream& save_function(std::ostream& out,uint indent) const
     =0;

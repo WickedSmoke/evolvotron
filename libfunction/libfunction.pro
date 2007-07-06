@@ -8,6 +8,7 @@ CONFIG += staticlib
 PRECOMPILED_HEADER = libfunction_precompiled.h
 
 HEADERS += \
+        friezegroup.h \
         function_boilerplate.h \
         function_boilerplate_instantiate.h \
         function_compose_pair.h \
@@ -56,6 +57,7 @@ HEADERS += \
 	xyz.h
 
 SOURCES += \
+        friezegroup.cpp \
         function_boilerplate.cpp \
         function_compose_pair.cpp \
         function_compose_triple.cpp \

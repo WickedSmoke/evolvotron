@@ -47,11 +47,7 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
   /*! Must be hit by the REGISTER macro if it is to have it's name filled in
    */
   static FunctionRegistration& get_registration();
-  
-  //! Evaluation is supplied by the specific class.
-  virtual const XYZ evaluate(const XYZ& p) const
-    =0;
-  
+    
   //! Bits give some classification of the function type
   static const uint type_classification() {return CLASSIFICATION;}
 

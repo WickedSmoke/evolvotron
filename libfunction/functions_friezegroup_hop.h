@@ -23,6 +23,10 @@
 #ifndef _functions_friezegroup_hop_h_
 #define _functions_friezegroup_hop_h_
 
+#include "friezegroup.h"
+
+//------------------------------------------------------------------------------------------
+
 //! Hop (Conway p111): no reflections or rotation.
 /*! Just have to cycle x range.   
 \verbatim
@@ -42,36 +46,14 @@ struct Hop
   }
 };
 
-struct FreeZ
-{
-  const float operator()(float z) const
-  {
-    return z;
-  }
-};
-
-struct ClampZ
-{
-  ClampZ(float z)
-    :_z(z)
-  {}
-  const float operator()(float) const
-  {
-    return _z;
-  }
-
-  private:
-  const float _z;
-};
-
 //! Something which can be added to friezegroup_hop without breaking symmetry.
 /*
   A function f(p) has hop symmetry if f(xmod1,y)=f(x,y) for all x,y.
-  This is true for friezegroup_hop.
+  This is true for Hop.
 
   [What do we mean by added ?
   If f has hop symmetry then f(g(p)) and g(f(p)) for any g do too.
-  f+g has hop symmetry if f and g have hop symmetry]
+  f+g has hop symmetry if f and g have hop symmetry (for mod1 rule anyway]
 
   Let g(p)=-d(p)+f(p+d(p)) where f has hop symmetry.
   If d(p) depends purely on y then g(p) has hop symmetry because then
@@ -81,7 +63,7 @@ struct ClampZ
  */
 struct HopInvariant
 {
-  HopInvariant(const FunctionNode& f,const XYZ& k)
+  HopInvariant(const Function& f,const XYZ& k)
     :_f(f)
     ,_k(k)
   {}
@@ -90,10 +72,11 @@ struct HopInvariant
     return _f(_k*p.y()).xy();
   }
 private:
-  const FunctionNode& _f;
+  const Function& _f;
   const XYZ& _k;
 };
 
+//! Constructs two points and a blending weight which will behave sensibly for Hop
 struct HopBlend
 {
   const boost::tuple<float,XY,XY> operator()(const XY& p) const
@@ -106,25 +89,6 @@ struct HopBlend
        );
   }
 };
-
-template <class SYMMETRY,class ZPOLICY> const XYZ Friezegroup(const FunctionNode& f,const XYZ& p,const SYMMETRY& sym,const ZPOLICY& zpol)
-{
-  return f(XYZ(sym(p.xy()),zpol(p.z())));
-}
-
-template<class SYMMETRY,class WARP,class ZPOLICY> const XYZ FriezegroupWarp(const FunctionNode& f,const XYZ& p,const SYMMETRY& sym,const WARP& warp,const ZPOLICY& zpol)
-{
-  const XY d(warp(p.xy()));
-  return f(XYZ(d+sym(p.xy()-d),zpol(p.z())));
-}
-
-template<class SYMMETRY,class BLEND,class ZPOLICY> const XYZ FriezegroupBlend(const FunctionNode& f,const XYZ& p,const SYMMETRY& sym,const BLEND& blend,const ZPOLICY& zpol)
-{
-  const boost::tuple<float,XY,XY> b(blend(p.xy()));
-  return
-    b.get<0>()*f(XYZ(sym(b.get<1>()),zpol(p.z())))
-    +(1.0-b.get<0>())*f(XYZ(sym(b.get<2>()),zpol(p.z())));
-}
 
 //------------------------------------------------------------------------------------------
 
@@ -191,6 +155,28 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopBlendClampZ,1,1,false,FnStructure)
     }
   
 FUNCTION_END(FunctionFriezeGroupHopBlendClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupHopBlendWarpFreeZ,3,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return FriezegroupBlendWarp(arg(0),p,Hop(),HopBlend(),HopInvariant(arg(1),XYZ(param(0),param(1),param(2))),FreeZ());
+    }
+  
+FUNCTION_END(FunctionFriezeGroupHopBlendWarpFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupHopBlendWarpClampZ,4,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return FriezegroupBlendWarp(arg(0),p,Hop(),HopBlend(),HopInvariant(arg(1),XYZ(param(0),param(1),param(2))),ClampZ(param(3)));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupHopBlendWarpClampZ)
 
 //------------------------------------------------------------------------------------------
 

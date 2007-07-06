@@ -23,6 +23,8 @@
 #ifndef _functions_friezegroup_jump_h_
 #define _functions_friezegroup_jump_h_
 
+#include "friezegroup.h"
+
 //! Jump (Conway p1m1): horizontal reflection only
 /*! Just cycle x range and reflect in y.
 \verbatim
@@ -32,36 +34,135 @@
      o    o    o
 \endverbatim
 */
-inline XY friezegroup_jump(const XY& p)
+struct Jump
 {
-  return XY
-    (
-     modulusf(p.x(),1.0),
-     fabs(p.y())
-     );
-}
+  const XY operator()(const XY& p) const
+    {
+      return XY
+	(
+	 modulusf(p.x(),1.0),
+	 fabs(p.y())
+	 );
+    }
+};
+
+//! Unlike HopInvariant, we can only allow displacement in x.
+struct JumpInvariant
+{
+  JumpInvariant(const Function& f,const XYZ& k)
+    :_f(f)
+    ,_k(k)
+  {}
+  const XY operator()(const XY& p) const
+  {
+    return XY(_f(_k*fabs(p.y())).x(),0.0);
+  }
+private:
+  const Function& _f;
+  const XYZ& _k;
+};
+
+//! Constructs two points and a blending weight which will behave sensibly for Hop
+struct JumpBlend
+{
+  const boost::tuple<float,XY,XY> operator()(const XY& p) const
+  {
+    return boost::tuple<float,XY,XY>
+      (
+       2.0*trianglef(p.x(),0.5),
+       Jump()(p),
+       Jump()(p+XY(0.5,0.0))
+       );
+  }
+};
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupJumpFreeZ,0,0,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupJumpFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return XYZ(friezegroup_jump(p.xy()),p.z());
+      return Friezegroup(arg(0),p,Jump(),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupJumpFreeZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupJumpClampZ,1,0,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupJumpClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return XYZ(friezegroup_jump(p.xy()),param(0));
+      return Friezegroup(arg(0),p,Jump(),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupJumpClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupJumpWarpFreeZ,3,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return FriezegroupWarp(arg(0),p,Jump(),JumpInvariant(arg(1),XYZ(param(0),param(1),param(2))),FreeZ());
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpWarpFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupJumpWarpClampZ,4,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return FriezegroupWarp(arg(0),p,Jump(),JumpInvariant(arg(1),XYZ(param(0),param(1),param(2))),ClampZ(param(3)));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpWarpClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupJumpBlendFreeZ,0,1,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return FriezegroupBlend(arg(0),p,Jump(),JumpBlend(),FreeZ());
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpBlendFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupJumpBlendClampZ,1,1,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return FriezegroupBlend(arg(0),p,Jump(),JumpBlend(),ClampZ(param(0)));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpBlendClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupJumpBlendWarpFreeZ,3,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return FriezegroupBlendWarp(arg(0),p,Jump(),JumpBlend(),JumpInvariant(arg(1),XYZ(param(0),param(1),param(2))),FreeZ());
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpBlendWarpFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupJumpBlendWarpClampZ,4,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return FriezegroupBlendWarp(arg(0),p,Jump(),JumpBlend(),JumpInvariant(arg(1),XYZ(param(0),param(1),param(2))),ClampZ(param(3)));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpBlendWarpClampZ)
 
 //------------------------------------------------------------------------------------------
 
