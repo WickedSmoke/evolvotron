@@ -28,8 +28,6 @@
 
 class Transform;
 
- 
-
 //! Function intended primarily to be the top level function node.
 /*! First 12 parameters are a space transform, second 12 paramters are a colour space transform.
 */
