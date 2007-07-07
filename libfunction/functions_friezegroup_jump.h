@@ -55,7 +55,23 @@ struct JumpInvariant
   {}
   const XY operator()(const XY& p) const
   {
+    // This works:
+    // No it doesn't not always and produces different output at different resolutions ????
     return XY(_f(_k*fabs(p.y())).x(),0.0);
+
+    // This doesn't, but y needs to be reflected:
+    //return _f(_k*fabs(p.y())).xy();
+
+    // This still doesn't work:  maybe don't cross y=0 ?
+    //XY r(_f(_k*fabs(p.y())).xy());
+    //if (p.y()<0.0) r.y(-r.y());
+    //return r;
+
+    // This still doesn't work
+    //XY r(_f(_k*fabs(p.y())).xy());
+    //if (p.y()<0.0) r.y(-r.y());
+    //if (r.y()<0.0) r.y(0.0);
+    //return r;
   }
 private:
   const Function& _f;

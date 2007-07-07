@@ -57,7 +57,7 @@ template <class SYMMETRY,class ZPOLICY> inline const XYZ Friezegroup(const Funct
 template<class SYMMETRY,class WARP,class ZPOLICY> inline const XYZ FriezegroupWarp(const Function& f,const XYZ& p,const SYMMETRY& sym,const WARP& warp,const ZPOLICY& zpol)
 {
   const XY d(warp(p.xy()));
-  return f(XYZ(d+sym(p.xy()-d),zpol(p.z())));
+  return f(XYZ(sym(p.xy()+d)-d,zpol(p.z())));
 }
 
 //! Function evaluation via blended symmetry.
@@ -73,10 +73,10 @@ template<class SYMMETRY,class BLEND,class ZPOLICY> inline const XYZ FriezegroupB
 template<class SYMMETRY,class BLEND,class WARP,class ZPOLICY> const XYZ FriezegroupBlendWarp(const Function& f,const XYZ& p,const SYMMETRY& sym,const BLEND& blend,const WARP& warp,const ZPOLICY& zpol)
 {
   const XY d(warp(p.xy()));
-  const boost::tuple<float,XY,XY> b(blend(p.xy()-d));
+  const boost::tuple<float,XY,XY> b(blend(p.xy()+d));
   return
-    b.get<0>()*f(XYZ(d+sym(b.get<1>()),zpol(p.z())))
-    +(1.0-b.get<0>())*f(XYZ(d+sym(b.get<2>()),zpol(p.z())));
+    b.get<0>()*f(XYZ(sym(b.get<1>())-d,zpol(p.z())))
+    +(1.0-b.get<0>())*f(XYZ(sym(b.get<2>())-d,zpol(p.z())));
 }
 
 #endif
