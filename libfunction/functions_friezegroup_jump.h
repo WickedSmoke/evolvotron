@@ -55,29 +55,14 @@ struct JumpInvariant
   {}
   const std::pair<XY,XY> operator()(const XY& p) const
   {
-    // This works:
-    //return XY(_f(_k*fabs(p.y())).x(),0.0);
-
-    // This doesn't, but y needs to be reflected:
-    //return _f(_k*fabs(p.y())).xy();
-
-    // This still doesn't work:  maybe don't cross y=0 ?
-    //XY r(_f(_k*fabs(p.y())).xy());
-    //if (p.y()<0.0) r.y(-r.y());
-    //return r;
-
-    // This still doesn't work
-    //XY r(_f(_k*fabs(p.y())).xy());
-    //if (p.y()<0.0 && r.y()>0.0) r.y(-r.y());
-    //else if (p.y()>0.0 && r.y()<0.0) r.y(-r.y());
-    //return r;
-    
+    // A distortion dependent only on y
     XY d(_f(_k*fabs(p.y())).xy());
+    // Reflect the distortion across symmetry line
     if (p.y()<0.0) d.y(-d.y());
-    //d.y(0.0);
-
-    real mid_y=fabs(p.y()+d.y());
-    real back_y=fabs(p.y())-mid_y;
+    // This is where the distortion will be mapped to by symmetry
+    const real intermediate_y=fabs(p.y()+d.y());
+    // This is what would take us back to the original position
+    const real back_y=fabs(p.y())-intermediate_y;
     return std::make_pair(d,XY(-d.x(),back_y));
   }
 private:

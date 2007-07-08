@@ -46,21 +46,7 @@ struct Hop
   }
 };
 
-//! Something which can be added to friezegroup_hop without breaking symmetry.
-/*
-  A function f(p) has hop symmetry if f(xmod1,y)=f(x,y) for all x,y.
-  This is true for Hop.
-
-  [What do we mean by added ?
-  If f has hop symmetry then f(g(p)) and g(f(p)) for any g do too.
-  f+g has hop symmetry if f and g have hop symmetry (for mod1 rule anyway]
-
-  Let g(p)=-d(p)+f(p+d(p)) where f has hop symmetry.
-  If d(p) depends purely on y then g(p) has hop symmetry because then
-  g(xmod1,y)=-d(y)+f(xmod1+dx(y),y+dy(y))
-  g(x,y)    =-d(y)+f(x    +dx(y),y+dy(y))
-  ...hmmm, not convincing...
- */
+//! Something which can distort Hop without breaking symmetry.
 struct HopInvariant
 {
   HopInvariant(const Function& f,const XYZ& k)
@@ -69,6 +55,7 @@ struct HopInvariant
   {}
   const std::pair<XY,XY> operator()(const XY& p) const
   {
+    // A distortion dependent only on y
     const XY d(_f(_k*p.y()).xy());
     return std::make_pair(d,-d);
   }
