@@ -3,9 +3,8 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
-- Complete moving friezegroup functions over to new regime.
 - Work out how to add warping/blending to the (frieze) symmetry groups so they dont look so "cut".
-  (Have this for Hop and Jump so far).
+  (Have this for Hop and Jump only so far).
   
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
