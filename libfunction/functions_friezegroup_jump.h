@@ -46,7 +46,6 @@ struct Jump
     }
 };
 
-//! Unlike HopInvariant, we can only allow displacement in x.
 struct JumpInvariant
 {
   JumpInvariant(const Function& f,const XYZ& k)

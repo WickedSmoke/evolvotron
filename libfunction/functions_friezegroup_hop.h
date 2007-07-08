@@ -49,19 +49,16 @@ struct Hop
 //! Something which can distort Hop without breaking symmetry.
 struct HopInvariant
 {
-  HopInvariant(const Function& f,const XYZ& k)
+  HopInvariant(const Function& f)
     :_f(f)
-    ,_k(k)
   {}
   const std::pair<XY,XY> operator()(const XY& p) const
   {
-    // A distortion dependent only on y
-    const XY d(_f(_k*p.y()).xy());
+    const XY d(_f(XYZ(p.y(),trianglef(p.x(),0.5),0.0)).xy());
     return std::make_pair(d,-d);
   }
 private:
   const Function& _f;
-  const XYZ& _k;
 };
 
 //! Constructs two points and a blending weight which will behave sensibly for Hop
@@ -102,22 +99,22 @@ FUNCTION_END(FunctionFriezeGroupHopClampZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopWarpFreeZ,3,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopWarpFreeZ,0,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return FriezegroupWarp(arg(0),p,Hop(),HopInvariant(arg(1),XYZ(param(0),param(1),param(2))),FreeZ());
+      return FriezegroupWarp(arg(0),p,Hop(),HopInvariant(arg(1)),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupHopWarpFreeZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopWarpClampZ,4,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopWarpClampZ,1,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return FriezegroupWarp(arg(0),p,Hop(),HopInvariant(arg(1),XYZ(param(0),param(1),param(2))),ClampZ(param(3)));
+      return FriezegroupWarp(arg(0),p,Hop(),HopInvariant(arg(1)),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopWarpClampZ)
@@ -146,22 +143,22 @@ FUNCTION_END(FunctionFriezeGroupHopBlendClampZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopBlendWarpFreeZ,3,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopBlendWarpFreeZ,0,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return FriezegroupBlendWarp(arg(0),p,Hop(),HopBlend(),HopInvariant(arg(1),XYZ(param(0),param(1),param(2))),FreeZ());
+      return FriezegroupBlendWarp(arg(0),p,Hop(),HopBlend(),HopInvariant(arg(1)),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupHopBlendWarpFreeZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopBlendWarpClampZ,4,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopBlendWarpClampZ,1,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return FriezegroupBlendWarp(arg(0),p,Hop(),HopBlend(),HopInvariant(arg(1),XYZ(param(0),param(1),param(2))),ClampZ(param(3)));
+      return FriezegroupBlendWarp(arg(0),p,Hop(),HopBlend(),HopInvariant(arg(1)),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopBlendWarpClampZ)
