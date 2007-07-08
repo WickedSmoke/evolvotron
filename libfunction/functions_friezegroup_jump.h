@@ -53,11 +53,10 @@ struct JumpInvariant
     :_f(f)
     ,_k(k)
   {}
-  const XY operator()(const XY& p) const
+  const std::pair<XY,XY> operator()(const XY& p) const
   {
     // This works:
-    // No it doesn't not always and produces different output at different resolutions ????
-    return XY(_f(_k*fabs(p.y())).x(),0.0);
+    //return XY(_f(_k*fabs(p.y())).x(),0.0);
 
     // This doesn't, but y needs to be reflected:
     //return _f(_k*fabs(p.y())).xy();
@@ -69,9 +68,17 @@ struct JumpInvariant
 
     // This still doesn't work
     //XY r(_f(_k*fabs(p.y())).xy());
-    //if (p.y()<0.0) r.y(-r.y());
-    //if (r.y()<0.0) r.y(0.0);
+    //if (p.y()<0.0 && r.y()>0.0) r.y(-r.y());
+    //else if (p.y()>0.0 && r.y()<0.0) r.y(-r.y());
     //return r;
+    
+    XY d(_f(_k*fabs(p.y())).xy());
+    if (p.y()<0.0) d.y(-d.y());
+    //d.y(0.0);
+
+    real mid_y=fabs(p.y()+d.y());
+    real back_y=fabs(p.y())-mid_y;
+    return std::make_pair(d,XY(-d.x(),back_y));
   }
 private:
   const Function& _f;

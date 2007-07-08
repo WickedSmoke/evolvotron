@@ -67,9 +67,10 @@ struct HopInvariant
     :_f(f)
     ,_k(k)
   {}
-  const XY operator()(const XY& p) const
+  const std::pair<XY,XY> operator()(const XY& p) const
   {
-    return _f(_k*p.y()).xy();
+    const XY d(_f(_k*p.y()).xy());
+    return std::make_pair(d,-d);
   }
 private:
   const Function& _f;
