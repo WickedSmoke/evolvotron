@@ -46,6 +46,7 @@ struct Spinhop
   }
 };
 
+//! \todo: Can do this.  Can be warped in x and y; all fits together
 struct SpinhopInvariant;
 
 struct SpinhopBlend;
