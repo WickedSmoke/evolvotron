@@ -23,6 +23,8 @@
 #ifndef _functions_friezegroup_spinhop_h_
 #define _functions_friezegroup_spinhop_h_
 
+#include "friezegroup.h"
+
 //! Spinhop (Conway p112): Half turn rotation only.
 /*! Sawtooth x increasing or decreasing depending on which side, with y reflected.
 \verbatim
@@ -32,33 +34,40 @@
      o     o
 \endverbatim
 */
-inline const XY friezegroup_spinhop(const XY& p)
+struct Spinhop
 {
-  return XY
-    (
-     (p.y()>0.0 ? modulusf(p.x(),1.0) : 1.0-modulusf(p.x(),1.0)),
-     fabs(p.y())
-     );
-}
+  const XY operator()(const XY& p) const
+  {
+    return XY
+      (
+       (p.y()>0.0 ? modulusf(p.x(),1.0) : 1.0-modulusf(p.x(),1.0)),
+       fabs(p.y())
+       );
+  }
+};
+
+struct SpinhopInvariant;
+
+struct SpinhopBlend;
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupSpinhopFreeZ,0,0,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupSpinhopFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return XYZ(friezegroup_spinhop(p.xy()),p.z());
+      return Friezegroup(arg(0),p,Spinhop(),FreeZ());
     }
 
 FUNCTION_END(FunctionFriezeGroupSpinhopFreeZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupSpinhopClampZ,1,0,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupSpinhopClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return XYZ(friezegroup_spinhop(p.xy()),param(0));
+      return Friezegroup(arg(0),p,Spinhop(),ClampZ(param(0)));
     }
 
 FUNCTION_END(FunctionFriezeGroupSpinhopClampZ)
