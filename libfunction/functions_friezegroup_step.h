@@ -23,6 +23,8 @@
 #ifndef _functions_friezegroup_step_h_
 #define _functions_friezegroup_step_h_
 
+#include "friezegroup.h"
+
 //! Step (Conway p1a1): glide reflection only.
 /*! Sawtooth x, out of step by half range across y-axis.
 \verbatim
@@ -32,33 +34,41 @@
        o     o
 \endverbatim
 */
-inline const XY friezegroup_step(const XY& p)
+
+struct Step
 {
-  return XY
-    (
-     (p.y()>0.0 ? modulusf(p.x(),1.0) : modulusf(p.x()+0.5,1.0)),
-     fabs(p.y())
-     );
-}
+  const XY operator()(const XY& p) const
+  {
+    return XY
+      (
+       (p.y()>0.0 ? modulusf(p.x(),1.0) : modulusf(p.x()+0.5,1.0)),
+       fabs(p.y())
+       );
+  }
+};
+
+struct StepInvariant;
+
+struct StepBlend;
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupStepFreeZ,0,0,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupStepFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return XYZ(friezegroup_step(p.xy()),p.z());
+      return Friezegroup(arg(0),p,Step(),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupStepFreeZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupStepClampZ,1,0,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupStepClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return XYZ(friezegroup_step(p.xy()),param(0));
+      return Friezegroup(arg(0),p,Step(),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupStepClampZ)
