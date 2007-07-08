@@ -54,7 +54,7 @@ struct HopInvariant
   {}
   const std::pair<XY,XY> operator()(const XY& p) const
   {
-    const XY d(_f(XYZ(p.y(),trianglef(p.x(),0.5),0.0)).xy());
+    const XY d(_f(XYZ(trianglef(p.x(),0.5),p.y(),0.0)).xy());
     return std::make_pair(d,-d);
   }
 private:

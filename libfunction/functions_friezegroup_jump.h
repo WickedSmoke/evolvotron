@@ -54,7 +54,7 @@ struct JumpInvariant
   const std::pair<XY,XY> operator()(const XY& p) const
   {
     // A distortion dependent only on fabs(y) and repeating in x.
-    XY d(_f(XYZ(fabs(p.y()),trianglef(p.x(),0.5),0.0)).xy());
+    XY d(_f(XYZ(trianglef(p.x(),0.5),fabs(p.y()),0.0)).xy());
     // Reflect the distortion across symmetry line
     if (p.y()<0.0) d.y(-d.y());
     // This is where the distortion will be mapped to by symmetry
