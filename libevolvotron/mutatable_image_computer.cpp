@@ -66,6 +66,7 @@ void MutatableImageComputer::run()
     a suitable #ifdef-able patch if you need something different here.
     Note that this code relies on Linux NPTL's non-Posix-compliant
     thread-specific nice value.
+    \todo: Could check some error codes, but pretty harmless if it doesn't work.
   */
   const int current_priority=getpriority(PRIO_PROCESS,0);
   setpriority(PRIO_PROCESS,0,std::min(19,current_priority+_niceness));
