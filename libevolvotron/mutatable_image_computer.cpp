@@ -61,9 +61,11 @@ void MutatableImageComputer::run()
   std::clog << "Thread starting\n";
 
   // Lower compute thread priority slightly;
-  // computing is less important than displaying the results.
+  // computing more stuff is less important than displaying the results we've got.
   /*! \todo: People porting to non-Linux (BSD, MacOS, Fink etc) please send
     a suitable #ifdef-able patch if you need something different here.
+    Note that this code relies on Linux NPTL's non-Posix-compliant
+    thread-specific nice value.
   */
   const int current_priority=getpriority(PRIO_PROCESS,0);
   setpriority(PRIO_PROCESS,0,std::min(19,current_priority+_niceness));
