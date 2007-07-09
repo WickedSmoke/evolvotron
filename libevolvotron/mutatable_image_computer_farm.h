@@ -101,7 +101,7 @@ class MutatableImageComputerFarm
  public:
 
   //! Constructor.
-  MutatableImageComputerFarm(uint n_threads);
+  MutatableImageComputerFarm(uint n_threads,int niceness);
 
   //! Destructor cleans up threads.
   ~MutatableImageComputerFarm();

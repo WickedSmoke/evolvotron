@@ -12,6 +12,9 @@ evolvotron
 [\-t
 .I <threads>
 ]
+[\-n
+.I niceness
+]
 [\-F]
 [\-M]
 [\-f 
@@ -58,7 +61,12 @@ Number of image display cells (defaults to 6 by 5).
 .TP 0.5i
 .B \-t
 .I <threads>
-Number of compute threads (defaults to 2)
+Number of compute threads (defaults to number of CPUs)
+
+.TP 0.5i
+.B \-n
+.I <niceness>
+Niceness of compute threads relative to main thread (defaults to 4).
 
 .TP 0.5i
 .B \-F

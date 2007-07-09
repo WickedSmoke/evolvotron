@@ -28,14 +28,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /*! Creates the specified number of threads and store pointers to them.
  */
-MutatableImageComputerFarm::MutatableImageComputerFarm(uint n_threads)
+MutatableImageComputerFarm::MutatableImageComputerFarm(uint n_threads,int niceness)
 {
   _done_position=_done.end();
 
   for (uint i=0;i<n_threads;i++)
     {
       // The computer's constructor includes a start()
-      _computers.push_back(new MutatableImageComputer(this));
+      _computers.push_back(new MutatableImageComputer(this,niceness));
     }
 }
 

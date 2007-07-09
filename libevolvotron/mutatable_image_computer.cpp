@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2007 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -31,12 +31,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image_computer_farm.h"
 #include "mutatable_image_computer_task.h"
 
-MutatableImageComputer::MutatableImageComputer(MutatableImageComputerFarm* frm)
+MutatableImageComputer::MutatableImageComputer(MutatableImageComputerFarm* frm,int niceness)
   :
 #ifndef NDEBUG
   InstanceCounted(typeid(this).name(),false),
 #endif
-  _farm(frm)
+  _farm(frm),
+  _niceness(niceness)
 {
   start();
 }
@@ -65,7 +66,7 @@ void MutatableImageComputer::run()
     a suitable #ifdef-able patch if you need something different here.
   */
   const int current_priority=getpriority(PRIO_PROCESS,0);
-  setpriority(PRIO_PROCESS,0,std::min(19,current_priority+4));
+  setpriority(PRIO_PROCESS,0,std::min(19,current_priority+_niceness));
 
   // Run until something sets the kill flag 
   while(!communications().kill())

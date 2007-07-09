@@ -16,6 +16,7 @@ From release 0.4.0:
  - Compute threads use QWaitCondition, not polling.
  - Default number of threads is number of processors.
  - Compute threads run at lower priority.
+ - -n <niceness> command line option to control compute thread priority.
  - About dialog displays number of threads.
  - Use precompiled headers (2m45s down to 1m45s).
  - code_review script

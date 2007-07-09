@@ -45,6 +45,9 @@ class MutatableImageComputer : public QThread
   //! Pointer to compute farm of which this thread is part.
   MutatableImageComputerFarm*const _farm;
 
+  //! Priority offset applied to compute threads.
+  const int _niceness;
+
   //! The current task.  Can't be a const MutatableImageComputerTask because the task holds the calculated result.
   boost::shared_ptr<MutatableImageComputerTask> _task;
 
@@ -163,7 +166,7 @@ class MutatableImageComputer : public QThread
  public:
 
   //! Constructor
-  MutatableImageComputer(MutatableImageComputerFarm* frm);
+  MutatableImageComputer(MutatableImageComputerFarm* frm,int niceness);
 
   //! Destructor
   ~MutatableImageComputer();

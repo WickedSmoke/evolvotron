@@ -96,6 +96,9 @@ int main(int argc,char* argv[])
     }
   std::clog << "Using " << threads << " threads\n";
 
+  int niceness=4;
+  if (args.option("-n",1)) args.after() >> niceness;
+
   if (args.option("-f",1)) args.after() >> frames;
   if (frames<1)
     {
@@ -140,11 +143,12 @@ int main(int argc,char* argv[])
     << " by " 
     << rows 
     << " display cells and " 
-    << threads 
-    << " compute threads\n";
+    << threads
+    << " compute threads (nice "
+    << niceness
+    << ")\n";
 
-
-  EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),frames,framerate,threads,start_fullscreen,start_menuhidden);
+  EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),frames,framerate,threads,niceness,start_fullscreen,start_menuhidden);
 
   main_widget->mutation_parameters().function_registry().status(std::clog);
 

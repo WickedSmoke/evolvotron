@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2004 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -81,6 +81,9 @@ static const char*const helptext_short=
 "  </li>"
 "  <li>"
 "    <b>-t</b> <i>threads</i> : Set number of compute threads."
+"  </li>"
+"  <li>"
+"    <b>-n</b> <i>niceness</i> : Set priority of compute threads relative to main (GUI) thread."
 "  </li>"
 "  <li>"
 "    <b>-F</b> : Start in fullscreen mode."
