@@ -46,9 +46,24 @@ struct Spinhop
   }
 };
 
-//! \todo: Can do this.  Can be warped in x and y; all fits together
-struct SpinhopInvariant;
+//! \todo: Should be able to do this.  Can be warped in x and y; all fits together.
+struct SpinhopInvariant
+{
+  SpinhopInvariant(const Function& f)
+    :_f(f)
+  {}
+  const std::pair<XY,XY> operator()(const XY& p) const
+  {
+    const bool alt(modulusf(p.x(),2.0) < 1.0);
+    XY d(_f(XYZ(trianglef(p.x(),1.0),(alt ? -p.y():p.y()),0.0)).xy());
+    if (alt) d=-d;
+    return std::make_pair(d,-d);
+  }
+private:
+  const Function& _f;
+};
 
+//! Not sure this makes sense... trying to fade changes symmetry. 
 struct SpinhopBlend;
 
 //------------------------------------------------------------------------------------------
@@ -72,6 +87,29 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinhopClampZ,1,1,false,FnStructure)
     }
 
 FUNCTION_END(FunctionFriezeGroupSpinhopClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarpFreeZ,0,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return FriezegroupWarp(arg(0),p,Spinhop(),SpinhopInvariant(arg(1)),FreeZ());
+    }
+  
+FUNCTION_END(FunctionFriezeGroupSpinhopWarpFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarpClampZ,1,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return FriezegroupWarp(arg(0),p,Spinhop(),SpinhopInvariant(arg(1)),ClampZ(param(0)));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupSpinhopWarpClampZ)
+
 
 //------------------------------------------------------------------------------------------
 

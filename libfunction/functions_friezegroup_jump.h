@@ -67,7 +67,7 @@ private:
   const Function& _f;
 };
 
-//! Constructs two points and a blending weight which will behave sensibly for Hop
+//! Constructs two points and a blending weight which will behave sensibly for Jump
 struct JumpBlend
 {
   const boost::tuple<float,XY,XY> operator()(const XY& p) const
