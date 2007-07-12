@@ -46,10 +46,10 @@ struct Sidle
 };
 
 //! Can't warp Sidle because the reflection lines lock the pattern down.
-//struct SidleInvariant;
+struct SidleInvariant;
 
 //! Can't blend Sidle because there's nothing to hide.
-//struct SidleBlend;
+struct SidleBlend;
 
 //------------------------------------------------------------------------------------------
 

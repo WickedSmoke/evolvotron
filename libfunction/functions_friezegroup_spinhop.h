@@ -54,10 +54,13 @@ struct SpinhopInvariant
   {}
   const XY operator()(const XY& p) const
   {
-    const bool alt(modulusf(p.x(),2.0) < 1.0);
-    XY d(_f(XYZ(trianglef(p.x(),1.0),(alt ? -p.y():p.y()),0.0)).xy());
-    if (alt) d=-d;
-    return d;
+    // x-warp must depend only on fabs(y), reflect across y=0
+    real dx(_f(XYZ(trianglef(p.x()-0.5,0.5),fabs(p.y()),0.0)).x());
+    if (p.y()<0.0) dx=(-dx);
+    // y-warp must depend only on cyclic-x, reflect across x=0.5 lines
+    //real dy(_f(XYZ(trianglef(p.x()-0.5,0.5),0.0,0.0)).y());
+    //if (modulusf(p.x(),1.0)<0.5) dy=-dy;
+    return XY(dx,0.0);
   }
 private:
   const Function& _f;
