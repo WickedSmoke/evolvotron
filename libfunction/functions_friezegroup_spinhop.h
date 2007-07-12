@@ -52,12 +52,12 @@ struct SpinhopInvariant
   SpinhopInvariant(const Function& f)
     :_f(f)
   {}
-  const std::pair<XY,XY> operator()(const XY& p) const
+  const XY operator()(const XY& p) const
   {
     const bool alt(modulusf(p.x(),2.0) < 1.0);
     XY d(_f(XYZ(trianglef(p.x(),1.0),(alt ? -p.y():p.y()),0.0)).xy());
     if (alt) d=-d;
-    return std::make_pair(d,-d);
+    return d;
   }
 private:
   const Function& _f;

@@ -51,17 +51,12 @@ struct JumpInvariant
   JumpInvariant(const Function& f)
     :_f(f)
   {}
-  const std::pair<XY,XY> operator()(const XY& p) const
+  const XY operator()(const XY& p) const
   {
-    // A distortion dependent only on fabs(y) and repeating in x.
-    XY d(_f(XYZ(trianglef(p.x(),0.5),fabs(p.y()),0.0)).xy());
-    // Reflect the distortion across symmetry line
-    if (p.y()<0.0) d.y(-d.y());
-    // This is where the distortion will be mapped to by symmetry
-    const real intermediate_y=fabs(p.y()+d.y());
-    // This is what would take us back to the original position
-    const real back_y=fabs(p.y())-intermediate_y;
-    return std::make_pair(d,XY(-d.x(),back_y));
+    // An x-only distortion dependent only on fabs(y) and repeating in x.
+    // y distortion tricky because could cross y=0 line
+    XY d(_f(XYZ(trianglef(p.x()-0.5,0.5),fabs(p.y()),0.0)).x(),0.0);
+    return d;
   }
 private:
   const Function& _f;

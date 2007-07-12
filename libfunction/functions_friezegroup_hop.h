@@ -52,10 +52,10 @@ struct HopInvariant
   HopInvariant(const Function& f)
     :_f(f)
   {}
-  const std::pair<XY,XY> operator()(const XY& p) const
+  const XY operator()(const XY& p) const
   {
-    const XY d(_f(XYZ(trianglef(p.x(),0.5),p.y(),0.0)).xy());
-    return std::make_pair(d,-d);
+    const XY d(_f(XYZ(trianglef(p.x(),0.5),p.y(),0.0)).x(),0.0);
+    return d;
   }
 private:
   const Function& _f;
