@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /*! Outputs whitespace-separated co-ordinates.
  */
-std::ostream& XYZ::write(std::ostream& out) const
+std::ostream& XY::write(std::ostream& out) const
 {
   return out << x() << " " << y();
 }
