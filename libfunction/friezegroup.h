@@ -48,13 +48,21 @@ struct ClampZ
 };
 
 //! Function evaluation via symmetry.
-template <class SYMMETRY,class ZPOLICY> inline const XYZ Friezegroup(const Function& f,const XYZ& p,const SYMMETRY& sym,const ZPOLICY& zpol)
+template <class SYMMETRY,class ZPOLICY> 
+  inline const XYZ Friezegroup
+    (
+     const Function& f,const XYZ& p,const SYMMETRY& sym,const ZPOLICY& zpol
+     )
 {
   return f(XYZ(sym(p.xy()),zpol(p.z())));
 }
 
 //! Function evaluation via warped symmetry.
-template<class SYMMETRY,class WARP,class ZPOLICY> inline const XYZ FriezegroupWarp(const Function& f,const XYZ& p,const SYMMETRY& sym,const WARP& warp,const ZPOLICY& zpol)
+template<class SYMMETRY,class WARP,class ZPOLICY> 
+  inline const XYZ FriezegroupWarp
+    (
+     const Function& f,const XYZ& p,const SYMMETRY& sym,const WARP& warp,const ZPOLICY& zpol
+     )
 {
   const XY d(warp(p.xy()));
   const XY pd(p.xy()+d);
@@ -63,16 +71,24 @@ template<class SYMMETRY,class WARP,class ZPOLICY> inline const XYZ FriezegroupWa
 }
 
 //! Function evaluation via blended symmetry.
-template<class SYMMETRY,class BLEND,class ZPOLICY> inline const XYZ FriezegroupBlend(const Function& f,const XYZ& p,const SYMMETRY& sym,const BLEND& blend,const ZPOLICY& zpol)
+template<class SYMMETRY,class BLEND,class ZPOLICY> 
+  inline const XYZ FriezegroupBlend
+    (
+     const Function& f,const XYZ& p,const SYMMETRY& sym,const BLEND& blend,const ZPOLICY& zpol
+     )
 {
   const boost::tuple<float,XY,XY> b(blend(p.xy()));
   return
-    b.get<0>()*f(XYZ(sym(b.get<1>()),zpol(p.z())))
+          b.get<0>() *f(XYZ(sym(b.get<1>()),zpol(p.z())))
     +(1.0-b.get<0>())*f(XYZ(sym(b.get<2>()),zpol(p.z())));
 }
 
 //! Function evaluation via blended warped symmetry.
-template<class SYMMETRY,class BLEND,class WARP,class ZPOLICY> const XYZ FriezegroupBlendWarp(const Function& f,const XYZ& p,const SYMMETRY& sym,const BLEND& blend,const WARP& warp,const ZPOLICY& zpol)
+template<class SYMMETRY,class BLEND,class WARP,class ZPOLICY> 
+  inline const XYZ FriezegroupBlendWarp
+    (
+     const Function& f,const XYZ& p,const SYMMETRY& sym,const BLEND& blend,const WARP& warp,const ZPOLICY& zpol
+     )
 {
   const XY d(warp(p.xy()));
   const XY pd(p.xy()+d);

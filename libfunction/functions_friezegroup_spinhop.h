@@ -26,7 +26,7 @@
 #include "friezegroup.h"
 
 //! Spinhop (Conway p112): Half turn rotation only.
-/*! Sawtooth x increasing or decreasing depending on which side, with y reflected.
+/*! Sawtooth x increasing or decreasing depending on which side, with y inverting
 \verbatim
     o     o
   ---   ---
@@ -38,28 +38,26 @@ struct Spinhop
 {
   const XY operator()(const XY& p) const
   {
-    return XY
-      (
-       (p.y()>0.0 ? modulusf(p.x(),1.0) : 1.0-modulusf(p.x(),1.0)),
-       fabs(p.y())
-       );
+    if (modulusf(p.x(),2.0)<1.0)
+      {
+	return XY(    modulusf(p.x(),1.0), p.y());
+      }
+    else
+      {
+	return XY(1.0-modulusf(p.x(),1.0),-p.y());
+      }
   }
 };
 
-//! \todo: Should be able to do this.  Can be warped in x and y; all fits together.
-struct SpinhopInvariant
+struct SpinhopInvariant   // HERE
 {
   SpinhopInvariant(const Function& f)
     :_f(f)
   {}
   const XY operator()(const XY& p) const
   {
-    // x-warp must depend only on fabs(y), reflect across y=0
-    real dx(_f(XYZ(trianglef(p.x()-0.5,0.5),fabs(p.y()),0.0)).x());
-    if (p.y()<0.0) dx=(-dx);
-    // y-warp must depend only on cyclic-x, reflect across x=0.5 lines
-    //real dy(_f(XYZ(trianglef(p.x()-0.5,0.5),0.0,0.0)).y());
-    //if (modulusf(p.x(),1.0)<0.5) dy=-dy;
+    const real y(modulusf(p.x()-0.5,2.0)<1.0 ? p.y() : -p.y());
+    const real dx(_f(XYZ(trianglef(p.x()-0.5,0.5),y,0.0)).x());
     return XY(dx,0.0);
   }
 private:
