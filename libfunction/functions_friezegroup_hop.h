@@ -36,14 +36,19 @@
 */
 struct Hop
 {
+  Hop(int domain=0)
+    :_domain(domain)
+  {}
   const XY operator()(const XY& p) const
   {
     return XY
       (
-       modulusf(p.x(),1.0),
+       static_cast<real>(_domain)+modulusf(p.x(),1.0),
        p.y()
        );
   }
+  private:
+  const int _domain;
 };
 
 //! Something which can distort Hop without breaking symmetry.
@@ -96,6 +101,24 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopClampZ,1,1,false,FnStructure)
     }
   
 FUNCTION_END(FunctionFriezeGroupHopClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupHopCutClampZ,2,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const real k=Friezegroup(arg(1),p,Hop(),ClampZ(param(1))).sum_of_components(); 
+      const real t=-0.5+Hop()(p.xy()).x();  // -0.5 to +0.5 over domain
+      int d=0;
+      if (k<t-0.5) d=-1;
+      else if (t+0.5<k) d=1;
+      
+      return Friezegroup(arg(0),p,Hop(d),ClampZ(param(0)));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupHopCutClampZ)
+
 
 //------------------------------------------------------------------------------------------
 

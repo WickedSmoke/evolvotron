@@ -56,6 +56,7 @@ struct SpinhopInvariant   // HERE
   {}
   const XY operator()(const XY& p) const
   {
+    
     const real y(modulusf(p.x()-0.5,2.0)<1.0 ? p.y() : -p.y());
     const real dx(_f(XYZ(trianglef(p.x()-0.5,0.5),y,0.0)).x());
     return XY(dx,0.0);

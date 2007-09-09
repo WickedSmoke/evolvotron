@@ -48,6 +48,7 @@ REGISTER_DCL(FunctionConvolveSamples);
 REGISTER_DCL(FunctionAccumulateOctaves);
 REGISTER_DCL(FunctionFriezeGroupHopFreeZ);
 REGISTER_DCL(FunctionFriezeGroupHopClampZ);
+REGISTER_DCL(FunctionFriezeGroupHopCutClampZ);
 REGISTER_DCL(FunctionFriezeGroupHopWarpFreeZ);
 REGISTER_DCL(FunctionFriezeGroupHopWarpClampZ);
 REGISTER_DCL(FunctionFriezeGroupHopBlendFreeZ);
@@ -166,6 +167,7 @@ void register_all_functions(FunctionRegistry& r)
   register_FunctionAccumulateOctaves(r);
   register_FunctionFriezeGroupHopFreeZ(r);
   register_FunctionFriezeGroupHopClampZ(r);
+  register_FunctionFriezeGroupHopCutClampZ(r);
   register_FunctionFriezeGroupHopWarpFreeZ(r);
   register_FunctionFriezeGroupHopWarpClampZ(r);
   register_FunctionFriezeGroupHopBlendFreeZ(r);
