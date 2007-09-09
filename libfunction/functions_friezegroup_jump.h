@@ -36,14 +36,19 @@
 */
 struct Jump
 {
+  Jump(int domain=0)
+    :_domain(domain)
+  {}
   const XY operator()(const XY& p) const
     {
       return XY
 	(
-	 modulusf(p.x(),1.0),
+	 static_cast<real>(_domain)+modulusf(p.x(),1.0),
 	 fabs(p.y())
 	 );
     }
+  private:
+  const int _domain;
 };
 
 struct JumpInvariant
@@ -97,6 +102,26 @@ FUNCTION_BEGIN(FunctionFriezeGroupJumpClampZ,1,1,false,FnStructure)
     }
   
 FUNCTION_END(FunctionFriezeGroupJumpClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupJumpCutClampZ,2,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const XYZ ps(p.x()-0.5,p.y(),p.z());
+      const XY psd(Jump()(ps.xy()));
+      const real k=tanh(Friezegroup(arg(1),ps,Jump(),ClampZ(param(1))).sum_of_components()); 
+      const real t=-1.0+2.0*psd.x();   // -1 to +1 over shifted domain
+
+      int d=0;
+      if (psd.x()<0.5 && k<t) d=-1;
+      else if (psd.x()>=0.5 && k>t) d=1;
+      
+      return Friezegroup(arg(0),p,Jump(d),ClampZ(param(0)));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpCutClampZ)
 
 //------------------------------------------------------------------------------------------
 

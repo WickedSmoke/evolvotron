@@ -108,17 +108,19 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopCutClampZ,2,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const real k=Friezegroup(arg(1),p,Hop(),ClampZ(param(1))).sum_of_components(); 
-      const real t=-0.5+Hop()(p.xy()).x();  // -0.5 to +0.5 over domain
+      const XYZ ps(p.x()-0.5,p.y(),p.z());
+      const XY psd(Hop()(ps.xy()));
+      const real k=tanh(Friezegroup(arg(1),ps,Hop(),ClampZ(param(1))).sum_of_components()); 
+      const real t=-1.0+2.0*psd.x();   // -1 to +1 over shifted domain
+
       int d=0;
-      if (k<t-0.5) d=-1;
-      else if (t+0.5<k) d=1;
+      if (psd.x()<0.5 && k<t) d=-1;
+      else if (psd.x()>=0.5 && k>t) d=1;
       
       return Friezegroup(arg(0),p,Hop(d),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopCutClampZ)
-
 
 //------------------------------------------------------------------------------------------
 

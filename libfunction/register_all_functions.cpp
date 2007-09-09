@@ -13,9 +13,6 @@ REGISTER_DCL(FunctionConstant);
 REGISTER_DCL(FunctionIdentity);
 REGISTER_DCL(FunctionPostTransform);
 REGISTER_DCL(FunctionPreTransform);
-REGISTER_DCL(FunctionTop);
-REGISTER_DCL(FunctionTransform);
-REGISTER_DCL(FunctionTransformGeneralised);
 REGISTER_DCL(FunctionAdd);
 REGISTER_DCL(FunctionMultiply);
 REGISTER_DCL(FunctionDivide);
@@ -57,6 +54,7 @@ REGISTER_DCL(FunctionFriezeGroupHopBlendWarpFreeZ);
 REGISTER_DCL(FunctionFriezeGroupHopBlendWarpClampZ);
 REGISTER_DCL(FunctionFriezeGroupJumpFreeZ);
 REGISTER_DCL(FunctionFriezeGroupJumpClampZ);
+REGISTER_DCL(FunctionFriezeGroupJumpCutClampZ);
 REGISTER_DCL(FunctionFriezeGroupJumpWarpFreeZ);
 REGISTER_DCL(FunctionFriezeGroupJumpWarpClampZ);
 REGISTER_DCL(FunctionFriezeGroupJumpBlendFreeZ);
@@ -123,6 +121,9 @@ REGISTER_DCL(FunctionPreTransformGeneralised);
 REGISTER_DCL(FunctionPostTransformGeneralised);
 REGISTER_DCL(FunctionTransformQuadratic);
 REGISTER_DCL(FunctionRotate);
+REGISTER_DCL(FunctionTop);
+REGISTER_DCL(FunctionTransformGeneralised);
+REGISTER_DCL(FunctionTransform);
 
 void register_all_functions(FunctionRegistry& r)
 {
@@ -132,9 +133,6 @@ void register_all_functions(FunctionRegistry& r)
   register_FunctionIdentity(r);
   register_FunctionPostTransform(r);
   register_FunctionPreTransform(r);
-  register_FunctionTop(r);
-  register_FunctionTransform(r);
-  register_FunctionTransformGeneralised(r);
   register_FunctionAdd(r);
   register_FunctionMultiply(r);
   register_FunctionDivide(r);
@@ -176,6 +174,7 @@ void register_all_functions(FunctionRegistry& r)
   register_FunctionFriezeGroupHopBlendWarpClampZ(r);
   register_FunctionFriezeGroupJumpFreeZ(r);
   register_FunctionFriezeGroupJumpClampZ(r);
+  register_FunctionFriezeGroupJumpCutClampZ(r);
   register_FunctionFriezeGroupJumpWarpFreeZ(r);
   register_FunctionFriezeGroupJumpWarpClampZ(r);
   register_FunctionFriezeGroupJumpBlendFreeZ(r);
@@ -242,4 +241,7 @@ void register_all_functions(FunctionRegistry& r)
   register_FunctionPostTransformGeneralised(r);
   register_FunctionTransformQuadratic(r);
   register_FunctionRotate(r);
+  register_FunctionTop(r);
+  register_FunctionTransformGeneralised(r);
+  register_FunctionTransform(r);
 }
