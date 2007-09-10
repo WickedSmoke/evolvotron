@@ -33,51 +33,54 @@
     o    o    o
   ---  ---  --- 
 \endverbatim
+Domain is over (-width/2,width/2), centred on zero.
+Default domain we use -0.5 to +0.5 to see symmetry at default sort of zoom.
 */
 struct Hop
 {
-  Hop(int domain=0)
-    :_domain(domain)
-  {}
+  Hop(real width,int domain=0)
+    :_width(width)
+    ,_domain(domain)
+  {
+    assert(width>0.0f);
+  }
   const XY operator()(const XY& p) const
   {
     return XY
       (
-       static_cast<real>(_domain)+modulusf(p.x(),1.0),
+       (_domain-0.5)*_width+modulusf(p.x()-0.5*_width,_width),
        p.y()
        );
   }
   private:
+  const real _width;
   const int _domain;
 };
 
-//! Something which can distort Hop without breaking symmetry.
-struct HopInvariant
-{
-  HopInvariant(const Function& f)
-    :_f(f)
-  {}
-  const XY operator()(const XY& p) const
-  {
-    const XY d(_f(XYZ(trianglef(p.x(),0.5),p.y(),0.0)).x(),0.0);
-    return d;
-  }
-private:
-  const Function& _f;
-};
-
-//! Constructs two points and a blending weight which will behave sensibly for Hop
+//! Constructs two points and a blending weight which will behave sensibly for Hop.
+/*! The additional point is half a domain width away.
+  The blend weight is the weight of the primary point, should be maximum
+  in the centre of the domain (0) and zero at the edges +/-0.5*width
+ */
 struct HopBlend
 {
-  const boost::tuple<float,XY,XY> operator()(const XY& p) const
+  HopBlend(real width)
+    :_width(width)
   {
-    return boost::tuple<float,XY,XY>
+    assert(width>0.0f);
+  }
+       
+  const boost::tuple<real,XY,XY> operator()(const XY& p) const
+  {
+    return boost::tuple<real,XY,XY>
       (
-       2.0*trianglef(p.x(),0.5),
-       Hop()(p),
-       Hop()(p+XY(0.5,0.0))
+       (2.0/_width)*trianglef(p.x()-0.5*_width,0.5*_width),  // 0 at -width/2 and +width/2
+       Hop(_width)(p),
+       Hop(_width)(p-XY(0.5*_width,0.0))
        );
   }
+  private:
+  const real _width;
 };
 
 //------------------------------------------------------------------------------------------
@@ -86,7 +89,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Hop(),FreeZ());
+      return Friezegroup(arg(0),p,Hop(1.0),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupHopFreeZ)
@@ -97,7 +100,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Hop(),ClampZ(param(0)));
+      return Friezegroup(arg(0),p,Hop(1.0),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopClampZ)
@@ -109,51 +112,18 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopCutClampZ,2,2,false,FnStructure)
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const XYZ ps(p.x()-0.5,p.y(),p.z());
-      const XY psd(Hop()(ps.xy()));
-      const real k=tanh(Friezegroup(arg(1),ps,Hop(),ClampZ(param(1))).sum_of_components()); 
+      const XY psd(Hop(1.0)(ps.xy()));
+      const real k=tanh(Friezegroup(arg(1),ps,Hop(1.0),ClampZ(param(1))).sum_of_components()); 
       const real t=-1.0+2.0*psd.x();   // -1 to +1 over shifted domain
 
       int d=0;
       if (psd.x()<0.5 && k<t) d=-1;
       else if (psd.x()>=0.5 && k>t) d=1;
       
-      return Friezegroup(arg(0),p,Hop(d),ClampZ(param(0)));
+      return Friezegroup(arg(0),p,Hop(1.0,d),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopCutClampZ)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupHopWarpFreeZ,0,2,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return FriezegroupWarp(arg(0),p,Hop(),HopInvariant(arg(1)),FreeZ());
-    }
-  
-FUNCTION_END(FunctionFriezeGroupHopWarpFreeZ)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupHopWarpClampZ,1,2,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return FriezegroupWarp(arg(0),p,Hop(),HopInvariant(arg(1)),ClampZ(param(0)));
-    }
-  
-FUNCTION_END(FunctionFriezeGroupHopWarpClampZ)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupHopBlendFreeZ,0,1,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return FriezegroupBlend(arg(0),p,Hop(),HopBlend(),FreeZ());
-    }
-  
-FUNCTION_END(FunctionFriezeGroupHopBlendFreeZ)
 
 //------------------------------------------------------------------------------------------
 
@@ -161,32 +131,21 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopBlendClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return FriezegroupBlend(arg(0),p,Hop(),HopBlend(),ClampZ(param(0)));
+      return FriezegroupBlend(arg(0),p,Hop(1.0),HopBlend(1.0),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopBlendClampZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopBlendWarpFreeZ,0,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopBlendFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return FriezegroupBlendWarp(arg(0),p,Hop(),HopBlend(),HopInvariant(arg(1)),FreeZ());
+      return FriezegroupBlend(arg(0),p,Hop(1.0),HopBlend(1.0),FreeZ());
     }
   
-FUNCTION_END(FunctionFriezeGroupHopBlendWarpFreeZ)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupHopBlendWarpClampZ,1,2,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return FriezegroupBlendWarp(arg(0),p,Hop(),HopBlend(),HopInvariant(arg(1)),ClampZ(param(0)));
-    }
-  
-FUNCTION_END(FunctionFriezeGroupHopBlendWarpClampZ)
+FUNCTION_END(FunctionFriezeGroupHopBlendFreeZ)
 
 //------------------------------------------------------------------------------------------
 

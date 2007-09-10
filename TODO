@@ -11,6 +11,8 @@ Conventional Mode
   Spinjump   
   Spinsidle  
   Step       
+
+- Blend: could blend with an alternate function, so should have BlendOne and BlendTwo.
   
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
