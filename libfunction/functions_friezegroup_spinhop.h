@@ -25,44 +25,13 @@
 
 #include "friezegroup.h"
 
-//! Spinhop (Conway p112): Half turn rotation only.
-/*! Sawtooth x increasing or decreasing depending on which side, with y inverting.
-Don't think this can be blended because it would change symmetry.
-\verbatim
-    o     o
-  ---   ---
-     ---   ---
-     o     o
-\endverbatim
-*/
-struct Spinhop
-{
-  Spinhop(real width)
-    :_width(width)
-  {}
-  const XY operator()(const XY& p) const
-  {
-    const real x=modulusf(p.x()+0.5*_width,2.0*_width)-0.5*_width;
-    if (x<0.5*_width)
-      {
-	return XY(x,p.y());
-      }
-    else
-      {
-	return XY(_width-x,-p.y());
-      }
-  }
-  private:
-  const real _width;
-};
-
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionFriezeGroupSpinhopFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Spinhop(1.0),FreeZ());
+      return FriezegroupEvaluate(arg(0),p,Spinhop(1.0),FreeZ());
     }
 
 FUNCTION_END(FunctionFriezeGroupSpinhopFreeZ)
@@ -73,10 +42,34 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinhopClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Spinhop(1.0),ClampZ(param(0)));
+      return FriezegroupEvaluate(arg(0),p,Spinhop(1.0),ClampZ(param(0)));
     }
 
 FUNCTION_END(FunctionFriezeGroupSpinhopClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupSpinhopCutClampZ,2,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const int d=FriezegroupCut(arg(1),p,SpinhopCut(1.0),ClampZ(param(1)));
+      return FriezegroupEvaluate(arg(0),p,Spinhop(1.0,d),ClampZ(param(0)));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupSpinhopCutClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupSpinhopCutFreeZ,0,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const int d=FriezegroupCut(arg(1),p,SpinhopCut(1.0),FreeZ());
+      return FriezegroupEvaluate(arg(0),p,Spinhop(1.0,d),FreeZ());
+    }
+  
+FUNCTION_END(FunctionFriezeGroupSpinhopCutFreeZ)
 
 //------------------------------------------------------------------------------------------
 

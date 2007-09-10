@@ -12,7 +12,7 @@ Conventional Mode
   Jump       - Basic, Blend and Cut done.  (Is just Hop with y=0 reflection).    
   Sidle      - Basic. Can't be blended or cut as there are only reflection lines.
   Spinjump   - Basic. No blend or cut as there are only reflection lines.  (Is just Sidle with y=0 reflection).
-  Spinhop    - Basic.  Needs cut.  Don't think it can be blended.
+  Spinhop    - Basic.  ***CUT IS WORK IN PROGRESS***  Don't think it can be blended.
   Spinsidle  - todo
   Step       - todo
   

@@ -31,7 +31,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Hop(1.0),FreeZ());
+      return FriezegroupEvaluate(arg(0),p,Hop(1.0),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupHopFreeZ)
@@ -42,7 +42,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Hop(1.0),ClampZ(param(0)));
+      return FriezegroupEvaluate(arg(0),p,Hop(1.0),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopClampZ)
@@ -75,8 +75,8 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopCutClampZ,2,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const int d=FriezegroupCut(arg(1),p,XY(0.5,0.0),Hop(1.0),ClampZ(param(1)));
-      return Friezegroup(arg(0),p,Hop(1.0,d),ClampZ(param(0)));
+      const int d=FriezegroupCut(arg(1),p,HopCut(1.0),ClampZ(param(1)));
+      return FriezegroupEvaluate(arg(0),p,Hop(1.0,d),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopCutClampZ)
@@ -87,8 +87,8 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopCutFreeZ,0,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const int d=FriezegroupCut(arg(1),p,XY(0.5,0.0),Hop(1.0),FreeZ());
-      return Friezegroup(arg(0),p,Hop(1.0,d),FreeZ());
+      const int d=FriezegroupCut(arg(1),p,HopCut(1.0),FreeZ());
+      return FriezegroupEvaluate(arg(0),p,Hop(1.0,d),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupHopCutFreeZ)
