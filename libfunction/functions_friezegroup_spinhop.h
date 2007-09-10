@@ -26,7 +26,8 @@
 #include "friezegroup.h"
 
 //! Spinhop (Conway p112): Half turn rotation only.
-/*! Sawtooth x increasing or decreasing depending on which side, with y inverting
+/*! Sawtooth x increasing or decreasing depending on which side, with y inverting.
+Don't think this can be blended because it would change symmetry.
 \verbatim
     o     o
   ---   ---
@@ -36,37 +37,24 @@
 */
 struct Spinhop
 {
-  const XY operator()(const XY& p) const
-  {
-    if (modulusf(p.x(),2.0)<1.0)
-      {
-	return XY(    modulusf(p.x(),1.0), p.y());
-      }
-    else
-      {
-	return XY(1.0-modulusf(p.x(),1.0),-p.y());
-      }
-  }
-};
-
-struct SpinhopInvariant   // HERE
-{
-  SpinhopInvariant(const Function& f)
-    :_f(f)
+  Spinhop(real width)
+    :_width(width)
   {}
   const XY operator()(const XY& p) const
   {
-    
-    const real y(modulusf(p.x()-0.5,2.0)<1.0 ? p.y() : -p.y());
-    const real dx(_f(XYZ(trianglef(p.x()-0.5,0.5),y,0.0)).x());
-    return XY(dx,0.0);
+    const real x=modulusf(p.x()+0.5*_width,2.0*_width)-0.5*_width;
+    if (x<0.5*_width)
+      {
+	return XY(x,p.y());
+      }
+    else
+      {
+	return XY(_width-x,-p.y());
+      }
   }
-private:
-  const Function& _f;
+  private:
+  const real _width;
 };
-
-//! Not sure this makes sense... trying to fade changes symmetry. 
-struct SpinhopBlend;
 
 //------------------------------------------------------------------------------------------
 
@@ -74,7 +62,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinhopFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Spinhop(),FreeZ());
+      return Friezegroup(arg(0),p,Spinhop(1.0),FreeZ());
     }
 
 FUNCTION_END(FunctionFriezeGroupSpinhopFreeZ)
@@ -85,33 +73,10 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinhopClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Spinhop(),ClampZ(param(0)));
+      return Friezegroup(arg(0),p,Spinhop(1.0),ClampZ(param(0)));
     }
 
 FUNCTION_END(FunctionFriezeGroupSpinhopClampZ)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarpFreeZ,0,2,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return FriezegroupWarp(arg(0),p,Spinhop(),SpinhopInvariant(arg(1)),FreeZ());
-    }
-  
-FUNCTION_END(FunctionFriezeGroupSpinhopWarpFreeZ)
-
-//------------------------------------------------------------------------------------------
-
-FUNCTION_BEGIN(FunctionFriezeGroupSpinhopWarpClampZ,1,2,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      return FriezegroupWarp(arg(0),p,Spinhop(),SpinhopInvariant(arg(1)),ClampZ(param(0)));
-    }
-  
-FUNCTION_END(FunctionFriezeGroupSpinhopWarpClampZ)
-
 
 //------------------------------------------------------------------------------------------
 
