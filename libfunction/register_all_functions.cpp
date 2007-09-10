@@ -62,6 +62,8 @@ REGISTER_DCL(FunctionFriezeGroupSidleFreeZ);
 REGISTER_DCL(FunctionFriezeGroupSidleClampZ);
 REGISTER_DCL(FunctionFriezeGroupSpinhopFreeZ);
 REGISTER_DCL(FunctionFriezeGroupSpinhopClampZ);
+REGISTER_DCL(FunctionFriezeGroupSpinhopCutClampZ);
+REGISTER_DCL(FunctionFriezeGroupSpinhopCutFreeZ);
 REGISTER_DCL(FunctionFriezeGroupSpinjumpFreeZ);
 REGISTER_DCL(FunctionFriezeGroupSpinjumpClampZ);
 REGISTER_DCL(FunctionFriezeGroupSpinsidleFreeZ);
@@ -174,6 +176,8 @@ void register_all_functions(FunctionRegistry& r)
   register_FunctionFriezeGroupSidleClampZ(r);
   register_FunctionFriezeGroupSpinhopFreeZ(r);
   register_FunctionFriezeGroupSpinhopClampZ(r);
+  register_FunctionFriezeGroupSpinhopCutClampZ(r);
+  register_FunctionFriezeGroupSpinhopCutFreeZ(r);
   register_FunctionFriezeGroupSpinjumpFreeZ(r);
   register_FunctionFriezeGroupSpinjumpClampZ(r);
   register_FunctionFriezeGroupSpinsidleFreeZ(r);
