@@ -72,11 +72,12 @@ struct HopBlend
        
   const boost::tuple<real,XY,XY> operator()(const XY& p) const
   {
+    const Hop hop(_width);
     return boost::tuple<real,XY,XY>
       (
-       (2.0/_width)*trianglef(p.x()-0.5*_width,0.5*_width),  // 0 at -width/2 and +width/2
-       Hop(_width)(p),
-       Hop(_width)(p-XY(0.5*_width,0.0))
+       (2.0/_width)*trianglef(p.x()-0.5*_width,0.5*_width),  // 0 at -width/2 and +width/2, 1 at 0
+       hop(p),
+       hop(p-XY(0.5*_width,0.0))
        );
   }
   private:
@@ -127,22 +128,22 @@ FUNCTION_END(FunctionFriezeGroupHopCutClampZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopBlendClampZ,1,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopBlendClampZ,1,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return FriezegroupBlend(arg(0),p,Hop(1.0),HopBlend(1.0),ClampZ(param(0)));
+      return FriezegroupBlend(arg(0),arg(1),p,HopBlend(1.0),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupHopBlendClampZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopBlendFreeZ,0,1,false,FnStructure)
+FUNCTION_BEGIN(FunctionFriezeGroupHopBlendFreeZ,0,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return FriezegroupBlend(arg(0),p,Hop(1.0),HopBlend(1.0),FreeZ());
+      return FriezegroupBlend(arg(0),arg(1),p,HopBlend(1.0),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupHopBlendFreeZ)

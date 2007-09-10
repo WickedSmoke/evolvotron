@@ -125,7 +125,7 @@ inline uint modulusi(int x,int y)
   return r;
 }
 
-//! Triangle function: like modulus, but ramps down instead of discontinuity at y.
+//! Triangle function: like modulus, but starts ramping down instead of discontinuity at y.
 /*! Always has slope 1.  Setting y=1 ensures x in [0,1]
  */
 inline real trianglef(real x,real y)

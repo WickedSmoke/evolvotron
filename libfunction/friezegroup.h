@@ -57,44 +57,17 @@ template <class SYMMETRY,class ZPOLICY>
   return f(XYZ(sym(p.xy()),zpol(p.z())));
 }
 
-//! Function evaluation via warped symmetry.
-template<class SYMMETRY,class WARP,class ZPOLICY> 
-  inline const XYZ FriezegroupWarp
-    (
-     const Function& f,const XYZ& p,const SYMMETRY& sym,const WARP& warp,const ZPOLICY& zpol
-     )
-{
-  const XY d(warp(p.xy()));
-  const XY pd(p.xy()+d);
-  const XY delta(sym(pd)-pd);
-  return f(XYZ(p.xy()+delta,zpol(p.z())));
-}
-
 //! Function evaluation via blended symmetry.
-template<class SYMMETRY,class BLEND,class ZPOLICY> 
+template<class BLEND,class ZPOLICY> 
   inline const XYZ FriezegroupBlend
     (
-     const Function& f,const XYZ& p,const SYMMETRY& sym,const BLEND& blend,const ZPOLICY& zpol
+     const Function& f0,const Function& f1,const XYZ& p,const BLEND& blend,const ZPOLICY& zpol
      )
 {
-  const boost::tuple<float,XY,XY> b(blend(p.xy()));
+  const boost::tuple<real,XY,XY> b(blend(p.xy()));
   return
-          b.get<0>() *f(XYZ(sym(b.get<1>()),zpol(p.z())))
-    +(1.0-b.get<0>())*f(XYZ(sym(b.get<2>()),zpol(p.z())));
-}
-
-//! Function evaluation via blended warped symmetry.
-template<class SYMMETRY,class BLEND,class WARP,class ZPOLICY> 
-  inline const XYZ FriezegroupBlendWarp
-    (
-     const Function& f,const XYZ& p,const SYMMETRY& sym,const BLEND& blend,const WARP& warp,const ZPOLICY& zpol
-     )
-{
-  const XY d(warp(p.xy()));
-  const XY pd(p.xy()+d);
-  const XY delta(sym(pd)-pd);
-
-  return FriezegroupBlend(f,p+XYZ(delta,0.0),sym,blend,zpol);
+          b.get<0>() *f0(XYZ(b.get<1>(),zpol(p.z())))
+    +(1.0-b.get<0>())*f1(XYZ(b.get<2>(),zpol(p.z())));
 }
 
 #endif
