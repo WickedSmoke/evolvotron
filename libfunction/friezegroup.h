@@ -87,4 +87,157 @@ template<class SYMMETRY,class ZPOLICY>
   else return 0;
 }
 
+//------------------------------------------------------------------------------------------
+
+//! Hop (Conway p111): no reflections or rotation.
+/*! Just have to cycle x range.   
+\verbatim
+    o    o    o
+  ---  ---  --- 
+\endverbatim
+Domain is over (-width/2,width/2), centred on zero.
+Default domain we use -0.5 to +0.5 to see symmetry at default sort of zoom.
+*/
+struct Hop
+{
+  Hop(real width,int domain=0)
+    :_width(width)
+    ,_domain(domain)
+  {
+    assert(width>0.0f);
+  }
+
+  const real width() const {return _width;}
+
+  const XY operator()(const XY& p) const
+  {
+    return XY
+      (
+       (_domain-0.5)*_width+modulusf(p.x()-0.5*_width,_width),
+       p.y()
+       );
+  }
+  private:
+  const real _width;
+  const int _domain;
+};
+
+//! Constructs two points and a blending weight which will behave sensibly for Hop.
+/*! The additional point is half a domain width away.
+  The blend weight is the weight of the primary point, should be maximum
+  in the centre of the domain (0) and zero at the edges +/-0.5*width
+ */
+struct HopBlend
+{
+  HopBlend(real width)
+    :_width(width)
+  {
+    assert(width>0.0f);
+  }
+       
+  const boost::tuple<real,XY,XY> operator()(const XY& p) const
+  {
+    const Hop hop(_width);
+    return boost::tuple<real,XY,XY>
+      (
+       (2.0/_width)*trianglef(p.x()-0.5*_width,0.5*_width),  // 0 at -width/2 and +width/2, 1 at 0
+       hop(p),
+       hop(p-XY(0.5*_width,0.0))
+       );
+  }
+
+  private:
+  const real _width;
+};
+
+//------------------------------------------------------------------------------------------
+
+//! Jump (Conway p1m1): horizontal reflection only
+/*! Just cycle x range and reflect in y.
+Is simply Hop with a relection about y=0
+\verbatim
+     o    o    o
+   ---  ---  ---
+   ---  ---  ---
+     o    o    o
+\endverbatim
+*/
+struct Jump : public Hop
+{
+  Jump(real width,int domain=0)
+    :Hop(width,domain)
+  {}
+
+  const XY operator()(const XY& p) const
+    {
+      return Hop::operator()(XY(p.x(),fabs(p.y())));
+    }
+};
+
+//! Constructs two points and a blending weight which will behave sensibly for Jump
+struct JumpBlend : public HopBlend
+{
+  JumpBlend(real width)
+    :HopBlend(width)
+  {}
+  const boost::tuple<float,XY,XY> operator()(const XY& p) const
+  {
+    return HopBlend::operator()(XY(p.x(),fabs(p.y())));
+  }
+};
+
+//------------------------------------------------------------------------------------------
+
+//! Sidle (Conway pm11):  vertical reflection
+/*! Bounce x backwards and forwards.
+  Can't be blended or cut because there are only reflection lines.
+\verbatim
+  o| |o o| |o
+   | |   | |
+   | |   | |
+\endverbatim
+*/
+struct Sidle
+{
+  Sidle(real width)
+    :_width(width)
+  {}
+  const XY operator()(const XY& p) const
+  {
+    return XY
+      (
+       trianglef(p.x()-0.5*_width,_width),
+       p.y()
+       );
+  }
+  private:
+  const real _width;
+};
+
+//------------------------------------------------------------------------------------------
+
+//! Spinjump (Conway pmm2): vertical & horizontal reflection and half-rotation.
+/*! Oscillate x and reflect y.  
+Is just sidle with a reflection about y=0.
+  Can't be blended or cut because there are only reflection lines.
+\verbatim
+    o o     o o
+  --- --- --- ---
+  --- --- --- ---
+    o o     o o
+\endverbatim
+*/
+struct Spinjump : public Sidle
+{
+  Spinjump(real width)
+    :Sidle(width)
+  {}
+  const XY operator()(const XY& p) const
+  {
+    return Sidle::operator()(XY(p.x(),fabs(p.y())));
+  }
+};
+
+//------------------------------------------------------------------------------------------
+
 #endif

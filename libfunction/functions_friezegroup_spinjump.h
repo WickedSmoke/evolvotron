@@ -25,39 +25,13 @@
 
 #include "friezegroup.h"
 
-//! Spinjump (Conway pmm2): vertical & horizontal reflection and half-rotation.
-/*! Oscillate x and reflect y.  
-\verbatim
-    o o     o o
-  --- --- --- ---
-  --- --- --- ---
-    o o     o o
-\endverbatim
-*/
-struct Spinjump
-{
-  const XY operator()(const XY& p) const
-  {
-    return XY
-      (
-       trianglef(p.x(),1.0),
-       fabs(p.y())
-       );
-  }
-};
-
-// Don't think this form can be warped without breaking symmetry
-struct SpinjumpInvariant;
-
-struct SpinjumpBlend;
-
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionFriezeGroupSpinjumpFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Spinjump(),FreeZ());
+      return Friezegroup(arg(0),p,Spinjump(1.0),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupSpinjumpFreeZ)
@@ -69,7 +43,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinjumpClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Spinjump(),ClampZ(param(0)));
+      return Friezegroup(arg(0),p,Spinjump(1.0),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupSpinjumpClampZ)

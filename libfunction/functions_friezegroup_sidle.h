@@ -25,39 +25,13 @@
 
 #include "friezegroup.h"
 
-//! Sidle (Conway pm11):  vertical reflection
-/*! Bounce x backwards and forwards.
-\verbatim
-  o| |o o| |o
-   | |   | |
-   | |   | |
-\endverbatim
-*/
-struct Sidle
-{
-  const XY operator()(const XY& p) const
-  {
-    return XY
-      (
-       trianglef(p.x(),1.0),
-       p.y()
-       );
-  }
-};
-
-//! Can't warp Sidle because the reflection lines lock the pattern down.
-struct SidleInvariant;
-
-//! Can't blend Sidle because there's nothing to hide.
-struct SidleBlend;
-
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionFriezeGroupSidleFreeZ,0,1,false,FnStructure)
      
   virtual const XYZ evaluate(const XYZ& p) const
     {  
-      return Friezegroup(arg(0),p,Sidle(),FreeZ());
+      return Friezegroup(arg(0),p,Sidle(1.0),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupSidleFreeZ)
@@ -65,11 +39,10 @@ FUNCTION_END(FunctionFriezeGroupSidleFreeZ)
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionFriezeGroupSidleClampZ,1,1,false,FnStructure)
-  // Don't think this form can be warped without breaking symmetry
      
   virtual const XYZ evaluate(const XYZ& p) const
     {  
-      return Friezegroup(arg(0),p,Sidle(),ClampZ(param(0)));
+      return Friezegroup(arg(0),p,Sidle(1.0),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupSidleClampZ)

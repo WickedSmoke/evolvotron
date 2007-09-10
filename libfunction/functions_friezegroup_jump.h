@@ -25,69 +25,13 @@
 
 #include "friezegroup.h"
 
-//! Jump (Conway p1m1): horizontal reflection only
-/*! Just cycle x range and reflect in y.
-\verbatim
-     o    o    o
-   ---  ---  ---
-   ---  ---  ---
-     o    o    o
-\endverbatim
-*/
-struct Jump
-{
-  Jump(int domain=0)
-    :_domain(domain)
-  {}
-  const XY operator()(const XY& p) const
-    {
-      return XY
-	(
-	 static_cast<real>(_domain)+modulusf(p.x(),1.0),
-	 fabs(p.y())
-	 );
-    }
-  private:
-  const int _domain;
-};
-
-struct JumpInvariant
-{
-  JumpInvariant(const Function& f)
-    :_f(f)
-  {}
-  const XY operator()(const XY& p) const
-  {
-    // An x-only distortion dependent only on fabs(y) and repeating in x.
-    // y distortion tricky because could cross y=0 line
-    XY d(_f(XYZ(trianglef(p.x()-0.5,0.5),fabs(p.y()),0.0)).x(),0.0);
-    return d;
-  }
-private:
-  const Function& _f;
-};
-
-//! Constructs two points and a blending weight which will behave sensibly for Jump
-struct JumpBlend
-{
-  const boost::tuple<float,XY,XY> operator()(const XY& p) const
-  {
-    return boost::tuple<float,XY,XY>
-      (
-       2.0*trianglef(p.x(),0.5),
-       Jump()(p),
-       Jump()(p+XY(0.5,0.0))
-       );
-  }
-};
-
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionFriezeGroupJumpFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Jump(),FreeZ());
+      return Friezegroup(arg(0),p,Jump(1.0),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupJumpFreeZ)
@@ -98,10 +42,56 @@ FUNCTION_BEGIN(FunctionFriezeGroupJumpClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Jump(),ClampZ(param(0)));
+      return Friezegroup(arg(0),p,Jump(1.0),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupJumpClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupJumpBlendClampZ,1,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return FriezegroupBlend(arg(0),arg(1),p,JumpBlend(1.0),ClampZ(param(0)));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpBlendClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupJumpBlendFreeZ,0,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return FriezegroupBlend(arg(0),arg(1),p,JumpBlend(1.0),FreeZ());
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpBlendFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupJumpCutClampZ,2,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const int d=FriezegroupCut(arg(1),p,XY(0.5,0.0),Jump(1.0),ClampZ(param(1)));
+      return Friezegroup(arg(0),p,Jump(1.0,d),ClampZ(param(0)));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpCutClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupJumpCutFreeZ,0,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const int d=FriezegroupCut(arg(1),p,XY(0.5,0.0),Jump(1.0),FreeZ());
+      return Friezegroup(arg(0),p,Jump(1.0,d),FreeZ());
+    }
+  
+FUNCTION_END(FunctionFriezeGroupJumpCutFreeZ)
 
 //------------------------------------------------------------------------------------------
 

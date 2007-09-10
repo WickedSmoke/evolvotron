@@ -9,12 +9,12 @@ Conventional Mode
   Can't see how to blend cuts; needs something more like old warp approach.
 - Work out how to add warping/blending to the (frieze) symmetry groups so they dont look so "cut".
   Hop        - Blend and Cut done.
-  Jump       
-  Sidle       
-  Spinhop     
-  Spinjump   
-  Spinsidle  
-  Step       
+  Jump       - Blend and Cut done.  (Is just Hop with y=0 reflection).    
+  Sidle      - Can't be blended or cut as there are only reflection lines.
+  Spinjump   - No blend or cut as there are only reflection lines.  (Is just Sidle with y=0 reflection).
+  Spinhop    - todo
+  Spinsidle  - todo 
+  Step       - todo
   
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html

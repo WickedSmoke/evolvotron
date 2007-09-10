@@ -27,69 +27,6 @@
 
 //------------------------------------------------------------------------------------------
 
-//! Hop (Conway p111): no reflections or rotation.
-/*! Just have to cycle x range.   
-\verbatim
-    o    o    o
-  ---  ---  --- 
-\endverbatim
-Domain is over (-width/2,width/2), centred on zero.
-Default domain we use -0.5 to +0.5 to see symmetry at default sort of zoom.
-*/
-struct Hop
-{
-  Hop(real width,int domain=0)
-    :_width(width)
-    ,_domain(domain)
-  {
-    assert(width>0.0f);
-  }
-
-  const real width() const {return _width;}
-
-  const XY operator()(const XY& p) const
-  {
-    return XY
-      (
-       (_domain-0.5)*_width+modulusf(p.x()-0.5*_width,_width),
-       p.y()
-       );
-  }
-  private:
-  const real _width;
-  const int _domain;
-};
-
-//! Constructs two points and a blending weight which will behave sensibly for Hop.
-/*! The additional point is half a domain width away.
-  The blend weight is the weight of the primary point, should be maximum
-  in the centre of the domain (0) and zero at the edges +/-0.5*width
- */
-struct HopBlend
-{
-  HopBlend(real width)
-    :_width(width)
-  {
-    assert(width>0.0f);
-  }
-       
-  const boost::tuple<real,XY,XY> operator()(const XY& p) const
-  {
-    const Hop hop(_width);
-    return boost::tuple<real,XY,XY>
-      (
-       (2.0/_width)*trianglef(p.x()-0.5*_width,0.5*_width),  // 0 at -width/2 and +width/2, 1 at 0
-       hop(p),
-       hop(p-XY(0.5*_width,0.0))
-       );
-  }
-
-  private:
-  const real _width;
-};
-
-//------------------------------------------------------------------------------------------
-
 FUNCTION_BEGIN(FunctionFriezeGroupHopFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
