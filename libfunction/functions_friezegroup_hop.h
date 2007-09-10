@@ -44,6 +44,9 @@ struct Hop
   {
     assert(width>0.0f);
   }
+
+  const real width() const {return _width;}
+
   const XY operator()(const XY& p) const
   {
     return XY
@@ -80,6 +83,7 @@ struct HopBlend
        hop(p-XY(0.5*_width,0.0))
        );
   }
+
   private:
   const real _width;
 };
@@ -108,26 +112,6 @@ FUNCTION_END(FunctionFriezeGroupHopClampZ)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionFriezeGroupHopCutClampZ,2,2,false,FnStructure)
-
-  virtual const XYZ evaluate(const XYZ& p) const
-    {
-      const XYZ ps(p.x()-0.5,p.y(),p.z());
-      const XY psd(Hop(1.0)(ps.xy()));
-      const real k=tanh(Friezegroup(arg(1),ps,Hop(1.0),ClampZ(param(1))).sum_of_components()); 
-      const real t=-1.0+2.0*psd.x();   // -1 to +1 over shifted domain
-
-      int d=0;
-      if (psd.x()<0.5 && k<t) d=-1;
-      else if (psd.x()>=0.5 && k>t) d=1;
-      
-      return Friezegroup(arg(0),p,Hop(1.0,d),ClampZ(param(0)));
-    }
-  
-FUNCTION_END(FunctionFriezeGroupHopCutClampZ)
-
-//------------------------------------------------------------------------------------------
-
 FUNCTION_BEGIN(FunctionFriezeGroupHopBlendClampZ,1,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
@@ -147,6 +131,30 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopBlendFreeZ,0,2,false,FnStructure)
     }
   
 FUNCTION_END(FunctionFriezeGroupHopBlendFreeZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupHopCutClampZ,2,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const int d=FriezegroupCut(arg(1),p,XY(0.5,0.0),Hop(1.0),ClampZ(param(1)));
+      return Friezegroup(arg(0),p,Hop(1.0,d),ClampZ(param(0)));
+    }
+  
+FUNCTION_END(FunctionFriezeGroupHopCutClampZ)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFriezeGroupHopCutFreeZ,0,2,false,FnStructure)
+
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const int d=FriezegroupCut(arg(1),p,XY(0.5,0.0),Hop(1.0),FreeZ());
+      return Friezegroup(arg(0),p,Hop(1.0,d),FreeZ());
+    }
+  
+FUNCTION_END(FunctionFriezeGroupHopCutFreeZ)
 
 //------------------------------------------------------------------------------------------
 

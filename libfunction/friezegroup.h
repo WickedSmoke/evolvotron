@@ -57,7 +57,9 @@ template <class SYMMETRY,class ZPOLICY>
   return f(XYZ(sym(p.xy()),zpol(p.z())));
 }
 
-//! Function evaluation via blended symmetry.
+//! Function evaluation with blending.
+/*! NB Is symmetry unaware; blend must have already reduced points to base domain.
+ */
 template<class BLEND,class ZPOLICY> 
   inline const XYZ FriezegroupBlend
     (
@@ -68,6 +70,21 @@ template<class BLEND,class ZPOLICY>
   return
           b.get<0>() *f0(XYZ(b.get<1>(),zpol(p.z())))
     +(1.0-b.get<0>())*f1(XYZ(b.get<2>(),zpol(p.z())));
+}
+
+template<class SYMMETRY,class ZPOLICY>
+  inline const int FriezegroupCut
+    (
+     const Function& f,const XYZ& p,const XY& d,const SYMMETRY& sym,const ZPOLICY& zpol
+     )
+{
+  const XY pc(sym(p.xy()+d));              // Might need to be more complicated than +d in future.
+  const real k=tanh(f(XYZ(pc,zpol(p.z()))).sum_of_components()); 
+  const real t=pc.x()/(0.5*sym.width());   // -1 to +1 over shifted domain used for cut function
+
+  if (pc.x()<0.0 && k<t) return -1;
+  else if (pc.x()>=0.0 && k>t) return 1;
+  else return 0;
 }
 
 #endif

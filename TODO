@@ -3,16 +3,18 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
+- Friezegroups:
+  Want cut and blend for those that support it.
+  Blend should use two functions.
+  Can't see how to blend cuts; needs something more like old warp approach.
 - Work out how to add warping/blending to the (frieze) symmetry groups so they dont look so "cut".
-  Hop        - All done. + working Cut.
-  Jump       - All done. + working Cut.
-  Sidle      - Can't blend or warp
-  Spinhop    - Can warp.  Can't see blend.
+  Hop        - Blend and Cut done.
+  Jump       
+  Sidle       
+  Spinhop     
   Spinjump   
   Spinsidle  
   Step       
-
-- Blend: could blend with an alternate function, so should have BlendOne and BlendTwo.
   
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
