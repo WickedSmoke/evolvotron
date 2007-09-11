@@ -31,7 +31,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinjumpFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Spinjump(1.0),FreeZ());
+      return FriezegroupEvaluate(arg(0),p,Spinjump(1.0),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupSpinjumpFreeZ)
@@ -43,7 +43,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinjumpClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Spinjump(1.0),ClampZ(param(0)));
+      return FriezegroupEvaluate(arg(0),p,Spinjump(1.0),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupSpinjumpClampZ)

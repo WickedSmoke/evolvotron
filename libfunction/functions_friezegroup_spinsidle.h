@@ -58,7 +58,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinsidleFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Spinsidle(),FreeZ());
+      return FriezegroupEvaluate(arg(0),p,Spinsidle(),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupSpinsidleFreeZ)
@@ -69,7 +69,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinsidleClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Spinsidle(),ClampZ(param(0)));
+      return FriezegroupEvaluate(arg(0),p,Spinsidle(),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupSpinsidleClampZ)

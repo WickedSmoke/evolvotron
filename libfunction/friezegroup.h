@@ -72,6 +72,15 @@ template<class BLEND,class ZPOLICY>
     +(1.0-b.get<0>())*f1(XYZ(b.get<2>(),zpol(p.z())));
 }
 
+template<class BLEND,class ZPOLICY> 
+  inline const XYZ FriezegroupBlend
+    (
+     const Function& f,const XYZ& p,const BLEND& blend,const ZPOLICY& zpol
+     )
+{
+  return FriezegroupBlend(f,f,p,blend,zpol);
+}
+
 //! Generate domain shift for when cutting.
 template<class CUT,class ZPOLICY>
   inline const int FriezegroupCut
@@ -301,6 +310,33 @@ struct Spinhop : public Friezegroup
   }
   private:
   const int _domain;
+};
+
+//! Blended Spinhop
+/*! Can build this from blending two rotated hop sequences.
+  Make the domains wider.
+\verbatim
+     o      o      o      o
+ -----  -----  -----  -----
+    -----  -----  -----  -----
+    o      o      o      o  
+\endverbatim
+ */
+struct SpinhopBlend : public Friezegroup // subclassing doesn't make much sense really
+{
+  SpinhopBlend(real width)
+    :Friezegroup(width)
+  {}
+  const boost::tuple<real,XY,XY> operator()(const XY& p) const
+  {
+    const Hop hop(2*width());
+    return boost::tuple<real,XY,XY>
+      (
+       trianglef(p.x()-width(),width())/width(),  // zero at x=-width and +width, 1 at x=0
+       hop(p),
+       hop(XY(width()-p.x(),-p.y()))
+       );
+  }
 };
 
 // Generates points suitable for evaluating cutting function

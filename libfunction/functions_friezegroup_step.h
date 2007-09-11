@@ -57,7 +57,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupStepFreeZ,0,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Step(),FreeZ());
+      return FriezegroupEvaluate(arg(0),p,Step(),FreeZ());
     }
   
 FUNCTION_END(FunctionFriezeGroupStepFreeZ)
@@ -68,7 +68,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupStepClampZ,1,1,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      return Friezegroup(arg(0),p,Step(),ClampZ(param(0)));
+      return FriezegroupEvaluate(arg(0),p,Step(),ClampZ(param(0)));
     }
   
 FUNCTION_END(FunctionFriezeGroupStepClampZ)
