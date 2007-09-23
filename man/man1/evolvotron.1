@@ -35,7 +35,7 @@ evolvotron
 \-X
 .I <functionname>
 ]
-
+[\-D]
 .SH DESCRIPTION
 
 .B evolvotron
@@ -126,6 +126,12 @@ This can also be controlled from the "Favourite" dialog.
 Similar to
 .B \-x
 but with no wrapper functions.
+
+.TP 0.5i
+.B \-D
+Debug mode.
+Currently simply sets function weightings so virtually all function nodes are FunctionNoiseOneChannel.
+This is really only useful to developers in conjunction with the -x/-X options.
 
 .SH EXAMPLES
 

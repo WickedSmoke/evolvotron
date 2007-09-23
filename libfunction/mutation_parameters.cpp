@@ -30,10 +30,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_identity.h"
 #include "function_transform.h"
 
-MutationParameters::MutationParameters(uint seed)
+MutationParameters::MutationParameters(uint seed,bool debug_mode)
   :_function_registry(new FunctionRegistry())
   ,_r01(seed)
   ,_r_negexp(seed,1.0)
+  ,_debug_mode(debug_mode)
 {
   reset();
 }
@@ -56,7 +57,7 @@ void MutationParameters::reset()
   _proportion_constant=0.5;
   _identity_supression=1.0;
 
-  //! \todo Could do with _max_initial_iterations being higher (64?) but it slows things down.
+  //! \todo Could do with _max_initial_iterations being higher (64?) for fractal type things but it slows things down too much.
   _max_initial_iterations=16;
   _probability_iterations_change_step=0.25;
   _probability_iterations_change_jump=0.02;
@@ -68,10 +69,18 @@ void MutationParameters::reset()
        it++
        )
     {
-      real initial_weight=1.0;
-      if ((*it)->classification() & FnIterative) initial_weight=1.0/1024.0;  // Ouch iterative functions are expensive
-      if ((*it)->classification() & FnFractal) initial_weight=1.0/1024.0;  // Yuk fractals are ugly
-      _function_weighting.insert(std::make_pair((*it),initial_weight));
+      if (_debug_mode)
+	{
+	  real initial_weight=((*it)->name()=="FunctionNoiseOneChannel" ? 1.0 : 1.0/1024.0);
+	  _function_weighting.insert(std::make_pair((*it),initial_weight));
+	}
+      else
+	{
+	  real initial_weight=1.0;
+	  if ((*it)->classification() & FnIterative) initial_weight=1.0/1024.0;  // Ouch iterative functions are expensive
+	  if ((*it)->classification() & FnFractal) initial_weight=1.0/1024.0;  // Yuk fractals are ugly
+	  _function_weighting.insert(std::make_pair((*it),initial_weight));
+	}
     }
 
   recalculate_function_stuff();

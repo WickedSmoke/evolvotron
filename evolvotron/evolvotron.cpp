@@ -126,6 +126,8 @@ int main(int argc,char* argv[])
       favourite_function_unwrapped=true;
     }
 
+  const bool function_debug_mode=args.option("-D");
+
 #ifdef FULLSCREEN
   // Use same keys as used by app to toggle modes
   bool start_fullscreen=args.option("-F");
@@ -148,7 +150,7 @@ int main(int argc,char* argv[])
     << niceness
     << ")\n";
 
-  EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),frames,framerate,threads,niceness,start_fullscreen,start_menuhidden);
+  EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),frames,framerate,threads,niceness,start_fullscreen,start_menuhidden,function_debug_mode);
 
   main_widget->mutation_parameters().function_registry().status(std::clog);
 

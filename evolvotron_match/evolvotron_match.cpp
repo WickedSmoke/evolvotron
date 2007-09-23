@@ -133,7 +133,7 @@ int main(int argc,char* argv[])
     uint seed=getpid()+t.msec()+1000*t.second()+60000*t.minute()+3600000*t.hour();   
     std::clog << "Random seed is " << seed << "\n";
    
-    MutationParameters mutation_parameters(seed);
+    MutationParameters mutation_parameters(seed,false);
  
     if (argc<2)
       {

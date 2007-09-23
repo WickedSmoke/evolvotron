@@ -179,10 +179,10 @@ void EvolvotronMain::last_spawned_image(const boost::shared_ptr<const MutatableI
 /*! Constructor sets up GUI components and fires up QTimer.
   Initialises mutation parameters using time, so different every time.
  */
-EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frames,uint framerate,uint n_threads,int niceness,bool start_fullscreen,bool start_menuhidden)
+EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frames,uint framerate,uint n_threads,int niceness,bool start_fullscreen,bool start_menuhidden,bool function_debug_mode)
   :QMainWindow(parent,0,Qt::WType_TopLevel|Qt::WDestructiveClose)
    ,_history(new EvolvotronMain::History(this))
-   ,_mutation_parameters(time(0),this)
+   ,_mutation_parameters(time(0),function_debug_mode,this)
    ,_statusbar_tasks(0)
    ,_last_spawn_method(&EvolvotronMain::spawn_normal)
 {

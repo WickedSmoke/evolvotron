@@ -5,13 +5,13 @@ Conventional Mode
 -----------------
 - Friezegroups:
   Want cut and blend for those that support it.
-  Blend should use two functions.
+  Blend should use two functions in some cases.
   Can't see how to blend cuts; needs something more like old warp approach.
 - Work out how to add warping/blending to the (frieze) symmetry groups so they dont look so "cut".
   Hop        - Basic, Blend and Cut done.
   Jump       - Basic, Blend and Cut done.  (Is just Hop with y=0 reflection).    
-  Sidle      - Basic. Can't be blended or cut as there are only reflection lines.
-  Spinjump   - Basic. No blend or cut as there are only reflection lines.  (Is just Sidle with y=0 reflection).
+  Sidle      - Basic. Can't be blended or cut as there are only reflection lines.  (Could be blended, but doesn't hide much).
+  Spinjump   - Basic. No blend or cut as there are only reflection lines.  (Is just Sidle with y=0 reflection).  (Again, could blend but not much point).
   Spinhop    - Basic. Blend done. ***CUT IS WORK IN PROGRESS***
   Spinsidle  - todo
   Step       - todo
@@ -21,7 +21,7 @@ Conventional Mode
   Wikipedia http://en.wikipedia.org/wiki/Wallpaper_group is good.
   Presumably there are 3D versions too.
   See also http://www.mi.sanu.ac.yu/vismath/ana/ana5.htm
-
+- When mutating parameters, have a chance of a "special" reset to "interesting" values, and maybe even patterns of values.
 - Debian transitioning Apps to Applications (post Etch) see bug 361418
 - GPLv3 ?  Don't understand what else needs to be (e.g Qt3 etc)
 - Maybe icon setting could do with some more attention; probably there are more things which should set it

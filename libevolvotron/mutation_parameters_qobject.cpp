@@ -24,9 +24,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "mutation_parameters_qobject.h"
 
-MutationParametersQObject::MutationParametersQObject(uint seed,QObject* parent)
+MutationParametersQObject::MutationParametersQObject(uint seed,bool debug_mode,QObject* parent)
   :QObject(parent)
-  ,MutationParameters(seed)
+  ,MutationParameters(seed,debug_mode)
 {}
 
 MutationParametersQObject::~MutationParametersQObject()

@@ -98,11 +98,14 @@ class MutationParameters
   //! Map from [0,1] to a function registration, taking weights into account.
   std::map<real,const FunctionRegistration*> _function_pick;
 
+  //! Just use SingleChannelNoise for almost all functions (useful for debugging).
+  const bool _debug_mode;
+
   void recalculate_function_stuff();
 
  public:
   //! Trivial constructor.
-  MutationParameters(uint seed);
+  MutationParameters(uint seed,bool debug_mode);
 
   //! Trivial destructor.
   virtual ~MutationParameters();

@@ -89,8 +89,8 @@ template<class CUT,class ZPOLICY>
      )
 {
   const XY pc(cut(p.xy()));
-  const real k=tanh(f(XYZ(pc,zpol(p.z()))).sum_of_components()); 
-  const real t=pc.x()/(0.5*cut.width());   // -1 to +1 over shifted domain used for cut function
+  const real k=tanh(f(XYZ(pc,zpol(p.z()))).sum_of_components());
+  const real t=pc.x()/(0.5*cut.width());   // -1 to +1 over domain used for cut function (should be in -width/2 to +width/2)
 
   if (pc.x()<0.0 && k<t) return -1;
   else if (pc.x()>=0.0 && k>t) return 1;
@@ -232,6 +232,7 @@ struct JumpCut : public HopCut
 //! Sidle (Conway pm11):  vertical reflection
 /*! Bounce x backwards and forwards.
   Can't be blended or cut because there are only reflection lines.
+  (Well we could blend it by increasing the domain width and blending between overlapping domains, but the reflection lines aren't really worth going to any trouble to hide.
 \verbatim
   o| |o o| |o
    | |   | |
@@ -297,15 +298,17 @@ struct Spinhop : public Friezegroup
   {}
   const XY operator()(const XY& p) const
   {
-    const real x=modulusf(p.x()+0.5*width(),2.0*width())-0.5*width();
-    const real flip=0.5*width();
+    if (_domain!=0) return XY(_domain,0.0);
+    const real x=modulusf(p.x()+0.5*width(),2.0*width())+(_domain-0.5)*width();
+    const real y=((_domain&1) ? -p.y() : p.y());
+      const real flip=(_domain+0.5)*width();
     if (x<flip)
       {
-	return XY(x,p.y());
+	return XY(x,y);
       }
     else
       {
-	return XY(width()-x,-p.y());
+	return XY(width()-x,-y);
       }
   }
   private:
@@ -317,8 +320,8 @@ struct Spinhop : public Friezegroup
   Make the domains wider.
 \verbatim
      o      o      o      o
- -----  -----  -----  -----
-    -----  -----  -----  -----
+ -----  -----  -----  -----        v blend these two together
+    -----  -----  -----  -----     ^ using triangular alpha fn
     o      o      o      o  
 \endverbatim
  */
