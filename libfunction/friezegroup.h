@@ -91,7 +91,6 @@ template<class CUT,class ZPOLICY>
   const XY pc(cut(p.xy()));
   const real k=tanh(f(XYZ(pc,zpol(p.z()))).sum_of_components());
   const real t=pc.x()/(0.5*cut.width());   // -1 to +1 over domain used for cut function (should be in -width/2 to +width/2)
-
   if (pc.x()<0.0 && k<t) return -1;
   else if (pc.x()>=0.0 && k>t) return 1;
   else return 0;
@@ -248,7 +247,7 @@ struct Sidle : public Friezegroup
   {
     return XY
       (
-       trianglef(p.x()-0.5*width(),width()),
+       trianglef(p.x()+0.5*width(),width())-0.5*width(),       // So -width/2 maps to -width/2
        p.y()
        );
   }
@@ -298,10 +297,10 @@ struct Spinhop : public Friezegroup
   {}
   const XY operator()(const XY& p) const
   {
-    if (_domain!=0) return XY(_domain,0.0);
+    //if (_domain!=0) return XY(_domain,0.0); // DEBUG
     const real x=modulusf(p.x()+0.5*width(),2.0*width())+(_domain-0.5)*width();
     const real y=((_domain&1) ? -p.y() : p.y());
-      const real flip=(_domain+0.5)*width();
+    const real flip=(_domain+0.5)*width();
     if (x<flip)
       {
 	return XY(x,y);
@@ -342,7 +341,9 @@ struct SpinhopBlend : public Friezegroup // subclassing doesn't make much sense 
   }
 };
 
-// Generates points suitable for evaluating cutting function
+//! Generates points suitable for evaluating cutting function
+/*! Only suitable cut I can see looks like Sidle with rotation about y=0
+ */
 struct SpinhopCut : public Friezegroup
 {
   SpinhopCut(real width)
@@ -350,7 +351,10 @@ struct SpinhopCut : public Friezegroup
   {}
   const XY operator()(const XY& p) const
   {
-    return Spinhop(width())(p+XY(0.5*width(),0.0));
+    const XY pm(p.x()-0.5*width(),fabs(p.y()));
+    const XY r(Sidle(width())(pm));
+    if (p.y()<0.0) return XY(-r.x(),r.y());
+    else return r;
   }
 };
 
