@@ -297,18 +297,28 @@ struct Spinhop : public Friezegroup
   {}
   const XY operator()(const XY& p) const
   {
-    //if (_domain!=0) return XY(_domain,0.0); // DEBUG
-    const real x=modulusf(p.x()+0.5*width(),2.0*width())+(_domain-0.5)*width();
-    const real y=((_domain&1) ? -p.y() : p.y());
-    const real flip=(_domain+0.5)*width();
-    if (x<flip)
+    const bool flipped=(modulusf(p.x()+0.5*width(),2.0*width())>width());
+    
+    real x=modulusf(p.x()+0.5*width(),width())-0.5*width();
+    real y=p.y();
+    if (flipped)
       {
-	return XY(x,y);
+	x=-x;
+	y=-y;
       }
-    else
+
+    if (_domain==-1)
       {
-	return XY(width()-x,-y);
+	x=-1000.0;
+	y=-1000.0;
       }
+    else if (_domain==1)
+      {
+	x=1000.0;
+	y=1000.0;
+      }
+    
+    return XY(x,y);
   }
   private:
   const int _domain;
