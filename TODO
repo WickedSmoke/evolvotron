@@ -8,11 +8,11 @@ Conventional Mode
   Blend should use two functions in some cases.
   Can't see how to blend cuts; needs something more like old warp approach.
 - Work out how to add warping/blending to the (frieze) symmetry groups so they dont look so "cut".
-  Hop        - Basic, Blend and Cut done.
-  Jump       - Basic, Blend and Cut done.  (Is just Hop with y=0 reflection).    
+  Hop        - Basic, Blend and Cut done.  Cut needs attn to fit in with spinhop.
+  Jump       - Basic, Blend and Cut done.  (Is just Hop with y=0 reflection).    Cut needs attn to fit in with spinhop.
   Sidle      - Basic. Can't be blended or cut as there are only reflection lines.  (Could be blended, but doesn't hide much).
   Spinjump   - Basic. No blend or cut as there are only reflection lines.  (Is just Sidle with y=0 reflection).  (Again, could blend but not much point).
-  Spinhop    - Basic. Blend done. ***CUT IS WORK IN PROGRESS***
+  Spinhop    - Basic. Blend done. Cut done.
   Spinsidle  - todo
   Step       - todo
   

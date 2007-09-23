@@ -82,6 +82,8 @@ template<class BLEND,class ZPOLICY>
 }
 
 //! Generate domain shift for when cutting.
+/*! This function actually far too specific to Hop and Jump, so move into their Cut functions as done for SpinhopCut
+ */
 template<class CUT,class ZPOLICY>
   inline const int FriezegroupCut
     (
@@ -297,25 +299,16 @@ struct Spinhop : public Friezegroup
   {}
   const XY operator()(const XY& p) const
   {
-    const bool flipped=(modulusf(p.x()+0.5*width(),2.0*width())>width());
+
+    bool flipped=(modulusf(p.x()+0.5*width(),2.0*width())>width());
+    if (_domain!=0) flipped=!flipped;
     
-    real x=modulusf(p.x()+0.5*width(),width())-0.5*width();
+    real x=modulusf(p.x()+0.5*width(),width())-0.5*width()+_domain*width();
     real y=p.y();
     if (flipped)
       {
 	x=-x;
 	y=-y;
-      }
-
-    if (_domain==-1)
-      {
-	x=-1000.0;
-	y=-1000.0;
-      }
-    else if (_domain==1)
-      {
-	x=1000.0;
-	y=1000.0;
       }
     
     return XY(x,y);
@@ -351,20 +344,27 @@ struct SpinhopBlend : public Friezegroup // subclassing doesn't make much sense 
   }
 };
 
-//! Generates points suitable for evaluating cutting function
-/*! Only suitable cut I can see looks like Sidle with rotation about y=0
+//! Only suitable cut I can see looks like Sidle with rotate across y=0
+/*! \todo There's something different could be done here.  The cutting is too constrained (needs pictures :^)
+  \todo Some "softening" of the cut around y=0 would be good to stop odd looking hard lines.
  */
-struct SpinhopCut : public Friezegroup
+template <class ZPOLICY> struct SpinhopCut : public Friezegroup
 {
   SpinhopCut(real width)
     :Friezegroup(width)
   {}
-  const XY operator()(const XY& p) const
+  const int operator()(const Function& f,const XYZ& p,const ZPOLICY& zpol) const
   {
-    const XY pm(p.x()-0.5*width(),fabs(p.y()));
-    const XY r(Sidle(width())(pm));
-    if (p.y()<0.0) return XY(-r.x(),r.y());
-    else return r;
+    const XY pm(p.x()-0.5*width(),fabs(p.y()));    // Shift out of alignment with spinhop being cut, and add reflection about y=0
+    const XY r(Sidle(width())(pm));                // in combo with sidle, gets us something suitable for cutting without breaking spinhop
+    const XY pc(p.y()<0.0 ? XY(-r.x(),r.y()) : r); // if we also flip it below y=0
+    const real k=tanh(f(XYZ(pc,zpol(p.z()))).sum_of_components());
+
+    const real t=(modulusf(pm.x()-0.5*width(),width())-0.5*width())/(0.5*width());  // Scans -1 to 1 across each (shifted, cutting) domain
+    int d=0;
+    if (t<0.0 && k<t) d=-1;
+    else if (t>=0.0 && k>t) d=1;
+    return d;
   }
 };
 

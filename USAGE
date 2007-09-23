@@ -129,9 +129,8 @@ POWER-USER & DEBUG OPTIONS
         Puts the certain aspects of the app into a more debug oriented mode.
         Currently (ie this may change) it simply changes function weightings
         so virtually all function nodes are FunctionNoiseOneChannel. By itself
-	this is a pretty pointless thing to do, but in conjunction with the 
-        -X options it's useful for examining the behaviour of specific
-        functions.
+	this is a pretty pointless thing to do, but in conjunction with the -X
+        options it's useful for examining the behaviour of specific functions.
 
 MOUSE CONTROL
 ============= 

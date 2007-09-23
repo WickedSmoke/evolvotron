@@ -75,7 +75,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinhopCutClampZ,2,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const int d=FriezegroupCut(arg(1),p,SpinhopCut(1.0),ClampZ(param(1)));
+      const int d=SpinhopCut<ClampZ>(1.0)(arg(1),p,ClampZ(param(1)));
       return FriezegroupEvaluate(arg(0),p,Spinhop(1.0,d),ClampZ(param(0)));
     }
   
@@ -87,7 +87,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinhopCutFreeZ,0,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const int d=FriezegroupCut(arg(1),p,SpinhopCut(1.0),FreeZ());
+      const int d=SpinhopCut<FreeZ>(1.0)(arg(1),p,FreeZ());
       return FriezegroupEvaluate(arg(0),p,Spinhop(1.0,d),FreeZ());
     }
   
