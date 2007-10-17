@@ -178,8 +178,6 @@ MutatableImageDisplay::~MutatableImageDisplay()
   _offscreen_buffer.clear();
 
   _offscreen_image.clear();
-
-  std::clog << "A MutatableImageDisplay was deleted\n";
 }
 
 const uint MutatableImageDisplay::simplify_constants(bool single_action)

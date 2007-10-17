@@ -84,6 +84,7 @@ template<class BLEND,class ZPOLICY>
 //! Generate domain shift for when cutting.
 /*! This function actually far too specific to Hop and Jump, so move into their Cut functions as done for SpinhopCut
  */
+/*
 template<class CUT,class ZPOLICY>
   inline const int FriezegroupCut
     (
@@ -97,6 +98,7 @@ template<class CUT,class ZPOLICY>
   else if (pc.x()>=0.0 && k>t) return 1;
   else return 0;
 }
+*/
 
 //------------------------------------------------------------------------------------------
 
@@ -169,7 +171,8 @@ struct HopBlend : public Friezegroup // subclassing doesn't make much sense real
   }
 };
 
-// Generates points suitable for evaluating cutting function
+//! Generates points suitable for evaluating cutting function
+/*
 struct HopCut : public Friezegroup
 {
   HopCut(real width)
@@ -180,6 +183,7 @@ struct HopCut : public Friezegroup
     return Hop(width())(p+XY(0.5*width(),0.0));
   }
 };
+*/
 
 //------------------------------------------------------------------------------------------
 
@@ -217,6 +221,7 @@ struct JumpBlend : public HopBlend
   }
 };
 
+/*
 struct JumpCut : public HopCut
 {
   JumpCut(real width)
@@ -227,6 +232,7 @@ struct JumpCut : public HopCut
     return HopCut::operator()(XY(p.x(),fabs(p.y())));
   }
 };
+*/
 
 //------------------------------------------------------------------------------------------
 
@@ -348,6 +354,7 @@ struct SpinhopBlend : public Friezegroup // subclassing doesn't make much sense 
 /*! \todo There's something different could be done here.  The cutting is too constrained (needs pictures :^)
   \todo Some "softening" of the cut around y=0 would be good to stop odd looking hard lines.
  */
+/*
 template <class ZPOLICY> struct SpinhopCut : public Friezegroup
 {
   SpinhopCut(real width)
@@ -367,6 +374,7 @@ template <class ZPOLICY> struct SpinhopCut : public Friezegroup
     return d;
   }
 };
+*/
 
 //------------------------------------------------------------------------------------------
 

@@ -71,6 +71,7 @@ FUNCTION_END(FunctionFriezeGroupSpinhopBlendFreeZ)
 
 //------------------------------------------------------------------------------------------
 
+/*
 FUNCTION_BEGIN(FunctionFriezeGroupSpinhopCutClampZ,2,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
@@ -80,9 +81,11 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinhopCutClampZ,2,2,false,FnStructure)
     }
   
 FUNCTION_END(FunctionFriezeGroupSpinhopCutClampZ)
+*/
 
 //------------------------------------------------------------------------------------------
 
+/*
 FUNCTION_BEGIN(FunctionFriezeGroupSpinhopCutFreeZ,0,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
@@ -92,6 +95,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupSpinhopCutFreeZ,0,2,false,FnStructure)
     }
   
 FUNCTION_END(FunctionFriezeGroupSpinhopCutFreeZ)
+*/
 
 //------------------------------------------------------------------------------------------
 

@@ -71,6 +71,7 @@ FUNCTION_END(FunctionFriezeGroupHopBlendFreeZ)
 
 //------------------------------------------------------------------------------------------
 
+/*
 FUNCTION_BEGIN(FunctionFriezeGroupHopCutClampZ,2,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
@@ -80,9 +81,11 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopCutClampZ,2,2,false,FnStructure)
     }
   
 FUNCTION_END(FunctionFriezeGroupHopCutClampZ)
+*/
 
 //------------------------------------------------------------------------------------------
 
+/*
 FUNCTION_BEGIN(FunctionFriezeGroupHopCutFreeZ,0,2,false,FnStructure)
 
   virtual const XYZ evaluate(const XYZ& p) const
@@ -92,6 +95,7 @@ FUNCTION_BEGIN(FunctionFriezeGroupHopCutFreeZ,0,2,false,FnStructure)
     }
   
 FUNCTION_END(FunctionFriezeGroupHopCutFreeZ)
+*/
 
 //------------------------------------------------------------------------------------------
 
