@@ -1,5 +1,10 @@
 Known bugs:
 
+- Build dependencies don't seem to be very good; crashes and bad linkage
+  can sometimes be cleared by touching files or rebuild from clean.
+  (precompiled headers something to do with this?)
+  We're at the mercy of qmake here really.
+
 - Simplifying functions sometimes changes their appearance
   (implies "is_constant" probably buggy for some functions).
   Some random testing of functions before and after simplify would help.

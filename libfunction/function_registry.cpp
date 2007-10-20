@@ -71,13 +71,10 @@ std::ostream& FunctionRegistry::status(std::ostream& out) const
   return out;
 }
 
-void FunctionRegistry::name_and_register(const char* n,FunctionRegistration& r)
+void FunctionRegistry::register_function(const FunctionRegistration& r)
 {
-  r.name(n);
-
-  const std::string ns(n);
-  if (_registry_by_name.find(ns)==_registry_by_name.end())
+  if (_registry_by_name.find(r.name())==_registry_by_name.end())
     {
-      _registry_by_name[ns]=r;
+      _registry_by_name[r.name()]=r;
     }
 }

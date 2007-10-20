@@ -43,10 +43,12 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
   //! Destructor.
   virtual ~FunctionBoilerplate();
 
+  //! Accessor providing function name
+  virtual const char*const thisname() const
+    =0;
+
   //! Registration member returns a reference to class meta-information.
-  /*! Must be hit by the REGISTER macro if it is to have it's name filled in
-   */
-  static FunctionRegistration& get_registration();
+  static const FunctionRegistration get_registration(const char* fn_name);
     
   //! Bits give some classification of the function type
   static const uint type_classification() {return CLASSIFICATION;}
@@ -88,19 +90,13 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
 FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::~FunctionBoilerplate()
 {}
 
-/*! We could obtain a type name obtained from typeid BUT:
-  - it has some strange numbers attached (with gcc 3.2 anyway).
-  - the strings returned from it seem to bomb if you try and do anything with them too soon (ie during static initialisation).
-  So we use the no-name registration and the programmer-friendly name gets filled in by the REGISTER macro.
-  \warning Returns a new instance of the registration for each invokation,
-  but should only be being called once if REGISTER is used correctly (once for each class).
-*/
+//! Provide a complete registration for the function
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION> 
-FunctionRegistration& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::get_registration()
+const FunctionRegistration FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::get_registration(const char* fn_name)
 {
-  static FunctionRegistration reg
+  return FunctionRegistration
     (
-     /*typeid(FUNCTION).name(),*/
+     std::string(fn_name),
      &FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::stubnew,
      &FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::create,
      PARAMETERS,
@@ -108,7 +104,6 @@ FunctionRegistration& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIV
      ITERATIVE,
      FUNCTION::type_classification()
      );
-  return reg;
 }
 
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION>
@@ -177,7 +172,7 @@ const bool FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFIC
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION>
 std::ostream& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::save_function(std::ostream& out,uint indent) const
 {
-  return Superclass::save_function(out,indent,get_registration().name());
+  return Superclass::save_function(out,indent,thisname());
 }
 
 #define FN_CTOR_DCL(FN) FN(const std::vector<real>& p,boost::ptr_vector<FunctionNode>& a,uint iter);
@@ -186,17 +181,25 @@ std::ostream& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSI
 #define FN_DTOR_DCL(FN) virtual ~FN();
 #define FN_DTOR_IMP(FN) FN::~FN() {}
 
+#define FN_VNAME_DCL(FN) virtual const char*const thisname() const;
+#define FN_VNAME_IMP(FN) const char*const FN::thisname() const {return FN::classname();}
+
+#define FN_SNAME_DCL(FN) static const char*const classname();
+#define FN_SNAME_IMP(FN) const char*const FN::classname() {return #FN;}
+
 #define FUNCTION_BEGIN(FN,NP,NA,IT,CL) \
    class FN : public FunctionBoilerplate<FN,NP,NA,IT,CL> \
    {public: \
      typedef FunctionBoilerplate<FN,NP,NA,IT,CL> Superclass; \
      FN_CTOR_DCL(FN) \
-     FN_DTOR_DCL(FN)
+     FN_DTOR_DCL(FN) \
+     FN_VNAME_DCL(FN) \
+     FN_SNAME_DCL(FN)
 
 //! Macro to push registrations through to registry.
 /*! Used by register_all_functions.h/register_all_functions.cpp
 */
-#define REGISTER(R,FN) R.name_and_register(#FN,FN::get_registration());
+#define REGISTER(R,FN) R.register_function(FN::get_registration(#FN));
 #define REGISTER_DCL(FN) extern void register_ ## FN(FunctionRegistry&);
 #define REGISTER_IMP(FN) void register_ ## FN(FunctionRegistry& r){REGISTER(r,FN);}
 

@@ -61,7 +61,7 @@ class FunctionRegistration
     ,_classification(fnc)
     {}
 
-  //! Null constructor
+  //! Void constructor
   FunctionRegistration()
     :_name()
     ,_stubnew_fn(0)
@@ -72,18 +72,6 @@ class FunctionRegistration
     ,_classification(0)
     {}
   
-
-  //! Constructor (no name version)
-  FunctionRegistration(FunctionNodeStubNewFnPtr s,FunctionNodeCreateFnPtr fc,uint np,uint na,bool i,uint fnc)
-    :_name()
-    ,_stubnew_fn(s)
-    ,_create_fn(fc)
-    ,_params(np)
-    ,_args(na)
-    ,_iterative(i)
-    ,_classification(fnc)
-    {}
-
   //! Constructor (copy)
   FunctionRegistration(const FunctionRegistration& f)
     :_name(f._name)
@@ -95,28 +83,10 @@ class FunctionRegistration
     ,_classification(f._classification)
     {}
 
-  //! Constructor (copy with name override)
-  FunctionRegistration(const std::string& n,const FunctionRegistration& f)
-    :_name(n)
-    ,_stubnew_fn(f._stubnew_fn)
-    ,_create_fn(f._create_fn)
-    ,_params(f._params)
-    ,_args(f._args)
-    ,_iterative(f._iterative)
-    ,_classification(f._classification)
-    {}
-
-
   //! Accessor.
   const std::string& name() const
     {
        return _name;
-    }
-
-  //! Accessor.
-  void name(const std::string& n)
-    {
-      _name=n;
     }
 
   //! Accessor.

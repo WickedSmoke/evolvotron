@@ -53,9 +53,8 @@ class FunctionRegistry
   //! Dump list of registered functions
   std::ostream& status(std::ostream& out) const;
 
-  //! Register a function.  Handle duplicates gracefully. 
-  /*! A copy is taken, but we fill in the name field of the supplied registration, which will be empty.*/
-  void name_and_register(const char* n,FunctionRegistration& r);
+  //! Register a function.  Handles duplicates gracefully. 
+  void register_function(const FunctionRegistration& r);
 
  protected:
   //! Dictionary from names to Registration objects

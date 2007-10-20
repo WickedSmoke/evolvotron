@@ -29,6 +29,6 @@
 #undef FUNCTION_END
 
 //! Replace definition to obtain concrete implementations
-#define FUNCTION_END(FN) };FN_CTOR_IMP(FN);FN_DTOR_IMP(FN);REGISTER_IMP(FN);
+#define FUNCTION_END(FN) };FN_CTOR_IMP(FN);FN_DTOR_IMP(FN);FN_VNAME_IMP(FN);FN_SNAME_IMP(FN);REGISTER_IMP(FN);
 
 #endif
