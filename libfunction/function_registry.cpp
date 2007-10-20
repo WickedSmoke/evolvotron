@@ -46,7 +46,7 @@ const FunctionRegistration*const FunctionRegistry::lookup(const std::string& f) 
     return 0;
   else
     {
-#if BOOST_VERSION>=103400
+#if BOOST_VERSION >= 103400
       return *(it->second);
 #else
       return *it;
