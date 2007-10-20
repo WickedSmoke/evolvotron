@@ -72,7 +72,7 @@ void MutationParameters::reset()
       if (_debug_mode)
 	{
 	  const FunctionRegistration*const fn=
-#if BOOST_VERSION >= 013400
+#if BOOST_VERSION >= 103400
 	    *(it->second);
 #else
 	    *it;
@@ -84,7 +84,7 @@ void MutationParameters::reset()
 	{
 	  real initial_weight=1.0;
 	  const FunctionRegistration*const fn=
-#if BOOST_VERSION >= 013400
+#if BOOST_VERSION >= 103400
 	    *(it->second);
 #else
 	    *it;

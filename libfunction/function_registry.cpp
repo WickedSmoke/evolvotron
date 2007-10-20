@@ -46,7 +46,7 @@ const FunctionRegistration*const FunctionRegistry::lookup(const std::string& f) 
     return 0;
   else
     {
-#if BOOST_VERSION >= 013400
+#if BOOST_VERSION>=103400
       return *(it->second);
 #else
       return *it;
@@ -61,7 +61,7 @@ std::ostream& FunctionRegistry::status(std::ostream& out) const
     {
       out 
 	<< "  " 
-#if BOOST_VERSION >= 013400
+#if BOOST_VERSION >= 103400
 	<< it->first
 #else
 	<< it.key() 
