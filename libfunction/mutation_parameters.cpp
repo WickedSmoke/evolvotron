@@ -71,15 +71,27 @@ void MutationParameters::reset()
     {
       if (_debug_mode)
 	{
-	  real initial_weight=((*it)->name()=="FunctionNoiseOneChannel" ? 1.0 : 1.0/1024.0);
-	  _function_weighting.insert(std::make_pair((*it),initial_weight));
+	  const FunctionRegistration*const fn=
+#if BOOST_VERSION >= 013400
+	    *(it->second);
+#else
+	    *it;
+#endif
+	  real initial_weight=(fn->name()=="FunctionNoiseOneChannel" ? 1.0 : 1.0/1024.0);
+	  _function_weighting.insert(std::make_pair(fn,initial_weight));
 	}
       else
 	{
 	  real initial_weight=1.0;
-	  if ((*it)->classification() & FnIterative) initial_weight=1.0/1024.0;  // Ouch iterative functions are expensive
-	  if ((*it)->classification() & FnFractal) initial_weight=1.0/1024.0;  // Yuk fractals are ugly
-	  _function_weighting.insert(std::make_pair((*it),initial_weight));
+	  const FunctionRegistration*const fn=
+#if BOOST_VERSION >= 013400
+	    *(it->second);
+#else
+	    *it;
+#endif
+	  if (fn->classification() & FnIterative) initial_weight=1.0/1024.0;  // Ouch iterative functions are expensive
+	  if (fn->classification() & FnFractal) initial_weight=1.0/1024.0;  // Yuk fractals are ugly
+	  _function_weighting.insert(std::make_pair(fn,initial_weight));
 	}
     }
 

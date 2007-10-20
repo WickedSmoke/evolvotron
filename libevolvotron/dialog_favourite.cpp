@@ -51,7 +51,12 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
        it++
        )
     {
-      const FunctionRegistration& fn=*(*it);
+      const FunctionRegistration& fn=
+#if BOOST_VERSION >= 013400
+      **(it->second);
+#else
+      **it;
+#endif
       _favourite_fn_to_index[fn.name()]=_favourite->count();
       _index_to_favourite_fn[_favourite->count()]=fn.name();
       _favourite->insertItem(fn.name());

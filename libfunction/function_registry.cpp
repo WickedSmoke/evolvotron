@@ -45,7 +45,13 @@ const FunctionRegistration*const FunctionRegistry::lookup(const std::string& f) 
   if (it==_registry_by_name.end())
     return 0;
   else
-    return *it;
+    {
+#if BOOST_VERSION >= 013400
+      return *(it->second);
+#else
+      return *it;
+#endif
+    }
 }
 
 std::ostream& FunctionRegistry::status(std::ostream& out) const
@@ -53,7 +59,14 @@ std::ostream& FunctionRegistry::status(std::ostream& out) const
   out << "Registered functions:\n";
   for (Registrations::const_iterator it=_registry_by_name.begin();it!=_registry_by_name.end();it++)
     {
-      out << "  " << it.key() << "\n";
+      out 
+	<< "  " 
+#if BOOST_VERSION >= 013400
+	<< it->first
+#else
+	<< it.key() 
+#endif
+	<< "\n";
     }
   return out;
 }

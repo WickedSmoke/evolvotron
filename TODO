@@ -3,6 +3,7 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
+- FunctionRegistry is using ptr_container wrong (defined on ptr type)
 - Friezegroups:
   Want cut and blend for those that support it.
   Blend should use two functions in some cases.

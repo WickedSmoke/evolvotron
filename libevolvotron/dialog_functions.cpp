@@ -70,7 +70,12 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
 	   it!=_parent->mutation_parameters().function_registry().registrations().end();
 	   it++)
 	{
-	  const FunctionRegistration& fn=*(*it);
+	  const FunctionRegistration& fn=
+#if BOOST_VERSION >= 013400
+	    **(it->second);
+#else
+	    **it;
+#endif
 	  if (c==-1 || fn.classification()&(1<<c))
 	    {
 	      QGroupBox* g=new QGroupBox(3,Qt::Horizontal,fn.name(),scrollview->contentParent());
