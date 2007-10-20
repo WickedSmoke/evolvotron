@@ -1,7 +1,7 @@
 [Most recent at top]
 
 From release 0.4.0:
- - Version to 0.5.0dev
+ - Version to 0.5.0
  - Lists of functions in alphabetic order.
  - New FunctionTop always at top level.
  - New functions: Frieze groups.
@@ -24,7 +24,7 @@ From release 0.4.0:
  - code_review script
  - Set an icon on various dialogs and main frame.
  - Add -D (function debug) massively weighting in favour of FunctionNoiseOneChannel.  Useful with -x/-X.
- - Believed to fix Debian #436231
+ - Believed to fix Debian bug #436231
 
 From release 0.3.1:
  - Version to 0.4.0

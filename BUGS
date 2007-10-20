@@ -13,8 +13,8 @@ Known bugs:
   Enlarging up to 4096x4096 sometimes looks a bit more sensible.
 
 - Have yet to find a tool which can display anything other than the
-  first frame of a Qt-generated MNG format.  (Apparently Qt's mng
-  actually has nothing to do with the standard multi-frame png format).
+  first frame of a Qt-generated MNG format.  (Apparently Qt's MNG
+  actually has nothing to do with the multi-frame PNG format).
 
 - Very rarely image calculations appear to arrive seriously out-of-order.
   May be a more of a problem on slower hardware ? 

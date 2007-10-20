@@ -16,8 +16,8 @@ mutation and user-selection driven evolution.  If you like lava-lamps,
 and still think the Mandelbrot set is cool, this could be the software
 for you.
 
-It uses C++ (and STL) & Qt (that's Trolltech's Qt GUI toolkit,
-it's ABSOLUTELY NOTHING TO DO WITH APPLE'S QUICKTIME!).
+It uses C++ (and STL+Boost) & Qt (which is Trolltech's Qt GUI
+toolkit; it's ABSOLUTELY NOTHING TO DO WITH APPLE'S QUICKTIME!).
 It's multithreaded (using Qt's threading API).
 
 Home page: http://www.bottlenose.demon.co.uk/share/evolvotron
@@ -72,14 +72,15 @@ or just have both done for you by doing
 commands, and is probably the easiest way to build if your PATH doesn't 
 include a directory containing qmake and you like it that way.]
 
-Make will recurse into and build the libevolvotron directory
+Make will recurse into and build the libfunction & libevolvotron directories
 (which is 99% of the work) and some additional subdirectories with 
 executables.
 
 Among other things, this will give you an "evolvotron" 
 executable which you can run immediately with
   ./evolvotron/evolvotron
-and/or copy where you like.
+and/or copy where you like (there are no shared libs or "resource files"
+needing additional attention). 
 
 See the USAGE file (or in-app manual) for instructions.
 
@@ -97,8 +98,7 @@ Short story
    you probably need to install a Qt development tools package
    of some sort before you can build evolvotron.
 
-There is probably a requirement your bost library be 1.33.
-Some details associated with boost::ptr_map changed in subsequent versions.
+The 0.5.0 code is believed to build against Boost 1.33 or 1.34.
 
 Long story
 ----------
@@ -233,4 +233,6 @@ the source code documentation, execute
   ./mkdoc
 at the top level.
 The code documentation then appears in ./doc/html/
-This hasn't been tested in a while.
+This hasn't been tested in a long while now, although the
+doxygen commenting style has been kept up.
+

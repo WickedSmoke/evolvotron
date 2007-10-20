@@ -5,6 +5,7 @@ Conventional Mode
 -----------------
 - FunctionRegistry is using ptr_container wrong (defined on ptr type)
 - Friezegroups:
+  Cut taken out for 0.5.0 release.
   Want cut and blend for those that support it.
   Blend should use two functions in some cases.
   Can't see how to blend cuts; needs something more like old warp approach.
