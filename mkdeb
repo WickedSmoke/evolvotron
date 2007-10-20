@@ -1,4 +1,4 @@
-#!/bin/bash -ev
+#!/bin/bash
 
 # Before using this you probably need to install
 #   sudo pbuilder yada devscripts lintian linda cdeboostrap (or debootstrap)
