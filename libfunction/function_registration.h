@@ -46,15 +46,12 @@ typedef std::auto_ptr<FunctionNode> (*FunctionNodeStubNewFnPtr)(const MutationPa
 typedef std::auto_ptr<FunctionNode> (*FunctionNodeCreateFnPtr)(const FunctionRegistry&,const FunctionNodeInfo&,std::string&);
 
 //! Class for meta information about functions.
-/*! We use char*'s for the name 'cos they aren't dynamic so might as well use the strings from the object code.
-  (Also it avoids possible headaches with std::string in static initialisers).
- */
 class FunctionRegistration
 {
  public:
   
   //! Constructor.
-  FunctionRegistration(const char* n,FunctionNodeStubNewFnPtr fs,FunctionNodeCreateFnPtr fc,uint np,uint na,bool i,uint fnc)
+  FunctionRegistration(const std::string& n,FunctionNodeStubNewFnPtr fs,FunctionNodeCreateFnPtr fc,uint np,uint na,bool i,uint fnc)
     :_name(n)
     ,_stubnew_fn(fs)
     ,_create_fn(fc)
@@ -64,9 +61,21 @@ class FunctionRegistration
     ,_classification(fnc)
     {}
 
+  //! Null constructor
+  FunctionRegistration()
+    :_name()
+    ,_stubnew_fn(0)
+    ,_create_fn(0)
+    ,_params(0)
+    ,_args(0)
+    ,_iterative(false)
+    ,_classification(0)
+    {}
+  
+
   //! Constructor (no name version)
   FunctionRegistration(FunctionNodeStubNewFnPtr s,FunctionNodeCreateFnPtr fc,uint np,uint na,bool i,uint fnc)
-    :_name(0)
+    :_name()
     ,_stubnew_fn(s)
     ,_create_fn(fc)
     ,_params(np)
@@ -87,8 +96,8 @@ class FunctionRegistration
     {}
 
   //! Constructor (copy with name override)
-  FunctionRegistration(const char* name,const FunctionRegistration& f)
-    :_name(name)
+  FunctionRegistration(const std::string& n,const FunctionRegistration& f)
+    :_name(n)
     ,_stubnew_fn(f._stubnew_fn)
     ,_create_fn(f._create_fn)
     ,_params(f._params)
@@ -99,15 +108,15 @@ class FunctionRegistration
 
 
   //! Accessor.
-  const char*const name() const
+  const std::string& name() const
     {
        return _name;
     }
 
   //! Accessor.
-  void name(const char* name)
+  void name(const std::string& n)
     {
-      _name=name;
+      _name=n;
     }
 
   //! Accessor.
@@ -149,7 +158,7 @@ class FunctionRegistration
  protected:
 
   //! Name of the function.
-  const char* _name;
+  std::string _name;
 
   //! The FunctionNodeUsing's stubnew function.
   FunctionNodeStubNewFnPtr _stubnew_fn;

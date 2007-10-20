@@ -53,9 +53,9 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
     {
       const FunctionRegistration& fn=
 #if BOOST_VERSION >= 103400
-      **(it->second);
+      *(it->second);
 #else
-      **it;
+      *it;
 #endif
       _favourite_fn_to_index[fn.name()]=_favourite->count();
       _index_to_favourite_fn[_favourite->count()]=fn.name();

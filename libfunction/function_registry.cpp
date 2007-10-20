@@ -47,9 +47,9 @@ const FunctionRegistration*const FunctionRegistry::lookup(const std::string& f) 
   else
     {
 #if BOOST_VERSION >= 103400
-      return *(it->second);
+      return it->second;
 #else
-      return *it;
+      return &*it;
 #endif
     }
 }
@@ -78,6 +78,6 @@ void FunctionRegistry::name_and_register(const char* n,FunctionRegistration& r)
   const std::string ns(n);
   if (_registry_by_name.find(ns)==_registry_by_name.end())
     {
-      _registry_by_name[ns]=new FunctionRegistration(n,r);
+      _registry_by_name[ns]=r;
     }
 }

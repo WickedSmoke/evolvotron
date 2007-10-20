@@ -72,9 +72,9 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
 	{
 	  const FunctionRegistration& fn=
 #if BOOST_VERSION >= 103400
-	    **(it->second);
+	    *(it->second);
 #else
-	    **it;
+	    *it;
 #endif
 	  if (c==-1 || fn.classification()&(1<<c))
 	    {

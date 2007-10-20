@@ -73,9 +73,9 @@ void MutationParameters::reset()
 	{
 	  const FunctionRegistration*const fn=
 #if BOOST_VERSION >= 103400
-	    *(it->second);
+	    it->second;
 #else
-	    *it;
+	    &*it;
 #endif
 	  real initial_weight=(fn->name()=="FunctionNoiseOneChannel" ? 1.0 : 1.0/1024.0);
 	  _function_weighting.insert(std::make_pair(fn,initial_weight));
@@ -85,9 +85,9 @@ void MutationParameters::reset()
 	  real initial_weight=1.0;
 	  const FunctionRegistration*const fn=
 #if BOOST_VERSION >= 103400
-	    *(it->second);
+	    it->second;
 #else
-	    *it;
+	    &*it;
 #endif
 	  if (fn->classification() & FnIterative) initial_weight=1.0/1024.0;  // Ouch iterative functions are expensive
 	  if (fn->classification() & FnFractal) initial_weight=1.0/1024.0;  // Yuk fractals are ugly
