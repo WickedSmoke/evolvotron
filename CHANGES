@@ -25,6 +25,7 @@ From release 0.4.0:
  - Set an icon on various dialogs and main frame.
  - Add -D (function debug) massively weighting in favour of FunctionNoiseOneChannel.  Useful with -x/-X.
  - Believed to fix Debian bug #436231
+ - MutatableImage has serial number (fix problems caused by pointer value being wrongly used as equivalent)
 
 From release 0.3.1:
  - Version to 0.4.0
