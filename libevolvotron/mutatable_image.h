@@ -51,7 +51,14 @@ class MutatableImage
   //! Whether xyz should be interpreted as long/lat/radius
   bool _spheremap;
 
+  //! Whether this image is locked \todo Should be a property of display, not image.
   bool _locked;
+
+  //! Serial number for identity tracking (used by display to discover whether a recompute is needed)
+  unsigned long long _serial;
+
+  //! Object count to generate serial numbers
+  static unsigned long long _count;
 
  public:
   
@@ -94,6 +101,12 @@ class MutatableImage
   void locked(bool l)
     {
       _locked=l;
+    }
+
+  //! Accessor.
+  const unsigned long long serial() const
+    {
+      return _serial;
     }
 
   //! Clone this image.  The cloned image will not have locked state.

@@ -246,7 +246,7 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
   assert(_image.get()==0 || _image->ok());
   assert(i.get()==0 || i->ok());
 
-  // New image, so increment serial number so any old incoming stuff which avoids abort is ignored.
+  // New image, so increment serial number so any old incoming stuff which somehow avoids abort is ignored.
   _serial++;
 
   _properties->set_message(std::string("Not yet implemented"));
@@ -256,8 +256,8 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
 
   // Careful: we could be passed our own existing (and already owned) image
   // (a trick used by resize to trigger recompute & redisplay)
-  // but if the image isn't beig changed we might as well leave what's already shown
-  if (i.get()!=_image.get())
+  // but if the image isn't being changed we might as well leave what's already shown
+  if (i.get()==0 || _image.get()==0 || i->serial()!=_image->serial())
     {
       _image=i;
 

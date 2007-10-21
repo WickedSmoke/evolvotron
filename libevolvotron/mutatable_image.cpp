@@ -33,6 +33,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image_display_big.h"
 #include "transform.h"
 
+unsigned long long MutatableImage::_count=0;
+
 MutatableImage::MutatableImage(std::auto_ptr<FunctionTop>& r,bool sinz,bool sm,bool lock)
   :
 #ifndef NDEBUG
@@ -42,6 +44,7 @@ MutatableImage::MutatableImage(std::auto_ptr<FunctionTop>& r,bool sinz,bool sm,b
   ,_sinusoidal_z(sinz)
   ,_spheremap(sm)
   ,_locked(lock)
+  ,_serial(_count++)
 {
   assert(_top.get()!=0);
 }
@@ -54,6 +57,7 @@ MutatableImage::MutatableImage(const MutationParameters& parameters,bool excitin
   _sinusoidal_z(sinz)
   ,_spheremap(sm)
   ,_locked(false)
+  ,_serial(_count++)
 {
   std::vector<real> pv;
   FunctionNode::stubparams(pv,parameters,12);
