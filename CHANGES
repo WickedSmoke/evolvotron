@@ -23,11 +23,11 @@ From release 0.4.0:
    (NB assumes Linux NPTL's non-Posix compliant behaviour of threads NOT sharing a common nice value;
    see "man pthreads" on Linux.)
  - About dialog displays number of threads.
- - Use precompiled headers (2m45s down to 1m45s).
+ - Use precompiled headers (build time 2m45s down to 1m45s).
  - code_review script
  - Set an icon on various dialogs and main frame.
  - Add -D (function debug) massively weighting in favour of FunctionNoiseOneChannel.  Useful with -x/-X.
- - Believed to fix Debian bug #436231
+ - Believed to fix Debian bug #436231 and gentoo #144160
  - MutatableImage has serial number (fix problems caused by pointer value being wrongly used as equivalent)
 
 From release 0.3.1:
