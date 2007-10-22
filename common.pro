@@ -1,4 +1,3 @@
-
 # Shared definitions included by the other .pro files
 # qmake should NOT be executed on this file directly
 

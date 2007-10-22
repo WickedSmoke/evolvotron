@@ -49,23 +49,23 @@ class MutationParameters
   //! Negative-exponential generator might be useful too.
   mutable RandomNegExp _r_negexp;
 
-  //! Specifies the magnitude of random changes the function parameters.
-  real _magnitude_parameter_variation;
+  //! Specifies the base magnitude of random changes the function parameters.
+  real _base_magnitude_parameter_variation;
 
-  //! Specifies the probability of a the parameter set being completely reset.
-  real _probability_parameter_reset;
+  //! Specifies the base probability of a the parameter set being completely reset.
+  real _base_probability_parameter_reset;
 
-  //! Specifies the probability of a child being dropped and replaced with a new random stub.
-  real _probability_glitch;
+  //! Specifies the base probability of a child being dropped and replaced with a new random stub.
+  real _base_probability_glitch;
 
-  //! Specifies the probability of all child nodes being reordered.
-  real _probability_shuffle;
+  //! Specifies the base probability of all child nodes being reordered.
+  real _base_probability_shuffle;
 
-  //! Specifies the probability of a random stub being inserted before a child.
-  real _probability_insert;
+  //! Specifies the base probability of a random stub being inserted before a child.
+  real _base_probability_insert;
 
-  //! Specifies the probability of a node being replaced with an alternate type.
-  real _probability_substitute;
+  //! Specifies the base probability of a node being replaced with an alternate type.
+  real _base_probability_substitute;
 
   //! Specifies the proportion of basic node types.
   real _proportion_basic;
@@ -79,11 +79,11 @@ class MutationParameters
   //! The maximum number of iterations an iterative function node can have initially.
   uint _max_initial_iterations;
 
-  //! The probability of the number of iterations changing by plus or minus 1.
-  real _probability_iterations_change_step;
+  //! The base probability of the number of iterations changing by plus or minus 1.
+  real _base_probability_iterations_change_step;
   
-  //! The probability of the number of iterations changing by times or divide 2.
-  real _probability_iterations_change_jump;
+  //! The base probability of the number of iterations changing by times or divide 2.
+  real _base_probability_iterations_change_jump;
 
   //! Individual weighting modifiers for each function type
   /*! Will only be applied to random functions we're asked for.
@@ -100,6 +100,12 @@ class MutationParameters
 
   //! Just use SingleChannelNoise for almost all functions (useful for debugging).
   const bool _debug_mode;
+
+  //! Number of generations at which parameters will be half cooled.
+  unsigned int _decay_halflife;
+
+  //! Count of number of generations for decay cooling.
+  unsigned int _decay_count;
 
   void recalculate_function_stuff();
 
@@ -141,75 +147,105 @@ class MutationParameters
       return _r_negexp();
     }
 
-  //! Accessor.
-  const real magnitude_parameter_variation() const
+  //! Accessor, with decay.
+  const real effective_magnitude_parameter_variation() const
     {
-      return _magnitude_parameter_variation;
+      return base_magnitude_parameter_variation()*decay_factor();
     }
   //! Accessor.
-  void magnitude_parameter_variation(real v) 
+  const real base_magnitude_parameter_variation() const
     {
-      _magnitude_parameter_variation=v;
+      return _base_magnitude_parameter_variation;
+    }
+  //! Accessor.
+  void base_magnitude_parameter_variation(real v) 
+    {
+      _base_magnitude_parameter_variation=v;
+      report_change();
+    }
+
+  //! Accessor, with decay.
+  const real effective_probability_parameter_reset() const
+    {
+      return base_probability_parameter_reset()*decay_factor();
+    }
+  //! Accessor.
+  const real base_probability_parameter_reset() const
+    {
+      return _base_probability_parameter_reset;
+    } 
+  //! Accessor.
+  void base_probability_parameter_reset(real v) 
+    {
+      _base_probability_parameter_reset=v;
+      report_change();
+    }
+
+  //! Accessor, with decay.
+  const real effective_probability_glitch() const
+    {
+      return base_probability_glitch()*decay_factor();
+    }
+  //! Accessor.
+  const real base_probability_glitch() const
+    {
+      return _base_probability_glitch;
+    }
+  //! Accessor.
+  void base_probability_glitch(real v)
+    {
+      _base_probability_glitch=v;
+      report_change();
+    }
+
+  //! Accessor, with decay.
+  const real effective_probability_shuffle() const
+    {
+      return base_probability_shuffle()*decay_factor();
+    }
+  //! Accessor.
+  const real base_probability_shuffle() const
+    {
+      return _base_probability_shuffle;
+    }
+  //! Accessor.
+  void base_probability_shuffle(real v)
+    {
+      _base_probability_shuffle=v;
+      report_change();
+    }
+
+  //! Accessor, with decay.
+  const real effective_probability_insert() const
+    {
+      return base_probability_insert()*decay_factor();
+    }
+  //! Accessor.
+  const real base_probability_insert() const
+    {
+      return _base_probability_insert;
+    }
+  //! Accessor.
+  void base_probability_insert(real v)
+    {
+      _base_probability_insert=v;
       report_change();
     }
 
   //! Accessor.
-  const real probability_parameter_reset() const
+  const real effective_probability_substitute() const
     {
-      return _probability_parameter_reset;
+      return base_probability_substitute()*decay_factor();
     }
   //! Accessor.
-  void probability_parameter_reset(real v) 
+  const real base_probability_substitute() const
     {
-      _probability_parameter_reset=v;
-      report_change();
-    }
-
-  //! Accessor.
-  const real probability_glitch() const
-    {
-      return _probability_glitch;
+      return _base_probability_substitute;
     }
   //! Accessor.
-  void probability_glitch(real v)
+  void base_probability_substitute(real v)
     {
-      _probability_glitch=v;
-      report_change();
-    }
-
-  //! Accessor.
-  const real probability_shuffle() const
-    {
-      return _probability_shuffle;
-    }
-  //! Accessor.
-  void probability_shuffle(real v)
-    {
-      _probability_shuffle=v;
-      report_change();
-    }
-
-  //! Accessor.
-  const real probability_insert() const
-    {
-      return _probability_insert;
-    }
-  //! Accessor.
-  void probability_insert(real v)
-    {
-      _probability_insert=v;
-      report_change();
-    }
-
-  //! Accessor.
-  const real probability_substitute() const
-    {
-      return _probability_substitute;
-    }
-  //! Accessor.
-  void probability_substitute(real v)
-    {
-      _probability_substitute=v;
+      _base_probability_substitute=v;
       report_change();
     }
 
@@ -249,27 +285,37 @@ class MutationParameters
       report_change();
     }
 
-  //! Accessor.
-  const real probability_iterations_change_step() const
+  //! Accessor, with decay.
+  const real effective_probability_iterations_change_step() const
     {
-      return _probability_iterations_change_step;
+      return base_probability_iterations_change_step()*decay_factor();
     }
   //! Accessor.
-  void probability_iterations_change_step(real v)
+  const real base_probability_iterations_change_step() const
     {
-      _probability_iterations_change_step=v;
+      return _base_probability_iterations_change_step;
+    }
+  //! Accessor.
+  void base_probability_iterations_change_step(real v)
+    {
+      _base_probability_iterations_change_step=v;
       report_change();
     }
 
-  //! Accessor.
-  const real probability_iterations_change_jump() const
+  //! Accessor, with decay.
+  const real effective_probability_iterations_change_jump() const
     {
-      return _probability_iterations_change_jump;
+      return base_probability_iterations_change_jump()*decay_factor();
     }
   //! Accessor.
-  void probability_iterations_change_jump(real v)
+  const real base_probability_iterations_change_jump() const
     {
-      _probability_iterations_change_jump=v;
+      return _base_probability_iterations_change_jump;
+    }
+  //! Accessor.
+  void base_probability_iterations_change_jump(real v)
+    {
+      _base_probability_iterations_change_jump=v;
       report_change();
     }
 
@@ -303,6 +349,13 @@ class MutationParameters
 
  protected:
 
+  //! Compute current decay factor
+  const real decay_factor() const
+    {
+      assert(_decay_halflife!=0);
+      return pow(0.5,_decay_count/static_cast<double>(_decay_halflife));
+    }
+
   //! Return a random function appropriately biased by current settings
   std::auto_ptr<FunctionNode> random_function() const;
 
@@ -311,7 +364,6 @@ class MutationParameters
 
   //! Intended for Qt-world subclass to override to emit signal. 
   virtual void report_change();
- public:
 };
 
 #endif

@@ -44,13 +44,16 @@ MutationParameters::~MutationParameters()
 
 void MutationParameters::reset()
 {
-  _magnitude_parameter_variation=0.25;
+  _decay_halflife=20;
+  _decay_count=0;
 
-  _probability_parameter_reset=0.05;
-  _probability_glitch=0.05;
-  _probability_shuffle=0.05;
-  _probability_insert=0.05;
-  _probability_substitute=0.05;
+  _base_magnitude_parameter_variation=0.25;
+
+  _base_probability_parameter_reset=0.05;
+  _base_probability_glitch=0.05;
+  _base_probability_shuffle=0.05;
+  _base_probability_insert=0.05;
+  _base_probability_substitute=0.05;
 
   _proportion_basic=0.6;
 
@@ -59,8 +62,8 @@ void MutationParameters::reset()
 
   //! \todo Could do with _max_initial_iterations being higher (64?) for fractal type things but it slows things down too much.
   _max_initial_iterations=16;
-  _probability_iterations_change_step=0.25;
-  _probability_iterations_change_jump=0.02;
+  _base_probability_iterations_change_step=0.25;
+  _base_probability_iterations_change_jump=0.02;
 
   _function_weighting.clear();
   for (
@@ -102,16 +105,16 @@ void MutationParameters::reset()
 
 void MutationParameters::general_cool(real f)
 {
-  _magnitude_parameter_variation*=f;
+  _base_magnitude_parameter_variation*=f;
 
-  _probability_parameter_reset*=f;
-  _probability_glitch*=f;
-  _probability_shuffle*=f;
-  _probability_insert*=f;
-  _probability_substitute*=f;
+  _base_probability_parameter_reset*=f;
+  _base_probability_glitch*=f;
+  _base_probability_shuffle*=f;
+  _base_probability_insert*=f;
+  _base_probability_substitute*=f;
 
-  _probability_iterations_change_step*=f;
-  _probability_iterations_change_jump*=f;
+  _base_probability_iterations_change_step*=f;
+  _base_probability_iterations_change_jump*=f;
 
   report_change();
 }

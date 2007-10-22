@@ -97,7 +97,7 @@ void FunctionTop::mutate(const MutationParameters& parameters,bool mutate_own_pa
   if (mutate_own_parameters)
     {
   
-      if (parameters.r01()<parameters.probability_parameter_reset())
+      if (parameters.r01()<parameters.effective_probability_parameter_reset())
 	{
 	  reset_pretransform_parameters(parameters);
 	}
@@ -106,7 +106,7 @@ void FunctionTop::mutate(const MutationParameters& parameters,bool mutate_own_pa
 	  mutate_pretransform_parameters(parameters);
 	}
       
-      if (parameters.r01()<parameters.probability_parameter_reset())
+      if (parameters.r01()<parameters.effective_probability_parameter_reset())
 	{
 	  reset_posttransform_parameters(parameters);
 	}
@@ -153,7 +153,7 @@ const Transform FunctionTop::interesting_pretransform(const MutationParameters& 
       while (parameters.r01()<0.125) t.concatenate_on_right(TransformScale(2.0));
       while (parameters.r01()<0.125) t.concatenate_on_right(TransformScale(0.5));
     }
-  else if (parameters.r01()<parameters.probability_parameter_reset())
+  else if (parameters.r01()<parameters.effective_probability_parameter_reset())
     {
       do 
 	{
@@ -202,7 +202,7 @@ const Transform FunctionTop::interesting_pretransform(const MutationParameters& 
 
 void FunctionTop::mutate_pretransform_parameters(const MutationParameters& parameters)
 {
-  concatenate_pretransform_on_right(interesting_pretransform(parameters,parameters.magnitude_parameter_variation()));
+  concatenate_pretransform_on_right(interesting_pretransform(parameters,parameters.effective_magnitude_parameter_variation()));
   //! \todo: Could have a small probability of orthoganalizing the basis vectors.
 }
 
@@ -217,7 +217,7 @@ void FunctionTop::reset_pretransform_parameters(const MutationParameters& parame
 void FunctionTop::mutate_posttransform_parameters(const MutationParameters& parameters)
 {
   for (uint i=12;i<23;i++)
-    params()[i]+=parameters.magnitude_parameter_variation()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
+    params()[i]+=parameters.effective_magnitude_parameter_variation()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
 }
 
 void FunctionTop::reset_posttransform_parameters(const MutationParameters& parameters)

@@ -124,12 +124,12 @@ void DialogMutationParameters::resizeEvent(QResizeEvent*)
 
 void DialogMutationParameters::setup_from_mutation_parameters()
 {
-  _spinbox_magnitude      ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->magnitude_parameter_variation()));
-  _spinbox_parameter_reset->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_parameter_reset()));
-  _spinbox_glitch         ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_glitch()));
-  _spinbox_shuffle        ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_shuffle()));
-  _spinbox_insert         ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_insert()));
-  _spinbox_substitute     ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->probability_substitute()));
+  _spinbox_magnitude      ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_magnitude_parameter_variation()));
+  _spinbox_parameter_reset->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_parameter_reset()));
+  _spinbox_glitch         ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_glitch()));
+  _spinbox_shuffle        ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_shuffle()));
+  _spinbox_insert         ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_insert()));
+  _spinbox_substitute     ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_substitute()));
 
   parameters_changed_status_display();
 }
@@ -185,32 +185,32 @@ void DialogMutationParameters::shield()
 
 void DialogMutationParameters::changed_magnitude(int v)
 {
-  _mutation_parameters->magnitude_parameter_variation(v/static_cast<real>(_scale));
+  _mutation_parameters->base_magnitude_parameter_variation(v/static_cast<real>(_scale));
 }
 
 void DialogMutationParameters::changed_parameter_reset(int v)
 {
-  _mutation_parameters->probability_parameter_reset(v/static_cast<real>(_scale));
+  _mutation_parameters->base_probability_parameter_reset(v/static_cast<real>(_scale));
 }
 
 void DialogMutationParameters::changed_glitch(int v)
 {
-  _mutation_parameters->probability_glitch(v/static_cast<real>(_scale));
+  _mutation_parameters->base_probability_glitch(v/static_cast<real>(_scale));
 }
 
 void DialogMutationParameters::changed_shuffle(int v)
 {
-  _mutation_parameters->probability_shuffle(v/static_cast<real>(_scale));
+  _mutation_parameters->base_probability_shuffle(v/static_cast<real>(_scale));
 }
 
 void DialogMutationParameters::changed_insert(int v)
 {
-  _mutation_parameters->probability_insert(v/static_cast<real>(_scale));
+  _mutation_parameters->base_probability_insert(v/static_cast<real>(_scale));
 }
 
 void DialogMutationParameters::changed_substitute(int v)
 {
-  _mutation_parameters->probability_substitute(v/static_cast<real>(_scale));
+  _mutation_parameters->base_probability_substitute(v/static_cast<real>(_scale));
 }
 
 void DialogMutationParameters::mutation_parameters_changed()

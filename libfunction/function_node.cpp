@@ -242,7 +242,7 @@ void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_p
   // Perturb any parameters we have
   if (mutate_own_parameters)
     {
-      if (parameters.r01()<parameters.probability_parameter_reset())
+      if (parameters.r01()<parameters.effective_probability_parameter_reset())
 	{
 	std::vector<real> p;
 	stubparams(p,parameters,params().size());
@@ -252,7 +252,7 @@ void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_p
 	{
 	  for (std::vector<real>::iterator it=params().begin();it!=params().end();it++)
 	    {
-	      (*it)+=parameters.magnitude_parameter_variation()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
+	      (*it)+=parameters.effective_magnitude_parameter_variation()*(parameters.r01()<0.5 ? -parameters.rnegexp() : parameters.rnegexp());
 	    }
 	}
     }
@@ -260,7 +260,7 @@ void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_p
   // Perturb iteration count if any
   if (_iterations)
     {
-      if (parameters.r01()<parameters.probability_iterations_change_step())
+      if (parameters.r01()<parameters.effective_probability_iterations_change_step())
 	{
 	  if (parameters.r01()<0.5)
 	    {
@@ -270,7 +270,7 @@ void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_p
 	    {
 	      _iterations++;
 	    }
-	  if (parameters.r01()<parameters.probability_iterations_change_jump())
+	  if (parameters.r01()<parameters.effective_probability_iterations_change_jump())
 	    {
 	      if (parameters.r01()<0.5)
 		{
@@ -293,7 +293,7 @@ void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_p
   // Think about glitching some nodes.
   for (uint i=0;i<args().size();i++)
     {
-      if (parameters.r01()<parameters.probability_glitch())
+      if (parameters.r01()<parameters.effective_probability_glitch())
 	{
 	  args().replace(i,stub(parameters,false).release());
 	}
@@ -303,7 +303,7 @@ void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_p
   //! \todo Substitution might make more sense if it was for a node with the same/similar number of arguments.
   for (uint i=0;i<args().size();i++)
     {
-      if (parameters.r01()<parameters.probability_substitute())
+      if (parameters.r01()<parameters.effective_probability_substitute())
 	{
 	  // Take a copy of the nodes parameters and arguments
 	  std::auto_ptr<boost::ptr_vector<FunctionNode> > a(args()[i].deepclone_args());
@@ -350,7 +350,7 @@ void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_p
     }
   
   // Think about randomising child order
-  if (parameters.r01()<parameters.probability_shuffle())
+  if (parameters.r01()<parameters.effective_probability_shuffle())
     {
       random_shuffle(args(),parameters.rng01());
     }
@@ -358,7 +358,7 @@ void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_p
   // Think about inserting a random stub between us and some subnodes
   for (uint i=0;i<args().size();i++)
     {
-      if (parameters.r01()<parameters.probability_insert())
+      if (parameters.r01()<parameters.effective_probability_insert())
 	{
 	  boost::ptr_vector<FunctionNode> a;
 	  a.transfer(a.begin(),args().begin()+i,args());
