@@ -8,6 +8,7 @@ CONFIG += staticlib
 PRECOMPILED_HEADER = libevolvotron_precompiled.h
 
 INCLUDEPATH += ../libfunction
+DEPENDPATH += ../libfunction
 
 HEADERS += \
         args.h \
