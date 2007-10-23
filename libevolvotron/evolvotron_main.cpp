@@ -257,7 +257,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
 
   _checkbox_autocool_enable=new QCheckBox("&Autocool",_statusbar);
   _label_autocool_enable=new QLabel("",_statusbar);
-  QToolTip::add(_checkbox_autocool_enable,"Autocooling gradually reduces the chance and magnitude of mutations with time.\nTo restart the count, unselect and reselect autocooling.");
+  QToolTip::add(_checkbox_autocool_enable,"Autocooling gradually reduces the chance and magnitude of mutations with time.");
   
   connect(_checkbox_autocool_enable,SIGNAL(stateChanged(int)),_dialog_mutation_parameters,SLOT(changed_autocool_enable(int)));
 

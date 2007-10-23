@@ -48,10 +48,10 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   _button_heat=new QPushButton("&Heat",_grid_buttons);
   _button_irradiate=new QPushButton("&Irradiate",_grid_buttons);
 
-  QToolTip::add(_button_cool,"Decrease size of constant perturbations during mutation");
-  QToolTip::add(_button_heat,"Increase size of constant perturbations during mutation");
-  QToolTip::add(_button_shield,"Decrease probability of function tree structural mutations");
-  QToolTip::add(_button_irradiate,"Increase probability of function tree structural mutations");  
+  QToolTip::add(_button_cool,"Decrease size of constant perturbations during mutation.");
+  QToolTip::add(_button_heat,"Increase size of constant perturbations during mutation.");
+  QToolTip::add(_button_shield,"Decrease probability of function tree structural mutations.");
+  QToolTip::add(_button_irradiate,"Increase probability of function tree structural mutations.");  
 
   connect(_button_reset,    SIGNAL(clicked()),this,SLOT(reset()));
   connect(_button_cool,     SIGNAL(clicked()),this,SLOT(cool()));
@@ -64,40 +64,40 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   new QLabel("Perturbation magnitude:",_grid_parameters);
   _spinbox_magnitude=new QSpinBox(0,_scale,maximum(1,_scale/100),_grid_parameters);
   _spinbox_magnitude->setSuffix(QString("/%1").arg(_scale));
-  QToolTip::add(_spinbox_magnitude,"Scale of function parameter perturbations");
+  QToolTip::add(_spinbox_magnitude,"Scale of function parameter perturbations.");
   
   new QLabel("p(Parameter reset)",_grid_parameters);
   _spinbox_parameter_reset=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
   _spinbox_parameter_reset->setSuffix(QString("/%1").arg(_scale));
-  QToolTip::add(_spinbox_parameter_reset,"Probability of function parameters being completely reset");
+  QToolTip::add(_spinbox_parameter_reset,"Probability of function parameters being completely reset.");
 
   new QLabel("p(Glitch)",_grid_parameters);
   _spinbox_glitch=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
   _spinbox_glitch->setSuffix(QString("/%1").arg(_scale));
-  QToolTip::add(_spinbox_glitch,"Probability of function branch being replaced by new random stub");
+  QToolTip::add(_spinbox_glitch,"Probability of function branch being replaced by new random stub.");
 
   new QLabel("p(Shuffle)",_grid_parameters);
   _spinbox_shuffle=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
   _spinbox_shuffle->setSuffix(QString("/%1").arg(_scale));
-  QToolTip::add(_spinbox_shuffle,"Probability of function branches being reordered");
+  QToolTip::add(_spinbox_shuffle,"Probability of function branches being reordered.");
 
   new QLabel("p(Insert)",_grid_parameters);
   _spinbox_insert=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
   _spinbox_insert->setSuffix(QString("/%1").arg(_scale));
-  QToolTip::add(_spinbox_insert,"Probability of function branch having random stub inserted");
+  QToolTip::add(_spinbox_insert,"Probability of function branch having random stub inserted.");
 
   new QLabel("p(Substitute)",_grid_parameters);
   _spinbox_substitute=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
   _spinbox_substitute->setSuffix(QString("/%1").arg(_scale));
-  QToolTip::add(_spinbox_substitute,"Probability of function node's type being changed");
+  QToolTip::add(_spinbox_substitute,"Probability of function node's type being changed.");
 
   new QLabel("Autocool",_grid_parameters);
   _checkbox_autocool_enable=new QCheckBox(_grid_parameters);
-  QToolTip::add(_checkbox_autocool_enable,"Autocooling reduces the strength and probablility of mutations with increasing numbers of generations.\nUnselect and re-select to reset the generation count.");
+  QToolTip::add(_checkbox_autocool_enable,"Autocooling reduces the strength and probablility of mutations with increasing numbers of generations.");
 
-  new QLabel("Autocool halflife",_grid_parameters);
+  new QLabel("Autocool half-life",_grid_parameters);
   _spinbox_autocool_halflife=new QSpinBox(1,1000,1,_grid_parameters);
-  QToolTip::add(_spinbox_autocool_halflife,"Number of generations needed to halve mutation influence when autocooling");
+  QToolTip::add(_spinbox_autocool_halflife,"Number of generations needed to halve mutation influence when autocooling.");
 
   setup_from_mutation_parameters();
 
