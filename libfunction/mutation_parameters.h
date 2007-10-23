@@ -339,6 +339,7 @@ class MutationParameters
     {
       return _autocool_enable;
     }
+  //! Accessor.
   void autocool_enable(bool v)
     {
       _autocool_enable=v;
@@ -351,10 +352,29 @@ class MutationParameters
     {
       return _autocool_halflife;
     }
+  //! Accessor.
   void autocool_halflife(int v)
     {
       _autocool_halflife=v;
       report_change();
+    }
+
+  //! Accessor
+  const int autocool_generations() const
+    {
+      return _autocool_generations;
+    }
+  //! Accessor.
+  void autocool_generations(int v)
+    {
+      _autocool_generations=v;
+      report_change();
+    }
+  //! Accessor.
+  void autocool_generations_increment()
+    {
+      _autocool_generations++;
+      report_change();      
     }
 
   //! Calculate branching ratio for above calls

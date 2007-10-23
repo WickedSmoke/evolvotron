@@ -256,7 +256,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _grid=new QGrid(grid_size.width(),this);
 
   _checkbox_autocool_enable=new QCheckBox("&Autocool",_statusbar);
-  _label_autocool_enable=new QLabel("Generation 0",_statusbar);
+  _label_autocool_enable=new QLabel("",_statusbar);
   QToolTip::add(_checkbox_autocool_enable,"Autocooling gradually reduces the chance and magnitude of mutations with time.\nTo restart the count, unselect and reselect autocooling.");
   
   connect(_checkbox_autocool_enable,SIGNAL(stateChanged(int)),_dialog_mutation_parameters,SLOT(changed_autocool_enable(int)));
@@ -442,6 +442,8 @@ void EvolvotronMain::spawn_all(MutatableImageDisplay* spawning_display,SpawnMemb
 
   history().end_action();
 
+  _mutation_parameters.autocool_generations_increment();
+    
   QApplication::restoreOverrideCursor();
 }
 
@@ -682,8 +684,13 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
     {
       // Invoking reset on the 1st dialog actually resets the parameters 
       _dialog_mutation_parameters->reset();
-      // This one just serves to setup the dialog from the now reset parameters
+      // This one just serves to setup the function dialog from the now reset parameters
       _dialog_functions->setup_from_mutation_parameters();
+    }
+  else
+    {
+      // Seems odd if we don't restart the count.
+      _mutation_parameters.autocool_generations(0);
     }
 
   for (std::vector<MutatableImageDisplay*>::iterator it=displays().begin();it!=displays().end();it++)
@@ -719,4 +726,5 @@ void EvolvotronMain::reset_cold()
 void EvolvotronMain::mutation_parameters_changed()
 {
   _checkbox_autocool_enable->setChecked(_mutation_parameters.autocool_enable());
+  _label_autocool_enable->setText(QString("Generations:")+QString::number(_mutation_parameters.autocool_generations()));
 }
