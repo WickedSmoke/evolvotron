@@ -44,8 +44,9 @@ MutationParameters::~MutationParameters()
 
 void MutationParameters::reset()
 {
-  _decay_halflife=20;
-  _decay_count=0;
+  _autocool_enable=false;
+  _autocool_halflife=20;
+  _autocool_generations=0;
 
   _base_magnitude_parameter_variation=0.25;
 
@@ -101,6 +102,12 @@ void MutationParameters::reset()
   recalculate_function_stuff();
 
   report_change();
+}
+
+const real MutationParameters::decay_factor() const
+{
+  assert(_autocool_halflife!=0);
+  return (_autocool_enable ? pow(0.5,_autocool_generations/static_cast<double>(_autocool_halflife)) : 1.0);
 }
 
 void MutationParameters::general_cool(real f)

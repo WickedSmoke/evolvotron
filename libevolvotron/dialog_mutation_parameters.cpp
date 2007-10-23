@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationParametersQObject* mp)
   :QDialog(parent)
-  ,_scale(1000000)
+  ,_scale(100)
   ,_parent(parent)
   ,_mutation_parameters(mp)
 {
@@ -91,6 +91,14 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   _spinbox_substitute->setSuffix(QString("/%1").arg(_scale));
   QToolTip::add(_spinbox_substitute,"Probability of function node's type being changed");
 
+  new QLabel("Autocool",_grid_parameters);
+  _checkbox_autocool_enable=new QCheckBox(_grid_parameters);
+  QToolTip::add(_checkbox_autocool_enable,"Autocooling reduces the strength and probablility of mutations with increasing numbers of generations.\nUnselect and re-select to reset the generation count.");
+
+  new QLabel("Autocool halflife",_grid_parameters);
+  _spinbox_autocool_halflife=new QSpinBox(1,1000,1,_grid_parameters);
+  QToolTip::add(_spinbox_autocool_halflife,"Number of generations needed to halve mutation influence when autocooling");
+
   setup_from_mutation_parameters();
 
   // Do this AFTER setup
@@ -101,6 +109,9 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   connect(_spinbox_shuffle,SIGNAL(valueChanged(int)),this,SLOT(changed_shuffle(int)));
   connect(_spinbox_insert,SIGNAL(valueChanged(int)),this,SLOT(changed_insert(int)));
   connect(_spinbox_substitute,SIGNAL(valueChanged(int)),this,SLOT(changed_substitute(int)));
+
+  connect(_checkbox_autocool_enable,SIGNAL(stateChanged(int)),this,SLOT(changed_autocool_enable(int)));
+  connect(_spinbox_autocool_halflife,SIGNAL(valueChanged(int)),this,SLOT(changed_autocool_halflife(int)));
  
   _vbox->setStretchFactor(_grid_parameters,1);
 
@@ -124,29 +135,15 @@ void DialogMutationParameters::resizeEvent(QResizeEvent*)
 
 void DialogMutationParameters::setup_from_mutation_parameters()
 {
-  _spinbox_magnitude      ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_magnitude_parameter_variation()));
-  _spinbox_parameter_reset->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_parameter_reset()));
-  _spinbox_glitch         ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_glitch()));
-  _spinbox_shuffle        ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_shuffle()));
-  _spinbox_insert         ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_insert()));
-  _spinbox_substitute     ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_substitute()));
+  _spinbox_magnitude        ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_magnitude_parameter_variation()));
+  _spinbox_parameter_reset  ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_parameter_reset()));
+  _spinbox_glitch           ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_glitch()));
+  _spinbox_shuffle          ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_shuffle()));
+  _spinbox_insert           ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_insert()));
+  _spinbox_substitute       ->setValue(static_cast<int>(0.5+_scale*_mutation_parameters->base_probability_substitute()));
 
-  parameters_changed_status_display();
-}
-
-void DialogMutationParameters::parameters_changed_status_display()
-{
-  QString message
-    =QString("%1/%2/%3/%4/%5/%6")
-    .arg(_spinbox_magnitude->value())
-    .arg(_spinbox_parameter_reset->value())
-    .arg(_spinbox_glitch->value())
-    .arg(_spinbox_shuffle->value())
-    .arg(_spinbox_insert->value())
-    .arg(_spinbox_substitute->value())
-    ;
-
-  _parent->statusBar()->message(message,2000);
+  _checkbox_autocool_enable->setChecked(_mutation_parameters->autocool_enable());
+  _spinbox_autocool_halflife->setValue(_mutation_parameters->autocool_halflife());
 }
 
 void DialogMutationParameters::reset()
@@ -183,6 +180,12 @@ void DialogMutationParameters::shield()
   _spinbox_substitute->stepDown();
 }
 
+void DialogMutationParameters::changed_autocool_enable(int buttonstate)
+{
+  if (buttonstate==QButton::On) _mutation_parameters->autocool_enable(true);
+  else if (buttonstate==QButton::Off) _mutation_parameters->autocool_enable(false);
+}
+
 void DialogMutationParameters::changed_magnitude(int v)
 {
   _mutation_parameters->base_magnitude_parameter_variation(v/static_cast<real>(_scale));
@@ -213,7 +216,12 @@ void DialogMutationParameters::changed_substitute(int v)
   _mutation_parameters->base_probability_substitute(v/static_cast<real>(_scale));
 }
 
+void DialogMutationParameters::changed_autocool_halflife(int v)
+{
+  _mutation_parameters->autocool_halflife(v);
+}
+
 void DialogMutationParameters::mutation_parameters_changed()
 {
-  setup_from_mutation_parameters();  
+  setup_from_mutation_parameters();
 }

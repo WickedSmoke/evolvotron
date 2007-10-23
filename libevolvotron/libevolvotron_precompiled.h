@@ -27,6 +27,7 @@
 #include "libfunction_precompiled.h"
 
 #include <qapplication.h>
+#include <qcheckbox.h>
 #include <qcursor.h>
 #include <qdatetime.h>
 #include <qdialog.h>

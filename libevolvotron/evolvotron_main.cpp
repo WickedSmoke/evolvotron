@@ -255,26 +255,20 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
 
   _grid=new QGrid(grid_size.width(),this);
 
-  //! \todo These might work better as QToolButton
-  _button_cool=new QPushButton("&Cool",_statusbar);
-  _button_shield=new QPushButton("&Shield",_statusbar);
-  _button_heat=new QPushButton("&Heat",_statusbar);
-  _button_irradiate=new QPushButton("&Irradiate",_statusbar);
-
-  QToolTip::add(_button_cool,"Decrease size of constant perturbations during mutation");
-  QToolTip::add(_button_heat,"Increase size of constant perturbations during mutation");
-  QToolTip::add(_button_shield,"Decrease probability of function tree structural mutations");
-  QToolTip::add(_button_irradiate,"Increase probability of function tree structural mutations");
+  _checkbox_autocool_enable=new QCheckBox("&Autocool",_statusbar);
+  _label_autocool_enable=new QLabel("Generation 0",_statusbar);
+  QToolTip::add(_checkbox_autocool_enable,"Autocooling gradually reduces the chance and magnitude of mutations with time.\nTo restart the count, unselect and reselect autocooling.");
   
-  connect(_button_cool,     SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(cool()));
-  connect(_button_heat,     SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(heat()));
-  connect(_button_shield,   SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(shield()));
-  connect(_button_irradiate,SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(irradiate()));
+  connect(_checkbox_autocool_enable,SIGNAL(stateChanged(int)),_dialog_mutation_parameters,SLOT(changed_autocool_enable(int)));
 
-  _statusbar->addWidget(_button_cool,0,true);
-  _statusbar->addWidget(_button_shield,0,true);
-  _statusbar->addWidget(_button_heat,0,true);
-  _statusbar->addWidget(_button_irradiate,0,true);
+  _statusbar->addWidget(new QHBox(_statusbar),1,true);
+  _statusbar->addWidget(_label_autocool_enable,0,true);
+  _statusbar->addWidget(_checkbox_autocool_enable,0,true);
+
+  connect(
+	  &_mutation_parameters,SIGNAL(changed()),
+	  this,SLOT(mutation_parameters_changed())
+	  );
   
   // We need to make sure the display grid gets all the space it can
   setCentralWidget(_grid);
@@ -722,3 +716,7 @@ void EvolvotronMain::reset_cold()
   reset(true,true);
 }
 
+void EvolvotronMain::mutation_parameters_changed()
+{
+  _checkbox_autocool_enable->setChecked(_mutation_parameters.autocool_enable());
+}

@@ -101,11 +101,14 @@ class MutationParameters
   //! Just use SingleChannelNoise for almost all functions (useful for debugging).
   const bool _debug_mode;
 
+  //! Whether autocooling is being applied.
+  bool _autocool_enable;
+
   //! Number of generations at which parameters will be half cooled.
-  unsigned int _decay_halflife;
+  uint _autocool_halflife;
 
   //! Count of number of generations for decay cooling.
-  unsigned int _decay_count;
+  uint _autocool_generations;
 
   void recalculate_function_stuff();
 
@@ -331,6 +334,29 @@ class MutationParameters
       report_change();
     }
 
+  //! Accessor.
+  const bool autocool_enable() const
+    {
+      return _autocool_enable;
+    }
+  void autocool_enable(bool v)
+    {
+      _autocool_enable=v;
+      std::clog << "Autocooling " << (autocool_enable() ? "ON" : "OFF") << "\n";
+      report_change();
+    }
+
+  //! Accessor.
+  const int autocool_halflife() const
+    {
+      return _autocool_halflife;
+    }
+  void autocool_halflife(int v)
+    {
+      _autocool_halflife=v;
+      report_change();
+    }
+
   //! Calculate branching ratio for above calls
   /* Call user should be checking this and diluting with boring nodes to keep it under control
    */
@@ -350,11 +376,7 @@ class MutationParameters
  protected:
 
   //! Compute current decay factor
-  const real decay_factor() const
-    {
-      assert(_decay_halflife!=0);
-      return pow(0.5,_decay_count/static_cast<double>(_decay_halflife));
-    }
+  const real decay_factor() const;
 
   //! Return a random function appropriately biased by current settings
   std::auto_ptr<FunctionNode> random_function() const;

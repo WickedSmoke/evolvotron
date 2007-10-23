@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _evolvotron_main_h_
 #define _evolvotron_main_h_
 
+#include <qcheckbox.h>
 #include <qmenubar.h>
 #include <qstatusbar.h>
 #include <qmainwindow.h>
@@ -190,13 +191,11 @@ class EvolvotronMain : public QMainWindow
   //! The help menu.
   QPopupMenu* _popupmenu_help;
 
-  //@{
-  //! Button for quick adjustment of MutationParameters
-  QPushButton* _button_cool;
-  QPushButton* _button_heat;
-  QPushButton* _button_shield;
-  QPushButton* _button_irradiate;
-  //@}
+  // Select autocooling (also serves to reset the generation count).
+  QCheckBox* _checkbox_autocool_enable;
+
+  // Report number of generations.
+  QLabel* _label_autocool_enable;
 
   //! Grid for image display areas
   QGrid* _grid;
@@ -371,6 +370,9 @@ class EvolvotronMain : public QMainWindow
 
   //! Resets and randomizes function weightings
   void reset_randomized();
+
+  //! So we can update any exposed mutation parameters (e.g autocool enable, generation count)
+  void mutation_parameters_changed();
 };
 
 #endif

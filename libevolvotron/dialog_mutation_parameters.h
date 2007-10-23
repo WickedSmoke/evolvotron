@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <qgrid.h>
 #include <qspinbox.h>
 #include <qslider.h>
-#include <qcheckbox.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
 
@@ -77,16 +76,17 @@ class DialogMutationParameters : public QDialog
   QSpinBox* _spinbox_shuffle;
   QSpinBox* _spinbox_insert;
   QSpinBox* _spinbox_substitute;
+  QSpinBox* _spinbox_autocool_halflife;
   //@}
+
+  //! Control autocooling
+  QCheckBox* _checkbox_autocool_enable;
 
   //! Button to close dialog.
   QPushButton* _ok;
 
   //! Need to pass resizes on to vbox or things just get chopped.
   virtual void resizeEvent(QResizeEvent*);
-
-  //! Put a quick message in the status bar showing the new numbers.
-  void parameters_changed_status_display();
 
   //! Reload spinboxes from _mutation_parameters.
   void setup_from_mutation_parameters();
@@ -102,13 +102,16 @@ class DialogMutationParameters : public QDialog
  public slots:
 
   //@{
-  //! Signalled by button (possibly status bar button).
+  //! Signalled by button.
   void reset();
   void heat();
   void cool();
   void irradiate();
   void shield();
   //@}
+
+  //! Signalled by checkbox.
+  void changed_autocool_enable(int buttonstate);
 
   //@{
   //! Signalled by spinbox.
@@ -118,6 +121,7 @@ class DialogMutationParameters : public QDialog
   void changed_shuffle(int v);
   void changed_insert(int v);
   void changed_substitute(int v);
+  void changed_autocool_halflife(int v);
   //@}
 
   //! Signalled by mutation parameters
