@@ -23,9 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _dialog_mutation_parameters_h_
 #define _dialog_mutation_parameters_h_
 
-#include <qgrid.h>
-#include <qspinbox.h>
-#include <qslider.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
 
@@ -36,6 +33,8 @@ class DialogMutationParameters : public QDialog
 {
  private:
   Q_OBJECT
+
+  typedef QDialog Superclass;
 
  protected:
   //! Scale to spinbox's integer values.
@@ -50,20 +49,20 @@ class DialogMutationParameters : public QDialog
    */
   MutationParametersQObject*const _mutation_parameters;
 
-  //! Vertical layout.
-  QVBox* _vbox;
+  //! Top level holder of all the dialog content.
+  QVBox* _dialog_content;
 
   //! Grid for buttons;
   QGrid* _grid_buttons;
 
   //! Group for base mutation parameter controls
-  QGroupBox* _group_base_mutation;
+  QVGroupBox* _group_base_mutation;
 
   //! Grid for base parameter control spinners
   QGrid* _grid_base_mutation;
 
   //! Group for autocool parameters
-  QGroupBox* _group_autocool;
+  QVGroupBox* _group_autocool;
 
   //! Grid for autocool parameters
   QGrid* _grid_autocool;

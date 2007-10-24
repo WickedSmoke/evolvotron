@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "dialog_functions.h"
 
 #include <qtooltip.h>
-#include <qgroupbox.h>
 #include <qtabwidget.h>
 
 #include "evolvotron_main.h"

@@ -28,16 +28,25 @@
 
 #include <qapplication.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qcursor.h>
 #include <qdatetime.h>
 #include <qdialog.h>
+#include <qgrid.h>
 #include <qgroupbox.h>
 #include <qimage.h>
 #include <qlabel.h>
+#include <qlayout.h>
 #include <qobject.h>
 #include <qpushbutton.h>
+#include <qslider.h>
+#include <qspinbox.h>
 #include <qstring.h>
+#include <qtooltip.h>
+#include <qhbox.h>
+#include <qhgroupbox.h>
 #include <qvbox.h>
+#include <qvgroupbox.h>
 #include <qwidget.h>
 
 #endif

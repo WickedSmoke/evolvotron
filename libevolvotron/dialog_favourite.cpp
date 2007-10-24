@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "dialog_favourite.h"
 
-#include <qgroupbox.h>
-
 #include "function_registry.h"
 #include "evolvotron_main.h"
 
@@ -38,7 +36,7 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
   
   _dialog_content=new QVBox(this);
   
-  QGroupBox* group0=new QGroupBox(1,Qt::Horizontal,"Function",_dialog_content);
+  QVGroupBox* group0=new QVGroupBox("Function",_dialog_content);
 
   new QLabel("Root node for new image functions:",group0,0,Qt::WordBreak);
   _favourite=new QComboBox(false,group0);
@@ -62,7 +60,7 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
       _favourite->insertItem(fn.name());
     }
 
-  QGroupBox* group1=new QGroupBox(1,Qt::Horizontal,"Wrapping",_dialog_content);
+  QVGroupBox* group1=new QVGroupBox("Wrapping",_dialog_content);
   
   _unwrapped=new QCheckBox("Disable additional space/colour transforms\n",group1);
 

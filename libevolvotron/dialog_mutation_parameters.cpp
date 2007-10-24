@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "dialog_mutation_parameters.h"
 
-#include <qtooltip.h>
-
 /*! About dialog displays author info, web addresses and license info.
  */
 DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationParametersQObject* mp)
@@ -38,9 +36,9 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
 
   setCaption("Mutation Parameters");
 
-  _vbox=new QVBox(this);
+  _dialog_content=new QVBox(this);
 
-  _grid_buttons=new QGrid(5,Qt::Horizontal,_vbox);
+  _grid_buttons=new QGrid(5,Qt::Horizontal,_dialog_content);
 
   _button_reset=new QPushButton("&Reset",_grid_buttons);
   _button_cool=new QPushButton("&Cool",_grid_buttons);
@@ -59,18 +57,14 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   connect(_button_shield,   SIGNAL(clicked()),this,SLOT(shield()));
   connect(_button_irradiate,SIGNAL(clicked()),this,SLOT(irradiate()));
 
-  _group_base_mutation=new QGroupBox("Base mutation parameters",_vbox);
-  _group_autocool=new QGroupBox("Autocool",_vbox);
+  _group_base_mutation=new QVGroupBox("Base mutation parameters",_dialog_content);
+  _group_autocool=new QVGroupBox("Autocool",_dialog_content);
+  _dialog_content->setStretchFactor(_group_base_mutation,1);
+  _dialog_content->setStretchFactor(_group_autocool,1);
 
   _grid_base_mutation=new QGrid(2,Qt::Horizontal,_group_base_mutation);
   _grid_autocool=new QGrid(2,Qt::Horizontal,_group_autocool);
-
-  _vbox->setStretchFactor(_group_base_mutation,1);
-  _vbox->setStretchFactor(_group_autocool,1);
-  QSizePolicy spx(QSizePolicy::Expanding,QSizePolicy::Preferred);
-  _group_base_mutation->setSizePolicy(spx);
-  _group_autocool->setSizePolicy(spx);
-
+  
   new QLabel("Perturbation magnitude:",_grid_base_mutation);
   _spinbox_magnitude=new QSpinBox(0,_scale,maximum(1,_scale/100),_grid_base_mutation);
   _spinbox_magnitude->setSuffix(QString("/%1").arg(_scale));
@@ -123,7 +117,7 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   connect(_checkbox_autocool_enable,SIGNAL(stateChanged(int)),this,SLOT(changed_autocool_enable(int)));
   connect(_spinbox_autocool_halflife,SIGNAL(valueChanged(int)),this,SLOT(changed_autocool_halflife(int)));
  
-  _ok=new QPushButton("OK",_vbox);
+  _ok=new QPushButton("OK",_dialog_content);
 
   connect(
 	  _ok,SIGNAL(clicked()),
@@ -136,9 +130,10 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
 	  );
 }
 
-void DialogMutationParameters::resizeEvent(QResizeEvent*)
+void DialogMutationParameters::resizeEvent(QResizeEvent* e)
 {
-  _vbox->resize(size());
+  Superclass::resizeEvent(e);
+  _dialog_content->resize(size());
 }
 
 void DialogMutationParameters::setup_from_mutation_parameters()
