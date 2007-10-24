@@ -116,6 +116,7 @@ class DialogMutationParameters : public QDialog
   void cool();
   void irradiate();
   void shield();
+  void reheat();
   //@}
 
   //! Signalled by checkbox.

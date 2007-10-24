@@ -255,15 +255,19 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
 
   _grid=new QGrid(grid_size.width(),this);
 
-  _checkbox_autocool_enable=new QCheckBox("&Autocool",_statusbar);
   _label_autocool_enable=new QLabel("",_statusbar);
+  _checkbox_autocool_enable=new QCheckBox("&Autocool",_statusbar);
   QToolTip::add(_checkbox_autocool_enable,"Autocooling gradually reduces the chance and magnitude of mutations with time.");
+  _button_autocool_reheat=new QPushButton("Re&heat",_statusbar);
+  QToolTip::add(_button_autocool_reheat,"Reheat restarts the autocooling generation count, restoring the full strength of mutations.");
   
   connect(_checkbox_autocool_enable,SIGNAL(stateChanged(int)),_dialog_mutation_parameters,SLOT(changed_autocool_enable(int)));
+  connect(_button_autocool_reheat,SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(reheat()));
 
   _statusbar->addWidget(new QHBox(_statusbar),1,true);
-  _statusbar->addWidget(_label_autocool_enable,0,true);
   _statusbar->addWidget(_checkbox_autocool_enable,0,true);
+  _statusbar->addWidget(_label_autocool_enable,0,true);
+  _statusbar->addWidget(_button_autocool_reheat,0,true);
 
   connect(
 	  &_mutation_parameters,SIGNAL(changed()),
@@ -726,5 +730,18 @@ void EvolvotronMain::reset_cold()
 void EvolvotronMain::mutation_parameters_changed()
 {
   _checkbox_autocool_enable->setChecked(_mutation_parameters.autocool_enable());
-  _label_autocool_enable->setText(QString("Generations:")+QString::number(_mutation_parameters.autocool_generations()));
+  if (_mutation_parameters.autocool_enable())
+    {
+      _label_autocool_enable->setText(QString("Generations:")+QString::number(_mutation_parameters.autocool_generations()));
+      _label_autocool_enable->show();
+
+      if (_mutation_parameters.autocool_generations()>0) _button_autocool_reheat->show();
+      else _button_autocool_reheat->hide();
+
+    }
+  else
+    {
+      _label_autocool_enable->hide();
+      _button_autocool_reheat->hide();
+    }
 }

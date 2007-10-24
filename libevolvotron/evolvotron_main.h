@@ -191,11 +191,14 @@ class EvolvotronMain : public QMainWindow
   //! The help menu.
   QPopupMenu* _popupmenu_help;
 
-  // Select autocooling (also serves to reset the generation count).
+  //! Select autocooling (also serves to reset the generation count).
   QCheckBox* _checkbox_autocool_enable;
 
-  // Report number of generations.
+  //! Report number of generations.
   QLabel* _label_autocool_enable;
+
+  //! Button to reheat
+  QButton* _button_autocool_reheat;
 
   //! Grid for image display areas
   QGrid* _grid;

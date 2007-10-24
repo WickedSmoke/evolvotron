@@ -183,6 +183,11 @@ void DialogMutationParameters::shield()
   _spinbox_substitute->stepDown();
 }
 
+void DialogMutationParameters::reheat()
+{
+  _mutation_parameters->autocool_generations(0);
+}
+
 void DialogMutationParameters::changed_autocool_enable(int buttonstate)
 {
   if (buttonstate==QButton::On) _mutation_parameters->autocool_enable(true);
