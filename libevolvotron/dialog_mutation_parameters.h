@@ -56,8 +56,17 @@ class DialogMutationParameters : public QDialog
   //! Grid for buttons;
   QGrid* _grid_buttons;
 
-  //! Grid for parameter control spinners
-  QGrid* _grid_parameters;
+  //! Group for base mutation parameter controls
+  QGroupBox* _group_base_mutation;
+
+  //! Grid for base parameter control spinners
+  QGrid* _grid_base_mutation;
+
+  //! Group for autocool parameters
+  QGroupBox* _group_autocool;
+
+  //! Grid for autocool parameters
+  QGrid* _grid_autocool;
 
   //@{
   //! Button for quick adjustment of MutationParameters

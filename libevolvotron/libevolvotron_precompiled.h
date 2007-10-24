@@ -31,6 +31,7 @@
 #include <qcursor.h>
 #include <qdatetime.h>
 #include <qdialog.h>
+#include <qgroupbox.h>
 #include <qimage.h>
 #include <qlabel.h>
 #include <qobject.h>

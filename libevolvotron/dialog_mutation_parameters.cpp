@@ -59,44 +59,54 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   connect(_button_shield,   SIGNAL(clicked()),this,SLOT(shield()));
   connect(_button_irradiate,SIGNAL(clicked()),this,SLOT(irradiate()));
 
-  _grid_parameters=new QGrid(2,Qt::Horizontal,_vbox);
+  _group_base_mutation=new QGroupBox("Base mutation parameters",_vbox);
+  _group_autocool=new QGroupBox("Autocool",_vbox);
 
-  new QLabel("Perturbation magnitude:",_grid_parameters);
-  _spinbox_magnitude=new QSpinBox(0,_scale,maximum(1,_scale/100),_grid_parameters);
+  _grid_base_mutation=new QGrid(2,Qt::Horizontal,_group_base_mutation);
+  _grid_autocool=new QGrid(2,Qt::Horizontal,_group_autocool);
+
+  _vbox->setStretchFactor(_group_base_mutation,1);
+  _vbox->setStretchFactor(_group_autocool,1);
+  QSizePolicy spx(QSizePolicy::Expanding,QSizePolicy::Preferred);
+  _group_base_mutation->setSizePolicy(spx);
+  _group_autocool->setSizePolicy(spx);
+
+  new QLabel("Perturbation magnitude:",_grid_base_mutation);
+  _spinbox_magnitude=new QSpinBox(0,_scale,maximum(1,_scale/100),_grid_base_mutation);
   _spinbox_magnitude->setSuffix(QString("/%1").arg(_scale));
   QToolTip::add(_spinbox_magnitude,"Scale of function parameter perturbations.");
   
-  new QLabel("p(Parameter reset)",_grid_parameters);
-  _spinbox_parameter_reset=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
+  new QLabel("p(Parameter reset)",_grid_base_mutation);
+  _spinbox_parameter_reset=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_base_mutation);
   _spinbox_parameter_reset->setSuffix(QString("/%1").arg(_scale));
   QToolTip::add(_spinbox_parameter_reset,"Probability of function parameters being completely reset.");
 
-  new QLabel("p(Glitch)",_grid_parameters);
-  _spinbox_glitch=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
+  new QLabel("p(Glitch)",_grid_base_mutation);
+  _spinbox_glitch=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_base_mutation);
   _spinbox_glitch->setSuffix(QString("/%1").arg(_scale));
   QToolTip::add(_spinbox_glitch,"Probability of function branch being replaced by new random stub.");
 
-  new QLabel("p(Shuffle)",_grid_parameters);
-  _spinbox_shuffle=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
+  new QLabel("p(Shuffle)",_grid_base_mutation);
+  _spinbox_shuffle=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_base_mutation);
   _spinbox_shuffle->setSuffix(QString("/%1").arg(_scale));
   QToolTip::add(_spinbox_shuffle,"Probability of function branches being reordered.");
 
-  new QLabel("p(Insert)",_grid_parameters);
-  _spinbox_insert=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
+  new QLabel("p(Insert)",_grid_base_mutation);
+  _spinbox_insert=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_base_mutation);
   _spinbox_insert->setSuffix(QString("/%1").arg(_scale));
   QToolTip::add(_spinbox_insert,"Probability of function branch having random stub inserted.");
 
-  new QLabel("p(Substitute)",_grid_parameters);
-  _spinbox_substitute=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_parameters);
+  new QLabel("p(Substitute)",_grid_base_mutation);
+  _spinbox_substitute=new QSpinBox(0,_scale,maximum(1,_scale/1000),_grid_base_mutation);
   _spinbox_substitute->setSuffix(QString("/%1").arg(_scale));
   QToolTip::add(_spinbox_substitute,"Probability of function node's type being changed.");
 
-  new QLabel("Autocool",_grid_parameters);
-  _checkbox_autocool_enable=new QCheckBox(_grid_parameters);
+  new QLabel("Enable",_grid_autocool);
+  _checkbox_autocool_enable=new QCheckBox(_grid_autocool);
   QToolTip::add(_checkbox_autocool_enable,"Autocooling reduces the strength and probablility of mutations with increasing numbers of generations.");
 
-  new QLabel("Autocool half-life",_grid_parameters);
-  _spinbox_autocool_halflife=new QSpinBox(1,1000,1,_grid_parameters);
+  new QLabel("Half-life",_grid_autocool);
+  _spinbox_autocool_halflife=new QSpinBox(1,1000,1,_grid_autocool);
   QToolTip::add(_spinbox_autocool_halflife,"Number of generations needed to halve mutation influence when autocooling.");
 
   setup_from_mutation_parameters();
@@ -113,8 +123,6 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   connect(_checkbox_autocool_enable,SIGNAL(stateChanged(int)),this,SLOT(changed_autocool_enable(int)));
   connect(_spinbox_autocool_halflife,SIGNAL(valueChanged(int)),this,SLOT(changed_autocool_halflife(int)));
  
-  _vbox->setStretchFactor(_grid_parameters,1);
-
   _ok=new QPushButton("OK",_vbox);
 
   connect(
