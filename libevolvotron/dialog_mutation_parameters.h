@@ -67,6 +67,12 @@ class DialogMutationParameters : public QDialog
   //! Grid for autocool parameters
   QGrid* _grid_autocool;
 
+  //! Label to show number of generations
+  QLabel* _label_autocool_generations;
+
+  //! Button to reheeat autocooling
+  QPushButton* _button_autocool_reheat;
+
   //@{
   //! Button for quick adjustment of MutationParameters
   QPushButton* _button_reset;

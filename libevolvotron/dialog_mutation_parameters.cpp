@@ -103,6 +103,11 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   _spinbox_autocool_halflife=new QSpinBox(1,1000,1,_grid_autocool);
   QToolTip::add(_spinbox_autocool_halflife,"Number of generations needed to halve mutation influence when autocooling.");
 
+  _label_autocool_generations=new QLabel("",_grid_autocool);
+
+  _button_autocool_reheat=new QPushButton("Reheat",_grid_autocool);
+  connect(_button_autocool_reheat,SIGNAL(clicked()),this,SLOT(reheat()));
+
   setup_from_mutation_parameters();
 
   // Do this AFTER setup
@@ -147,6 +152,11 @@ void DialogMutationParameters::setup_from_mutation_parameters()
 
   _checkbox_autocool_enable->setChecked(_mutation_parameters->autocool_enable());
   _spinbox_autocool_halflife->setValue(_mutation_parameters->autocool_halflife());
+  _label_autocool_generations->setText(QString("Generations: ")+QString::number(_mutation_parameters->autocool_generations()));
+
+  // Grey-out any irrelevant settings
+  _spinbox_autocool_halflife->setEnabled(_mutation_parameters->autocool_enable());
+  _button_autocool_reheat->setEnabled(_mutation_parameters->autocool_enable() && _mutation_parameters->autocool_generations()>0);
 }
 
 void DialogMutationParameters::reset()

@@ -198,7 +198,7 @@ class EvolvotronMain : public QMainWindow
   QLabel* _label_autocool_enable;
 
   //! Button to reheat
-  QButton* _button_autocool_reheat;
+  QPushButton* _button_autocool_reheat;
 
   //! Grid for image display areas
   QGrid* _grid;
