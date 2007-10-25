@@ -33,6 +33,8 @@ class DialogAbout : public QDialog
  private:
   Q_OBJECT
 
+  typedef QDialog Superclass;
+
  public:
   //! Constructor.
   DialogAbout(QWidget* parent,int n_threads);

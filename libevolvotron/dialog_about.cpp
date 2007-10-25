@@ -34,23 +34,29 @@ DialogAbout::DialogAbout(QWidget* parent,int n_threads)
 
   _vbox=new QVBox(this);
 
+  QTabWidget* tabs=new QTabWidget(_vbox);
+  QVBox* vbox_info=new QVBox(tabs);
+  tabs->addTab(vbox_info,"Info");
+  QVBox* vbox_license=new QVBox(tabs);
+  tabs->addTab(vbox_license,"License");
+
   std::ostringstream about_string;
   about_string
     << "Evolvotron "
     << EVOLVOTRON_BUILD
-    << "\n"
+    << "\n\n"
     << "Using "
     << n_threads
     << " compute thread" 
     << (n_threads>1 ? "s" : "") << "\n\n"
-    << "Author: timday@timday.com\n"
+    << "Author: timday@timday.com\n\n"
     << "Home page: http://evolvotron.sourceforge.net\n"
     << "Project page: http://sourceforge.net/projects/evolvotron\n";
 
-  _label=new QLabel(about_string.str().c_str(),_vbox);
-  _label->setAlignment(Qt::AlignHCenter|_label->alignment());
+  _label=new QLabel(about_string.str().c_str(),vbox_info);
+  _label->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter|_label->alignment());
   
-  _license=new QTextEdit(_vbox);
+  _license=new QTextEdit(vbox_license);
   _license->setReadOnly(true);
   _license->setTextFormat(PlainText);
   _license->setText((std::string("License:\n")+std::string(license_string)).c_str());
@@ -67,7 +73,8 @@ DialogAbout::DialogAbout(QWidget* parent,int n_threads)
 	  );
 }
 
-void DialogAbout::resizeEvent(QResizeEvent*)
+void DialogAbout::resizeEvent(QResizeEvent* e)
 {
+  Superclass::resizeEvent(e);
   _vbox->resize(size());
 }

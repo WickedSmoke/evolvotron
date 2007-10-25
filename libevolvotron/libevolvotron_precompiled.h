@@ -42,6 +42,7 @@
 #include <qslider.h>
 #include <qspinbox.h>
 #include <qstring.h>
+#include <qtabwidget.h>
 #include <qtooltip.h>
 #include <qhbox.h>
 #include <qhgroupbox.h>
