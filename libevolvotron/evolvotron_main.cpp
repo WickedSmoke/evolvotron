@@ -228,7 +228,7 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   // We want to use a checkmark on some items
   _popupmenu_settings->setCheckable(true);
 
-  _popupmenu_settings->insertItem("&Mutation parameters...",_dialog_mutation_parameters,SLOT(show()));
+  _popupmenu_settings->insertItem("Mutation &parameters...",_dialog_mutation_parameters,SLOT(show()));
   _popupmenu_settings->insertItem("&Function weightings...",_dialog_functions,SLOT(show()));
   _popupmenu_settings->insertItem("Fa&vourite function...",_dialog_favourite,SLOT(show()));
 
@@ -256,9 +256,9 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _grid=new QGrid(grid_size.width(),this);
 
   _label_autocool_enable=new QLabel("",_statusbar);
-  _checkbox_autocool_enable=new QCheckBox("&Autocool",_statusbar);
+  _checkbox_autocool_enable=new QCheckBox("Autocool",_statusbar);
   QToolTip::add(_checkbox_autocool_enable,"Autocooling gradually reduces the chance and magnitude of mutations with time.");
-  _button_autocool_reheat=new QPushButton("Re&heat",_statusbar);
+  _button_autocool_reheat=new QPushButton("Reheat",_statusbar);
   QToolTip::add(_button_autocool_reheat,"Reheat restarts the autocooling generation count, restoring the full strength of mutations.");
   
   connect(_checkbox_autocool_enable,SIGNAL(stateChanged(int)),_dialog_mutation_parameters,SLOT(changed_autocool_enable(int)));
