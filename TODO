@@ -24,8 +24,10 @@ Conventional Mode
   Wikipedia http://en.wikipedia.org/wiki/Wallpaper_group is good.
   Presumably there are 3D versions too.
   See also http://www.mi.sanu.ac.yu/vismath/ana/ana5.htm
+- The function properties dialog could construct a QListView instead of just displaying the XML.
+  But then you'd want full editing capabilities too (and why not?)
 - When mutating parameters, have a chance of a "special" reset to "interesting" values, and maybe even patterns of values.
-- Debian transitioning Apps to Applications (post Etch) see bug 361418
+- Debian transitioning Apps to Applications (post Etch) see bug #361418
 - GPLv3 ?  Don't understand what else needs to be (e.g Qt3 etc)
 - Maybe icon setting could do with some more attention; probably there are more things which should set it
   (e.g respawn coloured) and loading could set a flag defering icon setting until that view is ready.

@@ -32,7 +32,15 @@ DialogMutatableImageDisplay::DialogMutatableImageDisplay(QWidget* parent)
 
   _vbox=new QVBox(this);
 
-  _message=new QLabel(QString(""),_vbox);
+  _tabs=new QTabWidget(_vbox);
+
+  _label_info=new QLabel(QString(""),_tabs);
+  _tabs->addTab(_label_info,"Summary");
+
+  _textedit_xml=new QTextEdit(_tabs);
+  _textedit_xml->setReadOnly(true);
+  _textedit_xml->setTextFormat(PlainText);
+  _tabs->addTab(_textedit_xml,"Detail");
 
   _ok=new QPushButton("OK",_vbox);
 
@@ -51,10 +59,12 @@ void DialogMutatableImageDisplay::resizeEvent(QResizeEvent*)
   _vbox->resize(size());
 }
 
-void DialogMutatableImageDisplay::set_message(const std::string& m)
+void DialogMutatableImageDisplay::set_content(const std::string& m,const std::string& x)
 {
-  _message->setText(QString(m.c_str()));
-  _message->adjustSize();
+  _label_info->setText(QString(m.c_str()));
+  _label_info->adjustSize();
+
+  _textedit_xml->setText(x);
 
   adjustSize();
   updateGeometry();

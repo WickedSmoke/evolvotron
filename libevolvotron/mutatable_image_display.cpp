@@ -249,8 +249,6 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
   // New image, so increment serial number so any old incoming stuff which somehow avoids abort is ignored.
   _serial++;
 
-  _properties->set_message(std::string("Not yet implemented"));
-
   // This might have already been done (e.g by resizeEvent), but it can't hurt to be sure.
   main()->farm().abort_for(this);
 
@@ -894,15 +892,17 @@ void MutatableImageDisplay::menupick_properties()
   image()->get_stats(total_nodes,total_parameters,depth,width,proportion_constant);
 
   std::stringstream msg;
-  msg << total_nodes      << "\t function nodes\n";
-  msg << total_parameters << "\t parameters\n";
-  msg << depth            << "\t maximum depth\n";
-  msg << width            << "\t width\n";
-  msg << std::setprecision(3) << 100.0*proportion_constant << "%\t constant\n";
+  msg << " " << total_nodes      << "\t function nodes\n";
+  msg << " " << total_parameters << "\t parameters\n";
+  msg << " " << depth            << "\t maximum depth\n";
+  msg << " " << width            << "\t width\n";
+  msg << " " << std::setprecision(3) << 100.0*proportion_constant << "%\t constant\n";
 
+  std::stringstream xml;
+  image()->save_function(xml);
+
+  _properties->set_content(msg.str(),xml.str());
   if (_icon.get()) _properties->setIcon(*_icon);
-
-  _properties->set_message(msg.str());
   _properties->exec();
 }
 
