@@ -38,7 +38,12 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
 
   _dialog_content=new QVBox(this);
 
-  _grid_buttons=new QGrid(5,Qt::Horizontal,_dialog_content);
+  _tabs=new QTabWidget(_dialog_content);
+
+  _vbox_base_mutation=new QVBox(_tabs);
+  _tabs->addTab(_vbox_base_mutation,"Base");
+
+  _grid_buttons=new QGrid(5,Qt::Horizontal,_vbox_base_mutation);
 
   _button_reset=new QPushButton("&Reset",_grid_buttons);
   _button_cool=new QPushButton("&Cool",_grid_buttons);
@@ -57,13 +62,11 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   connect(_button_shield,   SIGNAL(clicked()),this,SLOT(shield()));
   connect(_button_irradiate,SIGNAL(clicked()),this,SLOT(irradiate()));
 
-  _group_base_mutation=new QVGroupBox("Base mutation parameters",_dialog_content);
-  _group_autocool=new QVGroupBox("Autocool",_dialog_content);
-  _dialog_content->setStretchFactor(_group_base_mutation,1);
-  _dialog_content->setStretchFactor(_group_autocool,1);
+  _vbox_autocool=new QVBox(_tabs);
+  _tabs->addTab(_vbox_autocool,"Autocool");
 
-  _grid_base_mutation=new QGrid(2,Qt::Horizontal,_group_base_mutation);
-  _grid_autocool=new QGrid(2,Qt::Horizontal,_group_autocool);
+  _grid_base_mutation=new QGrid(2,Qt::Horizontal,_vbox_base_mutation);
+  _grid_autocool=new QGrid(2,Qt::Horizontal,_vbox_autocool);
   
   new QLabel("Perturbation magnitude:",_grid_base_mutation);
   _spinbox_magnitude=new QSpinBox(0,_scale,maximum(1,_scale/100),_grid_base_mutation);

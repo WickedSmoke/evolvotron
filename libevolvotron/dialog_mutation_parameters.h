@@ -52,17 +52,20 @@ class DialogMutationParameters : public QDialog
   //! Top level holder of all the dialog content.
   QVBox* _dialog_content;
 
+  //! Tabs for base parameters and autocool
+  QTabWidget* _tabs;
+
+  //! Tab for base mutation parameter controls
+  QVBox* _vbox_base_mutation;
+
   //! Grid for buttons;
   QGrid* _grid_buttons;
-
-  //! Group for base mutation parameter controls
-  QVGroupBox* _group_base_mutation;
 
   //! Grid for base parameter control spinners
   QGrid* _grid_base_mutation;
 
   //! Group for autocool parameters
-  QVGroupBox* _group_autocool;
+  QVBox* _vbox_autocool;
 
   //! Grid for autocool parameters
   QGrid* _grid_autocool;
