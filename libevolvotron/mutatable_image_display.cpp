@@ -894,11 +894,11 @@ void MutatableImageDisplay::menupick_properties()
   image()->get_stats(total_nodes,total_parameters,depth,width,proportion_constant);
 
   std::stringstream msg;
-  msg << "Function nodes  \t" << total_nodes << "\n";
-  msg << "Parameters      \t" << total_parameters << "\n";
-  msg << "Maximum depth   \t" << depth << "\n";
-  msg << "Width           \t" << width << "\n";
-  msg << "Constant        \t" << 100.0*proportion_constant << "%\n";
+  msg << total_nodes      << "\t function nodes\n";
+  msg << total_parameters << "\t parameters\n";
+  msg << depth            << "\t maximum depth\n";
+  msg << width            << "\t width\n";
+  msg << std::setprecision(3) << 100.0*proportion_constant << "%\t constant\n";
 
   if (_icon.get()) _properties->setIcon(*_icon);
 
