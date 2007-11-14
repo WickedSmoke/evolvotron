@@ -43,7 +43,9 @@ DialogRenderParameters::DialogRenderParameters(QMainWindow* parent,RenderParamet
   _buttongroup->insert(new QRadioButton("2x2",_buttongroup),2);
   _buttongroup->insert(new QRadioButton("4x4",_buttongroup),4);
   _buttongroup->setRadioButtonExclusive(true);
-  QToolTip::add(_buttongroup,"Increasing the amount of oversampling (antialiasing) makes final renderings look better, but takes longer.");
+  QToolTip::add(_buttongroup->find(1),"No oversampling");
+  QToolTip::add(_buttongroup->find(2),"Enables a final antialiased rendering with 4 samples per pixel");
+  QToolTip::add(_buttongroup->find(4),"Enables a final antialiased rendering with 16 samples per pixel");
 
   setup_from_render_parameters();
 
