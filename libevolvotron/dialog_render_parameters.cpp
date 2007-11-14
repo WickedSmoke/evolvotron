@@ -61,9 +61,6 @@ DialogRenderParameters::DialogRenderParameters(QMainWindow* parent,RenderParamet
 	  _render_parameters,SIGNAL(changed()),
 	  this,SLOT(render_parameters_changed())
 	  );
-
-  //setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-  //adjustSize();
 }
 
 void DialogRenderParameters::resizeEvent(QResizeEvent* e)
