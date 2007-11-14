@@ -384,6 +384,9 @@ class EvolvotronMain : public QMainWindow
 
   //! So we can update any exposed mutation parameters (e.g autocool enable, generation count)
   void mutation_parameters_changed();
+
+  //! So we can re-render when render parameters change
+  void render_parameters_changed();
 };
 
 #endif

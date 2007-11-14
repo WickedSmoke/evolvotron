@@ -274,6 +274,11 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _statusbar->addWidget(_button_autocool_reheat,0,true);
 
   connect(
+	  &_render_parameters,SIGNAL(changed()),
+	  this,SLOT(render_parameters_changed())
+	  );
+
+  connect(
 	  &_mutation_parameters,SIGNAL(changed()),
 	  this,SLOT(mutation_parameters_changed())
 	  );
@@ -748,4 +753,10 @@ void EvolvotronMain::mutation_parameters_changed()
       _label_autocool_enable->hide();
       _button_autocool_reheat->hide();
     }
+}
+
+void EvolvotronMain::render_parameters_changed()
+{
+  for (std::set<MutatableImageDisplay*>::iterator it=_known_displays.begin();it!=_known_displays.end();it++)
+    (*it)->image((*it)->image());
 }
