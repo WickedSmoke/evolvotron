@@ -46,7 +46,8 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
 
   QTabWidget* tabs=new QTabWidget(_dialog_content);
   _ok=new QPushButton("OK",_dialog_content);
-    
+  _ok->setDefault(true);
+
   for (int c=-1;c<FnClassifications;c++)
     {
       QVBox*const tab_content=new QVBox(_dialog_content);

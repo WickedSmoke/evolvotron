@@ -62,9 +62,6 @@ DialogAbout::DialogAbout(QWidget* parent,int n_threads)
   _license->setText((std::string("License:\n")+std::string(license_string)).c_str());
 
   _ok=new QPushButton("OK",_vbox);
-
-  //! \todo: These button settings don't seem to do anything.  Find out what's up.
-  _ok->setAutoDefault(true);
   _ok->setDefault(true);
 
   connect(

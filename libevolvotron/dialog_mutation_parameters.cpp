@@ -124,6 +124,7 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   connect(_spinbox_autocool_halflife,SIGNAL(valueChanged(int)),this,SLOT(changed_autocool_halflife(int)));
  
   _ok=new QPushButton("OK",_dialog_content);
+  _ok->setDefault(true);
 
   connect(
 	  _ok,SIGNAL(clicked()),

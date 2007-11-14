@@ -43,9 +43,6 @@ DialogMutatableImageDisplay::DialogMutatableImageDisplay(QWidget* parent)
   _tabs->addTab(_textedit_xml,"Detail");
 
   _ok=new QPushButton("OK",_vbox);
-
-  //! \todo: These button settings don't seem to do anything.  Find out what's up.
-  _ok->setAutoDefault(true);
   _ok->setDefault(true);
 
   connect(

@@ -141,9 +141,8 @@ DialogHelp::DialogHelp(QWidget* parent,bool full)
   _browser->setText(full ? helptext_long : helptext_short);
 
   _ok=new QPushButton("OK",_vbox);
-
-  //! \todo: These button settings don't seem to do anything.  Find out what's up.
-  _ok->setAutoDefault(true);
+  // Setting this button to default doesn't seem to have an effect (it does in other browsers).
+  // Something to do with sharing with a QTextBrowser ?
   _ok->setDefault(true);
 
   connect(

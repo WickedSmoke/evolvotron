@@ -66,6 +66,7 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
 
   //! \todo: Add OK & reset/restart versions ?
   QPushButton* ok=new QPushButton("OK",_dialog_content);
+  ok->setDefault(true);
 
   update_gui_from_state();
 

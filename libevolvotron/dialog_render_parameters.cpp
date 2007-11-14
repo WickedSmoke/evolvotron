@@ -53,6 +53,7 @@ DialogRenderParameters::DialogRenderParameters(QMainWindow* parent,RenderParamet
   connect(_buttongroup,SIGNAL(clicked(int)),this,SLOT(changed_oversampling(int)));
  
   _ok=new QPushButton("OK",_dialog_content);
+  _ok->setDefault(true);
 
   connect(
 	  _ok,SIGNAL(clicked()),
