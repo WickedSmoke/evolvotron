@@ -25,14 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "evolvotron_main.h"
 
-#include <qmessagebox.h>
-#include <qtooltip.h>
-#include <qregexp.h>
-
 #include "args.h"
 #include "dialog_about.h"
 #include "dialog_help.h"
 #include "dialog_mutation_parameters.h"
+#include "dialog_render_parameters.h"
 #include "dialog_functions.h"
 #include "dialog_favourite.h"
 #include "function_node.h"
@@ -183,12 +180,13 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   :QMainWindow(parent,0,Qt::WType_TopLevel|Qt::WDestructiveClose)
    ,_history(new EvolvotronMain::History(this))
    ,_mutation_parameters(time(0),function_debug_mode,this)
+   ,_render_parameters(false,1,this)
    ,_statusbar_tasks(0)
-   ,_last_spawn_method(&EvolvotronMain::spawn_normal)
+  ,_last_spawn_method(&EvolvotronMain::spawn_normal)
 {
   setMinimumSize(600,400);
 
-  // Need to create this first or DialogMutationParameters will cause one to be created too.
+  // Need to create this first or DialogMutationParameters might cause one to be created too.
   _statusbar=new QStatusBar(this);
   _statusbar->setSizeGripEnabled(false);
   _statusbar->message("Ready");
@@ -201,6 +199,8 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _dialog_help_long=new DialogHelp(this,true);
 
   _dialog_mutation_parameters=new DialogMutationParameters(this,&_mutation_parameters);
+
+  _dialog_render_parameters=new DialogRenderParameters(this,&_render_parameters);
 
   _dialog_functions=new DialogFunctions(this,&_mutation_parameters);
 
@@ -231,6 +231,10 @@ EvolvotronMain::EvolvotronMain(QWidget* parent,const QSize& grid_size,uint frame
   _popupmenu_settings->insertItem("Mutation &parameters...",_dialog_mutation_parameters,SLOT(show()));
   _popupmenu_settings->insertItem("&Function weightings...",_dialog_functions,SLOT(show()));
   _popupmenu_settings->insertItem("Fa&vourite function...",_dialog_favourite,SLOT(show()));
+
+  _popupmenu_settings->insertSeparator();
+
+  _popupmenu_settings->insertItem("Ren&der parameters...",_dialog_render_parameters,SLOT(show()));  
 
   _popupmenu_settings->insertSeparator();
 

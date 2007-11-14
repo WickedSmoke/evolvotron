@@ -18,6 +18,7 @@ HEADERS += \
 	dialog_help.h \
         dialog_mutatable_image_display.h \
 	dialog_mutation_parameters.h \
+	dialog_render_parameters.h \
 	evolvotron_main.h \
 	license.h \
 	mutatable_image.h \
@@ -27,6 +28,7 @@ HEADERS += \
 	mutatable_image_display.h \
 	mutatable_image_display_big.h \
         mutation_parameters_qobject.h \
+        render_parameters.h \
         transform_factory.h \
         usage_text.h \
         vbox_scrollview.h
@@ -39,6 +41,7 @@ SOURCES += \
 	dialog_functions.cpp \
         dialog_mutatable_image_display.cpp \
 	dialog_mutation_parameters.cpp \
+	dialog_render_parameters.cpp \
 	evolvotron_main.cpp \
 	license.cpp \
 	mutatable_image.cpp \
@@ -48,6 +51,7 @@ SOURCES += \
 	mutatable_image_display.cpp \
 	mutatable_image_display_big.cpp \
         mutation_parameters_qobject.cpp \
+        render_parameters.cpp \
         transform_factory.cpp \
         vbox_scrollview.cpp
 

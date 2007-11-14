@@ -23,12 +23,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _dialog_mutation_parameters_h_
 #define _dialog_mutation_parameters_h_
 
-#include <qmainwindow.h>
-#include <qstatusbar.h>
-
 #include "mutation_parameters_qobject.h"
 
-//! Provides an "About" dialog box, manages an instance of MutationParameters.
+//! Provides an dialog box for controlling MutationParameters.
 class DialogMutationParameters : public QDialog
 {
  private:

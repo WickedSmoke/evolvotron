@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "dialog_mutation_parameters.h"
 
-/*! About dialog displays author info, web addresses and license info.
- */
 DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationParametersQObject* mp)
   :QDialog(parent)
   ,_scale(100)

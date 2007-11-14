@@ -37,10 +37,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mutatable_image_display.h"
 #include "mutatable_image_computer_farm.h"
 #include "mutation_parameters_qobject.h"
+#include "render_parameters.h"
 
 class DialogAbout;
 class DialogHelp;
 class DialogMutationParameters;
+class DialogRenderParameters;
 class DialogFunctions;
 class DialogFavourite;
 
@@ -140,6 +142,9 @@ class EvolvotronMain : public QMainWindow
    */
   MutationParametersQObject _mutation_parameters;
 
+  //! Instance of render parameters for the app
+  RenderParameters _render_parameters;
+
   //! Somewhere to report what's going on
   QStatusBar* _statusbar;
 
@@ -160,6 +165,9 @@ class EvolvotronMain : public QMainWindow
 
   //! The dialog for adjusting MutationParameters.
   DialogMutationParameters* _dialog_mutation_parameters;
+
+  //! The dialog for adjusting RenderParameters.
+  DialogRenderParameters* _dialog_render_parameters;
 
   //! Dialog for controlling which functions are in use.
   DialogFunctions* _dialog_functions;

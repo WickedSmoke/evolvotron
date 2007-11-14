@@ -5,6 +5,7 @@ From release 0.5.0:
  - Replace not often used frontside heating/cooling buttons with autocooling mechanism.
  - Separate tabs for info & license on "About" dialog.
  - Better formatting of function properties dialog, and also shows XML function tree.
+ - Rendering controls
 
 From release 0.4.0:
  - Version to 0.5.0
