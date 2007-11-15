@@ -134,7 +134,7 @@ int main(int argc,char* argv[])
   const bool jitter=args.option("-j");
 
   uint multisample_level=1;
-  if (args.option("-s",1)) args.after() >> multisample_level;
+  if (args.option("-m",1)) args.after() >> multisample_level;
 
   const bool function_debug_mode=args.option("-D");
 

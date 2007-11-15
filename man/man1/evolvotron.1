@@ -17,14 +17,14 @@ evolvotron
 ]
 [\-linz]
 [\-j]
+[\-m
+.I <multisample>
+]
 [\-n
 .I niceness
 ]
 [\-r
 .I <framerate>
-]
-[\-s
-.I <multisample>
 ]
 [\-spheremap]
 [\-t
@@ -73,18 +73,18 @@ Number of image display cells (defaults to 6 by 5).
 Enable sample jittering.
 
 .TP 0.5i
-.B \-n
-.I <niceness>
-Niceness of compute threads relative to main thread (defaults to 4).
-
-.TP 0.5i
-.B \-s
+.B \-m
 .I <multisample>
 Enables antialiased rendering.
 Valid values are 1,2,3,4.
 This specifies the size of the sub-pixel sampling grid,
 so 1 provides the default one-sample-per-pixel behaviour,
 while 4 provides 16 samples per pixel on a 4x4 grid.
+
+.TP 0.5i
+.B \-n
+.I <niceness>
+Niceness of compute threads relative to main thread (defaults to 4).
 
 .TP 0.5i
 .B \-t
