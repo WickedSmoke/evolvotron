@@ -3,8 +3,7 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
-- Commandline option to start with autocool on.
-- Commandline option for antialiasing & jittered sampling (also in evolvotron_render)
+- -j & -s jitter & multisample options for evolvotron_render
 - Spheremap a render parameter
 
 - Friezegroups:
