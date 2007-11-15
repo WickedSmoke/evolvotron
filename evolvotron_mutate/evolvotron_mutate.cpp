@@ -49,7 +49,7 @@ int main(int argc,char* argv[])
   
     std::clog << "Random seed is " << seed << "\n";
   
-    MutationParameters mutation_parameters(seed,false);
+    MutationParameters mutation_parameters(seed,false,false);
 
     std::string report;
     boost::shared_ptr<const MutatableImage> imagefn_out;

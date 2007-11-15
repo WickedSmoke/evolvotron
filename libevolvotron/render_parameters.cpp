@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 RenderParameters::RenderParameters(bool j,uint m,QObject* parent)
   :QObject(parent)
    ,_jittered_samples(j)
-   ,_multisample_level(m)
+   ,_multisample_level(clamped(m,1u,4u))
 {}
 
 RenderParameters::~RenderParameters()

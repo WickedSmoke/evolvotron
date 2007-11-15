@@ -30,7 +30,7 @@ class MutationParametersQObject : public QObject, public MutationParameters
 {
   Q_OBJECT;
  public:
-  MutationParametersQObject(uint seed,bool debug_mode,QObject* parent);
+  MutationParametersQObject(uint seed,bool autocool,bool debug_mode,QObject* parent);
   ~MutationParametersQObject();
 
 signals:

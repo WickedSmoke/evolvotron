@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2007 Tim Day
 /*! \page License License
 
 This program is free software; you can redistribute it and/or
@@ -62,7 +62,6 @@ int main(int argc,char* argv[])
       std::cerr << "Must be at least 2 display grid cells (options: -g <cols> <rows>)\n";
       exit(1);
     }
-
   
   uint threads=1;
     
@@ -126,16 +125,18 @@ int main(int argc,char* argv[])
       favourite_function_unwrapped=true;
     }
 
-  const bool function_debug_mode=args.option("-D");
-
-#ifdef FULLSCREEN
   // Use same keys as used by app to toggle modes
   bool start_fullscreen=args.option("-F");
   bool start_menuhidden=args.option("-M");
-#else
-  bool start_fullscreen=false;
-  bool start_menuhidden=false;
-#endif
+
+  const bool autocool=args.option("-a");
+
+  const bool jitter=args.option("-j");
+
+  uint multisample_level=1;
+  if (args.option("-s",1)) args.after() >> multisample_level;
+
+  const bool function_debug_mode=args.option("-D");
 
   std::clog
     << "Evolvotron version "
@@ -150,7 +151,21 @@ int main(int argc,char* argv[])
     << niceness
     << ")\n";
 
-  EvolvotronMain*const main_widget=new EvolvotronMain(0,QSize(cols,rows),frames,framerate,threads,niceness,start_fullscreen,start_menuhidden,function_debug_mode);
+  EvolvotronMain*const main_widget=new EvolvotronMain
+      (
+       0,
+       QSize(cols,rows),
+       frames,
+       framerate,
+       threads,
+       niceness,
+       start_fullscreen,
+       start_menuhidden,
+       autocool,
+       jitter,
+       multisample_level,
+       function_debug_mode
+       );
 
   main_widget->mutation_parameters().function_registry().status(std::clog);
 

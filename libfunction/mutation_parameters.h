@@ -98,8 +98,8 @@ class MutationParameters
   //! Map from [0,1] to a function registration, taking weights into account.
   std::map<real,const FunctionRegistration*> _function_pick;
 
-  //! Just use SingleChannelNoise for almost all functions (useful for debugging).
-  const bool _debug_mode;
+  //! What state a reset should return autocool to.
+  const bool _autocool_reset_state;
 
   //! Whether autocooling is being applied.
   bool _autocool_enable;
@@ -110,11 +110,14 @@ class MutationParameters
   //! Count of number of generations for decay cooling.
   uint _autocool_generations;
 
+  //! Just use SingleChannelNoise for almost all functions (useful for debugging).
+  const bool _debug_mode;
+
   void recalculate_function_stuff();
 
  public:
   //! Trivial constructor.
-  MutationParameters(uint seed,bool debug_mode);
+  MutationParameters(uint seed,bool ac,bool debug_mode);
 
   //! Trivial destructor.
   virtual ~MutationParameters();

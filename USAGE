@@ -37,17 +37,19 @@ options and numeric arguments (ie use "-t 4" not "-t4")
 
 USER OPTIONS
 ------------
-  -geometry <width>x<height>
-	The usual Qt/X11 option to set on-screen size in pixels
+  -a
+	Enable autocooling by default, and cause resets of mutation
+	parameters to re-enable autocooling if it was disabled.
 
   -g <cols> <rows>
 	Sets number of image display cells (defaults to 6 by 5)
 
-  -t <threads>
-	Sets number of compute threads.
-        If this is not specified, as many compute threads are created
-        as there are processors on the system (unless this cannot be
-        discovered, in which case only a single compute thread is created).
+  -geometry <width>x<height>
+	The usual Qt/X11 option to set on-screen size in pixels
+
+  -j
+	Enable sample jittering.  Samples will be made at a random position
+	within a pixel instead of on a regular grid, providing some antialiasing.
 
   -n <niceness>
         Sets niceness of the compute thread(s) relative to the main thread.
@@ -56,6 +58,19 @@ USER OPTIONS
         part of the program (but note that this means other normal/lowish
         priority tasks running on your machine may slow evolvotron down
         a bit more than expected).
+
+  -s <multisample>
+	Enables additional antialiasing passes.
+	Specifing 2 or 3 will provide an additional pass with 2x2 or 3x3 samples per pixel.
+	Specifiying 4 (of higher) will provide a 2x2 and a final 4x4 pass.
+	Specifying 1 provides the default behaviour of one sample per pixel.
+	For maximum render quality also specify -j.
+
+  -t <threads>
+	Sets number of compute threads.
+        If this is not specified, as many compute threads are created
+        as there are processors on the system (unless this cannot be
+        discovered, in which case only a single compute thread is created).
 
   -F
 	Start in "fullscreen" mode (NB for Qt on X11 this means 
@@ -81,18 +96,26 @@ ANIMATION OPTIONS
   -f <frames>
 	Number of frames in animations (defaults to 1 i.e no animation)
 
-  -r <framerate>
-	Rate at which frames are displayed (integer).  (Defaults to 8).
-
- -linz
+  -linz
         Vary z linearly with time rather than sinusoidally.
         Sinusoidal variation generally looks better when animations are "bounced"
         forwards and backwards, but this option is useful when generating slices to
         use as volumetric textures.
 
+  -r <framerate>
+	Rate at which frames are displayed per second (integer).  (Defaults to 8).
+
+
 POWER-USER & DEBUG OPTIONS
 --------------------------
- -spheremap
+  -D
+        Puts the certain aspects of the app into a more debug oriented mode.
+        Currently (ie this may change) it simply changes function weightings
+        so virtually all function nodes are FunctionNoiseOneChannel. By itself
+	this is a pretty pointless thing to do, but in conjunction with the -X
+        options it's useful for examining the behaviour of specific functions.
+
+  -spheremap
         Images are produced by sampling the underlying 3D function on the
         latitude-longitude grid of a sphere.  The resulting images should be
         usable as spheremaps/spherical environment maps.  Animations vary
@@ -124,13 +147,6 @@ POWER-USER & DEBUG OPTIONS
         Function name recognition is case sensitive.
         Example (highly recommended): 
         $ evolvotron -X FunctionKaleidoscope 
-
-  -D
-        Puts the certain aspects of the app into a more debug oriented mode.
-        Currently (ie this may change) it simply changes function weightings
-        so virtually all function nodes are FunctionNoiseOneChannel. By itself
-	this is a pretty pointless thing to do, but in conjunction with the -X
-        options it's useful for examining the behaviour of specific functions.
 
 MOUSE CONTROL
 ============= 

@@ -30,11 +30,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_identity.h"
 #include "function_transform.h"
 
-MutationParameters::MutationParameters(uint seed,bool debug_mode)
+MutationParameters::MutationParameters(uint seed,bool ac,bool debug_mode)
   :_function_registry(new FunctionRegistry())
-  ,_r01(seed)
-  ,_r_negexp(seed,1.0)
-  ,_debug_mode(debug_mode)
+   ,_r01(seed)
+   ,_r_negexp(seed,1.0)
+   ,_autocool_reset_state(ac)
+   ,_debug_mode(debug_mode)
 {
   reset();
 }
@@ -44,7 +45,7 @@ MutationParameters::~MutationParameters()
 
 void MutationParameters::reset()
 {
-  _autocool_enable=false;
+  _autocool_enable=_autocool_reset_state;
   _autocool_halflife=20;
   _autocool_generations=0;
 

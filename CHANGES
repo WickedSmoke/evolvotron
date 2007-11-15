@@ -7,6 +7,7 @@ From release 0.5.0:
  - Better formatting of function properties dialog, and also shows XML function tree.
  - Dialog with rendering controls
  - Multisampling (antialiasing) options
+ - -a, -s, -j command line options for autocool/multisample/jitter
 
 From release 0.4.0:
  - Version to 0.5.0
