@@ -37,7 +37,8 @@ MutatableImageComputer::MutatableImageComputer(MutatableImageComputerFarm* frm,i
   InstanceCounted(typeid(this).name(),false),
 #endif
   _farm(frm),
-  _niceness(niceness)
+  _niceness(niceness),
+  _r01(23)  // Seed pretty unimportant; only used for sample jitter
 {
   start();
 }
@@ -103,12 +104,14 @@ void MutatableImageComputer::run()
 			//! \todo: Multisampling in z would be a motion blur/exposure length sort of effect (but not implemented).
 			// xyz co-ords vary over -1.0 to 1.0
 			// In the one frame case z will be 0
+			const real jx=(task()->jittered_samples() ? _r01() : 0.5);
+			const real jy=(task()->jittered_samples() ? _r01() : 0.5);
 			const XYZ p
 			  (
 			   task()->image()->sampling_coordinate
 			   (
-			    task()->current_col()+(sx+0.5)/multisample,
-			    task()->current_row()+(sy+0.5)/multisample,
+			    task()->current_col()+(sx+jx)/multisample,
+			    task()->current_row()+(sy+jy)/multisample,
 			    task()->current_frame(),
 			    width,
 			    height,

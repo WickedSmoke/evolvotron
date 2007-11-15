@@ -27,6 +27,7 @@
 #include <qmutex.h>
 
 #include "mutatable_image.h"
+#include "random.h"
 
 class MutatableImageDisplay;
 class MutatableImageComputerFarm;
@@ -50,6 +51,9 @@ class MutatableImageComputer : public QThread
 
   //! The current task.  Can't be a const MutatableImageComputerTask because the task holds the calculated result.
   boost::shared_ptr<MutatableImageComputerTask> _task;
+
+  //! Randomness for sampling jitter
+  Random01 _r01;
 
   //! Class encapsulating mutex-protected flags used for communicating between farm and worker.
   /*! The Mutex is of dubious value (could certainly be eliminated for reads).
