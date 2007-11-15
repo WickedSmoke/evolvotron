@@ -5,37 +5,42 @@ evolvotron \- Creates generative art by an interactive evolutionary process.
 
 .SH SYNOPSIS
 evolvotron
+[\-a]
+[\-D]
+[\-F]
+[\-f 
+.I <frames>
+]
 [\-g
 .I <cols>
 .I <rows>
 ]
-[\-t
-.I <threads>
-]
+[\-linz]
+[\-j]
 [\-n
 .I niceness
-]
-[\-F]
-[\-M]
-[\-f 
-.I <frames>
 ]
 [\-r
 .I <framerate>
 ]
-[\-spheremap
+[\-s
+.I <multisample>
+]
+[\-spheremap]
+[\-t
+.I <threads>
+]
+[\-v]
+[\-M]
+[\-X
+.I <functionname>
+|
+\-x
+.I <functionname>
 ]
 [
 .I <QtOptions>
 ]
-[\-v]
-[\-x
-.I <functionname>
-|
-\-X
-.I <functionname>
-]
-[\-D]
 
 .SH DESCRIPTION
 
@@ -54,20 +59,37 @@ is accessible from the application's "Help" menu once it is running.
 .SH GENERAL OPTIONS
 
 .TP 0.5i
+.B \-a
+Enable autocooling by default.
+
+.TP 0.5i
 .B \-g
 .I <cols>
 .I <rows>
 Number of image display cells (defaults to 6 by 5).
 
 .TP 0.5i
-.B \-t
-.I <threads>
-Number of compute threads (defaults to number of CPUs)
+.B -j
+Enable sample jittering.
 
 .TP 0.5i
 .B \-n
 .I <niceness>
 Niceness of compute threads relative to main thread (defaults to 4).
+
+.TP 0.5i
+.B \-s
+.I <multisample>
+Enables antialiased rendering.
+Valid values are 1,2,3,4.
+This specifies the size of the sub-pixel sampling grid,
+so 1 provides the default one-sample-per-pixel behaviour,
+while 4 provides 16 samples per pixel on a 4x4 grid.
+
+.TP 0.5i
+.B \-t
+.I <threads>
+Number of compute threads (defaults to number of CPUs)
 
 .TP 0.5i
 .B \-F
@@ -79,12 +101,21 @@ Start in "fullscreen" mode (window manager permitting).
 Start with menu and status bars supressed.
 [Press "Esc" key to display them].
 
+.TP 0.5i
+.I <QtOptions>
+The Qt GUI system recognizes an number of additional options
+(for example, standard X11 things like -geometry <width>x<height>).
+
 .SH ANIMATION OPTIONS
 
 .TP 0.5i
 .B \-f
 .I <frames>
 Number of frames to animate (defaults to 1 i.e no animaton)
+
+.TP 0.5i
+.B \-linz
+Vary z linearly with time rather than sinusoidally.
 
 .TP 0.5i
 .B \-r
@@ -96,11 +127,10 @@ Defaults to 8.
 .SH POWER-USER / DEBUG OPTIONS
 
 .TP 0.5i
-.I <QtOptions>
-Standard options recognised by the Qt toolkit (for example
-.B \-geometry
-.I <width>x<height>
-)
+.B \-D
+Debug mode.
+Currently simply sets function weightings so virtually all function nodes are FunctionNoiseOneChannel.
+This is really only useful to developers in conjunction with the -x/-X options.
 
 .TP 0.5i
 .B \-spheremap
@@ -127,12 +157,6 @@ This can also be controlled from the "Favourite" dialog.
 Similar to
 .B \-x
 but with no wrapper functions.
-
-.TP 0.5i
-.B \-D
-Debug mode.
-Currently simply sets function weightings so virtually all function nodes are FunctionNoiseOneChannel.
-This is really only useful to developers in conjunction with the -x/-X options.
 
 .SH EXAMPLES
 

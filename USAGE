@@ -64,7 +64,7 @@ USER OPTIONS
 	Specifing 2 or 3 will provide an additional pass with 2x2 or 3x3 samples per pixel.
 	Specifiying 4 (of higher) will provide a 2x2 and a final 4x4 pass.
 	Specifying 1 provides the default behaviour of one sample per pixel.
-	For maximum render quality also specify -j.
+	For best rendering quality also specify -j.
 
   -t <threads>
 	Sets number of compute threads.
