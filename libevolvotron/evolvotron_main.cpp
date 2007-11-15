@@ -325,6 +325,7 @@ EvolvotronMain::~EvolvotronMain()
   std::clog << "Evolvotron shut down begun...\n";
 
   // Orphan any displays which outlived us (and clear their images)  (look out: shutdown order is Qt-determined)
+  std::clog << "(There are " << _known_displays.size() << " displays remaining)\n";
   for (std::set<MutatableImageDisplay*>::const_iterator it=_known_displays.begin();it!=_known_displays.end();it++)
     {
       (*it)->image(boost::shared_ptr<const MutatableImage>());

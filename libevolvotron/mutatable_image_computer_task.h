@@ -61,6 +61,12 @@ class MutatableImageComputerTask
    */
   const uint _level;
 
+  //! Whether samples should be jittered.
+  const bool _jittered_samples;
+
+  //! Multisampling grid resolution e.g 4 implies a 4x4 grid
+  const uint _multisample_level;
+
   //@{
   //! Track pixels computed, so tasks can be restarted after defer.
   uint _current_pixel;
@@ -83,7 +89,7 @@ class MutatableImageComputerTask
 
  public:
   //! Constructor.
-  MutatableImageComputerTask(MutatableImageDisplay*const disp,const boost::shared_ptr<const MutatableImage>& img,const QSize& s,uint f,uint lev,unsigned long long int n);
+  MutatableImageComputerTask(MutatableImageDisplay*const disp,const boost::shared_ptr<const MutatableImage>& img,const QSize& s,uint f,uint lev,bool j,uint ms,unsigned long long int n);
   
   //! Destructor.
   ~MutatableImageComputerTask();
@@ -130,16 +136,28 @@ class MutatableImageComputerTask
       return _level;
     }
 
+  //! Accessor.
+  const bool jittered_samples() const
+    {
+      return _jittered_samples;
+    }
+
+  //! Accessor.
+  const uint multisample_level() const
+    {
+      return _multisample_level;
+    }
+
   //! Serial number
   const unsigned long long int serial() const
     {
       return _serial;
     }
 
-  //! Compute task priority.  Smallest images go first.
+  //! Compute task priority.  Smallest images (by number of samples) go first.
   const uint priority() const
     {
-      return size().width()*size().height();
+      return size().width()*size().height()*multisample_level()*multisample_level();
     }
 
   //! Accessor.

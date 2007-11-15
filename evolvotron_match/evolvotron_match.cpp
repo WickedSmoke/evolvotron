@@ -68,10 +68,14 @@ QImageWithData*const render_image(const MutatableImage*const imagefn,int width,i
 		    1.0-2.0*(row+0.5)/height,
 		    0.0
 		    );
-	uint c[3];
-	imagefn->get_rgb(p,c);
+
+	const XYZ c(imagefn->get_rgb(p));
+
+	const uint col0=lrint(clamped(c.x(),0.0,255.0));
+	const uint col1=lrint(clamped(c.y(),0.0,255.0));
+	const uint col2=lrint(clamped(c.z(),0.0,255.0));
 	
-	*pixel=((c[0]<<16)|(c[1]<<8)|(c[2]));
+	*pixel=((col0<<16)|(col1<<8)|(col2));
       }
 
   return new QImageWithData

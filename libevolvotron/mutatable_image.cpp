@@ -87,11 +87,6 @@ boost::shared_ptr<const MutatableImage> MutatableImage::deepclone(bool lock) con
   return boost::shared_ptr<const MutatableImage>(new MutatableImage(root,sinusoidal_z(),spheremap(),lock)); 
 }
 
-const XYZ MutatableImage::operator()(const XYZ& p) const
-{
-  return top()(p);
-}
-
 const bool MutatableImage::is_constant() const
 {
   return top().is_constant();
@@ -102,19 +97,19 @@ const bool MutatableImage::ok() const
   return top().ok();
 }  
 
-const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint sy,uint sz) const
+const XYZ MutatableImage::sampling_coordinate(real x,real y,uint z,uint sx,uint sy,uint sz) const
 {
   if (spheremap())
     {
-      const real longitude=-M_PI+2.0*M_PI*(x+0.5)/sx;
-      const real latitude=0.5*M_PI-M_PI*(y+0.5)/sy;
+      const real longitude=-M_PI+2.0*M_PI*x/sx;
+      const real latitude=0.5*M_PI-M_PI*y/sy;
       const real r=(
-		     sinusoidal_z()
-		     ?
-		     0.5+cos(M_PI*(z+0.5)/sz)
-		     :
-		     0.5+(z+0.5)/sz
-		     );
+		    sinusoidal_z()
+		    ?
+		    0.5+cos(M_PI*z/sz)
+		    :
+		    0.5+(z+0.5)/sz
+		    );
 		     
       return XYZ
 	(
@@ -127,8 +122,8 @@ const XYZ MutatableImage::sampling_coordinate(uint x,uint y,uint z,uint sx,uint 
     {
       return XYZ
 	(
-	 -1.0+2.0*(x+0.5)/sx,
-	  1.0-2.0*(y+0.5)/sy,
+	 -1.0+2.0*x/sx,
+	  1.0-2.0*y/sy,
 	 (
 	  sinusoidal_z()
 	  ?
@@ -154,23 +149,14 @@ boost::shared_ptr<const MutatableImage> MutatableImage::simplified() const
   return boost::shared_ptr<const MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap(),false));
 }
 
-void MutatableImage::get_rgb(const XYZ& p,uint c[3]) const
+const XYZ MutatableImage::get_rgb(const XYZ& p) const
 {
   // Actually calculate a pixel value from the image.
   // negexp distribution on colour-space parameters probably means the nominal range is something like -4.0 to 4.0
-  XYZ pv(top()(p));
+  const XYZ pv(top()(p));
 
-  // Scale nominal -2.0 to 2.0 range to 0-255
-  XYZ v(127.5*(0.5*pv+XYZ(1.0,1.0,1.0)));
-  
-  // Clamp out of range values 
-  v.x(clamped(v.x(),0.0,255.0));
-  v.y(clamped(v.y(),0.0,255.0));
-  v.z(clamped(v.z(),0.0,255.0));
-
-  c[0]=(uint)floorf(v.x());
-  c[1]=(uint)floorf(v.y());
-  c[2]=(uint)floorf(v.z());
+  // Scale a nominal -2.0 to 2.0 range to 0-255
+  return 127.5*(0.5*pv+XYZ(1.0,1.0,1.0));
 }
 
 void MutatableImage::get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const

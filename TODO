@@ -4,6 +4,7 @@ imply it will be done sooner or later than other items!
 Conventional Mode
 -----------------
 - Commandline option to start with autocool on.
+- Commandline option for antialiasing & jittered sampling (also in evolvotron_render)
 
 - Friezegroups:
   Cut taken out for 0.5.0 release.

@@ -61,12 +61,13 @@ void MutatableImageComputer::run()
   std::clog << "Thread starting\n";
 
   // Lower compute thread priority slightly;
-  // computing more stuff is less important than displaying the results we've got.
+  // computing yet more stuff is less important than displaying the results we've got.
   /*! \todo: People porting to non-Linux (BSD, MacOS, Fink etc) please send
     a suitable #ifdef-able patch if you need something different here.
     Note that this code relies on Linux NPTL's non-Posix-compliant
-    thread-specific nice value.
-    \todo: Could check some error codes, but pretty harmless if it doesn't work.
+    thread-specific nice value (although without a suitable replacement
+    per-thread priority mechanism it's just as well it's that way).
+    \todo: Should check some error codes, but it's pretty harmless if it doesn't work.
   */
   const int current_priority=getpriority(PRIO_PROCESS,0);
   setpriority(PRIO_PROCESS,0,std::min(19,current_priority+_niceness));
@@ -80,9 +81,11 @@ void MutatableImageComputer::run()
 	  _task=farm()->pop_todo(*this);
 	}
       
-      // If we still don't have one might as well wait a bit before retrying
       if (task()!=0)
 	{
+	  // DEBUG
+	  std::clog << "[" << task()->multisample_level() << "]";
+
 	  // Careful, we could be given an already aborted task
 	  if (!task()->aborted())
 	    {
@@ -92,20 +95,42 @@ void MutatableImageComputer::run()
 
 	      while (!communications().kill_or_abort_or_defer() && !task()->completed())
 		{
-		  // xyz co-ords vary over -1.0 to 1.0
-		  // In the one frame case z will be 0
-		  const XYZ p(task()->image()->sampling_coordinate
-			      (
-			       task()->current_col(),task()->current_row(),task()->current_frame(),
-			       width,height,frames
-			       )
-			      );
+		  XYZ accumulated_colour(0.0,0.0,0.0);
+		  const uint multisample=task()->multisample_level();
+		  for (uint sy=0;sy<multisample;sy++)
+		    for (uint sx=0;sx<multisample;sx++)
+		      {
+			//! \todo: Multisampling in z would be a motion blur/exposure length sort of effect (but not implemented).
+			// xyz co-ords vary over -1.0 to 1.0
+			// In the one frame case z will be 0
+			const XYZ p
+			  (
+			   task()->image()->sampling_coordinate
+			   (
+			    task()->current_col()+(sx+0.5)/multisample,
+			    task()->current_row()+(sy+0.5)/multisample,
+			    task()->current_frame(),
+			    width,
+			    height,
+			    frames
+			    )
+			   );
+			
+			accumulated_colour+=task()->image()->get_rgb(p);
+		      }
 
+		  accumulated_colour/=(multisample*multisample);
 		  
-		  uint c[3];
-		  task()->image()->get_rgb(p,c);
+		  // Clamp out of range values
+		  accumulated_colour.x(clamped(accumulated_colour.x(),0.0,255.0));
+		  accumulated_colour.y(clamped(accumulated_colour.y(),0.0,255.0));
+		  accumulated_colour.z(clamped(accumulated_colour.z(),0.0,255.0));
+		  
+		  const uint col0=lrint(accumulated_colour.x());
+		  const uint col1=lrint(accumulated_colour.y());
+		  const uint col2=lrint(accumulated_colour.z());
 
-		  task()->image_data()[task()->current_pixel()]=((c[0]<<16)|(c[1]<<8)|(c[2]));
+		  task()->image_data()[task()->current_pixel()]=((col0<<16)|(col1<<8)|(col2));
 
 		  task()->pixel_advance();
 		}

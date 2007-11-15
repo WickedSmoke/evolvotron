@@ -75,14 +75,15 @@ int main(int argc,char* argv[])
 	for (int col=0;col<width;col++)
 	  {
 	    // xy co-ords vary over -1.0 to 1.0.  In the one frame case z will be 0
-	    const XYZ p(
-			imagefn->sampling_coordinate(col,row,frame,width,height,frames)
-			);
+	    const XYZ p(imagefn->sampling_coordinate(col,row,frame,width,height,frames));
 	    
-	    uint c[3];
-	    imagefn->get_rgb(p,c);
+	    const XYZ c(imagefn->get_rgb(p));
 	    
-	    image_data.push_back((c[0]<<16)|(c[1]<<8)|(c[2]));
+	    const uint col0=lrint(clamped(c.x(),0.0,255.0));
+	    const uint col1=lrint(clamped(c.y(),0.0,255.0));
+	    const uint col2=lrint(clamped(c.z(),0.0,255.0));
+
+	    image_data.push_back(((col0<<16)|(col1<<8)|(col2)));
 	  }
 
       {

@@ -71,10 +71,10 @@ class MutatableImage
   //! Destructor.  NB Deletes owned image function tree.
   virtual ~MutatableImage();
 
-  //! Returns the sampling co-ordinate given a pixel position
+  //! Returns the sampling co-ordinate given a (sub)pixel position in the given frame of an animation.
   /*! This depends on things like sinusoidal_z and spheremap
    */
-  const XYZ sampling_coordinate(uint x,uint y,uint z,uint sx,uint sy,uint sz) const;
+  const XYZ sampling_coordinate(real x,real y,uint z,uint sx,uint sy,uint sz) const;
 
   //! Accessor.
   const FunctionTop& top() const;
@@ -121,10 +121,8 @@ class MutatableImage
   //! Return a simplified version of this image
   boost::shared_ptr<const MutatableImage> simplified() const;
 
-  //! Evaluate the image at specified coordinate.
-  const XYZ operator()(const XYZ& p) const;
-
-  void get_rgb(const XYZ& p,uint c[3]) const;
+  //! Return the a 0-255-scaled RGB value at the specified location.
+  const XYZ get_rgb(const XYZ& p) const;
 
   //! Return whether image value is independent of position.
   const bool is_constant() const;

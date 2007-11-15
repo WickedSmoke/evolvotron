@@ -305,6 +305,14 @@ class EvolvotronMain : public QMainWindow
     }
 
   //! Accessor.
+  /*! NB Only const version made available publicly as modifications should be through an appropriate dialog slot.
+   */
+  const RenderParameters& render_parameters() const
+    {
+      return _render_parameters;
+    }
+
+  //! Accessor.
   MutatableImageComputerFarm& farm()
     {
       return *_farm;

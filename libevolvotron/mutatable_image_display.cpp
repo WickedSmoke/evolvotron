@@ -58,6 +58,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
    ,_timer(0)
    ,_resize_in_progress(false)
    ,_current_display_level(0)
+   ,_current_display_multisample_level(0)
    ,_icon_serial(0LL)
    ,_properties(0)
    ,_menu(0)
@@ -139,7 +140,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
   _menu->insertItem("Simplif&y function",this,SLOT(menupick_simplify()));
   _menu->insertItem("&Properties...",this,SLOT(menupick_properties()));
 
-  main()->hello(this);
+  main().hello(this);
 
   if (_fixed_size)
     {
@@ -170,8 +171,8 @@ MutatableImageDisplay::~MutatableImageDisplay()
   // Don't use main() because it asserts non-null.
   if (_main)
     {
-      main()->farm().abort_for(this);
-      main()->goodbye(this);
+      main().farm().abort_for(this);
+      main().goodbye(this);
     }
 
   _image.reset();
@@ -182,7 +183,7 @@ MutatableImageDisplay::~MutatableImageDisplay()
 
 const uint MutatableImageDisplay::simplify_constants(bool single_action)
 {
-  if (single_action) main()->history().begin_action("simplify");
+  if (single_action) main().history().begin_action("simplify");
 
   uint old_nodes;
   uint old_parameters;
@@ -191,7 +192,7 @@ const uint MutatableImageDisplay::simplify_constants(bool single_action)
   real old_const;
   _image->get_stats(old_nodes,old_parameters,old_depth,old_width,old_const);
 
-  main()->history().replacing(this);
+  main().history().replacing(this);
 
   image(_image->simplified());
 
@@ -204,7 +205,7 @@ const uint MutatableImageDisplay::simplify_constants(bool single_action)
 
   const uint nodes_eliminated=old_nodes-new_nodes;
 
-  if (single_action) main()->history().end_action();
+  if (single_action) main().history().end_action();
 
   if (single_action)
     {
@@ -250,7 +251,7 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
   _serial++;
 
   // This might have already been done (e.g by resizeEvent), but it can't hurt to be sure.
-  main()->farm().abort_for(this);
+  main().farm().abort_for(this);
 
   // Careful: we could be passed our own existing (and already owned) image
   // (a trick used by resize to trigger recompute & redisplay)
@@ -269,6 +270,7 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
 
   // If we start recomputing again we need to accept any delivered images.
   _current_display_level=(uint)(-1);
+  _current_display_multisample_level=(uint)(-1);
 
   // Update lock status displayed in menu
   _menu->setItemChecked(_menu_item_number_lock,(_image.get() ? _image->locked() : false));
@@ -276,19 +278,38 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
   if (_image.get())
     {
       // Allow for displays up to 4096 pixels high or wide
+      //! \todo: Should compute max level needed from display size
       for (int level=12;level>=0;level--)
 	{
 	  const int s=(1<<level);
-	  
-	  if (image_size().width()>=s && image_size().height()>=s)
-	    {
-	      /*! \todo Should computed frames be constant or reduced c.f spatial resolution ?  (Do full z resolution for now)
-	       */
-	      const boost::shared_ptr<const MutatableImage> task_image(_image);
-	      assert(task_image->ok());
 
-	      const boost::shared_ptr<MutatableImageComputerTask> task(new MutatableImageComputerTask(this,task_image,image_size()/s,_frames,level,_serial));
-	      main()->farm().push_todo(task);
+	  std::vector<uint> multisample;
+	  multisample.push_back(1);
+	  if (level==0)
+	    {
+	      // Only the final full resolution level gets an additional multisampling task.
+	      // For 4x4 sampling, do an initial 2x2 too.
+	      if (main().render_parameters().multisample_level()==4) multisample.push_back(2);
+	      if (main().render_parameters().multisample_level()>1) multisample.push_back(main().render_parameters().multisample_level());
+	    }
+
+	  for (std::vector<uint>::const_iterator it=multisample.begin();it!=multisample.end();it++)
+	    {
+	      if (image_size().width()>=s && image_size().height()>=s)
+		{
+		  //! \todo Should computed animation frames be constant or reduced c.f spatial resolution ?  (Do full z resolution for now)
+		  const boost::shared_ptr<const MutatableImage> task_image(_image);
+		  assert(task_image->ok());
+		  
+		  const boost::shared_ptr<MutatableImageComputerTask> task
+		    (
+		     new MutatableImageComputerTask
+		     (
+		      this,task_image,image_size()/s,_frames,level,main().render_parameters().jittered_samples(),(*it),_serial
+		      )
+		     );
+		  main().farm().push_todo(task);
+		}
 	    }
 	}
     }
@@ -297,11 +318,12 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
 void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImageComputerTask>& task)
 {
   // Ignore tasks which were aborted or which have somehow got out of order 
-  // (not impossible with multiple compute threads).
-  /*! \todo Not entirely sure the level check is sufficient in all possible situations,
-      would be best to have a serial number incremented for each recompute.
-   */
-  if (!task->aborted() && task->level()<_current_display_level && task->serial()==_serial)
+  // (entirely possible with multiple compute threads).
+  if (
+      !task->aborted() 
+      && task->serial()==_serial 
+      && (task->level()<_current_display_level || (task->level()==_current_display_level && task->multisample_level()>_current_display_multisample_level))
+      )
     {
       _offscreen_image.clear();
 
@@ -343,7 +365,8 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
 	  
       //! Note the resolution we've displayed so out-of-order low resolution images are dropped
       _current_display_level=task->level();
-
+      _current_display_multisample_level=task->multisample_level();
+  
       // Update what's on the screen.
       //! \todo Any case for calling update() instead of repaint() ?  Repaint maybe feels smoother.
       repaint();
@@ -357,14 +380,14 @@ void MutatableImageDisplay::lock(bool l,bool record_in_history)
     {
       if (record_in_history)
 	{
-	  main()->history().begin_action(l ? "lock" : "unlock");
-	  main()->history().replacing(this);
+	  main().history().begin_action(l ? "lock" : "unlock");
+	  main().history().replacing(this);
 	}
       const boost::shared_ptr<const MutatableImage> new_image(_image->deepclone(l));
       image(new_image);
       if (record_in_history)
 	{
-	  main()->history().end_action();
+	  main().history().end_action();
 	}
     }
 
@@ -398,7 +421,7 @@ void MutatableImageDisplay::resizeEvent(QResizeEvent* event)
       _image_size=event->size();
       
       // Abort all current tasks because they'll be the wrong size.
-      main()->farm().abort_for(this);
+      main().farm().abort_for(this);
       
       // Resize and reset our offscreen buffer (something to do while we wait)
       for (uint f=0;f<_offscreen_buffer.size();f++)
@@ -421,9 +444,9 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
   else if (event->button()==MidButton)
     {
       // Take a snapshot to undo back to.
-      main()->history().begin_action("middle-button drag");
-      main()->history().replacing(this);
-      main()->history().end_action();
+      main().history().begin_action("middle-button drag");
+      main().history().replacing(this);
+      main().history().end_action();
 
       _mid_button_adjust_start_pos=event->pos();
       _mid_button_adjust_last_pos=event->pos();
@@ -575,21 +598,21 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
  */
 void MutatableImageDisplay::menupick_respawn()
 {
-  main()->respawn(this);
+  main().respawn(this);
 }
 
 /*! This slot is called by selecting the "Spawn" context menu item, or by clicking the image
  */
 void MutatableImageDisplay::menupick_spawn()
 {
-  main()->spawn_normal(this);
+  main().spawn_normal(this);
 }
 
 /*! This slot is called by selecting the "Spawn Recoloured" context menu item
  */
 void MutatableImageDisplay::menupick_spawn_recoloured()
 {
-  main()->spawn_recoloured(this);
+  main().spawn_recoloured(this);
 }
 
 /*! This slot is called by selecting the "Spawn Warped/Random" context menu item
@@ -598,56 +621,56 @@ void MutatableImageDisplay::menupick_spawn_warped_random()
 {
   TransformFactoryRandomWarpXY transform_factory;
   
-  main()->spawn_warped(this,transform_factory);
+  main().spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_zoom_in()
 {
   TransformFactoryRandomScaleXY transform_factory(-2.0,0.0);
 
-  main()->spawn_warped(this,transform_factory);
+  main().spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_zoom_out()
 {
   TransformFactoryRandomScaleXY transform_factory(0.0,2.0);
 
-  main()->spawn_warped(this,transform_factory);
+  main().spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_rotate()
 {
   TransformFactoryRandomRotateZ transform_factory;
 
-  main()->spawn_warped(this,transform_factory);
+  main().spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_pan_xy()
 {
   TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0,0.0,0.0),XYZ(1.0,1.0,0.0));
 
-  main()->spawn_warped(this,transform_factory);
+  main().spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_pan_x()
 {
   TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0,0.0,0.0),XYZ(1.0,0.0,0.0));
 
-  main()->spawn_warped(this,transform_factory);
+  main().spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_pan_y()
 {
   TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0,0.0,0.0),XYZ(0.0,1.0,0.0));
 
-  main()->spawn_warped(this,transform_factory);
+  main().spawn_warped(this,transform_factory);
 }
 
 void MutatableImageDisplay::menupick_spawn_warped_pan_z()
 {
   TransformFactoryRandomTranslateXYZ transform_factory(XYZ(0.0,0.0,0.0),XYZ(0.0,0.0,1.0));
 
-  main()->spawn_warped(this,transform_factory);
+  main().spawn_warped(this,transform_factory);
 }
 
 /*! This slot is called by selecting the "Lock" context menu item.
@@ -672,7 +695,7 @@ void MutatableImageDisplay::menupick_save_image()
 
   std::clog << "Save requested...\n";
 
-  if (_current_display_level!=0)
+  if (_current_display_level!=0 || _current_display_multisample_level!=main().render_parameters().multisample_level())
     {
       QMessageBox::information(this,"Evolvotron","The selected image has not yet been generated at maximum resolution.\nPlease try again later.");
     }
@@ -818,9 +841,9 @@ void MutatableImageDisplay::menupick_load_function()
 	      QMessageBox::warning(this,"Evolvotron",("Function loaded with warnings:\n"+report).c_str(),QMessageBox::Ok,QMessageBox::NoButton);
 	    }
 	  
-	  main()->history().begin_action("load");
-	  main()->history().replacing(this);
-	  main()->history().end_action();
+	  main().history().begin_action("load");
+	  main().history().replacing(this);
+	  main().history().end_action();
 	  image(new_image);
 	}
     }
@@ -911,7 +934,7 @@ void MutatableImageDisplay::menupick_properties()
 */
 void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
 {
-  MutatableImageDisplayBig*const top_level_widget=new MutatableImageDisplayBig(0,main());
+  MutatableImageDisplayBig*const top_level_widget=new MutatableImageDisplayBig(0,&main());
   if (_icon.get()) top_level_widget->setIcon(*_icon);
 
   MutatableImageDisplay* display=0;
@@ -919,20 +942,20 @@ void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
   if (scrollable)
     {
       QScrollView*const scrollview=new QScrollView(top_level_widget,0,Qt::WDestructiveClose);
-      display=new MutatableImageDisplay(scrollview->viewport(),main(),false,true,sz,_frames,_framerate);
+      display=new MutatableImageDisplay(scrollview->viewport(),&main(),false,true,sz,_frames,_framerate);
       scrollview->addChild(display);
       top_level_widget->hold(scrollview);
     }
   else
     {
-      display=new MutatableImageDisplay(top_level_widget,main(),false,false,QSize(0,0),_frames,_framerate);
+      display=new MutatableImageDisplay(top_level_widget,&main(),false,false,QSize(0,0),_frames,_framerate);
       top_level_widget->hold(display);
     }
 
   top_level_widget->show();
 
   //Propagate full screen mode 
-  if (main()->isFullScreen()) top_level_widget->showFullScreen();
+  if (main().isFullScreen()) top_level_widget->showFullScreen();
 
   // Fire up image calculation
   display->image(_image);

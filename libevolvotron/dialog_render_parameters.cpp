@@ -38,13 +38,15 @@ DialogRenderParameters::DialogRenderParameters(QMainWindow* parent,RenderParamet
   _checkbox_jittered_samples=new QCheckBox(_grid);
   QToolTip::add(_checkbox_jittered_samples,"Jitter moves sampling positions randomly within a pixel.  This helps to break up aliasing and moire patterns.");
 
-  _buttongroup=new QVButtonGroup("Oversampling",_dialog_content);
+  _buttongroup=new QVButtonGroup("Oversampling (antialiasing)",_dialog_content);
   _buttongroup->insert(new QRadioButton("1x1",_buttongroup),1);
   _buttongroup->insert(new QRadioButton("2x2",_buttongroup),2);
+  _buttongroup->insert(new QRadioButton("3x3",_buttongroup),3);
   _buttongroup->insert(new QRadioButton("4x4",_buttongroup),4);
   _buttongroup->setRadioButtonExclusive(true);
   QToolTip::add(_buttongroup->find(1),"No oversampling");
   QToolTip::add(_buttongroup->find(2),"Enables a final antialiased rendering with 4 samples per pixel");
+  QToolTip::add(_buttongroup->find(3),"Enables a final antialiased rendering with 3 samples per pixel");
   QToolTip::add(_buttongroup->find(4),"Enables a final antialiased rendering with 16 samples per pixel");
 
   setup_from_render_parameters();

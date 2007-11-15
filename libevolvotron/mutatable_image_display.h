@@ -75,9 +75,12 @@ class MutatableImageDisplay : public QWidget
   bool _resize_in_progress;
 
   //! The resolution level currently displaying (0=1-for-1 pixels, 1=half resolution etc).
-  /*! Needed to handle possible (but unlikely?) out of order task returns from multiple compute threads.
+  /*! Needed to handle possible out of order task returns from multiple compute threads.
    */
   uint _current_display_level;
+
+  //! Similar to _current_display_level, but for multsampling levels within a resolution level.
+  uint _current_display_multisample_level;
 
   //! An image suitable for setting as an icon.
   std::auto_ptr<QPixmap> _icon;
@@ -146,12 +149,12 @@ class MutatableImageDisplay : public QWidget
     }
 
   //! Accessor.
-  EvolvotronMain*const main() const
+  EvolvotronMain& main() const
     {
       assert(_main!=0);
-      return _main;
+      return *_main;
     }
-
+  
   //! Accessor.
   void main(EvolvotronMain* m)
     {
