@@ -8,6 +8,7 @@ From release 0.5.0:
  - Dialog with rendering controls
  - Multisampling (antialiasing) options
  - -a/-j/-s command line options for autocool/jitter/multisample
+ - evolvotron_render adds -j/-s to control jitter & multisampling
 
 From release 0.4.0:
  - Version to 0.5.0

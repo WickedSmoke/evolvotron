@@ -3,7 +3,9 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
-- -j & -s jitter & multisample options for evolvotron_render
+- Tasks should be a tile of an image
+  (multiple compute threads could work on single "Big" images then).
+  Might be easiest to maintain 2 compute farms: one for working views and one for enlargements processing tiles.
 
 - Friezegroups:
   Cut taken out for 0.5.0 release.
@@ -139,8 +141,6 @@ Conventional Mode
 - Have a function type which can suck in random images from directories of images
   (specified by environmental variable ?)
   Filename would need to be retained in node and XML for reproducibility.
-- Check spew of tasks from drag-adjust can't get out of order in multithread compute farm and come back in wrong order
-  (associate tasks with an original image instance/serial number as well as an originating display ?)
 - Optimise drag: just recompute new area (needs image subregions for tasks).
 - Option (default on) to automatitcally respawn boring constant images as soon
   as they've been computed to a certain resolution.
@@ -180,8 +180,6 @@ Conventional Mode
   How close would it get and how quickly ?  
   Would the process of getting there be interesting (e.g as an animation) ?
 - Compute farms on multiple remote machines.
-- Tasks should be a tile of an image
-  (multiple compute threads could work on single "Big" images then).
 - Menu options to add/remove rows/columns from display grid
 - Autocool of mutation parameters
   (probably shouldn't be on by default; control from command line).
