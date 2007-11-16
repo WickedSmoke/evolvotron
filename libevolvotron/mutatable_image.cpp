@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "function_node_info.h"
 #include "function_top.h"
 #include "mutatable_image_display_big.h"
+#include "random.h"
 #include "transform.h"
 
 unsigned long long MutatableImage::_count=0;
@@ -157,6 +158,43 @@ const XYZ MutatableImage::get_rgb(const XYZ& p) const
 
   // Scale a nominal -2.0 to 2.0 range to 0-255
   return 127.5*(0.5*pv+XYZ(1.0,1.0,1.0));
+}
+
+const XYZ MutatableImage::get_rgb(uint x,uint y,uint f,uint width,uint height,uint frames,Random01* r01,uint multisample) const
+{
+  XYZ accumulated_colour(0.0,0.0,0.0);
+  for (uint sy=0;sy<multisample;sy++)
+    for (uint sx=0;sx<multisample;sx++)
+      {
+	//! \todo: Multisampling in z would be a motion blur/exposure length sort of effect (but not implemented).
+	// xyz co-ords vary over -1.0 to 1.0
+	// In the one frame case z will be 0
+	const real jx=(r01 ? (*r01)() : 0.5);
+	const real jy=(r01 ? (*r01)() : 0.5);
+	const XYZ p
+	  (
+	   sampling_coordinate
+	   (
+	    x+(sx+jx)/multisample,
+	    y+(sy+jy)/multisample,
+	    f,
+	    width,
+	    height,
+	    frames
+	    )
+	   );
+	
+	accumulated_colour+=get_rgb(p);
+      }
+
+  accumulated_colour/=(multisample*multisample);
+		  
+  // Clamp out of range values
+  accumulated_colour.x(clamped(accumulated_colour.x(),0.0,255.0));
+  accumulated_colour.y(clamped(accumulated_colour.y(),0.0,255.0));
+  accumulated_colour.z(clamped(accumulated_colour.z(),0.0,255.0));
+
+  return accumulated_colour;
 }
 
 void MutatableImage::get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const

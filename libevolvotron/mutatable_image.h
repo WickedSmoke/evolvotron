@@ -124,6 +124,9 @@ class MutatableImage
   //! Return the a 0-255-scaled RGB value at the specified location.
   const XYZ get_rgb(const XYZ& p) const;
 
+  //! Return the a 0-255-scaled RGB value at the specified pixel of an image/animation taking jitter (if random number generator provided) and multisampling into account
+  const XYZ get_rgb(uint x,uint y,uint f,uint width,uint height,uint frames,Random01* r01,uint multisample) const;
+
   //! Return whether image value is independent of position.
   const bool is_constant() const;
 

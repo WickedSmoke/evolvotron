@@ -5,14 +5,18 @@ evolvotron_render \- Render an evolvotron function tree to an image.
 
 .SH SYNOPSIS
 evolvotron_render
+[\-f 
+.I <frames>
+]
+[\-j]
+[\-m
+.I <multisample>
+]
 [\-s
 .I <width>
 .I <height>
 ]
 [\-spheremap]
-[\-f 
-.I <frames>
-]
 [\-v]
 .I <imagefile.[png|ppm]>
 <
@@ -32,6 +36,20 @@ See the evolvotron manual (accessible from the evolvotron
 application's Help menu) for more information on image functions.
 
 .SH COMMAND-LINE OPTIONS
+
+.TP 0.5i
+.B -j
+Enable sample jittering.
+
+.TP 0.5i
+.B \-m
+.I <multisample>
+Enables antialiased rendering.
+This specifies the size of the sub-pixel sampling grid,
+so 1 provides the default one-sample-per-pixel behaviour,
+while 4 provides 16 samples per pixel on a 4x4 grid.
+Unlike the main evolvotron application, there is no upper limit,
+but of course rendering time increases as the square of this number.
 
 .TP 0.5i
 .B \-s

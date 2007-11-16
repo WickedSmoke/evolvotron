@@ -84,9 +84,6 @@ void MutatableImageComputer::run()
       
       if (task()!=0)
 	{
-	  // DEBUG
-	  std::clog << "[" << task()->multisample_level() << "]";
-
 	  // Careful, we could be given an already aborted task
 	  if (!task()->aborted())
 	    {
@@ -96,39 +93,18 @@ void MutatableImageComputer::run()
 
 	      while (!communications().kill_or_abort_or_defer() && !task()->completed())
 		{
-		  XYZ accumulated_colour(0.0,0.0,0.0);
-		  const uint multisample=task()->multisample_level();
-		  for (uint sy=0;sy<multisample;sy++)
-		    for (uint sx=0;sx<multisample;sx++)
-		      {
-			//! \todo: Multisampling in z would be a motion blur/exposure length sort of effect (but not implemented).
-			// xyz co-ords vary over -1.0 to 1.0
-			// In the one frame case z will be 0
-			const real jx=(task()->jittered_samples() ? _r01() : 0.5);
-			const real jy=(task()->jittered_samples() ? _r01() : 0.5);
-			const XYZ p
-			  (
-			   task()->image()->sampling_coordinate
-			   (
-			    task()->current_col()+(sx+jx)/multisample,
-			    task()->current_row()+(sy+jy)/multisample,
-			    task()->current_frame(),
-			    width,
-			    height,
-			    frames
-			    )
-			   );
-			
-			accumulated_colour+=task()->image()->get_rgb(p);
-		      }
+		  XYZ accumulated_colour=task()->image()->get_rgb
+		    (
+		     task()->current_col(),
+		     task()->current_row(),
+		     task()->current_frame(),
+		     width,
+		     height,
+		     frames,
+		     (task()->jittered_samples() ? &_r01 : 0),
+		     task()->multisample_level()
+		     );
 
-		  accumulated_colour/=(multisample*multisample);
-		  
-		  // Clamp out of range values
-		  accumulated_colour.x(clamped(accumulated_colour.x(),0.0,255.0));
-		  accumulated_colour.y(clamped(accumulated_colour.y(),0.0,255.0));
-		  accumulated_colour.z(clamped(accumulated_colour.z(),0.0,255.0));
-		  
 		  const uint col0=lrint(accumulated_colour.x());
 		  const uint col1=lrint(accumulated_colour.y());
 		  const uint col2=lrint(accumulated_colour.z());

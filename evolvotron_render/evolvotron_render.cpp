@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "args.h"
 #include "function_registry.h"
 #include "mutatable_image.h"
+#include "random.h"
 
 //! Application code
 int main(int argc,char* argv[])
@@ -71,25 +72,37 @@ int main(int argc,char* argv[])
     uint multisample_level=1;
     if (args.option("-m",1)) args.after() >> multisample_level;
 
+    Random01 r01(23);     // Seed pretty unimportant; only used for sample jitter.
+
     for (uint frame=0;frame<frames;frame++)
       {
 	std::vector<uint> image_data;
 	image_data.reserve(width*height);
   
+	uint pixels=0;
+	uint report=1;
+	const uint reports=20;
 	for (int row=0;row<height;row++)
 	  for (int col=0;col<width;col++)
 	    {
-	      // xy co-ords vary over -1.0 to 1.0.  In the one frame case z will be 0
-	      const XYZ p(imagefn->sampling_coordinate(col,row,frame,width,height,frames));
+	      const XYZ v(imagefn->sampling_coordinate(col,row,frame,width,height,frames));
 	    
-	      const XYZ c(imagefn->get_rgb(p));
+	      const XYZ colour(imagefn->get_rgb(col,row,frame,width,height,frames,(jitter ? &r01 : 0),multisample_level));
 	    
-	      const uint col0=lrint(clamped(c.x(),0.0,255.0));
-	      const uint col1=lrint(clamped(c.y(),0.0,255.0));
-	      const uint col2=lrint(clamped(c.z(),0.0,255.0));
+	      const uint col0=lrint(clamped(colour.x(),0.0,255.0));
+	      const uint col1=lrint(clamped(colour.y(),0.0,255.0));
+	      const uint col2=lrint(clamped(colour.z(),0.0,255.0));
 
 	      image_data.push_back(((col0<<16)|(col1<<8)|(col2)));
+
+	      pixels++;
+	      if (pixels>=(report*width*height)/reports)
+		{
+		  std::clog << "[" << (100*report)/reports << "%]";
+		  report++;
+		}
 	    }
+	std::clog << "\n";
 
 	{
 	  //! \todo If filename is "-", write PPM to stdout (QImage save only supports write-to-a-filenames though)
