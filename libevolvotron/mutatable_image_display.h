@@ -177,6 +177,10 @@ class MutatableImageDisplay : public QWidget
   void lock(bool l,bool record_in_history);
 
  protected:
+
+  //! Which farm this display should use.
+  MutatableImageComputerFarm& farm() const;
+
   //! Usual handler for repaint events.
   virtual void paintEvent(QPaintEvent* event);
 
