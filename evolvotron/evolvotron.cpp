@@ -95,8 +95,11 @@ int main(int argc,char* argv[])
     }
   std::clog << "Using " << threads << " threads\n";
 
-  int niceness=4;
-  if (args.option("-n",1)) args.after() >> niceness;
+  int niceness_grid=4;
+  if (args.option("-n",1)) args.after() >> niceness_grid;
+
+  int niceness_enlargement=niceness_grid+4;
+  if (args.option("-N",1)) args.after() >> niceness_enlargement;
 
   if (args.option("-f",1)) args.after() >> frames;
   if (frames<1)
@@ -147,8 +150,10 @@ int main(int argc,char* argv[])
     << rows 
     << " display cells and " 
     << threads
-    << " compute threads (nice "
-    << niceness
+    << " compute threads per farm (niceness "
+    << niceness_grid
+    << " and "
+    << niceness_enlargement
     << ")\n";
 
   EvolvotronMain*const main_widget=new EvolvotronMain
@@ -158,7 +163,8 @@ int main(int argc,char* argv[])
        frames,
        framerate,
        threads,
-       niceness,
+       niceness_grid,
+       niceness_enlargement,
        start_fullscreen,
        start_menuhidden,
        autocool,

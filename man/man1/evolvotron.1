@@ -7,21 +7,25 @@ evolvotron \- Creates generative art by an interactive evolutionary process.
 evolvotron
 [\-a]
 [\-D]
-[\-F]
 [\-f 
 .I <frames>
 ]
+[\-F]
 [\-g
 .I <cols>
 .I <rows>
 ]
-[\-linz]
 [\-j]
+[\-linz]
 [\-m
 .I <multisample>
 ]
+[\-M]
 [\-n
 .I niceness
+]
+[\-N
+.I enlargement niceness
 ]
 [\-r
 .I <framerate>
@@ -31,11 +35,10 @@ evolvotron
 .I <threads>
 ]
 [\-v]
-[\-M]
-[\-X
+[\-x
 .I <functionname>
 |
-\-x
+\-X
 .I <functionname>
 ]
 [
@@ -63,6 +66,11 @@ is accessible from the application's "Help" menu once it is running.
 Enable autocooling by default.
 
 .TP 0.5i
+.B \-F
+Start in "fullscreen" mode (window manager permitting).
+[Press "Esc" key to revert to normal windowed mode].
+
+.TP 0.5i
 .B \-g
 .I <cols>
 .I <rows>
@@ -71,6 +79,11 @@ Number of image display cells (defaults to 6 by 5).
 .TP 0.5i
 .B -j
 Enable sample jittering.
+
+.TP
+.B \-M
+Start with menu and status bars supressed.
+[Press "Esc" key to display them].
 
 .TP 0.5i
 .B \-m
@@ -83,23 +96,18 @@ while 4 provides 16 samples per pixel on a 4x4 grid.
 
 .TP 0.5i
 .B \-n
-.I <niceness>
-Niceness of compute threads relative to main thread (defaults to 4).
+.I <grid niceness>
+Niceness relative to the main application thread of compute threads serving the main grid of images (defaults to 4).
+
+.TP 0.5i
+.B \-N
+.I <enlargement niceness>
+Niceness relative to the main application thread of compute threads dealing with enlargements (defaults to 4 more than grid niceness).
 
 .TP 0.5i
 .B \-t
 .I <threads>
 Number of compute threads (defaults to number of CPUs)
-
-.TP 0.5i
-.B \-F
-Start in "fullscreen" mode (window manager permitting).
-[Press "Esc" key to revert to normal windowed mode].
-
-.TP
-.B \-M
-Start with menu and status bars supressed.
-[Press "Esc" key to display them].
 
 .TP 0.5i
 .I <QtOptions>

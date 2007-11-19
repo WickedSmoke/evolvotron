@@ -41,6 +41,19 @@ USER OPTIONS
 	Enable autocooling by default, and cause resets of mutation
 	parameters to re-enable autocooling if it was disabled.
 
+  -F
+	Start in "fullscreen" mode (NB for Qt on X11 this means 
+	a screen-filling borderless/undecorated window is used; 
+	it's not simply maximising the window, and it's not the 
+	sort of framebuffer hijacking used by SDL games).  The Qt 
+	documentation claims some window managers may not be entirely
+	cooperative with this (in which case sorry, you're on your own).  
+	evolvotron actions which bring up dialog boxes (e.g save) seem
+	to generally behave fairly sensibly but child windows 
+	(e.g enlargements or dialogs) can show some "interesting" behaviour.  
+	Fullscreen mode can be toggled within the application using ctrl-f.  
+	The Esc key will also exit it.
+
   -g <cols> <rows>
 	Sets number of image display cells (defaults to 6 by 5)
 
@@ -58,38 +71,30 @@ USER OPTIONS
 	Specifying 1 provides the default behaviour of one sample per pixel.
 	For best rendering quality also specify -j.
 
-  -n <niceness>
-        Sets niceness of the compute thread(s) relative to the main thread.
+  -M	
+	Start with menu and status bar hidden.  Nice with -F.
+	Hiding can be toggled within the application using ctrl-m.
+	The Esc key will also bring them back.
+
+  -n <grid niceness>
+        Sets additional niceness (relative to the main application thread)
+	of the compute thread(s) serving the main display grid of images.
         It's useful to run compute threads at a slightly lower priority
         ("nice 4" is the default without this option) than the main (GUI)
         part of the program (but note that this means other normal/lowish
         priority tasks running on your machine may slow evolvotron down
         a bit more than expected).
 
+  -N <enlargement niceness>
+        Sets additional niceness (relative to the main application thread)
+	of the compute thread(s) computing enlargements (default value is
+	4 more than the grid niceness).
 
   -t <threads>
 	Sets number of compute threads.
         If this is not specified, as many compute threads are created
         as there are processors on the system (unless this cannot be
         discovered, in which case only a single compute thread is created).
-
-  -F
-	Start in "fullscreen" mode (NB for Qt on X11 this means 
-	a screen-filling borderless/undecorated window is used; 
-	it's not simply maximising the window, and it's not the 
-	sort of framebuffer hijacking used by SDL games).  The Qt 
-	documentation claims some window managers may not be entirely
-	cooperative with this (in which case sorry, you're on your own).  
-	evolvotron actions which bring up dialog boxes (e.g save) seem
-	to generally behave fairly sensibly but child windows 
-	(e.g enlargements or dialogs) can show some "interesting" behaviour.  
-	Fullscreen mode can be toggled within the application using ctrl-f.  
-	The Esc key will also exit it.
-
-  -M	
-	Start with menu and status bar hidden.  Nice with -F.
-	Hiding can be toggled within the application using ctrl-m.
-	The Esc key will also bring them back.
 
 ANIMATION OPTIONS
 -----------------

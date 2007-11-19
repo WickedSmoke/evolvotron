@@ -171,7 +171,7 @@ MutatableImageDisplay::~MutatableImageDisplay()
   // Don't use main() because it asserts non-null.
   if (_main)
     {
-      main().farm().abort_for(this);
+      main().farm(!_full_functionality).abort_for(this);
       main().goodbye(this);
     }
 
@@ -251,7 +251,7 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
   _serial++;
 
   // This might have already been done (e.g by resizeEvent), but it can't hurt to be sure.
-  main().farm().abort_for(this);
+  main().farm(_full_functionality).abort_for(this);
 
   // Careful: we could be passed our own existing (and already owned) image
   // (a trick used by resize to trigger recompute & redisplay)
@@ -308,7 +308,7 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
 		      this,task_image,image_size()/s,_frames,level,main().render_parameters().jittered_samples(),(*it),_serial
 		      )
 		     );
-		  main().farm().push_todo(task);
+		  main().farm(_full_functionality).push_todo(task);
 		}
 	    }
 	}
@@ -421,7 +421,7 @@ void MutatableImageDisplay::resizeEvent(QResizeEvent* event)
       _image_size=event->size();
       
       // Abort all current tasks because they'll be the wrong size.
-      main().farm().abort_for(this);
+      main().farm(_full_functionality).abort_for(this);
       
       // Resize and reset our offscreen buffer (something to do while we wait)
       for (uint f=0;f<_offscreen_buffer.size();f++)

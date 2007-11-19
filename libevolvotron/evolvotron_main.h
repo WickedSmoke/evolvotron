@@ -214,8 +214,8 @@ class EvolvotronMain : public QMainWindow
   //! Timer to drive tick() slot
   QTimer* _timer;
 
-  //! Farm of compute threads.
-  std::auto_ptr<MutatableImageComputerFarm> _farm;
+  //! Two farms of compute threads.  One for the main display, one for enlargements.
+  std::auto_ptr<MutatableImageComputerFarm> _farm[2];
 
   //! All the displays in the grid.
   std::vector<MutatableImageDisplay*> _displays;
@@ -286,7 +286,8 @@ class EvolvotronMain : public QMainWindow
      uint frames,
      uint framerate,
      uint n_threads,
-     int niceness,
+     int niceness_grid,
+     int niceness_enlargements,
      bool start_fullscreen,
      bool start_menuhidden,
      bool autocool,
@@ -327,9 +328,9 @@ class EvolvotronMain : public QMainWindow
     }
 
   //! Accessor.
-  MutatableImageComputerFarm& farm()
+  MutatableImageComputerFarm& farm(bool enlargement)
     {
-      return *_farm;
+      return *_farm[enlargement];
     }
 
   //! Accessor.

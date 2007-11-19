@@ -183,7 +183,8 @@ EvolvotronMain::EvolvotronMain
  uint frames,
  uint framerate,
  uint n_threads,
- int niceness,
+ int niceness_grid,
+ int niceness_enlargements,
  bool start_fullscreen,
  bool start_menuhidden,
  bool autocool,
@@ -306,7 +307,8 @@ EvolvotronMain::EvolvotronMain
 	  this, SLOT(tick()) 
 	  );
 
-  _farm=std::auto_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads,niceness));
+  _farm[0]=std::auto_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads,niceness_grid));
+  _farm[1]=std::auto_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads,niceness_enlargements));
 
   //! \todo frames and framerate should be retained and modifiable from the GUI
   for (int r=0;r<grid_size.height();r++)
@@ -347,8 +349,9 @@ EvolvotronMain::~EvolvotronMain()
 
   std::clog << "...cleared displays, deleting farm...\n";
 
-  // Shut down the compute farm
-  _farm.reset();;
+  // Shut down the compute farms
+  _farm[0].reset();
+  _farm[1].reset();
 
   std::clog << "...deleted farm, deleting history...\n";
 
@@ -540,7 +543,7 @@ void EvolvotronMain::list_known(std::ostream& out) const
  */
 void EvolvotronMain::tick()
 {
-  const uint tasks=farm().tasks();
+  const uint tasks=farm(false).tasks()+farm(true).tasks();
   if (tasks!=_statusbar_tasks)
     {
       if (tasks==0)
@@ -556,27 +559,31 @@ void EvolvotronMain::tick()
 
   // If there are aborted jobs in the todo queue 
   // shift them straight over to done queue so the compute threads don't have to worry about them.
-  farm().fasttrack_aborted();
+  farm(false).fasttrack_aborted();
+  farm(true).fasttrack_aborted();
 
   QTime watchdog;
   watchdog.start();
 
-  while ((task=farm().pop_done())!=0)
+  for (int which_farm=0;which_farm<=1;which_farm++)
     {
-      if (is_known(task->display()))
+      while ((task=farm(which_farm).pop_done())!=0)
 	{
-	  task->display()->deliver(task);
+	  if (is_known(task->display()))
+	    {
+	      task->display()->deliver(task);
+	    }
+	  else
+	    {
+	      // If we don't know who owns it we just have to trash it 
+	      // (probably a top level window which was closed with incomplete tasks).
+	      task.reset();
+	    }
+	  
+	  // Timeout in case we're being swamped by incoming tasks (maintain app responsiveness).
+	  if (watchdog.elapsed()>20)
+	    break;
 	}
-      else
-	{
-	  // If we don't know who owns it we just have to trash it 
-	  // (probably a top level window which was closed with incomplete tasks).
-	  task.reset();
-	}
-
-      // Timeout in case we're being swamped by incoming tasks (maintain app responsiveness).
-      if (watchdog.elapsed()>20)
-	break;
     }
 }    
 

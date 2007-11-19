@@ -46,10 +46,10 @@ class MutatableImageDisplay : public QWidget
   EvolvotronMain* _main;
 
   //! Flag for whether context menu should display all options.
-  bool _full_functionality;
+  const bool _full_functionality;
 
   //! Flag for whether the offscreen buffer has fixed size
-  bool _fixed_size;
+  const bool _fixed_size;
 
   //! Size of offscreen buffer
   QSize _image_size;
