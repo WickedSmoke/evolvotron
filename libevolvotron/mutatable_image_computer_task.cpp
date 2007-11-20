@@ -24,7 +24,20 @@
 
 #include "mutatable_image_computer_task.h"
 
-MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*const disp,const boost::shared_ptr<const MutatableImage>& img,const QSize& s,uint f,uint lev,bool j,uint ms,unsigned long long int n)
+MutatableImageComputerTask::MutatableImageComputerTask
+(
+ MutatableImageDisplay*const disp,
+ const boost::shared_ptr<const MutatableImage>& img,
+ const QSize& o,
+ const QSize& s,
+ uint f,
+ uint lev,
+ uint frag,
+ uint nfrag,
+ bool j,
+ uint ms,
+ unsigned long long int n
+ )
   :
 #ifndef NDEBUG
   InstanceCounted(typeid(this).name(),false),
@@ -32,9 +45,12 @@ MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*con
   _aborted(false)
   ,_display(disp)
   ,_image(img)
+  ,_origin(o)
   ,_size(s)
   ,_frames(f)
   ,_level(lev)
+  ,_fragment(frag)
+  ,_number_of_fragments(nfrag)
   ,_jittered_samples(j)
   ,_multisample_level(ms)
   ,_current_pixel(0)
@@ -46,6 +62,7 @@ MutatableImageComputerTask::MutatableImageComputerTask(MutatableImageDisplay*con
   ,_serial(n)
 {
   assert(_image->ok());
+  assert(_fragment<_number_of_fragments);
 }
 
 MutatableImageComputerTask::~MutatableImageComputerTask()

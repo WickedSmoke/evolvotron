@@ -49,6 +49,9 @@ class MutatableImageComputerTask
    */
   const boost::shared_ptr<const MutatableImage> _image;
 
+  //! The origin (on the display) of the image being generated.
+  const QSize _origin;
+
   //! The size of the image to be generated.
   const QSize _size;
 
@@ -61,6 +64,12 @@ class MutatableImageComputerTask
    */
   const uint _level;
 
+  //! The fragment number, used when a rendering job is split into multiple fragments.
+  const uint _fragment;
+
+  //! The number of fragments in the rendering job
+  const uint _number_of_fragments;
+
   //! Whether samples should be jittered.
   const bool _jittered_samples;
 
@@ -68,7 +77,7 @@ class MutatableImageComputerTask
   const uint _multisample_level;
 
   //@{
-  //! Track pixels computed, so tasks can be restarted after defer.
+  //! Track pixels computed, so tasks can be restarted after defer.  There are relative to the origin.
   uint _current_pixel;
   int _current_col;
   int _current_row;
@@ -76,9 +85,9 @@ class MutatableImageComputerTask
   //@}
 
   //! The image data generated.
-  /*! It might have been nice to use a QImage, but every access would probably have to be qApp mutex protected.
-    (Mustn't use Qt library except from main application thread).
-   */
+  /*! It might have been nice to use a QImage, but Qt docs warnings about not using Qt
+    library except from main application thread are a bit offputting.
+  */
   boost::shared_array<uint> _image_data;
 
   //! Set true by pixel_advance when it advances off the last frame.
@@ -89,7 +98,20 @@ class MutatableImageComputerTask
 
  public:
   //! Constructor.
-  MutatableImageComputerTask(MutatableImageDisplay*const disp,const boost::shared_ptr<const MutatableImage>& img,const QSize& s,uint f,uint lev,bool j,uint ms,unsigned long long int n);
+  MutatableImageComputerTask
+    (
+     MutatableImageDisplay*const disp,
+     const boost::shared_ptr<const MutatableImage>& img,
+     const QSize& o,
+     const QSize& s,
+     uint f,
+     uint lev,
+     uint frag,
+     uint nfrag,
+     bool j,
+     uint ms,
+     unsigned long long int n
+     );
   
   //! Destructor.
   ~MutatableImageComputerTask();
@@ -119,6 +141,12 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
+  const QSize& origin() const
+    {
+      return _origin;
+    }
+
+  //! Accessor.
   const QSize& size() const
     {
       return _size;
@@ -134,6 +162,18 @@ class MutatableImageComputerTask
   const uint level() const
     {
       return _level;
+    }
+
+  //! Accessor.
+  const uint fragment() const
+    {
+      return _fragment;
+    }
+
+  //! Accessor.
+  const uint number_of_fragments() const
+    {
+      return _number_of_fragments;
     }
 
   //! Accessor.

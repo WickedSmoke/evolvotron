@@ -305,7 +305,7 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
 		    (
 		     new MutatableImageComputerTask
 		     (
-		      this,task_image,image_size()/s,_frames,level,main().render_parameters().jittered_samples(),(*it),_serial
+		      this,task_image,QSize(0,0),image_size()/s,_frames,level,0,1,main().render_parameters().jittered_samples(),(*it),_serial
 		      )
 		     );
 		  farm().push_todo(task);

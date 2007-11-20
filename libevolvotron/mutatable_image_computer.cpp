@@ -82,25 +82,21 @@ void MutatableImageComputer::run()
 	  _task=farm()->pop_todo(*this);
 	}
       
-      if (task()!=0)
+      if (task())
 	{
 	  // Careful, we could be given an already aborted task
 	  if (!task()->aborted())
 	    {
-	      const uint frames=task()->frames();
-	      const uint height=task()->size().height();
-	      const uint width=task()->size().width();
-
 	      while (!communications().kill_or_abort_or_defer() && !task()->completed())
 		{
 		  XYZ accumulated_colour=task()->image()->get_rgb
 		    (
-		     task()->current_col(),
-		     task()->current_row(),
+		     task()->origin().width()+task()->current_col(),
+		     task()->origin().height()+task()->current_row(),
 		     task()->current_frame(),
-		     width,
-		     height,
-		     frames,
+		     task()->size().width(),
+		     task()->size().height(),
+		     task()->frames(),
 		     (task()->jittered_samples() ? &_r01 : 0),
 		     task()->multisample_level()
 		     );
