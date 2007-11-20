@@ -344,9 +344,12 @@ MAIN MENU BAR
 
 STATUS BAR
 ----------
-An area on the status bar shows how many "tasks" are outstanding.  
+An area on the status bar shows how many compute "tasks" are
+outstanding (or "Ready" when there are none).  When two task
+totals are reported, the first is for the main grid and the
+second for any enlargements being computed.
 Each "task" is the recomputation of an image at some resolution.
-Tasks are prioritised by their number of pixels  (small image
+Tasks are prioritised by their number of pixels (small image
 implies higher priority).  This is why, if the main grid is still
 recomputing, recalculations of enlargements will appear to freeze 
 after they have reached a certain resolution, at least until other 
