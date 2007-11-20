@@ -196,7 +196,8 @@ EvolvotronMain::EvolvotronMain
   ,_history(new EvolvotronMain::History(this))
   ,_mutation_parameters(time(0),autocool,function_debug_mode,this)
   ,_render_parameters(jitter,multisample_level,this)
-  ,_statusbar_tasks(0)
+  ,_statusbar_tasks_main(0)
+  ,_statusbar_tasks_enlargement(0)
   ,_last_spawn_method(&EvolvotronMain::spawn_normal)
 {
   setMinimumSize(600,400);
@@ -543,16 +544,30 @@ void EvolvotronMain::list_known(std::ostream& out) const
  */
 void EvolvotronMain::tick()
 {
-  const uint tasks=farm(false).tasks()+farm(true).tasks();
-  if (tasks!=_statusbar_tasks)
+  const uint tasks_main=farm(false).tasks();
+  const uint tasks_enlargement=farm(true).tasks();
+  if (tasks_main!=_statusbar_tasks_main || tasks_enlargement!=_statusbar_tasks_enlargement)
     {
-      if (tasks==0)
-	_statusbar_tasks_label->setText("Ready");
-      else
+      std::ostringstream msg;
+      msg << "";
+
+      if (tasks_main+tasks_enlargement==0)
 	{
-	  _statusbar_tasks_label->setText(QString("%1 tasks remaining").arg(tasks));
+	  msg << "Ready";
 	}
-      _statusbar_tasks=tasks;
+      else 
+	{
+	  msg << tasks_main;
+	  if (tasks_enlargement)
+	    {
+	      msg << "+" << tasks_enlargement;
+	    }
+	  msg << " tasks remaining";
+	}
+
+      _statusbar_tasks_label->setText(msg.str().c_str());
+      _statusbar_tasks_main=tasks_main;
+      _statusbar_tasks_enlargement=tasks_enlargement;
     }
 
   boost::shared_ptr<MutatableImageComputerTask> task;

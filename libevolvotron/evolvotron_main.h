@@ -151,8 +151,15 @@ class EvolvotronMain : public QMainWindow
   //! Label for displaying number of tasks running (more permanent than StatusBar's message method).
   QLabel* _statusbar_tasks_label;
 
-  //! Number of tasks statusbar is reporting as active
-  uint _statusbar_tasks;
+  //! Number of main tasks the statusbar is currently reporting as active
+  /*! Cached to avoid unnecessarily regenerating message
+   */
+  uint _statusbar_tasks_main;
+
+  //! Number of enlargement tasks the statusbar is currently reporting as active
+  /*! Cached to avoid unnecessarily regenerating message
+   */
+  uint _statusbar_tasks_enlargement;
 
   //! The "About" dialog widget.
   DialogAbout* _dialog_about;
