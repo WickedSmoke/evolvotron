@@ -97,6 +97,11 @@ class MutatableImageDisplay : public QWidget
   //! Offscreen image data for _offscreen_image.  This must remain alive longer than the QImage.
   boost::shared_array<uint> _offscreen_image_data;
 
+  //! Staging area for incoming fragments
+  /*! Fragments are accumulated for each (level,multisample) key, and completed levels passed on for display
+   */
+  std::map<std::pair<uint,uint>,std::map<uint,boost::shared_array<uint> > > _offscreen_image_data_inbox;
+
   //! The image function being displayed (its root node).
   /*! The held image is const because references to it could be held by history archive, compute tasks etc,
     so it should be completely replaced rather than manipulated.
