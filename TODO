@@ -3,10 +3,9 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
-- Tasks should be a tile of an image
-  (multiple compute threads could work on single "Big" images then).
-  Might be easiest to maintain 2 compute farms: one for working views and one for enlargements processing tiles.
-- More feedback on when enlrgements are ready for saving (have split tasks count now... need more ?)
+- Number of fragments for an enlargement should bear some relation to number of processors.
+  (ie 1 processor there's little point)
+- More feedback on when enlargements are ready for saving (have split tasks count now... need more ?)
 - Make mutatable image compute task use a vector<QImage>; isn't QObject derived... should be safe.
 
 - Friezegroups:
