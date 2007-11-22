@@ -27,7 +27,7 @@
 MutatableImageComputerTask::MutatableImageComputerTask
 (
  MutatableImageDisplay*const disp,
- const boost::shared_ptr<const MutatableImage>& img,
+ const boost::shared_ptr<const MutatableImage>& fn,
  uint pri,
  const QSize& fo,
  const QSize& fs,
@@ -46,7 +46,7 @@ MutatableImageComputerTask::MutatableImageComputerTask
 #endif
   _aborted(false)
   ,_display(disp)
-  ,_image(img)
+  ,_image_function(fn)
   ,_priority(pri)
   ,_fragment_origin(fo)
   ,_fragment_size(fs)

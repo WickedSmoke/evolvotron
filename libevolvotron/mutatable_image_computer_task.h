@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2007 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -47,7 +47,7 @@ class MutatableImageComputerTask
   //! The root node of the image tree to be generated.
   /*! Constness of the MutatableImage referenced is important as the instance is shared between all tasks and the original display.
    */
-  const boost::shared_ptr<const MutatableImage> _image;
+  const boost::shared_ptr<const MutatableImage> _image_function;
 
   //! Task priority.
   /*! Low numbers go to the head of the queue.
@@ -111,7 +111,7 @@ class MutatableImageComputerTask
   MutatableImageComputerTask
     (
      MutatableImageDisplay*const disp,
-     const boost::shared_ptr<const MutatableImage>& img,
+     const boost::shared_ptr<const MutatableImage>& fn,
      uint pri,
      const QSize& fo,
      const QSize& fs,
@@ -147,9 +147,9 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
-  const boost::shared_ptr<const MutatableImage>& image() const
+  const boost::shared_ptr<const MutatableImage>& image_function() const
     {
-      return _image;
+      return _image_function;
     }
 
   //! Accessor.

@@ -89,7 +89,7 @@ void MutatableImageComputer::run()
 	    {
 	      while (!communications().kill_or_abort_or_defer() && !task()->completed())
 		{
-		  XYZ accumulated_colour=task()->image()->get_rgb
+		  XYZ accumulated_colour=task()->image_function()->get_rgb
 		    (
 		     task()->fragment_origin().width()+task()->current_col(),
 		     task()->fragment_origin().height()+task()->current_row(),
