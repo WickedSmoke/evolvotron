@@ -28,8 +28,10 @@ MutatableImageComputerTask::MutatableImageComputerTask
 (
  MutatableImageDisplay*const disp,
  const boost::shared_ptr<const MutatableImage>& img,
- const QSize& o,
- const QSize& s,
+ uint pri,
+ const QSize& fo,
+ const QSize& fs,
+ const QSize& wis,
  uint f,
  uint lev,
  uint frag,
@@ -45,8 +47,10 @@ MutatableImageComputerTask::MutatableImageComputerTask
   _aborted(false)
   ,_display(disp)
   ,_image(img)
-  ,_origin(o)
-  ,_size(s)
+  ,_priority(pri)
+  ,_fragment_origin(fo)
+  ,_fragment_size(fs)
+  ,_whole_image_size(wis)
   ,_frames(f)
   ,_level(lev)
   ,_fragment(frag)
@@ -57,12 +61,23 @@ MutatableImageComputerTask::MutatableImageComputerTask
   ,_current_col(0)
   ,_current_row(0)
   ,_current_frame(0)
-  ,_image_data(new uint[s.width()*s.height()*f])
+  ,_image_data(new uint[fs.width()*fs.height()*f])
   ,_completed(false)
   ,_serial(n)
 {
+  /*
+  std::cerr 
+    << "[" 
+    << _number_of_fragments 
+    << ":" 
+    << _fragment_size.width() << "x" << _fragment_size.height() 
+    << " in " 
+    << _whole_image_size.width() << "x" << _whole_image_size.height()
+    << "]";
+  */
   assert(_image->ok());
   assert(_fragment<_number_of_fragments);
+  assert(_number_of_fragments>1 || _whole_image_size==_fragment_size);
 }
 
 MutatableImageComputerTask::~MutatableImageComputerTask()
@@ -74,11 +89,11 @@ void MutatableImageComputerTask::pixel_advance()
 {
   _current_pixel++;
   _current_col++;
-  if (_current_col==size().width())
+  if (_current_col==fragment_size().width())
     {
       _current_col=0;
       _current_row++;
-      if (_current_row==size().height())
+      if (_current_row==fragment_size().height())
 	{
 	  _current_row=0;
 	  _current_frame++;

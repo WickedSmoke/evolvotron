@@ -91,11 +91,11 @@ void MutatableImageComputer::run()
 		{
 		  XYZ accumulated_colour=task()->image()->get_rgb
 		    (
-		     task()->origin().width()+task()->current_col(),
-		     task()->origin().height()+task()->current_row(),
+		     task()->fragment_origin().width()+task()->current_col(),
+		     task()->fragment_origin().height()+task()->current_row(),
 		     task()->current_frame(),
-		     task()->size().width(),
-		     task()->size().height(),
+		     task()->whole_image_size().width(),
+		     task()->whole_image_size().height(),
 		     task()->frames(),
 		     (task()->jittered_samples() ? &_r01 : 0),
 		     task()->multisample_level()

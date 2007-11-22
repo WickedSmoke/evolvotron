@@ -286,33 +286,56 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
       for (int level=12;level>=0;level--)
 	{
 	  const int s=(1<<level);
-
-	  std::vector<uint> multisample;
-	  multisample.push_back(1);
-	  if (level==0)
+	  const QSize render_size(image_size()/s);
+	  
+	  if (render_size.width()>=1 && render_size.height()>=1)
 	    {
-	      // Only the final full resolution level gets an additional multisampling task.
-	      // For 4x4 sampling, do an initial 2x2 too.
-	      if (main().render_parameters().multisample_level()==4) multisample.push_back(2);
-	      if (main().render_parameters().multisample_level()>1) multisample.push_back(main().render_parameters().multisample_level());
-	    }
+	      // We'll fragment enlargements into strips this high (last one might be smaller)
+	      const uint stripheight=32;
+	      const int fragments=(_full_functionality ? 1 : (render_size.height()+stripheight-1)/stripheight);
+	      
+	      std::vector<uint> multisample;
+	      multisample.push_back(1);
+	      if (level==0)
+		{
+		  // Only the final full resolution level gets an additional multisampling task.
+		  // For 4x4 sampling, do an initial 2x2 too.
+		  if (main().render_parameters().multisample_level()==4) multisample.push_back(2);
+		  if (main().render_parameters().multisample_level()>1) multisample.push_back(main().render_parameters().multisample_level());
+		}
 
-	  for (std::vector<uint>::const_iterator it=multisample.begin();it!=multisample.end();it++)
-	    {
-	      if (image_size().width()>=s && image_size().height()>=s)
+	      for (std::vector<uint>::const_iterator it=multisample.begin();it!=multisample.end();it++)
 		{
 		  //! \todo Should computed animation frames be constant or reduced c.f spatial resolution ?  (Do full z resolution for now)
 		  const boost::shared_ptr<const MutatableImage> task_image(_image);
 		  assert(task_image->ok());
 		  
-		  const boost::shared_ptr<MutatableImageComputerTask> task
-		    (
-		     new MutatableImageComputerTask
-		     (
-		      this,task_image,QSize(0,0),image_size()/s,_frames,level,0,1,main().render_parameters().jittered_samples(),(*it),_serial
-		      )
-		     );
-		  farm().push_todo(task);
+		  // Use number of samples in unfragmented image as priority
+		  const uint task_priority=render_size.width()*render_size.height()*(*it)*(*it);
+
+		  for (int f=0;f<fragments;f++)
+		    {
+		      const boost::shared_ptr<MutatableImageComputerTask> task
+			(
+			 new MutatableImageComputerTask
+			 (
+			  this,
+			  task_image,
+			  task_priority,
+			  QSize(0,f*stripheight),
+			  QSize(render_size.width(),(fragments==1 ? render_size.height() : std::min(stripheight,render_size.height()-f*stripheight))),
+			  render_size,
+			  _frames,
+			  level,
+			  f,
+			  fragments,
+			  main().render_parameters().jittered_samples(),
+			  (*it),
+			  _serial
+			  )
+			 );
+		      farm().push_todo(task);
+		    }
 		}
 	    }
 	}
@@ -330,20 +353,55 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
       )
     {
       // Record the fragment in the inbox
-      _offscreen_image_data_inbox[std::make_pair(task->level(),task->multisample_level())][task->fragment()]=task->image_data();
+      const OffscreenImageDataInbox::key_type inbox_key(task->level(),task->multisample_level());
+      
+      OffscreenImageDataInbox::mapped_type& inbox_level=_offscreen_image_data_inbox[inbox_key];
+      assert(inbox_level.find(task->fragment())==inbox_level.end());
+      inbox_level[task->fragment()]=task;
 
       // If the level is complete, we can proceed to displaying it.
-      // (Above check means obsolete levels will never complete one a better one is displayed)
-      if (_offscreen_image_data_inbox[std::make_pair(task->level(),task->multisample_level())].size()==task->number_of_fragments())
+      // (Above check means obsolete levels will never complete once a better one is displayed)
+      if (inbox_level.size()==task->number_of_fragments())
 	{
+	  const QSize render_size(task->whole_image_size());
+
 	  _offscreen_image.clear();
 
-	  // If there's only one fragment in the task, no need to copy-assemble it
 	  if (task->number_of_fragments()==1)
-	    _offscreen_image_data=task->image_data();
+	    {
+	      // If there's only one fragment in the task, just use it
+	      _offscreen_image_data=task->image_data();
+	    }
 	  else
 	    {
-	      throw std::runtime_error("Fragmented compute task reassembly not implemented");
+	      // Otherwise we need to assemble the fragments together
+	      _offscreen_image_data=boost::shared_array<uint>(new uint[task->frames()*render_size.width()*render_size.height()]);
+	      for (OffscreenImageDataInbox::mapped_type::const_iterator it=inbox_level.begin();it!=inbox_level.end();++it)
+		{
+		  for (uint f=0;f<(*it).second->frames();f++)
+		    for (int y=0;y<(*it).second->fragment_size().height();y++)
+		      memcpy
+			(
+			 reinterpret_cast<void*>
+			 (&
+			  _offscreen_image_data
+			  [
+			   +f*(*it).second->whole_image_size().height()*(*it).second->whole_image_size().width()
+			   +(y+(*it).second->fragment_origin().height())*(*it).second->whole_image_size().width()
+			   +(*it).second->fragment_origin().width()
+			   ]
+			  ),
+			 reinterpret_cast<void*>
+			 (&
+			  (*it).second->image_data()
+			  [
+			   +f*(*it).second->fragment_size().height()*(*it).second->fragment_size().width()
+			   +y*(*it).second->fragment_size().width()
+			   ]
+			  ),
+			 sizeof(uint)*(*it).second->fragment_size().width()
+			 );
+		}
 	    }
       
 	  for (uint f=0;f<task->frames();f++)
@@ -352,9 +410,9 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
 		(
 		 new QImage
 		 (
-		  (uchar*)&(_offscreen_image_data[f*task->size().width()*task->size().height()]),
-		  task->size().width(),
-		  task->size().height(),
+		  (uchar*)&(_offscreen_image_data[f*render_size.width()*render_size.height()]),
+		  render_size.width(),
+		  render_size.height(),
 		  32,
 		  0,
 		  0,
@@ -370,7 +428,7 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
 	  // For an icon, take the first image big enough to (hopefully) be filtered down nicely.
 	  // The converter seems to auto-create an alpha mask sometimes (images with const-color areas), which is quite cool.
 	  const QSize icon_size(32,32);
-	  if (task->serial()!=_icon_serial && (task->level()==0 || (task->size().width()>=2*icon_size.width() && task->size().height()>=2*icon_size.height())))
+	  if (task->serial()!=_icon_serial && (task->level()==0 || (render_size.width()>=2*icon_size.width() && render_size.height()>=2*icon_size.height())))
 	    {
 	      const QImage icon_image(_offscreen_image[_offscreen_image.size()/2].smoothScale(icon_size));
 	      

@@ -1,5 +1,7 @@
 Known bugs:
 
+- Enlargements seem to need silly amount of memory.  Where's it all going ?
+
 - Middle mouse drags sometimes don't seem to have any effect other than
   triggering redisplay.  Thought to be fixed by MutatableImage serial numbers
   (was using pointer value as substitute for object identity before).

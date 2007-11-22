@@ -49,11 +49,21 @@ class MutatableImageComputerTask
    */
   const boost::shared_ptr<const MutatableImage> _image;
 
+  //! Task priority.
+  /*! Low numbers go to the head of the queue.
+    The total number of samples in the complete (non-fragmented) image is used,
+    so small low resolution images which can be quickly completed are run first.
+   */
+  const uint _priority;
+
   //! The origin (on the display) of the image being generated.
-  const QSize _origin;
+  const QSize _fragment_origin;
 
   //! The size of the image to be generated.
-  const QSize _size;
+  const QSize _fragment_size;
+
+  //! The full size of the image of which this is a fragment.
+  const QSize _whole_image_size;
 
   //! Number of animation frames to be rendered
   const uint _frames;
@@ -77,7 +87,7 @@ class MutatableImageComputerTask
   const uint _multisample_level;
 
   //@{
-  //! Track pixels computed, so tasks can be restarted after defer.  There are relative to the origin.
+  //! Track pixels computed, so tasks can be restarted after defer.  Row and column are relative to the fragment origin.
   uint _current_pixel;
   int _current_col;
   int _current_row;
@@ -88,7 +98,7 @@ class MutatableImageComputerTask
   /*! It might have been nice to use a QImage, but Qt docs warnings about not using Qt
     library except from main application thread are a bit offputting.
   */
-  boost::shared_array<uint> _image_data;
+  const boost::shared_array<uint> _image_data;
 
   //! Set true by pixel_advance when it advances off the last frame.
   bool _completed;
@@ -102,8 +112,10 @@ class MutatableImageComputerTask
     (
      MutatableImageDisplay*const disp,
      const boost::shared_ptr<const MutatableImage>& img,
-     const QSize& o,
-     const QSize& s,
+     uint pri,
+     const QSize& fo,
+     const QSize& fs,
+     const QSize& wis,
      uint f,
      uint lev,
      uint frag,
@@ -141,15 +153,21 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
-  const QSize& origin() const
+  const QSize& fragment_origin() const
     {
-      return _origin;
+      return _fragment_origin;
     }
 
   //! Accessor.
-  const QSize& size() const
+  const QSize& fragment_size() const
     {
-      return _size;
+      return _fragment_size;
+    }
+
+  //! Accessor.
+  const QSize& whole_image_size() const
+    {
+      return _whole_image_size;
     }
 
   //! Accessor.
@@ -194,20 +212,14 @@ class MutatableImageComputerTask
       return _serial;
     }
 
-  //! Compute task priority.  Smallest images (by number of samples) go first.
+  //! Accessor.
   const uint priority() const
     {
-      return size().width()*size().height()*multisample_level()*multisample_level();
+      return _priority;
     }
 
   //! Accessor.
   const boost::shared_array<uint>& image_data() const
-    {
-      return _image_data;
-    }
-
-  //! Accessor.
-  boost::shared_array<uint>& image_data()
     {
       return _image_data;
     }
