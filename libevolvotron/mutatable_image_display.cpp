@@ -347,106 +347,89 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
   // Ignore tasks which were aborted or which have somehow got out of order 
   // (entirely possible with multiple compute threads).
   if (
-      !task->aborted() 
-      && task->serial()==_serial 
-      && task->level()<_current_display_level
+      task->aborted() 
+      || task->serial()!=_serial 
+      || task->level()>=_current_display_level
       )
+    return;
+    
+  // Record the fragment in the inbox
+  const OffscreenImageDataInbox::key_type inbox_key(task->level(),task->multisample_level());  
+  OffscreenImageDataInbox::mapped_type& inbox_level=_offscreen_image_data_inbox[inbox_key];
+  assert(inbox_level.find(task->fragment())==inbox_level.end());
+  inbox_level[task->fragment()]=task;
+  
+  if (inbox_level.size()!=task->number_of_fragments())
+    return;
+
+  // If the level is complete, we can proceed to displaying it
+
+  // Note that obsolete levels will never complete once a better one is displayed.
+  // So clear up previous levels; they're now irrelevant
+  _offscreen_image_data_inbox.erase
+    (
+     _offscreen_image_data_inbox.upper_bound(inbox_key),  // upper_bound is the NEXT key from the one we're about to display
+     _offscreen_image_data_inbox.end()
+     );
+  
+  const QSize render_size(task->whole_image_size());
+  
+  _offscreen_image.clear();
+  
+  if (task->number_of_fragments()==1)
     {
-      // Record the fragment in the inbox
-      const OffscreenImageDataInbox::key_type inbox_key(task->level(),task->multisample_level());
-      
-      OffscreenImageDataInbox::mapped_type& inbox_level=_offscreen_image_data_inbox[inbox_key];
-      assert(inbox_level.find(task->fragment())==inbox_level.end());
-      inbox_level[task->fragment()]=task;
-
-      // If the level is complete, we can proceed to displaying it.
-      // (Above check means obsolete levels will never complete once a better one is displayed)
-      if (inbox_level.size()==task->number_of_fragments())
+      // If there's only one fragment in the task, just use it
+      _offscreen_image=task->images();
+    }
+  else
+    {
+      // Otherwise we need to assemble the fragments together
+      for (uint f=0;f<_frames;f++)
 	{
-	  const QSize render_size(task->whole_image_size());
-
-	  _offscreen_image.clear();
-
-	  if (task->number_of_fragments()==1)
+	  _offscreen_image.push_back(QImage(render_size,32));
+	  
+	  for (OffscreenImageDataInbox::mapped_type::const_iterator it=inbox_level.begin();it!=inbox_level.end();++it)
 	    {
-	      // If there's only one fragment in the task, just use it
-	      _offscreen_image_data=task->image_data();
-	    }
-	  else
-	    {
-	      // Otherwise we need to assemble the fragments together
-	      _offscreen_image_data=boost::shared_array<uint>(new uint[task->frames()*render_size.width()*render_size.height()]);
-	      for (OffscreenImageDataInbox::mapped_type::const_iterator it=inbox_level.begin();it!=inbox_level.end();++it)
-		{
-		  for (uint f=0;f<(*it).second->frames();f++)
-		    for (int y=0;y<(*it).second->fragment_size().height();y++)
-		      memcpy
-			(
-			 reinterpret_cast<void*>
-			 (&
-			  _offscreen_image_data
-			  [
-			   +f*(*it).second->whole_image_size().height()*(*it).second->whole_image_size().width()
-			   +(y+(*it).second->fragment_origin().height())*(*it).second->whole_image_size().width()
-			   +(*it).second->fragment_origin().width()
-			   ]
-			  ),
-			 reinterpret_cast<void*>
-			 (&
-			  (*it).second->image_data()
-			  [
-			   +f*(*it).second->fragment_size().height()*(*it).second->fragment_size().width()
-			   +y*(*it).second->fragment_size().width()
-			   ]
-			  ),
-			 sizeof(uint)*(*it).second->fragment_size().width()
-			 );
-		}
-	    }
-      
-	  for (uint f=0;f<task->frames();f++)
-	    {
-	      _offscreen_image.push_back
+	      bitBlt
 		(
-		 new QImage
-		 (
-		  (uchar*)&(_offscreen_image_data[f*render_size.width()*render_size.height()]),
-		  render_size.width(),
-		  render_size.height(),
-		  32,
-		  0,
-		  0,
-		  QImage::LittleEndian  // Seems to be right for hi[-/R/G/B]lo packing
-		  )
+		 &_offscreen_image.back(),
+		 (*it).second->fragment_origin().width(),(*it).second->fragment_origin().height(),
+		 &(*it).second->images()[f],
+		 0,0,
+		 (*it).second->fragment_size().width(),(*it).second->fragment_size().height(),
+		 0
 		 );
-	      
-	      //! \todo Pick a scaling mode: smooth or not (or put it under GUI control). 
-	      // Curiously, although smoothscale seems to be noticeably slower, it doesn't look any better.
-	      _offscreen_buffer[f].convertFromImage(_offscreen_image.back().scale(image_size()));
 	    }
-	  
-	  // For an icon, take the first image big enough to (hopefully) be filtered down nicely.
-	  // The converter seems to auto-create an alpha mask sometimes (images with const-color areas), which is quite cool.
-	  const QSize icon_size(32,32);
-	  if (task->serial()!=_icon_serial && (task->level()==0 || (render_size.width()>=2*icon_size.width() && render_size.height()>=2*icon_size.height())))
-	    {
-	      const QImage icon_image(_offscreen_image[_offscreen_image.size()/2].smoothScale(icon_size));
-	      
-	      _icon=std::auto_ptr<QPixmap>(new QPixmap(icon_size));
-	      _icon->convertFromImage(icon_image,QPixmap::Color);
-	      
-	      _icon_serial=task->serial();
-	    }
-	  
-	  //! Note the resolution we've displayed so out-of-order low resolution images are dropped
-	  _current_display_level=task->level();
-	  _current_display_multisample_level=task->multisample_level();
-	  
-	  // Update what's on the screen.
-	  //! \todo Any case for calling update() instead of repaint() ?  Repaint maybe feels smoother.
-	  repaint();
 	}
     }
+  
+  for (uint f=0;f<_frames;f++)
+    {
+      //! \todo Pick a scaling mode: smooth or not (or put it under GUI control). 
+      // Curiously, although smoothscale seems to be noticeably slower, it doesn't look any better.
+      _offscreen_buffer[f].convertFromImage(_offscreen_image[f].scale(image_size()));
+    }
+  
+  // For an icon, take the first image big enough to (hopefully) be filtered down nicely.
+  // The converter seems to auto-create an alpha mask sometimes (images with const-color areas), which is quite cool.
+  const QSize icon_size(32,32);
+  if (task->serial()!=_icon_serial && (task->level()==0 || (render_size.width()>=2*icon_size.width() && render_size.height()>=2*icon_size.height())))
+    {
+      const QImage icon_image(_offscreen_image[_offscreen_image.size()/2].smoothScale(icon_size));
+      
+      _icon=std::auto_ptr<QPixmap>(new QPixmap(icon_size));
+      _icon->convertFromImage(icon_image,QPixmap::Color);
+      
+      _icon_serial=task->serial();
+    }
+  
+  //! Note the resolution we've displayed so out-of-order low resolution images are dropped
+  _current_display_level=task->level();
+  _current_display_multisample_level=task->multisample_level();      
+
+  // Update what's on the screen.
+  //! \todo Any case for calling update() instead of repaint() ?  Repaint maybe feels smoother.
+  repaint();
 }
 
 void MutatableImageDisplay::lock(bool l,bool record_in_history)

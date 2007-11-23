@@ -61,7 +61,6 @@ MutatableImageComputerTask::MutatableImageComputerTask
   ,_current_col(0)
   ,_current_row(0)
   ,_current_frame(0)
-  ,_image_data(new uint[fs.width()*fs.height()*f])
   ,_completed(false)
   ,_serial(n)
 {
@@ -75,14 +74,19 @@ MutatableImageComputerTask::MutatableImageComputerTask
     << _whole_image_size.width() << "x" << _whole_image_size.height()
     << "]";
   */
-  assert(_image->ok());
+  assert(_image_function->ok());
   assert(_fragment<_number_of_fragments);
   assert(_number_of_fragments>1 || _whole_image_size==_fragment_size);
+
+  for (uint f=0;f<frames();f++)
+    {
+      _images.push_back(QImage(fragment_size(),32));
+    }
 }
 
 MutatableImageComputerTask::~MutatableImageComputerTask()
 {
-  assert(_image->ok());
+  assert(_image_function->ok());
 }
 
 void MutatableImageComputerTask::pixel_advance()

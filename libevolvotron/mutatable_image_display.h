@@ -92,13 +92,10 @@ class MutatableImageDisplay : public QWidget
   boost::ptr_vector<QPixmap> _offscreen_buffer;
 
   //! Offscreen image buffer in sensible image format (used for save, as pixmap is in display format which might be less bits).
-  boost::ptr_vector<QImage> _offscreen_image;
-
-  //! Offscreen image data for _offscreen_image.  This must remain alive longer than the QImage.
-  boost::shared_array<uint> _offscreen_image_data;
+  std::vector<QImage> _offscreen_image;
 
   //! Type for staging area for incoming fragments.
-  /*! Key is level and multisampling, value is a map from fragment number to tasks.
+  /*! Key is level and multisampling, mapped type is also itself a map from fragment number to tasks.
    */
   typedef std::map<std::pair<uint,uint>,std::map<uint,boost::shared_ptr<const MutatableImageComputerTask> > > OffscreenImageDataInbox;
 

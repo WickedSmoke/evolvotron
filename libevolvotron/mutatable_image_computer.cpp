@@ -105,7 +105,7 @@ void MutatableImageComputer::run()
 		  const uint col1=lrint(accumulated_colour.y());
 		  const uint col2=lrint(accumulated_colour.z());
 
-		  task()->image_data()[task()->current_pixel()]=((col0<<16)|(col1<<8)|(col2));
+		  task()->images()[task()->current_frame()].setPixel(task()->current_col(),task()->current_row(),((col0<<16)|(col1<<8)|(col2)));
 
 		  task()->pixel_advance();
 		}

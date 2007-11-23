@@ -94,11 +94,8 @@ class MutatableImageComputerTask
   uint _current_frame;
   //@}
 
-  //! The image data generated.
-  /*! It might have been nice to use a QImage, but Qt docs warnings about not using Qt
-    library except from main application thread are a bit offputting.
-  */
-  const boost::shared_array<uint> _image_data;
+  //! The image data generated for the fragments.
+  std::vector<QImage> _images;
 
   //! Set true by pixel_advance when it advances off the last frame.
   bool _completed;
@@ -219,9 +216,15 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
-  const boost::shared_array<uint>& image_data() const
+  std::vector<QImage>& images()
     {
-      return _image_data;
+      return _images;
+    }
+
+  //! Accessor.
+  const std::vector<QImage>& images() const
+    {
+      return _images;
     }
 
   //! Accessor.
