@@ -149,7 +149,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
 
   for (uint f=0;f<_frames;f++)
     {
-      _offscreen_buffer.push_back(new QPixmap());
+      _offscreen_pixmap.push_back(QPixmap());
     }
 
   _timer=new QTimer(this);
@@ -176,7 +176,7 @@ MutatableImageDisplay::~MutatableImageDisplay()
     }
 
   _image.reset();
-  _offscreen_buffer.clear();
+  _offscreen_pixmap.clear();
 
   _offscreen_image.clear();
 }
@@ -262,8 +262,8 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
       _image=i;
 
       // Clear any existing image data - stops old animations continuing to play 
-      for (uint f=0;f<_offscreen_buffer.size();f++)
-	_offscreen_buffer[f].fill(black);
+      for (uint f=0;f<_offscreen_pixmap.size();f++)
+	_offscreen_pixmap[f].fill(black);
 
       // Queue a paint so the display will be blacked out
       repaint();
@@ -354,8 +354,8 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
     return;
     
   // Record the fragment in the inbox
-  const OffscreenImageDataInbox::key_type inbox_key(task->level(),task->multisample_level());  
-  OffscreenImageDataInbox::mapped_type& inbox_level=_offscreen_image_inbox[inbox_key];
+  const OffscreenImageInbox::key_type inbox_key(task->level(),task->multisample_level());  
+  OffscreenImageInbox::mapped_type& inbox_level=_offscreen_image_inbox[inbox_key];
   assert(inbox_level.find(task->fragment())==inbox_level.end());
   inbox_level[task->fragment()]=task;
   
@@ -387,7 +387,7 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
 	{
 	  _offscreen_image.push_back(QImage(render_size,32));
 	  
-	  for (OffscreenImageDataInbox::mapped_type::const_iterator it=inbox_level.begin();it!=inbox_level.end();++it)
+	  for (OffscreenImageInbox::mapped_type::const_iterator it=inbox_level.begin();it!=inbox_level.end();++it)
 	    {
 	      bitBlt
 		(
@@ -406,7 +406,7 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
     {
       //! \todo Pick a scaling mode: smooth or not (or put it under GUI control). 
       // Curiously, although smoothscale seems to be noticeably slower, it doesn't look any better.
-      _offscreen_buffer[f].convertFromImage(_offscreen_image[f].scale(image_size()));
+      _offscreen_pixmap[f].convertFromImage(_offscreen_image[f].scale(image_size()));
     }
   
   // For an icon, take the first image big enough to (hopefully) be filtered down nicely.
@@ -461,9 +461,9 @@ MutatableImageComputerFarm& MutatableImageDisplay::farm() const
 
 void MutatableImageDisplay::paintEvent(QPaintEvent*)
 {
-  // Repaint the screen from the offscreen buffer
-  // (If there have been resizes it will be black)
-  bitBlt(this,0,0,&_offscreen_buffer[_current_frame]);
+  // Repaint the screen from the offscreen pixmaps
+  // (If there have been resizes they will be black)
+  bitBlt(this,0,0,&_offscreen_pixmap[_current_frame]);
 
   // If this is the first paint event after a resize we can start computing images for the new size.
   if (_resize_in_progress)
@@ -488,11 +488,11 @@ void MutatableImageDisplay::resizeEvent(QResizeEvent* event)
       // Abort all current tasks because they'll be the wrong size.
       farm().abort_for(this);
       
-      // Resize and reset our offscreen buffer (something to do while we wait)
-      for (uint f=0;f<_offscreen_buffer.size();f++)
+      // Resize and reset our offscreen pixmap (something to do while we wait)
+      for (uint f=0;f<_offscreen_pixmap.size();f++)
 	{
-	  _offscreen_buffer[f].resize(image_size());
-	  _offscreen_buffer[f].fill(black);
+	  _offscreen_pixmap[f].resize(image_size());
+	  _offscreen_pixmap[f].fill(black);
 	}
       
       // Flag for the next paintEvent to tell it a recompute can be started now.
