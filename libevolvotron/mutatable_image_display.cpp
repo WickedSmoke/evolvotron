@@ -274,7 +274,7 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
   _current_display_multisample_level=(uint)(-1);
 
   // Clear up staging area... its contents are now useless
-  _offscreen_image_data_inbox.clear();
+  _offscreen_image_inbox.clear();
 
   // Update lock status displayed in menu
   _menu->setItemChecked(_menu_item_number_lock,(_image.get() ? _image->locked() : false));
@@ -355,7 +355,7 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
     
   // Record the fragment in the inbox
   const OffscreenImageDataInbox::key_type inbox_key(task->level(),task->multisample_level());  
-  OffscreenImageDataInbox::mapped_type& inbox_level=_offscreen_image_data_inbox[inbox_key];
+  OffscreenImageDataInbox::mapped_type& inbox_level=_offscreen_image_inbox[inbox_key];
   assert(inbox_level.find(task->fragment())==inbox_level.end());
   inbox_level[task->fragment()]=task;
   
@@ -366,15 +366,13 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
 
   // Note that obsolete levels will never complete once a better one is displayed.
   // So clear up previous levels; they're now irrelevant
-  _offscreen_image_data_inbox.erase
+  _offscreen_image_inbox.erase
     (
-     _offscreen_image_data_inbox.upper_bound(inbox_key),  // upper_bound is the NEXT key from the one we're about to display
-     _offscreen_image_data_inbox.end()
+     _offscreen_image_inbox.upper_bound(inbox_key),  // upper_bound is the NEXT key from the one we're about to display
+     _offscreen_image_inbox.end()
      );
   
   const QSize render_size(task->whole_image_size());
-  
-  _offscreen_image.clear();
   
   if (task->number_of_fragments()==1)
     {
@@ -384,6 +382,7 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
   else
     {
       // Otherwise we need to assemble the fragments together
+      _offscreen_image.resize(0);
       for (uint f=0;f<_frames;f++)
 	{
 	  _offscreen_image.push_back(QImage(render_size,32));

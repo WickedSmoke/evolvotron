@@ -102,7 +102,7 @@ class MutatableImageDisplay : public QWidget
   //! Staging area for incoming fragments.
   /*! Fragments are accumulated for each (level,multisample) key, and completed levels passed on for display
    */
-  OffscreenImageDataInbox _offscreen_image_data_inbox;
+  OffscreenImageDataInbox _offscreen_image_inbox;
 
   //! The image function being displayed (its root node).
   /*! The held image is const because references to it could be held by history archive, compute tasks etc,
