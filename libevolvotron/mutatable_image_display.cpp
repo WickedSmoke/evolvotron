@@ -175,7 +175,7 @@ MutatableImageDisplay::~MutatableImageDisplay()
       main().goodbye(this);
     }
 
-  _image.reset();
+  _image_function.reset();
   _offscreen_pixmaps.clear();
 
   _offscreen_images.clear();
@@ -190,18 +190,18 @@ const uint MutatableImageDisplay::simplify_constants(bool single_action)
   uint old_depth;
   uint old_width;
   real old_const;
-  _image->get_stats(old_nodes,old_parameters,old_depth,old_width,old_const);
+  _image_function->get_stats(old_nodes,old_parameters,old_depth,old_width,old_const);
 
   main().history().replacing(this);
 
-  image(_image->simplified());
+  image_function(_image_function->simplified());
 
   uint new_nodes;
   uint new_parameters;
   uint new_depth;
   uint new_width;
   real new_const;
-  _image->get_stats(new_nodes,new_parameters,new_depth,new_width,new_const);
+  _image_function->get_stats(new_nodes,new_parameters,new_depth,new_width,new_const);
 
   const uint nodes_eliminated=old_nodes-new_nodes;
 
@@ -242,7 +242,7 @@ void MutatableImageDisplay::frame_advance()
   repaint(false);
 }
 
-void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>& i)
+void MutatableImageDisplay::image_function(const boost::shared_ptr<const MutatableImage>& i)
 {
   assert(_image.get()==0 || _image->ok());
   assert(i.get()==0 || i->ok());
@@ -257,9 +257,9 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
   // (a trick used by resize to trigger recompute & redisplay)
   // but if the image isn't being changed we might as well leave
   // what's being displayed there are being a better choice than black
-  if (i.get()==0 || _image.get()==0 || i->serial()!=_image->serial())
+  if (i.get()==0 || _image_function.get()==0 || i->serial()!=_image_function->serial())
     {
-      _image=i;
+      _image_function=i;
 
       // Clear any existing image data - stops old animations continuing to play 
       for (uint f=0;f<_offscreen_pixmaps.size();f++)
@@ -277,9 +277,9 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
   _offscreen_images_inbox.clear();
 
   // Update lock status displayed in menu
-  _menu->setItemChecked(_menu_item_number_lock,(_image.get() ? _image->locked() : false));
+  _menu->setItemChecked(_menu_item_number_lock,(_image_function.get() ? _image_function->locked() : false));
   
-  if (_image.get())
+  if (_image_function.get())
     {
       // Allow for displays up to 4096 pixels high or wide
       //! \todo: Should compute max level needed from display size
@@ -307,7 +307,7 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
 	      for (std::vector<uint>::const_iterator it=multisample.begin();it!=multisample.end();it++)
 		{
 		  //! \todo Should computed animation frames be constant or reduced c.f spatial resolution ?  (Do full z resolution for now)
-		  const boost::shared_ptr<const MutatableImage> task_image(_image);
+		  const boost::shared_ptr<const MutatableImage> task_image(_image_function);
 		  assert(task_image->ok());
 		  
 		  // Use number of samples in unfragmented image as priority
@@ -434,15 +434,15 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
 void MutatableImageDisplay::lock(bool l,bool record_in_history)
 {
   // This might be called (with l=false) with null _image during start-up reset.
-  if (_image && _image->locked()!=l)
+  if (_image_function && _image_function->locked()!=l)
     {
       if (record_in_history)
 	{
 	  main().history().begin_action(l ? "lock" : "unlock");
 	  main().history().replacing(this);
 	}
-      const boost::shared_ptr<const MutatableImage> new_image(_image->deepclone(l));
-      image(new_image);
+      const boost::shared_ptr<const MutatableImage> new_image_function(_image_function->deepclone(l));
+      image_function(new_image_function);
       if (record_in_history)
 	{
 	  main().history().end_action();
@@ -468,7 +468,7 @@ void MutatableImageDisplay::paintEvent(QPaintEvent*)
   // If this is the first paint event after a resize we can start computing images for the new size.
   if (_resize_in_progress)
     {
-      image(_image);
+      image_function(_image_function);
       _resize_in_progress=false;
     }
 }
@@ -646,12 +646,12 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	      std::clog << "[Pan]";
 	    }
 	  
-	  std::auto_ptr<FunctionTop> new_root(image()->top().typed_deepclone());
+	  std::auto_ptr<FunctionTop> new_root(image_function()->top().typed_deepclone());
 	  new_root->concatenate_pretransform_on_right(transform);
 
 	  // Install new image (triggers recompute).
-	  const boost::shared_ptr<const MutatableImage> new_image(new MutatableImage(new_root,image()->sinusoidal_z(),image()->spheremap(),false));
-	  image(new_image);
+	  const boost::shared_ptr<const MutatableImage> new_image_function(new MutatableImage(new_root,image_function()->sinusoidal_z(),image_function()->spheremap(),false));
+	  image_function(new_image_function);
 
 	  // Finally, record position of this event as last event
 	  _mid_button_adjust_last_pos=event->pos();
@@ -743,7 +743,7 @@ void MutatableImageDisplay::menupick_spawn_warped_pan_z()
  */
 void MutatableImageDisplay::menupick_lock()
 {
-  lock(!_image->locked(),true);
+  lock(!_image_function->locked(),true);
 }
 
 void MutatableImageDisplay::menupick_simplify()
@@ -878,7 +878,7 @@ void MutatableImageDisplay::menupick_save_function()
   if (!save_filename.isEmpty())
     {
       std::ofstream file(save_filename.local8Bit());
-      _image->save_function(file);
+      _image_function->save_function(file);
       file.flush();
       if (!file)
 	{
@@ -894,8 +894,8 @@ void MutatableImageDisplay::menupick_load_function()
     {
       std::ifstream file(load_filename.local8Bit());
       std::string report;
-      boost::shared_ptr<const MutatableImage> new_image(MutatableImage::load_function(_main->mutation_parameters().function_registry(),file,report));
-      if (new_image.get()==0)
+      boost::shared_ptr<const MutatableImage> new_image_function(MutatableImage::load_function(_main->mutation_parameters().function_registry(),file,report));
+      if (new_image_function.get()==0)
 	{
 	  QMessageBox::critical(this,"Evolvotron",("Function not loaded due to errors:\n"+report).c_str());
 	}
@@ -909,7 +909,7 @@ void MutatableImageDisplay::menupick_load_function()
 	  main().history().begin_action("load");
 	  main().history().replacing(this);
 	  main().history().end_action();
-	  image(new_image);
+	  image_function(new_image_function);
 	}
     }
 }
@@ -977,7 +977,7 @@ void MutatableImageDisplay::menupick_properties()
   uint width;
   real proportion_constant;
 
-  image()->get_stats(total_nodes,total_parameters,depth,width,proportion_constant);
+  image_function()->get_stats(total_nodes,total_parameters,depth,width,proportion_constant);
 
   std::stringstream msg;
   msg << " " << total_nodes      << "\t function nodes\n";
@@ -987,7 +987,7 @@ void MutatableImageDisplay::menupick_properties()
   msg << " " << std::setprecision(3) << 100.0*proportion_constant << "%\t constant\n";
 
   std::stringstream xml;
-  image()->save_function(xml);
+  image_function()->save_function(xml);
 
   _properties->set_content(msg.str(),xml.str());
   if (_icon.get()) _properties->setIcon(*_icon);
@@ -1023,5 +1023,5 @@ void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
   if (main().isFullScreen()) top_level_widget->showFullScreen();
 
   // Fire up image calculation
-  display->image(_image);
+  display->image_function(_image_function);
 }

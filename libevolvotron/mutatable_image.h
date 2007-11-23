@@ -39,7 +39,7 @@ class MutatableImage
  protected:
 
   //! The top level FunctionNode of the image.
-  /*! This is partly here FunctionNode::mutate can't change the type of
+  /*! This is partly here because FunctionNode::mutate can't change the type of
     the node it is invoked on (only child nodes can be zapped), partly so we
     can keep colour and space transforms under control.
    */

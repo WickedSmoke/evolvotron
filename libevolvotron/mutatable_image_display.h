@@ -108,7 +108,7 @@ class MutatableImageDisplay : public QWidget
   /*! The held image is const because references to it could be held by history archive, compute tasks etc,
     so it should be completely replaced rather than manipulated.
    */
-  boost::shared_ptr<const MutatableImage> _image;
+  boost::shared_ptr<const MutatableImage> _image_function;
 
   //! Properties dialog.
   DialogMutatableImageDisplay* _properties;
@@ -144,15 +144,15 @@ class MutatableImageDisplay : public QWidget
   virtual ~MutatableImageDisplay();
 
   //! Accessor.
-  const boost::shared_ptr<const MutatableImage>& image()
+  const boost::shared_ptr<const MutatableImage>& image_function()
     {
-      return _image;
+      return _image_function;
     }
 
   //! Accessor.
   const bool locked() const
     {
-      return (_image.get()!=0 ? _image->locked() : false);
+      return (_image_function.get()!=0 ? _image_function->locked() : false);
     }
 
   //! Accessor.
@@ -175,7 +175,7 @@ class MutatableImageDisplay : public QWidget
     }
 
   //! Load a new image (clears up old image, starts new compute tasks).
-  void image(const boost::shared_ptr<const MutatableImage>& image);
+  void image_function(const boost::shared_ptr<const MutatableImage>& image_fn);
 
   //! Evolvotron main calls this with completed (but possibly aborted) tasks.
   void deliver(const boost::shared_ptr<const MutatableImageComputerTask>& task);
