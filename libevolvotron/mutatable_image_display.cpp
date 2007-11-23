@@ -149,7 +149,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
 
   for (uint f=0;f<_frames;f++)
     {
-      _offscreen_pixmap.push_back(QPixmap());
+      _offscreen_pixmaps.push_back(QPixmap());
     }
 
   _timer=new QTimer(this);
@@ -176,9 +176,9 @@ MutatableImageDisplay::~MutatableImageDisplay()
     }
 
   _image.reset();
-  _offscreen_pixmap.clear();
+  _offscreen_pixmaps.clear();
 
-  _offscreen_image.clear();
+  _offscreen_images.clear();
 }
 
 const uint MutatableImageDisplay::simplify_constants(bool single_action)
@@ -262,8 +262,8 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
       _image=i;
 
       // Clear any existing image data - stops old animations continuing to play 
-      for (uint f=0;f<_offscreen_pixmap.size();f++)
-	_offscreen_pixmap[f].fill(black);
+      for (uint f=0;f<_offscreen_pixmaps.size();f++)
+	_offscreen_pixmaps[f].fill(black);
 
       // Queue a paint so the display will be blacked out
       repaint();
@@ -274,7 +274,7 @@ void MutatableImageDisplay::image(const boost::shared_ptr<const MutatableImage>&
   _current_display_multisample_level=(uint)(-1);
 
   // Clear up staging area... its contents are now useless
-  _offscreen_image_inbox.clear();
+  _offscreen_images_inbox.clear();
 
   // Update lock status displayed in menu
   _menu->setItemChecked(_menu_item_number_lock,(_image.get() ? _image->locked() : false));
@@ -355,7 +355,7 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
     
   // Record the fragment in the inbox
   const OffscreenImageInbox::key_type inbox_key(task->level(),task->multisample_level());  
-  OffscreenImageInbox::mapped_type& inbox_level=_offscreen_image_inbox[inbox_key];
+  OffscreenImageInbox::mapped_type& inbox_level=_offscreen_images_inbox[inbox_key];
   assert(inbox_level.find(task->fragment())==inbox_level.end());
   inbox_level[task->fragment()]=task;
   
@@ -366,10 +366,10 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
 
   // Note that obsolete levels will never complete once a better one is displayed.
   // So clear up previous levels; they're now irrelevant
-  _offscreen_image_inbox.erase
+  _offscreen_images_inbox.erase
     (
-     _offscreen_image_inbox.upper_bound(inbox_key),  // upper_bound is the NEXT key from the one we're about to display
-     _offscreen_image_inbox.end()
+     _offscreen_images_inbox.upper_bound(inbox_key),  // upper_bound is the NEXT key from the one we're about to display
+     _offscreen_images_inbox.end()
      );
   
   const QSize render_size(task->whole_image_size());
@@ -377,21 +377,21 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
   if (task->number_of_fragments()==1)
     {
       // If there's only one fragment in the task, just use it
-      _offscreen_image=task->images();
+      _offscreen_images=task->images();
     }
   else
     {
       // Otherwise we need to assemble the fragments together
-      _offscreen_image.resize(0);
+      _offscreen_images.resize(0);
       for (uint f=0;f<_frames;f++)
 	{
-	  _offscreen_image.push_back(QImage(render_size,32));
+	  _offscreen_images.push_back(QImage(render_size,32));
 	  
 	  for (OffscreenImageInbox::mapped_type::const_iterator it=inbox_level.begin();it!=inbox_level.end();++it)
 	    {
 	      bitBlt
 		(
-		 &_offscreen_image.back(),
+		 &_offscreen_images.back(),
 		 (*it).second->fragment_origin().width(),(*it).second->fragment_origin().height(),
 		 &(*it).second->images()[f],
 		 0,0,
@@ -406,7 +406,7 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
     {
       //! \todo Pick a scaling mode: smooth or not (or put it under GUI control). 
       // Curiously, although smoothscale seems to be noticeably slower, it doesn't look any better.
-      _offscreen_pixmap[f].convertFromImage(_offscreen_image[f].scale(image_size()));
+      _offscreen_pixmaps[f].convertFromImage(_offscreen_images[f].scale(image_size()));
     }
   
   // For an icon, take the first image big enough to (hopefully) be filtered down nicely.
@@ -414,7 +414,7 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
   const QSize icon_size(32,32);
   if (task->serial()!=_icon_serial && (task->level()==0 || (render_size.width()>=2*icon_size.width() && render_size.height()>=2*icon_size.height())))
     {
-      const QImage icon_image(_offscreen_image[_offscreen_image.size()/2].smoothScale(icon_size));
+      const QImage icon_image(_offscreen_images[_offscreen_images.size()/2].smoothScale(icon_size));
       
       _icon=std::auto_ptr<QPixmap>(new QPixmap(icon_size));
       _icon->convertFromImage(icon_image,QPixmap::Color);
@@ -463,7 +463,7 @@ void MutatableImageDisplay::paintEvent(QPaintEvent*)
 {
   // Repaint the screen from the offscreen pixmaps
   // (If there have been resizes they will be black)
-  bitBlt(this,0,0,&_offscreen_pixmap[_current_frame]);
+  bitBlt(this,0,0,&_offscreen_pixmaps[_current_frame]);
 
   // If this is the first paint event after a resize we can start computing images for the new size.
   if (_resize_in_progress)
@@ -489,10 +489,10 @@ void MutatableImageDisplay::resizeEvent(QResizeEvent* event)
       farm().abort_for(this);
       
       // Resize and reset our offscreen pixmap (something to do while we wait)
-      for (uint f=0;f<_offscreen_pixmap.size();f++)
+      for (uint f=0;f<_offscreen_pixmaps.size();f++)
 	{
-	  _offscreen_pixmap[f].resize(image_size());
-	  _offscreen_pixmap[f].fill(black);
+	  _offscreen_pixmaps[f].resize(image_size());
+	  _offscreen_pixmaps[f].fill(black);
 	}
       
       // Flag for the next paintEvent to tell it a recompute can be started now.
@@ -806,9 +806,9 @@ void MutatableImageDisplay::menupick_save_image()
 		    {
 		      QPNGImagePacker packer(mng_file.get(),32,0);
 		      
-		      for (uint f=0;f<_offscreen_image.size();f++)
+		      for (uint f=0;f<_offscreen_images.size();f++)
 			{
-			  if (!packer.packImage(_offscreen_image[f]))
+			  if (!packer.packImage(_offscreen_images[f]))
 			    {
 			      QMessageBox::critical(this,"Evolvotron","Failed while writing file "+save_filename+"\nFile will be removed");
 			      mng_file->close();
@@ -834,11 +834,11 @@ void MutatableImageDisplay::menupick_save_image()
 		}
 	      else
 		{
-		  for (uint f=0;f<_offscreen_image.size();f++)
+		  for (uint f=0;f<_offscreen_images.size();f++)
 		    {
 		      QString actual_save_filename(save_filename);
 		      
-		      if (_offscreen_image.size()>1)
+		      if (_offscreen_images.size()>1)
 			{
 			  QString frame_component;
 			  frame_component.sprintf(".f%06d",f);
@@ -853,10 +853,10 @@ void MutatableImageDisplay::menupick_save_image()
 			    }
 			}
 		      
-		      if (!_offscreen_image[f].save(actual_save_filename.local8Bit(),save_format))
+		      if (!_offscreen_images[f].save(actual_save_filename.local8Bit(),save_format))
 			{
 			  QMessageBox::critical(this,"Evolvotron","Failed to write file "+actual_save_filename);
-			  if (f<_offscreen_image.size()-1)
+			  if (f<_offscreen_images.size()-1)
 			    {
 			      QMessageBox::critical(this,"Evolvotron","Not attempting to save remaining images in animation");
 			    }
