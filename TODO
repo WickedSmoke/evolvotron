@@ -3,7 +3,7 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
-- When new render is kicked off, would be good to know the context (one of many or not) to decide fragmentation strategy.
+- Try to elimate flicker when middle-mouse dragging.  repaint/update/WFlags related ?
 - More feedback on when enlargements are ready for saving (have split tasks count now... need more ? yes)
 
 - Friezegroups:
