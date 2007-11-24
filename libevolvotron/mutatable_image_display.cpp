@@ -347,12 +347,13 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
   // Ignore tasks which were aborted or which have somehow got out of order 
   // (entirely possible with multiple compute threads).
   if (
-      task->aborted() 
-      || task->serial()!=_serial 
-      || task->level()>=_current_display_level
+      task->aborted()
+      || task->serial()!=_serial
+      || task->level()>_current_display_level
+      || (task->level()==_current_display_level && task->multisample_grid()<=_current_display_multisample_grid)
       )
     return;
-    
+
   // Record the fragment in the inbox
   const OffscreenImageInbox::key_type inbox_key(task->level(),task->multisample_grid());  
   OffscreenImageInbox::mapped_type& inbox_level=_offscreen_images_inbox[inbox_key];
@@ -763,7 +764,6 @@ void MutatableImageDisplay::menupick_save_image()
   if (_current_display_level!=0 || _current_display_multisample_grid!=main().render_parameters().multisample_grid())
     {
       QMessageBox::information(this,"Evolvotron","The selected image has not yet been generated at maximum resolution.\nPlease try again later.");
-      std::cerr << _current_display_level << "," << _current_display_multisample_grid << "\n";
     }
   else
     {

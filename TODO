@@ -3,7 +3,6 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
-- Some problem with save of multisampled images ?  (Never completed)
 - Number of fragments for an enlargement should bear some relation to number of processors.
   (ie 1 processor there's little point.  One fragment per processor makes sense; there's always other
   levels to work on at least until the end when might want two fragments per processor).
