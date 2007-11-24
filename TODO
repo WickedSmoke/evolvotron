@@ -3,10 +3,8 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
-- Number of fragments for an enlargement should bear some relation to number of processors.
-  (ie 1 processor there's little point.  One fragment per processor makes sense; there's always other
-  levels to work on at least until the end when might want two fragments per processor).
-- More feedback on when enlargements are ready for saving (have split tasks count now... need more ?)
+- When new render is kicked off, would be good to know the context (one of many or not) to decide fragmentation strategy.
+- More feedback on when enlargements are ready for saving (have split tasks count now... need more ? yes)
 
 - Friezegroups:
   Cut taken out for 0.5.0 release.
