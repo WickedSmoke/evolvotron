@@ -84,7 +84,7 @@ class MutatableImageComputerTask
   const bool _jittered_samples;
 
   //! Multisampling grid resolution e.g 4 implies a 4x4 grid
-  const uint _multisample_level;
+  const uint _multisample_grid;
 
   //@{
   //! Track pixels computed, so tasks can be restarted after defer.  Row and column are relative to the fragment origin.
@@ -95,8 +95,15 @@ class MutatableImageComputerTask
   //@}
 
   //! The image data generated for the fragments.
-  std::vector<QImage> _images;
+  /*! This is lazily created to avoid multiple high resolution
+    images (especially with multisampling) being unnecessarily
+    concurrently allocated.
+   */
+  mutable std::vector<QImage> _images;
 
+  //! Lazy allocator for _images (which is mutable)
+  void allocate_images() const;
+  
   //! Set true by pixel_advance when it advances off the last frame.
   bool _completed;
 
@@ -198,9 +205,9 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
-  const uint multisample_level() const
+  const uint multisample_grid() const
     {
-      return _multisample_level;
+      return _multisample_grid;
     }
 
   //! Serial number
@@ -215,15 +222,17 @@ class MutatableImageComputerTask
       return _priority;
     }
 
-  //! Accessor.
+  //! Accessor, with lazy creation.
   std::vector<QImage>& images()
     {
+      if (_images.empty()) allocate_images();
       return _images;
     }
 
   //! Accessor.
   const std::vector<QImage>& images() const
     {
+      if (_images.empty()) allocate_images();
       return _images;
     }
 

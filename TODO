@@ -3,10 +3,10 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
-- Lazy creation of QImages in tasks would make more sense, especially when multisampling
-  (multiple high-resolutions getting pointlessly allocated early)
+- Some problem with save of multisampled images ?  (Never completed)
 - Number of fragments for an enlargement should bear some relation to number of processors.
-  (ie 1 processor there's little point)
+  (ie 1 processor there's little point.  One fragment per processor makes sense; there's always other
+  levels to work on at least until the end when might want two fragments per processor).
 - More feedback on when enlargements are ready for saving (have split tasks count now... need more ?)
 
 - Friezegroups:

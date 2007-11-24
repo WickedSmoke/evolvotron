@@ -78,7 +78,7 @@ void DialogRenderParameters::setup_from_render_parameters()
 {
   _checkbox_jittered_samples->setChecked(_render_parameters->jittered_samples());
 
-  QButton*const which_button=_buttongroup->find(_render_parameters->multisample_level());
+  QButton*const which_button=_buttongroup->find(_render_parameters->multisample_grid());
   if (which_button)
     {
       _buttongroup->setButton(_buttongroup->id(which_button));
@@ -93,7 +93,8 @@ void DialogRenderParameters::changed_jittered_samples(int buttonstate)
 
 void DialogRenderParameters::changed_oversampling(int id)
 {
-  _render_parameters->multisample_level(id);
+  assert(1<=id && id<=4);
+  _render_parameters->multisample_grid(id);
 }
 
 void DialogRenderParameters::render_parameters_changed()

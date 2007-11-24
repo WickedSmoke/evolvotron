@@ -13,6 +13,7 @@ From release 0.5.0:
    Task totals for each reported separately.
  - Enlargement renderings are fragmented into multiple smaller
    jobs to better utilize multiprocessor systems.
+ - Generally better use of ref-counted QImage and QPixmap.
 
 From release 0.4.0:
  - Version to 0.5.0

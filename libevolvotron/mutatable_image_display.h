@@ -79,8 +79,8 @@ class MutatableImageDisplay : public QWidget
    */
   uint _current_display_level;
 
-  //! Similar to _current_display_level, but for multsampling levels within a resolution level.
-  uint _current_display_multisample_level;
+  //! Similar to _current_display_level, but for tracking multisample grids within a resolution level.
+  uint _current_display_multisample_grid;
 
   //! An image suitable for setting as an icon.
   std::auto_ptr<QPixmap> _icon;

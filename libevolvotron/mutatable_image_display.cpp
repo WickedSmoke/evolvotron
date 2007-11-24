@@ -58,7 +58,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
    ,_timer(0)
    ,_resize_in_progress(false)
    ,_current_display_level(0)
-   ,_current_display_multisample_level(0)
+  ,_current_display_multisample_grid(0)
    ,_icon_serial(0LL)
    ,_properties(0)
    ,_menu(0)
@@ -165,7 +165,7 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
  */
 MutatableImageDisplay::~MutatableImageDisplay()
 {
-  assert(!_image.get() || _image->ok());
+  assert(!_image_function.get() || _image_function->ok());
 
   // During app shutdown EvolvotronMain might have already been destroyed so only call it if it's there.
   // Don't use main() because it asserts non-null.
@@ -244,7 +244,7 @@ void MutatableImageDisplay::frame_advance()
 
 void MutatableImageDisplay::image_function(const boost::shared_ptr<const MutatableImage>& i)
 {
-  assert(_image.get()==0 || _image->ok());
+  assert(_image_function.get()==0 || _image_function->ok());
   assert(i.get()==0 || i->ok());
 
   // New image, so increment serial number so any old incoming stuff which somehow avoids abort is ignored.
@@ -270,8 +270,8 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
     }
 
   // If we start recomputing again we need to accept any delivered images.
-  _current_display_level=(uint)(-1);
-  _current_display_multisample_level=(uint)(-1);
+  _current_display_level=static_cast<uint>(-1);
+  _current_display_multisample_grid=static_cast<uint>(-1);
 
   // Clear up staging area... its contents are now useless
   _offscreen_images_inbox.clear();
@@ -294,24 +294,24 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
 	      const uint stripheight=32;
 	      const int fragments=(_full_functionality ? 1 : (render_size.height()+stripheight-1)/stripheight);
 	      
-	      std::vector<uint> multisample;
-	      multisample.push_back(1);
+	      std::vector<uint> multisample_grid;
+	      multisample_grid.push_back(1);
 	      if (level==0)
 		{
 		  // Only the final full resolution level gets an additional multisampling task.
 		  // For 4x4 sampling, do an initial 2x2 too.
-		  if (main().render_parameters().multisample_level()==4) multisample.push_back(2);
-		  if (main().render_parameters().multisample_level()>1) multisample.push_back(main().render_parameters().multisample_level());
+		  if (main().render_parameters().multisample_grid()==4) multisample_grid.push_back(2);
+		  if (main().render_parameters().multisample_grid()>1) multisample_grid.push_back(main().render_parameters().multisample_grid());
 		}
 
-	      for (std::vector<uint>::const_iterator it=multisample.begin();it!=multisample.end();it++)
+	      for (std::vector<uint>::const_iterator multisample_it=multisample_grid.begin();multisample_it!=multisample_grid.end();multisample_it++)
 		{
 		  //! \todo Should computed animation frames be constant or reduced c.f spatial resolution ?  (Do full z resolution for now)
 		  const boost::shared_ptr<const MutatableImage> task_image(_image_function);
 		  assert(task_image->ok());
 		  
 		  // Use number of samples in unfragmented image as priority
-		  const uint task_priority=render_size.width()*render_size.height()*(*it)*(*it);
+		  const uint task_priority=render_size.width()*render_size.height()*(*multisample_it)*(*multisample_it);
 
 		  for (int f=0;f<fragments;f++)
 		    {
@@ -330,7 +330,7 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
 			  f,
 			  fragments,
 			  main().render_parameters().jittered_samples(),
-			  (*it),
+			  (*multisample_it),
 			  _serial
 			  )
 			 );
@@ -354,7 +354,7 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
     return;
     
   // Record the fragment in the inbox
-  const OffscreenImageInbox::key_type inbox_key(task->level(),task->multisample_level());  
+  const OffscreenImageInbox::key_type inbox_key(task->level(),task->multisample_grid());  
   OffscreenImageInbox::mapped_type& inbox_level=_offscreen_images_inbox[inbox_key];
   assert(inbox_level.find(task->fragment())==inbox_level.end());
   inbox_level[task->fragment()]=task;
@@ -409,6 +409,14 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
       _offscreen_pixmaps[f].convertFromImage(_offscreen_images[f].scale(image_size()));
     }
   
+  //! Note the resolution we've displayed so out-of-order low resolution images are dropped
+  _current_display_level=task->level();
+  _current_display_multisample_grid=task->multisample_grid();
+  
+  // Update what's on the screen.
+  //! \todo Any case for calling update() instead of repaint() ?  Repaint maybe feels smoother.
+  repaint();
+
   // For an icon, take the first image big enough to (hopefully) be filtered down nicely.
   // The converter seems to auto-create an alpha mask sometimes (images with const-color areas), which is quite cool.
   const QSize icon_size(32,32);
@@ -421,14 +429,6 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
       
       _icon_serial=task->serial();
     }
-  
-  //! Note the resolution we've displayed so out-of-order low resolution images are dropped
-  _current_display_level=task->level();
-  _current_display_multisample_level=task->multisample_level();      
-
-  // Update what's on the screen.
-  //! \todo Any case for calling update() instead of repaint() ?  Repaint maybe feels smoother.
-  repaint();
 }
 
 void MutatableImageDisplay::lock(bool l,bool record_in_history)
@@ -760,9 +760,10 @@ void MutatableImageDisplay::menupick_save_image()
 
   std::clog << "Save requested...\n";
 
-  if (_current_display_level!=0 || _current_display_multisample_level!=main().render_parameters().multisample_level())
+  if (_current_display_level!=0 || _current_display_multisample_grid!=main().render_parameters().multisample_grid())
     {
       QMessageBox::information(this,"Evolvotron","The selected image has not yet been generated at maximum resolution.\nPlease try again later.");
+      std::cerr << _current_display_level << "," << _current_display_multisample_grid << "\n";
     }
   else
     {

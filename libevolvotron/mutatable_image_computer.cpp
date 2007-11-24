@@ -98,7 +98,7 @@ void MutatableImageComputer::run()
 		     task()->whole_image_size().height(),
 		     task()->frames(),
 		     (task()->jittered_samples() ? &_r01 : 0),
-		     task()->multisample_level()
+		     task()->multisample_grid()
 		     );
 
 		  const uint col0=lrint(accumulated_colour.x());

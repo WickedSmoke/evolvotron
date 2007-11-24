@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -56,7 +56,7 @@ MutatableImageComputerTask::MutatableImageComputerTask
   ,_fragment(frag)
   ,_number_of_fragments(nfrag)
   ,_jittered_samples(j)
-  ,_multisample_level(ms)
+  ,_multisample_grid(ms)
   ,_current_pixel(0)
   ,_current_col(0)
   ,_current_row(0)
@@ -77,7 +77,11 @@ MutatableImageComputerTask::MutatableImageComputerTask
   assert(_image_function->ok());
   assert(_fragment<_number_of_fragments);
   assert(_number_of_fragments>1 || _whole_image_size==_fragment_size);
+  assert(1<=_multisample_grid);
+}
 
+void MutatableImageComputerTask::allocate_images() const
+{
   for (uint f=0;f<frames();f++)
     {
       _images.push_back(QImage(fragment_size(),32));

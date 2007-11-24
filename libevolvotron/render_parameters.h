@@ -46,15 +46,17 @@ class RenderParameters : public QObject
     }
 
   //! Accessor.
-  const uint multisample_level() const
+  const uint multisample_grid() const
     {
-      return _multisample_level;
+      assert(_multisample_grid>=1);
+      return _multisample_grid;
     }
 
   //! Accessor.
-  void multisample_level(uint v)
+  void multisample_grid(uint v)
     {
-      _multisample_level=v;
+      _multisample_grid=v;
+      assert(_multisample_grid>=1);
       report_change();
     }
 
@@ -72,7 +74,7 @@ signals:
   //! Grid for multisampling.
   /*! Default is 1.  4 would be 16 samples in a 4x4 grid.
    */
-  uint _multisample_level;
+  uint _multisample_grid;
 };
 
 
