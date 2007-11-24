@@ -158,7 +158,7 @@ void EvolvotronMain::History::undo()
 	   it++
 	   )
 	{
-	  _main->restore((*it).first,(*it).second);
+	  _main->restore((*it).first,(*it).second,_archive.size()>1);
 	}
       _archive.pop_front();
     }
@@ -344,7 +344,7 @@ EvolvotronMain::~EvolvotronMain()
   std::clog << "(There are " << _known_displays.size() << " displays remaining)\n";
   for (std::set<MutatableImageDisplay*>::const_iterator it=_known_displays.begin();it!=_known_displays.end();it++)
     {
-      (*it)->image_function(boost::shared_ptr<const MutatableImage>());
+      (*it)->image_function(boost::shared_ptr<const MutatableImage>(),true);
       (*it)->main(0);
     }
 
@@ -379,7 +379,7 @@ void EvolvotronMain::favourite_function_unwrapped(bool v)
   _dialog_favourite->favourite_function_unwrapped(v);
 }
 
-void EvolvotronMain::spawn_normal(const boost::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display)
+void EvolvotronMain::spawn_normal(const boost::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display,bool one_of_many)
 {
   boost::shared_ptr<const MutatableImage> new_image_function;
 
@@ -390,20 +390,20 @@ void EvolvotronMain::spawn_normal(const boost::shared_ptr<const MutatableImage>&
   while (new_image_function->is_constant());
   
   history().replacing(display);
-  display->image_function(new_image_function);
+  display->image_function(new_image_function,one_of_many);
 }
 
-void EvolvotronMain::spawn_recoloured(const boost::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display)
+void EvolvotronMain::spawn_recoloured(const boost::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display,bool one_of_many)
 {  
   std::auto_ptr<FunctionTop> new_root(image_function->top().typed_deepclone());
   
   new_root->reset_posttransform_parameters(mutation_parameters());
   history().replacing(display);
   boost::shared_ptr<const MutatableImage> it(new MutatableImage(new_root,image_function->sinusoidal_z(),image_function->spheremap(),false));
-  display->image_function(it);
+  display->image_function(it,one_of_many);
 }
 
-void EvolvotronMain::spawn_warped(const boost::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display)
+void EvolvotronMain::spawn_warped(const boost::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display,bool one_of_many)
 {
   std::auto_ptr<FunctionTop> new_root=std::auto_ptr<FunctionTop>(image_function->top().typed_deepclone());
 
@@ -413,12 +413,12 @@ void EvolvotronMain::spawn_warped(const boost::shared_ptr<const MutatableImage>&
   new_root->concatenate_pretransform_on_right(transform);
   history().replacing(display);
   boost::shared_ptr<const MutatableImage> it(new MutatableImage(new_root,image_function->sinusoidal_z(),image_function->spheremap(),false));
-  display->image_function(it);
+  display->image_function(it,one_of_many);
 }
 
-void EvolvotronMain::restore(MutatableImageDisplay* display,const boost::shared_ptr<const MutatableImage>& image_function)
+void EvolvotronMain::restore(MutatableImageDisplay* display,const boost::shared_ptr<const MutatableImage>& image_function,bool one_of_many)
 {
-  if (is_known(display)) display->image_function(image_function);
+  if (is_known(display)) display->image_function(image_function,one_of_many);
 }
 
 void EvolvotronMain::set_undoable(bool v,const std::string& action_name)
@@ -443,7 +443,7 @@ void EvolvotronMain::respawn(MutatableImageDisplay* display)
 	}
       else
 	{
-	  (this->*last_spawn_method())(last_spawned_image(),display);
+	  (this->*last_spawn_method())(last_spawned_image(),display,false);
 	}
 
       history().end_action();
@@ -467,7 +467,7 @@ void EvolvotronMain::spawn_all(MutatableImageDisplay* spawning_display,SpawnMemb
     {
       if ((*it)!=spawning_display && !(*it)->locked())
 	{
-	  (this->*method)(spawning_image_function,(*it));
+	  (this->*method)(spawning_image_function,(*it),true);
 	}
     }
 
@@ -701,7 +701,7 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
   history().replacing(display);
   //! \todo sinz and spheremap should be obtained from mutation parameters
   const boost::shared_ptr<const MutatableImage> image_function(new MutatableImage(root,!Args::global().option("-linz"),Args::global().option("-spheremap"),false));
-  display->image_function(image_function);
+  display->image_function(image_function,true);
 }
 
 void EvolvotronMain::undo()
@@ -794,5 +794,5 @@ void EvolvotronMain::mutation_parameters_changed()
 void EvolvotronMain::render_parameters_changed()
 {
   for (std::set<MutatableImageDisplay*>::iterator it=_known_displays.begin();it!=_known_displays.end();it++)
-    (*it)->image_function((*it)->image_function());
+    (*it)->image_function((*it)->image_function(),true);
 }

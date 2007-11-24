@@ -175,7 +175,10 @@ class MutatableImageDisplay : public QWidget
     }
 
   //! Load a new image (clears up old image, starts new compute tasks).
-  void image_function(const boost::shared_ptr<const MutatableImage>& image_fn);
+  /*! When the one_of_many parameter is true, it implies many other images are also being updated
+    (affects fragmentation strategy for multithreading).
+   */
+  void image_function(const boost::shared_ptr<const MutatableImage>& image_fn,bool one_of_many);
 
   //! Evolvotron main calls this with completed (but possibly aborted) tasks.
   void deliver(const boost::shared_ptr<const MutatableImageComputerTask>& task);

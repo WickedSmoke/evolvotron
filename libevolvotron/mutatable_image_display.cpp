@@ -66,6 +66,8 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
    ,_serial(0LL)
 {
   
+  setWFlags(getWFlags()|Qt::WNoAutoErase);
+
   // We DO want background drawn for fixed size because window could be bigger than image (not entirely satisfactory however: still flickers)
   if (!fixed_size)
     {
@@ -194,7 +196,7 @@ const uint MutatableImageDisplay::simplify_constants(bool single_action)
 
   main().history().replacing(this);
 
-  image_function(_image_function->simplified());
+  image_function(_image_function->simplified(),!single_action);
 
   uint new_nodes;
   uint new_parameters;
@@ -239,10 +241,10 @@ void MutatableImageDisplay::frame_advance()
 	  _animate_reverse=true;
 	}
     }
-  repaint(false);
+  repaint(false);  // Use repaint rather than update because we really do want this to happen immediately.
 }
 
-void MutatableImageDisplay::image_function(const boost::shared_ptr<const MutatableImage>& i)
+void MutatableImageDisplay::image_function(const boost::shared_ptr<const MutatableImage>& i,bool one_of_many)
 {
   assert(_image_function.get()==0 || _image_function->ok());
   assert(i.get()==0 || i->ok());
@@ -265,8 +267,8 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
       for (uint f=0;f<_offscreen_pixmaps.size();f++)
 	_offscreen_pixmaps[f].fill(black);
 
-      // Queue a paint so the display will be blacked out
-      repaint();
+      // Queue a repaint
+      update();
     }
 
   // If we start recomputing again we need to accept any delivered images.
@@ -287,13 +289,12 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
 	  const int s=(1<<level);
 	  const QSize render_size(image_size()/s);
 	  
-	  if (render_size.width()>=1 && render_size.height()>=1)
+	  // Don't bother rendering anything less than 4x4 unless that's all there is
+	  if ((render_size.width()>=4 && render_size.height()>=4) || level==0)
 	    {
-	      // We'll parallelize enlargements but not tiles in the grid.
-	      //! \todo: there should be a hint whether this update is a one-off (respawn) or a one-of-many (spawn)
 	      const int fragments
 		=(
-		  _full_functionality
+		  one_of_many
 		  ?
 		  1
 		  :
@@ -427,10 +428,6 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
   _current_display_level=task->level();
   _current_display_multisample_grid=task->multisample_grid();
   
-  // Update what's on the screen.
-  //! \todo Any case for calling update() instead of repaint() ?  Repaint maybe feels smoother.
-  repaint();
-
   // For an icon, take the first image big enough to (hopefully) be filtered down nicely.
   // The converter seems to auto-create an alpha mask sometimes (images with const-color areas), which is quite cool.
   const QSize icon_size(32,32);
@@ -443,6 +440,9 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
       
       _icon_serial=task->serial();
     }
+
+  // Update what's on the screen.
+  update();
 }
 
 void MutatableImageDisplay::lock(bool l,bool record_in_history)
@@ -456,7 +456,7 @@ void MutatableImageDisplay::lock(bool l,bool record_in_history)
 	  main().history().replacing(this);
 	}
       const boost::shared_ptr<const MutatableImage> new_image_function(_image_function->deepclone(l));
-      image_function(new_image_function);
+      image_function(new_image_function,false);
       if (record_in_history)
 	{
 	  main().history().end_action();
@@ -482,7 +482,7 @@ void MutatableImageDisplay::paintEvent(QPaintEvent*)
   // If this is the first paint event after a resize we can start computing images for the new size.
   if (_resize_in_progress)
     {
-      image_function(_image_function);
+      image_function(_image_function,true);
       _resize_in_progress=false;
     }
 }
@@ -665,7 +665,7 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 
 	  // Install new image (triggers recompute).
 	  const boost::shared_ptr<const MutatableImage> new_image_function(new MutatableImage(new_root,image_function()->sinusoidal_z(),image_function()->spheremap(),false));
-	  image_function(new_image_function);
+	  image_function(new_image_function,false);
 
 	  // Finally, record position of this event as last event
 	  _mid_button_adjust_last_pos=event->pos();
@@ -923,7 +923,7 @@ void MutatableImageDisplay::menupick_load_function()
 	  main().history().begin_action("load");
 	  main().history().replacing(this);
 	  main().history().end_action();
-	  image_function(new_image_function);
+	  image_function(new_image_function,false);
 	}
     }
 }
@@ -1037,5 +1037,5 @@ void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
   if (main().isFullScreen()) top_level_widget->showFullScreen();
 
   // Fire up image calculation
-  display->image_function(_image_function);
+  display->image_function(_image_function,false);
 }

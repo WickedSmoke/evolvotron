@@ -131,7 +131,7 @@ class EvolvotronMain : public QMainWindow
 
  protected:
   //! Convenience typedef for pointer to member function implementing a kind of spawn.
-  typedef void (EvolvotronMain::* SpawnMemberFn)(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display);
+  typedef void (EvolvotronMain::* SpawnMemberFn)(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display,bool one_of_many);
 
   //! Instance of History object to track activity.
   std::auto_ptr<History> _history;
@@ -276,9 +276,9 @@ class EvolvotronMain : public QMainWindow
 
   //@{
   //! Perform a particular type of spawn from an individiual image to an individual display.  (Locking not checked).
-  void spawn_normal(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display);
-  void spawn_recoloured(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display);
-  void spawn_warped(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display);
+  void spawn_normal(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display,bool one_of_many);
+  void spawn_recoloured(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display,bool one_of_many);
+  void spawn_warped(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display,bool one_of_many);
   //@}
 
   //! Spawn the specified display using the specified method.
@@ -347,7 +347,7 @@ class EvolvotronMain : public QMainWindow
     }
 
   //! Called by History when performing undo.
-  void restore(MutatableImageDisplay* display,const boost::shared_ptr<const MutatableImage>&);
+  void restore(MutatableImageDisplay* display,const boost::shared_ptr<const MutatableImage>&,bool one_of_many);
 
   //! Called by History to change undo menu status.
   void set_undoable(bool v,const std::string& name);
