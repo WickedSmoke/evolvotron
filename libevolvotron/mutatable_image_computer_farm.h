@@ -106,6 +106,12 @@ class MutatableImageComputerFarm
   //! Destructor cleans up threads.
   ~MutatableImageComputerFarm();
 
+  //! Accessor.
+  const uint num_threads() const
+    {
+      return _computers.size();
+    }
+
   //! Move aborted tasks from todo queue to done queue.
   void fasttrack_aborted();
 

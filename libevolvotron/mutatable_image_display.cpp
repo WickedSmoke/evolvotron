@@ -282,7 +282,6 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
   if (_image_function.get())
     {
       // Allow for displays up to 4096 pixels high or wide
-      //! \todo: Should compute max level needed from display size
       for (int level=12;level>=0;level--)
 	{
 	  const int s=(1<<level);
@@ -290,9 +289,20 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
 	  
 	  if (render_size.width()>=1 && render_size.height()>=1)
 	    {
-	      // We'll fragment enlargements into strips this high (last one might be smaller)
-	      const uint stripheight=32;
-	      const int fragments=(_full_functionality ? 1 : (render_size.height()+stripheight-1)/stripheight);
+	      // We'll parallelize enlargements but not tiles in the grid.
+	      //! \todo: there should be a hint whether this update is a one-off (respawn) or a one-of-many (spawn)
+	      const int fragments
+		=(
+		  _full_functionality
+		  ?
+		  1
+		  :
+		  std::min
+		  (
+		   2*farm().num_threads(),
+		   static_cast<uint>(render_size.height())
+		   )
+		  );
 	      
 	      std::vector<uint> multisample_grid;
 	      multisample_grid.push_back(1);
@@ -312,9 +322,11 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
 		  
 		  // Use number of samples in unfragmented image as priority
 		  const uint task_priority=render_size.width()*render_size.height()*(*multisample_it)*(*multisample_it);
-
+		  
+		  int fragment_start_row=0;
 		  for (int f=0;f<fragments;f++)
 		    {
+		      const int fragment_end_row=(render_size.height()*(f+1))/fragments;
 		      const boost::shared_ptr<MutatableImageComputerTask> task
 			(
 			 new MutatableImageComputerTask
@@ -322,8 +334,8 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
 			  this,
 			  task_image,
 			  task_priority,
-			  QSize(0,f*stripheight),
-			  QSize(render_size.width(),(fragments==1 ? render_size.height() : std::min(stripheight,render_size.height()-f*stripheight))),
+			  QSize(0,fragment_start_row),
+			  QSize(render_size.width(),fragment_end_row-fragment_start_row),
 			  render_size,
 			  _frames,
 			  level,
@@ -335,6 +347,7 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
 			  )
 			 );
 		      farm().push_todo(task);
+		      fragment_start_row=fragment_end_row;
 		    }
 		}
 	    }

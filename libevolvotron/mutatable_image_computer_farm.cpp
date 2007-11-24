@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 MutatableImageComputerFarm::MutatableImageComputerFarm(uint n_threads,int niceness)
 {
   _done_position=_done.end();
-
+  
   for (uint i=0;i<n_threads;i++)
     {
       // The computer's constructor includes a start()
