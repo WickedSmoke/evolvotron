@@ -3,7 +3,6 @@ imply it will be done sooner or later than other items!
 
 Conventional Mode
 -----------------
-- Try to elimate flicker when middle-mouse dragging.  repaint/update/WFlags related ?
 - More feedback on when enlargements are ready for saving (have split tasks count now... need more ? yes)
 
 - Friezegroups:
@@ -20,6 +19,9 @@ Conventional Mode
   Spinsidle  - todo
   Step       - todo
 
+- Not entirely convinced by separate thread pool for enlargements.
+  On the other hand, do need some mechanism to progress enlargements
+  while working on main grid.
 - Add functions for the 17 "wallpaper" symmetry groups.
   ref: http://www.scienceu.com/geometry/articles/tiling/wallpaper.html
   Wikipedia http://en.wikipedia.org/wiki/Wallpaper_group is good.

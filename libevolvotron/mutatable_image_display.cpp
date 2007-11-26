@@ -262,7 +262,7 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
 	  for (uint f=0;f<_offscreen_pixmaps.size();f++)
 	    _offscreen_pixmaps[f].fill(black);
 	  
-	  // Queue a repaint
+	  // Queue a redraw
 	  update();
 	}
     }
@@ -478,7 +478,7 @@ void MutatableImageDisplay::paintEvent(QPaintEvent*)
   // If this is the first paint event after a resize we can start computing images for the new size.
   if (_resize_in_progress)
     {
-      image_function(_image_function,false);  // A resize should really be considered one-of-many, but because the image doesn't change we get away with it
+      image_function(_image_function,false);  // A resize should really be considered one-of-many, but because the image doesn't change we seem to be able to get away with it
       _resize_in_progress=false;
     }
 }
