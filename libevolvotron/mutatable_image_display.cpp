@@ -40,8 +40,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /*! The constructor is passed:
     - the owning widget (probably either a QGrid or null if top-level),
     - the EvolvotronMain providing spawn and farm services, 
-    - a flag to specify whether this is a fully functional display or a restricted one (e.g no spawning for a single top pleve display),
-    - a flag to specify whether the offscreen buffer has fixed size (in which case scrollbars are used),
+    - a flag to specify whether this is a fully functional display or a restricted one (e.g no spawning for a single top level display),
+    - a flag to specify whether the offscreen buffer has fixed size (in which case scrollbars may be used),
     - and the size of the offscreen buffer (only used if fixed_size is true).
     Note that we use Qt's WDestructiveCode flag to ensure the destructor is called on close
  */
@@ -58,22 +58,15 @@ MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,
    ,_timer(0)
    ,_resize_in_progress(false)
    ,_current_display_level(0)
-  ,_current_display_multisample_grid(0)
+   ,_current_display_multisample_grid(0)
    ,_icon_serial(0LL)
    ,_properties(0)
    ,_menu(0)
    ,_menu_big(0)
    ,_serial(0LL)
 {
-  
   setWFlags(getWFlags()|Qt::WNoAutoErase);
-
-  // We DO want background drawn for fixed size because window could be bigger than image (not entirely satisfactory however: still flickers)
-  if (!fixed_size)
-    {
-      // This will stop the widget being cleared to grey before paintEvent is called (supposed to reduce flicker; not 100% though).
-      setBackgroundMode(Qt::NoBackground);
-    }
+  setBackgroundMode(Qt::NoBackground);
 
   _properties=new DialogMutatableImageDisplay(this);
 
@@ -257,18 +250,21 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
 
   // Careful: we could be passed our own existing (and already owned) image
   // (a trick used by resize to trigger recompute & redisplay)
-  // but if the image isn't being changed we might as well leave
-  // what's being displayed there are being a better choice than black
   if (i.get()==0 || _image_function.get()==0 || i->serial()!=_image_function->serial())
     {
       _image_function=i;
 
-      // Clear any existing image data - stops old animations continuing to play 
-      for (uint f=0;f<_offscreen_pixmaps.size();f++)
-	_offscreen_pixmaps[f].fill(black);
-
-      // Queue a repaint
-      update();
+      // If we're part of a fullscale change then better to display back rather than something misleading
+      // but for one-offs (e.g middle mouse drag) is better not to clear.
+      if (one_of_many)
+	{
+	  // Clear any existing image data - stops old animations continuing to play 
+	  for (uint f=0;f<_offscreen_pixmaps.size();f++)
+	    _offscreen_pixmaps[f].fill(black);
+	  
+	  // Queue a repaint
+	  update();
+	}
     }
 
   // If we start recomputing again we need to accept any delivered images.
@@ -482,7 +478,7 @@ void MutatableImageDisplay::paintEvent(QPaintEvent*)
   // If this is the first paint event after a resize we can start computing images for the new size.
   if (_resize_in_progress)
     {
-      image_function(_image_function,true);
+      image_function(_image_function,false);  // A resize should really be considered one-of-many, but because the image doesn't change we get away with it
       _resize_in_progress=false;
     }
 }
@@ -505,8 +501,8 @@ void MutatableImageDisplay::resizeEvent(QResizeEvent* event)
       // Resize and reset our offscreen pixmap (something to do while we wait)
       for (uint f=0;f<_offscreen_pixmaps.size();f++)
 	{
-	  _offscreen_pixmaps[f].resize(image_size());
-	  _offscreen_pixmaps[f].fill(black);
+	  _offscreen_pixmaps[f].resize(image_size());  // resize destroys contents
+	  _offscreen_pixmaps[f].fill(black);           // so set it 
 	}
       
       // Flag for the next paintEvent to tell it a recompute can be started now.
