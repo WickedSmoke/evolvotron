@@ -548,8 +548,8 @@ void EvolvotronMain::list_known(std::ostream& out) const
  */
 void EvolvotronMain::tick()
 {
-  const uint tasks_main=farm(false).tasks();
-  const uint tasks_enlargement=farm(true).tasks();
+  const uint tasks_main=_farm[0]->tasks();
+  const uint tasks_enlargement=(_farm[1].get() ? _farm[1]->tasks() : 0);
   if (tasks_main!=_statusbar_tasks_main || tasks_enlargement!=_statusbar_tasks_enlargement)
     {
       std::ostringstream msg;
@@ -578,15 +578,15 @@ void EvolvotronMain::tick()
 
   // If there are aborted jobs in the todo queue 
   // shift them straight over to done queue so the compute threads don't have to worry about them.
-  farm(false).fasttrack_aborted();
-  farm(true).fasttrack_aborted();
+  _farm[0]->fasttrack_aborted();
+  if (_farm[1].get()) _farm[1]->fasttrack_aborted();
 
   QTime watchdog;
   watchdog.start();
 
-  for (int which_farm=0;which_farm<=1;which_farm++)
+  for (int which_farm=0;which_farm<(_farm[1].get() ? 2 : 1);which_farm++)
     {
-      while ((task=farm(which_farm).pop_done())!=0)
+      while ((task=_farm[which_farm]->pop_done())!=0)
 	{
 	  if (is_known(task->display()))
 	    {

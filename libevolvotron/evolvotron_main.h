@@ -335,7 +335,7 @@ class EvolvotronMain : public QMainWindow
       return _render_parameters;
     }
 
-  //! Accessor.
+  //! Returns which farm to use for purpose.
   MutatableImageComputerFarm& farm(bool enlargement)
     {
       return *_farm[enlargement && _farm[1].get()];
