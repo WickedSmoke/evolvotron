@@ -7,6 +7,7 @@ evolvotron \- Creates generative art by an interactive evolutionary process.
 evolvotron
 [\-a]
 [\-D]
+[\-E]
 [\-f 
 .I <frames>
 ]
@@ -66,6 +67,17 @@ is accessible from the application's "Help" menu once it is running.
 Enable autocooling by default.
 
 .TP 0.5i
+.B \-E
+Use a separate thread pool for computing enlargements.
+Using this option ensures computation of enlargements continue to make
+some progress even while the main grid is being actively worked on.
+However, this will be at the expense of main grid rendering performance.
+Without this option, enlargements' final high-resolution renderings are
+invariably lower priority than computation for images in the main
+grid.
+See also the \-N option to control the priority of threads in this pool.
+
+.TP 0.5i
 .B \-F
 Start in "fullscreen" mode (window manager permitting).
 [Press "Esc" key to revert to normal windowed mode].
@@ -96,13 +108,14 @@ while 4 provides 16 samples per pixel on a 4x4 grid.
 
 .TP 0.5i
 .B \-n
-.I <grid niceness>
-Niceness relative to the main application thread of compute threads serving the main grid of images (defaults to 4).
+.I <niceness>
+Niceness of compute threads relative to the main application thread (defaults to 4).
 
 .TP 0.5i
 .B \-N
 .I <enlargement niceness>
 Niceness relative to the main application thread of compute threads dealing with enlargements (defaults to 4 more than grid niceness).
+Only effective in conjunction with -E option.
 
 .TP 0.5i
 .B \-t

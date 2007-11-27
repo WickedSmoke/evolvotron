@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2007 Tim Day
+// Copyright (C) 2007 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@ class DialogAbout : public QDialog
 
  public:
   //! Constructor.
-  DialogAbout(QWidget* parent,int n_threads);
+  DialogAbout(QWidget* parent,int n_threads,bool separate_farm_for_enlargements);
 
   //! Destructor.
   virtual ~DialogAbout()

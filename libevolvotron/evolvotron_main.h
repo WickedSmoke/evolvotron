@@ -293,6 +293,7 @@ class EvolvotronMain : public QMainWindow
      uint frames,
      uint framerate,
      uint n_threads,
+     bool separate_farm_for_enlargements,
      int niceness_grid,
      int niceness_enlargements,
      bool start_fullscreen,
@@ -337,7 +338,7 @@ class EvolvotronMain : public QMainWindow
   //! Accessor.
   MutatableImageComputerFarm& farm(bool enlargement)
     {
-      return *_farm[enlargement];
+      return *_farm[enlargement && _farm[1].get()];
     }
 
   //! Accessor.

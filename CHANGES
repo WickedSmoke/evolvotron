@@ -9,8 +9,8 @@ From release 0.5.0:
  - Multisampling (antialiasing) options
  - -a/-j/-s command line options for autocool/jitter/multisample
  - evolvotron_render adds -j/-s to control jitter & multisampling
- - There are now separate thread pools (with different nices) for main
-   display and enlargements.  Task totals for each reported separately.
+ - Option (-E) of separate thread pool (with different nices: -n/-N) for enlargements.
+   Task totals for each reported separately.
  - Enlargement and solo renderings are fragmented into multiple smaller
    jobs to better utilize multiprocessor systems.
  - Generally better use of ref-counted QImage and QPixmap.

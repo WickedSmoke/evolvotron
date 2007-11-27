@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "license.h"
 
-DialogAbout::DialogAbout(QWidget* parent,int n_threads)
+DialogAbout::DialogAbout(QWidget* parent,int n_threads,bool separate_farm_for_enlargements)
   :QDialog(parent)
 {
   setCaption("About evolvotron");
@@ -46,9 +46,12 @@ DialogAbout::DialogAbout(QWidget* parent,int n_threads)
     << EVOLVOTRON_BUILD
     << "\n\n"
     << "Using "
+    << (separate_farm_for_enlargements ? "2 pools" : "1 pool")
+    << " of "
     << n_threads
-    << " compute thread" 
-    << (n_threads>1 ? "s" : "") << "\n\n"
+    << " compute thread"
+    << (n_threads>1 ? "s" : "")
+    << "\n\n"
     << "Author: timday@timday.com\n\n"
     << "Home page: http://evolvotron.sourceforge.net\n"
     << "Project page: http://sourceforge.net/projects/evolvotron\n";

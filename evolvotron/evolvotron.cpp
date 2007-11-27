@@ -98,6 +98,8 @@ int main(int argc,char* argv[])
   int niceness_grid=4;
   if (args.option("-n",1)) args.after() >> niceness_grid;
 
+  const bool separate_farm_for_enlargements=args.option("-E");
+
   int niceness_enlargement=niceness_grid+4;
   if (args.option("-N",1)) args.after() >> niceness_enlargement;
 
@@ -163,6 +165,7 @@ int main(int argc,char* argv[])
        frames,
        framerate,
        threads,
+       separate_farm_for_enlargements,
        niceness_grid,
        niceness_enlargement,
        start_fullscreen,

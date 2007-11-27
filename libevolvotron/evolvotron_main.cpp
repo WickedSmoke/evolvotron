@@ -183,6 +183,7 @@ EvolvotronMain::EvolvotronMain
  uint frames,
  uint framerate,
  uint n_threads,
+ bool separate_farm_for_enlargements,
  int niceness_grid,
  int niceness_enlargements,
  bool start_fullscreen,
@@ -209,7 +210,7 @@ EvolvotronMain::EvolvotronMain
   _statusbar_tasks_label=new QLabel("Ready",_statusbar);
   _statusbar->addWidget(_statusbar_tasks_label,0,true);
 
-  _dialog_about=new DialogAbout(this,n_threads);
+  _dialog_about=new DialogAbout(this,n_threads,separate_farm_for_enlargements);
   _dialog_help_short=new DialogHelp(this,false);
   _dialog_help_long=new DialogHelp(this,true);
 
@@ -309,7 +310,10 @@ EvolvotronMain::EvolvotronMain
 	  );
 
   _farm[0]=std::auto_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads,niceness_grid));
-  _farm[1]=std::auto_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads,niceness_enlargements));
+  if (separate_farm_for_enlargements)
+    {
+      _farm[1]=std::auto_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads,niceness_enlargements));
+    }
 
   //! \todo frames and framerate should be retained and modifiable from the GUI
   for (int r=0;r<grid_size.height();r++)
