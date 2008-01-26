@@ -779,7 +779,7 @@ void MutatableImageDisplay::menupick_save_image()
       QString save_filename=QFileDialog::getSaveFileName(".","Images (*.ppm *.png *.qt-mng)",this,"Save image","Save image to a PPM, PNG or QT-MNG file");
       if (!save_filename.isEmpty())
 	{
-	  const char* save_format="PPM";
+	  QString save_format="PPM";
 	  if (save_filename.upper().endsWith(".PPM"))
 	    {
 	      save_format="PPM";
@@ -798,7 +798,7 @@ void MutatableImageDisplay::menupick_save_image()
 		(
 		 this,
 		 "Evolvotron",
-		 QString("Unrecognised file suffix.\nFile will be written in ")+QString(save_format)+QString(" format.")
+		 QString("Unrecognised file suffix.\nFile will be written in ")+save_format+QString(" format.")
 		 );
 	    }
 	  
@@ -863,7 +863,7 @@ void MutatableImageDisplay::menupick_save_image()
 			    }
 			}
 		      
-		      if (!_offscreen_images[f].save(actual_save_filename.local8Bit(),save_format))
+		      if (!_offscreen_images[f].save(actual_save_filename,save_format.local8Bit()))
 			{
 			  QMessageBox::critical(this,"Evolvotron","Failed to write file "+actual_save_filename);
 			  if (f<_offscreen_images.size()-1)
