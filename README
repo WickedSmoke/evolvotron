@@ -102,14 +102,16 @@ The 0.5.0 code is believed to build against Boost 1.33 or 1.34.
 
 If you have problems with a missing sched.h and some sched_* calls,
 you'll need to add a NONLINUX define to the compiler options.  This
-should be being done for win32 and macx by the scopes in the common.pro
-(untested).
+should be being done for win32 and macx by the appropriate scopes
+in the common.pro file, but other unices may need some manual intervention
+(ie just add an explicit DEFINES += .
 
 Long story
 ----------
 [These days the author primarily develops on Debian stable
 or testing.  The comments below re RedHat are based on experience
-with RH8&9; they may or may not be applicable to Fedora.]
+with the now very old RH 8 & 9; they may or may not be applicable
+to Fedora.]
 
 QTDIR should point to your Qt installation.  Your Qt installation
 should be a directory somewhere (it might be /usr/share/qt3, it
@@ -172,6 +174,7 @@ front of the other -I paths.  Yuk.
 
 BUILDING ON OTHER PLATFORMS
 ===========================
+[Very old information now!]
 
 Linc Davis reports:
   "I built it on a Mac with Qt installed via Fink (if you know what that is.)
@@ -227,8 +230,8 @@ Command-line driven tools and their man pages:
 An unsuccessful experiment:
   ./evolvotron_match/evolvotron_match
 
-There are NO extra supporting files
-(e.g libraries, config files, resource files)
+There are NO extra supporting files built
+(e.g shared libraries, config files, resource files)
 which need to be in special places for the software to work.
 
 BUILDING CODE DOCUMENTATION
