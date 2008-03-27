@@ -74,11 +74,12 @@ int main(int argc,char* argv[])
 	  exit(1);
 	}
     }
+      /*! \todo: People porting to non-Linux (BSD, MacOS, Fink etc)
+	please send a suitable #ifdef-able patch for your OS.
+      */
+#ifndef NONLINUX
   else
     {
-      /*! \todo: People porting to non-Linux (BSD, MacOS, Fink etc) please send 
-	a suitable #ifdef-able patch if you need something different here.
-      */
       cpu_set_t cpus;
       if (sched_getaffinity(0,sizeof(cpu_set_t),&cpus)!=0)
 	{
@@ -93,6 +94,8 @@ int main(int argc,char* argv[])
 	    }
 	}
     }
+#endif
+
   std::clog << "Using " << threads << " threads\n";
 
   int niceness_grid=4;

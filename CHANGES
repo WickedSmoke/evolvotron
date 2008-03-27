@@ -1,7 +1,9 @@
 [Most recent at top]
 
 From release 0.5.1:
- - Version to 0.5.2
+ - Version to 0.5.2dev
+ - Remove non-standard Qt animated PNG support (apparently dies in Qt4 anyway)
+ - Processor-count code disabled on non-linux systems (gated by win32 and macx scopes in common.pro)
 
 From release 0.5.0:
  - Version to 0.5.1

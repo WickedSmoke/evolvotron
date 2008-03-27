@@ -21,6 +21,17 @@ VERSION=$$VERSION_NUMBER
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 QMAKE_CFLAGS_RELEASE += -DNDEBUG
 
+#######################################
+# Disable linux specifc stuff (other unices might need attention)
+
+win32 {
+  DEFINES+=NONLINUX
+}
+
+macx {
+  DEFINES+=NONLINUX
+}
+
 ######################################
 # Other stuff:
 # Disable implicit cast from QString to/from char* - we should be using .local8Bit and ::fromLocal8Bit

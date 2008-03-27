@@ -105,9 +105,11 @@ USER OPTIONS
 
   -t <threads>
 	Sets number of compute threads.
-        If this is not specified, as many compute threads are created
+        If this is not specified, then as many compute threads are created
         as there are processors on the system (unless this cannot be
-        discovered, in which case only a single compute thread is created).
+        discovered in which case only a single compute thread is created).
+        Non-linux builds will likely not include code to determine processor count
+        (suitable patches gratefully received). 
 
 ANIMATION OPTIONS
 -----------------
@@ -206,9 +208,8 @@ Right clicking on an image gets you a few more options:
    mode is probably what you want in this case as the image will
    automatically be rendered at the correct resolution). 
 
- - "Save image" to save the image in a file (.ppm, .png or .qt-mng 
-   format; qt-mng is Qt's proprietary version of MNG and not very
-   useful).  You generally want to save an enlarged image: if you
+ - "Save image" to save the image in a file (.ppm or .png).
+   You generally want to save an enlarged image: if you
    save a small image from the grid, the size you see on the screen
    is the size you get in the file.  Save isn't allowed until the 
    full resolution image has been generated; if you try to save too 
@@ -423,13 +424,6 @@ files foo.f000000.ppm, foo.f000001.ppm... will be saved.
 If you have the ImageMagick tools you can convert these to
 an animated GIF playing at approx. 8 frames per second with: 
   $  convert -delay 12 foo.f??????.ppm foo.gif
-
-If you save an animation as "QT-MNG" a single file will be
-generated.  NB THIS IS IN A PROPRIETARY QT FORMAT WHICH PREDATES
-MULTI-FRAME PNG (also known as MNG) AND IS UNLIKELY TO BE
-READABLE BY ANYTHING OTHER THAN QT PROGRAMS.  So it's not 
-actually very useful.  Image viewers will generally recognise
-it as PNG and display the first frame, but that's all.
 
 ADVANCED USAGE
 ==============

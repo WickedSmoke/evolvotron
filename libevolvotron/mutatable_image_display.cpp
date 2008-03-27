@@ -776,7 +776,7 @@ void MutatableImageDisplay::menupick_save_image()
     }
   else
     {
-      QString save_filename=QFileDialog::getSaveFileName(".","Images (*.ppm *.png *.qt-mng)",this,"Save image","Save image to a PPM, PNG or QT-MNG file");
+      QString save_filename=QFileDialog::getSaveFileName(".","Images (*.ppm *.png)",this,"Save image","Save image to a PPM or PNG file");
       if (!save_filename.isEmpty())
 	{
 	  QString save_format="PPM";
@@ -788,10 +788,6 @@ void MutatableImageDisplay::menupick_save_image()
 	    {
 	      save_format="PNG";
 	    }
-	  else if (save_filename.upper().endsWith(".QT-MNG"))
-	    {
-	      save_format="QT-MNG";
-	    }
 	  else
 	    {
 	      QMessageBox::warning
@@ -802,77 +798,33 @@ void MutatableImageDisplay::menupick_save_image()
 		 );
 	    }
 	  
-	  if (!save_filename.isEmpty())
+	  for (uint f=0;f<_offscreen_images.size();f++)
 	    {
-	      std::auto_ptr<QFile> mng_file;
-	      if (save_format=="QT-MNG")
+	      QString actual_save_filename(save_filename);
+	      
+	      if (_offscreen_images.size()>1)
 		{
-		  mng_file=std::auto_ptr<QFile>(new QFile(save_filename));
-		  if (!mng_file->open(IO_WriteOnly|IO_Truncate))
+		  QString frame_component;
+		  frame_component.sprintf(".f%06d",f);
+		  int insert_point=save_filename.findRev(QString("."));
+		  if (insert_point==-1)
 		    {
-		      QMessageBox::critical(this,"Evolvotron","Failed to open file "+save_filename);
+		      actual_save_filename.append(frame_component);
 		    }
-		  else 
+		  else
 		    {
-		      QPNGImagePacker packer(mng_file.get(),32,0);
-		      
-		      for (uint f=0;f<_offscreen_images.size();f++)
-			{
-			  if (!packer.packImage(_offscreen_images[f]))
-			    {
-			      QMessageBox::critical(this,"Evolvotron","Failed while writing file "+save_filename+"\nFile will be removed");
-			      mng_file->close();
-			      if (!mng_file->remove())
-				{
-				  QMessageBox::critical(this,"Evolvotron","Failed to remove file "+save_filename);
-				}
-			      break;
-			    }
-			  std::clog << "Appended frame " << f << " to " << save_filename.local8Bit() << "\n";
-			}
-
-		      mng_file->close();
-		      if (mng_file->status()!=IO_Ok)
-			{
-			  QMessageBox::critical(this,"Evolvotron","Failed while closing file "+save_filename+"\nFile will be removed");
-			  if (!mng_file->remove())
-			    {
-			      QMessageBox::critical(this,"Evolvotron","Failed to remove file "+save_filename);
-			    }
-			}
+		      actual_save_filename.insert(insert_point,frame_component);
 		    }
 		}
-	      else
+	      
+	      if (!_offscreen_images[f].save(actual_save_filename,save_format.local8Bit()))
 		{
-		  for (uint f=0;f<_offscreen_images.size();f++)
+		  QMessageBox::critical(this,"Evolvotron","Failed to write file "+actual_save_filename);
+		  if (f<_offscreen_images.size()-1)
 		    {
-		      QString actual_save_filename(save_filename);
-		      
-		      if (_offscreen_images.size()>1)
-			{
-			  QString frame_component;
-			  frame_component.sprintf(".f%06d",f);
-			  int insert_point=save_filename.findRev(QString("."));
-			  if (insert_point==-1)
-			    {
-			      actual_save_filename.append(frame_component);
-			    }
-			  else
-			    {
-			      actual_save_filename.insert(insert_point,frame_component);
-			    }
-			}
-		      
-		      if (!_offscreen_images[f].save(actual_save_filename,save_format.local8Bit()))
-			{
-			  QMessageBox::critical(this,"Evolvotron","Failed to write file "+actual_save_filename);
-			  if (f<_offscreen_images.size()-1)
-			    {
-			      QMessageBox::critical(this,"Evolvotron","Not attempting to save remaining images in animation");
-			    }
-			  break;
-			}
+		      QMessageBox::critical(this,"Evolvotron","Not attempting to save remaining images in animation");		    
 		    }
+		  break;
 		}
 	    }
 	}
