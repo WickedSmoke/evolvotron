@@ -105,7 +105,7 @@ Non-linux platform issues
 On the whole, Qt does an excellent job of insulating code from
 platform specific details.  However, there is a little bit of
 linux-specific code in evolvotron.
-It hopefully all lives in
+It hopefully now all lives in
   libevolvtron/platform_specific.cpp
 and is selected by compile options
   -DPLATFORM_LINUX or -DPLATFORM_BSD
