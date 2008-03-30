@@ -234,6 +234,17 @@ There are NO extra supporting files built
 (e.g shared libraries, config files, resource files)
 which need to be in special places for the software to work.
 
+PACKAGING
+=========
+There are a few things which might be useful to packagers:
+
+mkdeb
+ - script to build .deb files (pubilder & yada).
+This is used to build the .debs on sourceforge.
+
+rpm/
+ - directory for contributed RPM related resources.
+
 BUILDING CODE DOCUMENTATION
 ===========================
 If you have doxygen (and graphviz too) and want to build
@@ -243,4 +254,3 @@ at the top level.
 The code documentation then appears in ./doc/html/
 This hasn't been tested in a long while now, although the
 doxygen commenting style has been kept up.
-
