@@ -5,6 +5,24 @@
 CONFIG+= qt thread stl precompile_header exceptions release       #release  #debug
 
 #######################################
+# Control platform specific code
+# might be easier to just add DEFINES+=... explicitly and not worry about the Qt platform scopes
+
+unix {
+  DEFINES+=PLATFORM_LINUX      # of course PLATFORM_BSD is more appropriate to some unices
+}
+
+win32 {
+# You might want to add some appropriate code to libevolvotron/platform_specific.cpp
+# and set a #define here to select it
+}
+
+macx {
+# This doesn't actually seem to be selected on Fink builds; manual intervention required
+  DEFINES+=PLATFORM_BSD
+}
+
+#######################################
 # Version numbering.  VERSION_NUMBER should have been set on the qmake command line (see .configure script)
 
 QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_VERSION="$$VERSION_NUMBER"'
@@ -20,17 +38,6 @@ VERSION=$$VERSION_NUMBER
 
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 QMAKE_CFLAGS_RELEASE += -DNDEBUG
-
-#######################################
-# Disable linux specifc stuff (other unices might need attention)
-
-win32 {
-  DEFINES+=NONLINUX
-}
-
-macx {
-  DEFINES+=NONLINUX
-}
 
 ######################################
 # Other stuff:

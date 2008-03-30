@@ -35,6 +35,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "evolvotron_precompiled.h"
 
 #include "args.h"
+#include "platform_specific.h"
+
 #include "evolvotron_main.h"
 
 //! Application code
@@ -63,38 +65,17 @@ int main(int argc,char* argv[])
       exit(1);
     }
   
-  uint threads=1;
+  uint threads=get_number_of_processors();
     
   if (args.option("-t",1))
     {
       args.after() >> threads;
       if (threads<1)
 	{
-	  std::cerr << "Must specify at least one compute thread (option: -t <threads>)\n";
+	  std::cerr << "Must specify at least one thread for option -t <threads>)\n";
 	  exit(1);
 	}
     }
-      /*! \todo: People porting to non-Linux (BSD, MacOS, Fink etc)
-	please send a suitable #ifdef-able patch for your OS.
-      */
-#ifndef NONLINUX
-  else
-    {
-      cpu_set_t cpus;
-      if (sched_getaffinity(0,sizeof(cpu_set_t),&cpus)!=0)
-	{
-	  std::cerr << "Could not determine number of CPUs; defaulting to " << threads << " compute thread\n";
-	}
-      else
-	{
-	  threads=0;
-	  for (int i=0;i<CPU_SETSIZE;i++)
-	    {
-	      if (CPU_ISSET(i,&cpus)) threads++;
-	    }
-	}
-    }
-#endif
 
   std::clog << "Using " << threads << " threads\n";
 

@@ -2,8 +2,11 @@
 
 From release 0.5.1:
  - Version to 0.5.2dev
- - Remove non-standard Qt animated PNG support (apparently dies in Qt4 anyway)
- - Processor-count code disabled on non-linux systems (gated by win32 and macx scopes in common.pro)
+ - Remove non-standard Qt animated PNG support
+   (apparently dies in Qt4 anyway)
+ - Platform specific code (e.g number of processors identification)
+   isolated in libevolvotron/platform_specific.[h|cpp]
+   and selected by PLATFORM_LINUX or PLATFORM_BSD
 
 From release 0.5.0:
  - Version to 0.5.1

@@ -28,6 +28,7 @@ HEADERS += \
 	mutatable_image_display.h \
 	mutatable_image_display_big.h \
         mutation_parameters_qobject.h \
+        platform_specific.h \
         render_parameters.h \
         transform_factory.h \
         usage_text.h \
@@ -51,6 +52,7 @@ SOURCES += \
 	mutatable_image_display.cpp \
 	mutatable_image_display_big.cpp \
         mutation_parameters_qobject.cpp \
+        platform_specific.cpp \
         render_parameters.cpp \
         transform_factory.cpp \
         vbox_scrollview.cpp

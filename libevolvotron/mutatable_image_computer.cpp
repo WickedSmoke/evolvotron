@@ -24,12 +24,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "mutatable_image_computer.h"
 
-// Needed for getpriority/setprioirty
-#include <sys/resource.h>
-
 #include "mutatable_image.h"
 #include "mutatable_image_computer_farm.h"
 #include "mutatable_image_computer_task.h"
+
+#include "platform_specific.h"
 
 MutatableImageComputer::MutatableImageComputer(MutatableImageComputerFarm* frm,int niceness)
   :
@@ -55,23 +54,15 @@ MutatableImageComputer::~MutatableImageComputer()
   std::clog << "...deleted a computer\n";
 }
 
-/*! Compute threads run this method untill killed (probably by the destructor being invoked by the original spawning thread.
+/*! Compute threads run this method until killed (probably by the destructor being invoked by the original spawning thread.
  */
 void MutatableImageComputer::run()
 {
   std::clog << "Thread starting\n";
 
-  // Lower compute thread priority slightly;
-  // computing yet more stuff is less important than displaying the results we've got.
-  /*! \todo: People porting to non-Linux (BSD, MacOS, Fink etc) please send
-    a suitable #ifdef-able patch if you need something different here.
-    Note that this code relies on Linux NPTL's non-Posix-compliant
-    thread-specific nice value (although without a suitable replacement
-    per-thread priority mechanism it's just as well it's that way).
-    \todo: Should check some error codes, but it's pretty harmless if it doesn't work.
-  */
-  const int current_priority=getpriority(PRIO_PROCESS,0);
-  setpriority(PRIO_PROCESS,0,std::min(19,current_priority+_niceness));
+  // Lower compute thread priority slightly; computing yet more stuff
+  // is less important than displaying the results we've got so far.
+  add_thread_niceness(_niceness);
 
   // Run until something sets the kill flag 
   while(!communications().kill())
