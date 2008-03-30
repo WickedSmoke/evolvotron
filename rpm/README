@@ -1,4 +1,5 @@
-Directory for RPM related resources.
-The author only has Debian/Ubuntu systems,
+Directory for contributed RPM related resources.
+NB the author only has Debian/Ubuntu systems currently.
+See the website for up-to-date news re downloadable packages.
 
 evolvotron.spec - Karl Robillard's .spec file to build RPM packages on OpenSuse.
