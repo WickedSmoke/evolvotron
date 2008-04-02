@@ -8,10 +8,10 @@ Packager: <wickedsmoke@users.sf.net>
 Group: Applications/Graphics
 Source: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
-%if 0%{?mandriva_version}
-BuildRequires: gcc-c++ qt3-devel boost-devel
+%if 0%{?fedora_version}
+BuildRequires: gcc-c++ boost-devel python qt-devel 
 %else
-BuildRequires: gcc-c++ qt-devel boost-devel
+BuildRequires: gcc-c++ boost-devel python qt3-devel 
 %endif
 
 %description
@@ -31,7 +31,6 @@ export PATH=$QTDIR/bin:$PATH
 %if 0%{?suse_version}
 export QTDIR=/usr/%{_lib}/qt3
 export PATH=$QTDIR/bin:$PATH  
-which qmake
 %endif
 ./configure
 make
