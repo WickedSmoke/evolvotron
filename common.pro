@@ -6,20 +6,23 @@ CONFIG+= qt thread stl precompile_header exceptions release       #release  #deb
 
 #######################################
 # Control platform specific code
-# might be easier to just add DEFINES+=... explicitly and not worry about the Qt platform scopes
+# (the Qt platform scopes don't seem that useful; might be easier to just add DEFINES+=... explicitly 
 
 unix {
   DEFINES+=PLATFORM_LINUX      # of course PLATFORM_BSD is more appropriate to some unices
 }
 
+macx {
+# NB This doesn't actually seem to be selected on Fink builds 
+# (presumably it applies to Quartz builds instead)
+# Fink does seem to have a useful __DARWIN_X11__ define though,
+# which is used to set PLATFORM_BSD in libevolvotron/platform_specific.cpp
+  DEFINES+=PLATFORM_BSD
+}
+
 win32 {
 # You might want to add some appropriate code to libevolvotron/platform_specific.cpp
 # and set a #define here to select it
-}
-
-macx {
-# This doesn't actually seem to be selected on Fink builds; manual intervention required
-  DEFINES+=PLATFORM_BSD
 }
 
 #######################################

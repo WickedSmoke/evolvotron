@@ -7,6 +7,7 @@ From release 0.5.1:
  - Platform specific code (e.g number of processors identification)
    isolated in libevolvotron/platform_specific.[h|cpp]
    and selected by PLATFORM_LINUX or PLATFORM_BSD
+   (Fink Qt3's __DARWIN_X11__ also detected and used to select PLATFORM_BSD).
 
 From release 0.5.0:
  - Version to 0.5.1

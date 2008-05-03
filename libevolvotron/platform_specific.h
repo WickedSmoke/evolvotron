@@ -24,6 +24,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _platform_specific_h_
 #define _platform_specific_h_
 
+// qt3 for Darwin appears to define this, so use it to select the PLATFORM_BSD options
+#ifdef __DARWIN_X11__
+#define PLATFORM_BSD
+#endif
+
 //! Return the number of processors on the system
 extern const uint get_number_of_processors();
 

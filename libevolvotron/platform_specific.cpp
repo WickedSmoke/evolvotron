@@ -98,6 +98,6 @@ void add_thread_niceness(uint n)
   const int current_priority=getpriority(PRIO_PROCESS,0);
   setpriority(PRIO_PROCESS,0,std::min(19u,current_priority+n));
 #else
-#warning "No platform-specific implementation of add_thread_niceness selected"
+#warning "No platform-specific implementation of add_thread_niceness available"
 #endif
 }

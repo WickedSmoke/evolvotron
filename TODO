@@ -6,6 +6,9 @@ Conventional Mode
 - Smaller fragments for big enlargements; seeing unused processors.
 - More feedback on when enlargements are ready for saving (have split tasks count now... need more ? yes)
 
+- Enlargement menu: submenus for square, 4:3, 8:5, 16:9.  5:4 SXGA 1024x1024 is a bit of an oddball.
+  And name them, see http://en.wikipedia.org/wiki/Computer_display_standard
+
 - Friezegroups:
   Cut taken out for 0.5.0 release.
   Want cut and blend for those that support it.

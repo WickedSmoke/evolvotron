@@ -105,11 +105,18 @@ Non-linux platform issues
 On the whole, Qt does an excellent job of insulating code from
 platform specific details.  However, there is a little bit of
 linux-specific code in evolvotron.
-It hopefully now all lives in
+
+If you don't have a PLATFORM_... define set, you'll get some warnings
+about no default implementations of functions in platform_specific.cpp,
+but should still get a working evolvotron (although missing some functionality
+with regard to automatically choosing how many threads to run and controlling
+thread priority).
+
+All the platform specific code should live in
   libevolvtron/platform_specific.cpp
 and is selected by compile options
   -DPLATFORM_LINUX or -DPLATFORM_BSD
-(with more potentially addable for other platforms)
+(with more potentially addable for other platforms).
 
 Setting the appropriate build options is most easily set by editing
 an appropriate
@@ -121,8 +128,6 @@ near the top of the
 file.  Qt doesn't make a fine enough distinction between unix platforms
 to decide completely automatically, and the situation is further complicated
 by e.g Fink's Qt not considering itself to be a Qt 'macx' build.
-If you don't have a PLATFORM_... define, you'll get some warnings
-about no default implementations of functions in platform_specific.cpp.
 
 Long story
 ----------
@@ -249,7 +254,7 @@ An unsuccessful experiment:
   ./evolvotron_match/evolvotron_match
 
 There are NO extra supporting files built
-(e.g shared libraries, config files, resource files)
+(e.g shared libraries, config files, "resource" files)
 which need to be in special places for the software to work.
 
 PACKAGING
@@ -257,8 +262,10 @@ PACKAGING
 There are a few things which might be useful to packagers:
 
 mkdeb
- - script to build .deb files (pubilder & yada).
-This is used to build the .debs on sourceforge.
+ - script to build .deb files (using the strangely unpopular
+"yada", and pbuilder).  This is used to build the .debs put
+up on sourceforge, but the "official" Debian ones (and Ubuntu
+derivatives) are more conventionally packaged by Gurkan Sengun. 
 
 rpm/
  - directory for contributed RPM related resources.
