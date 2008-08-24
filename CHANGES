@@ -8,6 +8,7 @@ From release 0.5.1:
    isolated in libevolvotron/platform_specific.[h|cpp]
    and selected by PLATFORM_LINUX or PLATFORM_BSD
    (Fink Qt3's __DARWIN_X11__ also detected and used to select PLATFORM_BSD).
+ - Repository migrated to svn
 
 From release 0.5.0:
  - Version to 0.5.1
