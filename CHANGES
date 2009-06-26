@@ -6,6 +6,7 @@ From release 0.5.1:
  - (Qt4 related) keyboard shortcuts rationalized (many removed)
  - (Qt4 related) image displays now have a frame around them
  - (Qt4 related) Remove non-standard Qt animated PNG support
+ - evolvotron_match removed
  - Platform specific code (e.g number of processors identification)
    isolated in libevolvotron/platform_specific.[h|cpp]
    and selected by PLATFORM_LINUX or PLATFORM_BSD
