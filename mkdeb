@@ -99,7 +99,7 @@ Install: sh
  yada install -man man/man1/evolvotron.1
  yada install -man man/man1/evolvotron_mutate.1
  yada install -man man/man1/evolvotron_render.1
-Menu: ?package(evolvotron): needs="x11" section="Apps/Graphics" title="Evolvotron" command="/usr/bin/evolvotron"
+Menu: ?package(evolvotron): needs="x11" section="Applications/Graphics" title="Evolvotron" command="/usr/bin/evolvotron"
 EOF
 
 yada rebuild
