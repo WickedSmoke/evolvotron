@@ -35,11 +35,11 @@ class XY
 
   //@{
   //! Accessor.
-  const real x() const
+  real x() const
     {
       return rep[0];
     }
-  const real y() const
+  real y() const
     {
       return rep[1];
     }
@@ -122,19 +122,19 @@ class XY
     }
 
   //! Return the square of the magnitude.
-  const real magnitude2() const
+  real magnitude2() const
     {
       return x()*x()+y()*y();
     }
 
   //! Return the magnitude.
-  const real magnitude() const
+  real magnitude() const
     {
       return sqrt(magnitude2());
     }
 
   //! Returns sum of x and y components.
-  const real sum_of_components() const
+  real sum_of_components() const
     {
       return x()+y();
     }
@@ -146,7 +146,7 @@ class XY
   void normalise();
 
   //! Returns true if an origin centred rectangle with this vectors' semi-axes contains the argument.
-  const bool origin_centred_rect_contains(const XY& p) const
+  bool origin_centred_rect_contains(const XY& p) const
     {
       return (-x()<=p.x() && p.x()<=x() && -y()<=p.y() && p.y()<=y()); 
     }
@@ -165,7 +165,7 @@ class XY
 //! Dot product.
 /*! Perhaps a curious choice of operator but it works for me.
  */
-inline const real operator%(const XY& a,const XY& b)
+inline real operator%(const XY& a,const XY& b)
 {
   return a.x()*b.x()+a.y()*b.y();
 } 
@@ -224,6 +224,5 @@ inline std::ostream& operator<<(std::ostream& out,const XY& v)
 {
   return v.write(out);
 }
-
 
 #endif

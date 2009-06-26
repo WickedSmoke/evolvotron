@@ -74,7 +74,7 @@ public:
     }
 
   //! Accessor.
-  const uint iterations() const
+  uint iterations() const
   {
     return _iterations;
   }

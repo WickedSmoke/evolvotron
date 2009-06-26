@@ -1,12 +1,22 @@
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
-Misc
-----
-Link to gallery http://gigrafx.110mb.com/evolvotron/index.html
+Consequences of Qt4 port
+------------------------
+mutableimagedisplay actions need attention - hmmm shorcuts would need to be installed for the grid, then dispatched.
+Margins in display grid - add command line option ?
+Why was DialogMutatableImageDisplay created with :QDialog(parent,0,TRUE) ?
+EvolvotronMain destructor called on close ?
+statusbar needs right justification ?
+libqt4-xml: add to .deb build dependencies
+New-style include files; move to common
+Lots of Qthingy* stuff needn't be declared in headers; clean up
 
 Conventional Mode
 -----------------
+- Link on webpage to gallery http://gigrafx.110mb.com/evolvotron/index.html
+- Mouse manipulations: frame rate should be clamped to allow some time to produce a nice image
+- At least split out evolvotron_main_history.cpp, even if the class remains nested in .h
 - Smaller fragments for big enlargements; seeing unused processors.
 - More feedback on when enlargements are ready for saving (have split tasks count now... need more ? yes)
 

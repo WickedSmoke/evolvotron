@@ -39,7 +39,7 @@ FunctionRegistry::~FunctionRegistry()
 }
 
 //! Return the registration for the function named (returns 0 if unknown)
-const FunctionRegistration*const FunctionRegistry::lookup(const std::string& f) const
+const FunctionRegistration* FunctionRegistry::lookup(const std::string& f) const
 {
   Registrations::const_iterator it=_registry_by_name.find(f);
   if (it==_registry_by_name.end())

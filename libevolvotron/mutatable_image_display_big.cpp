@@ -27,16 +27,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "evolvotron_main.h"
 
-/*! The constructor is passed:
-    - the owning widget (expected to be null but it might get used somewhere else one day)
-    - the EvolvotronMain providing spawn and farm services,
-    - the MutatableImageDisplay to be held
- */
-MutatableImageDisplayBig::MutatableImageDisplayBig(QWidget* parent,EvolvotronMain* mn)
-  :QWidget(parent,0,Qt::WDestructiveClose)
-   ,_main(mn)
-   ,_held(0)
-{}
+MutatableImageDisplayBig::MutatableImageDisplayBig(EvolvotronMain* mn)
+  :_main(mn)
+{
+  setAttribute(Qt::WA_DeleteOnClose,true);
+
+  setWindowTitle("Evolvotron");
+  setMinimumSize(256,256);
+  
+  //setSizeGripEnabled(true); // Would need a statusbar or similar
+}
 
 /*! Don't think destructor needs to do anything to _display... Qt takes care of it
  */
@@ -56,7 +56,7 @@ void MutatableImageDisplayBig::keyPressEvent(QKeyEvent* e)
       else
 	showNormal();  
     }
-  else if (e->key()==Qt::Key_F && !(e->state()^Qt::ControlButton))
+  else if (e->key()==Qt::Key_F && !e->modifiers())
     {
       if (isFullScreen())
 	{
@@ -72,9 +72,4 @@ void MutatableImageDisplayBig::keyPressEvent(QKeyEvent* e)
       // Perhaps it's for someone else
       e->ignore();
     }
-}
-
-void MutatableImageDisplayBig::resizeEvent(QResizeEvent*)
-{
-  _held->resize(size());
 }

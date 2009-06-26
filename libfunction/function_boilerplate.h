@@ -44,17 +44,17 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
   virtual ~FunctionBoilerplate();
 
   //! Accessor providing function name
-  virtual const char*const thisname() const
+  virtual const char* thisname() const
     =0;
 
   //! Registration member returns a reference to class meta-information.
   static const FunctionRegistration get_registration(const char* fn_name);
     
   //! Bits give some classification of the function type
-  static const uint type_classification() {return CLASSIFICATION;}
+  static uint type_classification() {return CLASSIFICATION;}
 
   //! Bits give some classification of the function type
-  virtual const uint self_classification() const;
+  virtual uint self_classification() const;
 
   //! Factory method to create a stub node for this type
   static std::auto_ptr<FunctionNode> stubnew(const MutationParameters& mutation_parameters,bool exciting);
@@ -71,7 +71,7 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
   std::auto_ptr<FUNCTION> typed_deepclone() const;
     
   //! Internal self-consistency check.  We can add some extra checks.
-  virtual const bool ok() const;
+  virtual bool ok() const;
 
   //! Save this node.
   virtual std::ostream& save_function(std::ostream& out,uint indent) const;
@@ -107,7 +107,7 @@ const FunctionRegistration FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITE
 }
 
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION>
-const uint FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::self_classification() const
+uint FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::self_classification() const
 {
   return CLASSIFICATION;
 }
@@ -156,7 +156,7 @@ std::auto_ptr<FUNCTION> FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERAT
 }
 
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION>
-const bool FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::ok() const
+bool FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::ok() const
 {
   return (
 	  params().size()==PARAMETERS
@@ -181,11 +181,11 @@ std::ostream& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSI
 #define FN_DTOR_DCL(FN) virtual ~FN();
 #define FN_DTOR_IMP(FN) FN::~FN() {}
 
-#define FN_VNAME_DCL(FN) virtual const char*const thisname() const;
-#define FN_VNAME_IMP(FN) const char*const FN::thisname() const {return FN::classname();}
+#define FN_VNAME_DCL(FN) virtual const char* thisname() const;
+#define FN_VNAME_IMP(FN) const char* FN::thisname() const {return FN::classname();}
 
-#define FN_SNAME_DCL(FN) static const char*const classname();
-#define FN_SNAME_IMP(FN) const char*const FN::classname() {return #FN;}
+#define FN_SNAME_DCL(FN) static const char* classname();
+#define FN_SNAME_IMP(FN) const char* FN::classname() {return #FN;}
 
 #define FUNCTION_BEGIN(FN,NP,NA,IT,CL) \
    class FN : public FunctionBoilerplate<FN,NP,NA,IT,CL> \

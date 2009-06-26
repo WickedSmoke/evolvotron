@@ -23,6 +23,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _render_parameters_h_
 #define _render_parameters_h_
 
+template <typename T> bool change(T& dst,const T& src)
+{
+  const T previous=dst;
+  dst=src;
+  return (dst!=previous);
+}
+
 //! Class encapsulating things affecting rendering
 class RenderParameters : public QObject
 {
@@ -33,7 +40,7 @@ class RenderParameters : public QObject
   ~RenderParameters();
 
   //! Accessor.
-  const bool jittered_samples() const
+  bool jittered_samples() const
     {
       return _jittered_samples;
     }
@@ -41,12 +48,11 @@ class RenderParameters : public QObject
   //! Accessor.
   void jittered_samples(bool v)
     {
-      _jittered_samples=v;
-      report_change();
+      if (change(_jittered_samples,v)) report_change();
     }
 
   //! Accessor.
-  const uint multisample_grid() const
+  uint multisample_grid() const
     {
       assert(_multisample_grid>=1);
       return _multisample_grid;
@@ -55,9 +61,8 @@ class RenderParameters : public QObject
   //! Accessor.
   void multisample_grid(uint v)
     {
-      _multisample_grid=v;
-      assert(_multisample_grid>=1);
-      report_change();
+      assert(v>=1);
+      if (change(_multisample_grid,v)) report_change();
     }
 
 signals:

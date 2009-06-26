@@ -90,13 +90,13 @@ class FunctionNode : public Function
   /*! Return true on success, false on fail with reasons in report string.
     Mainly for use by derived FunctionBoilerplate template to avoid duplicate code proliferation.
    */
-  static const bool verify_info(const FunctionNodeInfo& info,unsigned int np,unsigned int na,bool it,std::string& report);
+  static bool verify_info(const FunctionNodeInfo& info,unsigned int np,unsigned int na,bool it,std::string& report);
 
   //! Build argument list.
   /*! Return true on success, false on fail with reasons in report string.
     Mainly for use by derived FunctionBoilerplate template to avoid duplicate code proliferation.
    */
-  static const bool create_args(const FunctionRegistry&,const FunctionNodeInfo& info,boost::ptr_vector<FunctionNode>& args,std::string& report);
+  static bool create_args(const FunctionRegistry&,const FunctionNodeInfo& info,boost::ptr_vector<FunctionNode>& args,std::string& report);
 
  public:
 
@@ -107,19 +107,19 @@ class FunctionNode : public Function
       Default implementation (and probably the only sensible one)
       is constant if all args are constant; no args returns false.
    */
-  virtual const bool is_constant() const;
+  virtual bool is_constant() const;
 
   //! Internal self consistency check.
-  virtual const bool ok() const;
+  virtual bool ok() const;
 
   //! Bits give some classification of the function type
-  virtual const uint self_classification() const
+  virtual uint self_classification() const
     =0;
 
   //@{
   //! Query the node as to whether it is a FunctionTop (return null if not).
-  virtual const FunctionTop*const is_a_FunctionTop() const;
-  virtual FunctionTop*const is_a_FunctionTop();
+  virtual const FunctionTop* is_a_FunctionTop() const;
+  virtual FunctionTop* is_a_FunctionTop();
   //@}
 
   //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
@@ -132,7 +132,7 @@ class FunctionNode : public Function
   static void stubargs(boost::ptr_vector<FunctionNode>&,const MutationParameters& parameters,uint n,bool exciting=false);
 
   //! Return a suitable starting value for a node's iteration count (assuming it's iterative).
-  static const uint stubiterations(const MutationParameters& parameters);
+  static uint stubiterations(const MutationParameters& parameters);
 
   //! Constructor given an array of params and args and an iteration count.
   /*! These MUST be provided; there are no alterative constructors.
@@ -158,14 +158,14 @@ class FunctionNode : public Function
     }
 
   //! Accessor. 
-  const real param(uint n) const
+  real param(uint n) const
     {
       assert(n<params().size());
       return params()[n];
     }
 
   //! Accessor.
-  const uint iterations() const
+  uint iterations() const
     {
       return _iterations;
     }
@@ -232,11 +232,11 @@ class FunctionNode : public Function
  protected:
   //@{
   //! Useful constants used when some small sampling step is required (e.g gradient operators).
-  static const real epsilon() {return 1e-6;}
-  static const real epsilon2() {return 2.0*epsilon();}
-  static const real inv_epsilon() {return 1.0/epsilon();}
-  static const real inv_epsilon2() {return 1.0/epsilon2();}
-  static const real big_epsilon() {return sqrt(epsilon());}
+  static real epsilon() {return 1e-6;}
+  static real epsilon2() {return 2.0*epsilon();}
+  static real inv_epsilon() {return 1.0/epsilon();}
+  static real inv_epsilon2() {return 1.0/epsilon2();}
+  static real big_epsilon() {return sqrt(epsilon());}
   //@}
 };
 

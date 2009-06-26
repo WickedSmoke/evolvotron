@@ -84,7 +84,7 @@ void MutatableImageComputerTask::allocate_images() const
 {
   for (uint f=0;f<frames();f++)
     {
-      _images.push_back(QImage(fragment_size(),32));
+      _images.push_back(QImage(fragment_size(),QImage::Format_RGB32));
     }
 }
 

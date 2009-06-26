@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003 Tim Day
+// Copyright (C) 2009 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -28,7 +28,6 @@ class EvolvotronMain;
 //! Intended to be used as a top-level widget holding a single MutatableImageDisplay
 /*! We just used to use a display or scroll view itself as a top-level widget,
   but need this to get some specific keyboard effects.
-  As a MutatableImageDisplayHolder it actually has more in common with EvolvotronMain.
   \todo class name is a bit misleading.  This is really just a slightly modified top-level holder.
  */
 class MutatableImageDisplayBig : public QWidget
@@ -36,38 +35,26 @@ class MutatableImageDisplayBig : public QWidget
   Q_OBJECT
 
  protected:
-  //! Pointer back to the application object to access services.
+  //! Pointer back to the application object to access fullscreen state
   EvolvotronMain* _main;
-
-  //! The widget being held.  Probably be a QScrollView or MutatableImageDisplay.
-  QWidget* _held;
 
  public:
   //! Constructor.
-  MutatableImageDisplayBig(QWidget* parent,EvolvotronMain* mn);
+  MutatableImageDisplayBig(EvolvotronMain* mn);
 
   //! Destructor.
   virtual ~MutatableImageDisplayBig();
 
   //! Accessor.
-  EvolvotronMain*const main() const
+  EvolvotronMain* main() const
     {
       assert(_main!=0);
       return _main;
     }
 
-  //! Accessor.
-  void hold(QWidget* w)
-    {
-      _held=w;
-    }
-
  protected:
   //! Handle key-presses
   void keyPressEvent(QKeyEvent* e);
-
-  //! Need to propagate resizes to held widget
-  virtual void resizeEvent(QResizeEvent*);
 };
 
 #endif

@@ -53,7 +53,7 @@ static const char*const helptext_short=
 "<h2>Mouse</h2>"
 "<h3>Left-click</h3>"
 "<p>Spawns mutant offspring.</p>"
-"<h3>Middle-drag</h2>"
+"<h3>Middle-drag</h3>"
 "<ul>"
 "  <li>"
 "    Unmodified - pan"
@@ -147,26 +147,26 @@ static const char*const helptext_long=
 DialogHelp::DialogHelp(QWidget* parent,bool full)
   :QDialog(parent)
 {
-  setCaption(full ? "Evolvotron User Manual" : "Evolvotron Quick Reference");
-  setMinimumSize(300,200);
+  setWindowTitle(full ? "Evolvotron User Manual" : "Evolvotron Quick Reference");
+  setMinimumSize(480,360);
+  setSizeGripEnabled(true);
 
-  _vbox=new QVBox(this);
-  
-  _browser=new QTextBrowser(_vbox);
-  _browser->setText(full ? helptext_long : helptext_short);
+  setLayout(new QVBoxLayout);
 
-  _ok=new QPushButton("OK",_vbox);
-  // Setting this button to default doesn't seem to have an effect (it does in other browsers).
-  // Something to do with sharing with a QTextBrowser ?
-  _ok->setDefault(true);
+  QTextBrowser*const browser=new QTextBrowser;
+  layout()->addWidget(browser);
+  browser->setText(full ? helptext_long : helptext_short);
 
-  connect(
-	  _ok,SIGNAL(clicked()),
-	  this,SLOT(hide())
-	  );
+  QPushButton*const ok=new QPushButton("OK");
+  layout()->addWidget(ok);
+  ok->setDefault(true);
+
+  connect
+    (
+     ok,SIGNAL(clicked()),
+     this,SLOT(hide())
+     );
 }
 
-void DialogHelp::resizeEvent(QResizeEvent*)
-{
-  _vbox->resize(size());
-}
+DialogHelp::~DialogHelp()
+{}

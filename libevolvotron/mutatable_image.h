@@ -80,19 +80,19 @@ class MutatableImage
   const FunctionTop& top() const;
 
   //! Accessor.
-  const bool sinusoidal_z() const
+  bool sinusoidal_z() const
     {
       return _sinusoidal_z;
     }
 
   //! Accessor.
-  const bool spheremap() const
+  bool spheremap() const
     {
       return _spheremap;
     }
 
   //! Accessor.
-  const bool locked() const
+  bool locked() const
     {
       return _locked;
     }
@@ -104,7 +104,7 @@ class MutatableImage
     }
 
   //! Accessor.
-  const unsigned long long serial() const
+  unsigned long long serial() const
     {
       return _serial;
     }
@@ -128,7 +128,7 @@ class MutatableImage
   const XYZ get_rgb(uint x,uint y,uint f,uint width,uint height,uint frames,Random01* r01,uint multisample) const;
 
   //! Return whether image value is independent of position.
-  const bool is_constant() const;
+  bool is_constant() const;
 
   //! Save the function-tree to the stream
   std::ostream& save_function(std::ostream& out) const;
@@ -140,7 +140,7 @@ class MutatableImage
   void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const;
 
   //! Check the function tree is ok.
-  const bool ok() const;
+  bool ok() const;
 };
 
 #endif

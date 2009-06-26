@@ -25,25 +25,26 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "dialog_mutatable_image_display.h"
 
 DialogMutatableImageDisplay::DialogMutatableImageDisplay(QWidget* parent)
-  :QDialog(parent,0,TRUE)
+  :QDialog(parent)
 {
-  setCaption("Image Properties");
-  setMinimumSize(320,240);
+  setWindowTitle("Image Properties");
+  setSizeGripEnabled(true);
 
-  _vbox=new QVBox(this);
+  setLayout(new QVBoxLayout);
 
-  _tabs=new QTabWidget(_vbox);
+  _tabs=new QTabWidget;
+  layout()->addWidget(_tabs);
 
-  _label_info=new QLabel(QString(""),_tabs);
+  _label_info=new QLabel(QString(""));
   _tabs->addTab(_label_info,"Summary");
 
-  _textedit_xml=new QTextEdit(_tabs);
+  _textedit_xml=new QTextEdit;
   _textedit_xml->setReadOnly(true);
-  _textedit_xml->setTextFormat(PlainText);
   _tabs->addTab(_textedit_xml,"Detail");
 
-  _ok=new QPushButton("OK",_vbox);
+  _ok=new QPushButton("OK");
   _ok->setDefault(true);
+  layout()->addWidget(_ok);
 
   connect(
 	  _ok,SIGNAL(clicked()),
@@ -51,19 +52,16 @@ DialogMutatableImageDisplay::DialogMutatableImageDisplay(QWidget* parent)
 	  );
 }
 
-void DialogMutatableImageDisplay::resizeEvent(QResizeEvent*)
-{
-  _vbox->resize(size());
-}
+DialogMutatableImageDisplay::~DialogMutatableImageDisplay()
+{}
 
 void DialogMutatableImageDisplay::set_content(const std::string& m,const std::string& x)
 {
   _label_info->setText(QString(m.c_str()));
   _label_info->adjustSize();
 
-  _textedit_xml->setText(x);
+  _textedit_xml->setPlainText(x.c_str());
 
   adjustSize();
   updateGeometry();
 }
-

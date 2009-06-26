@@ -1,5 +1,5 @@
 // Source file for evolvotron
-// Copyright (C) 2002,2003,2004 Tim Day
+// Copyright (C) 2009 Tim Day
 /*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -24,14 +24,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "dialog_functions.h"
 
-#include <qtooltip.h>
-#include <qtabwidget.h>
-
 #include "evolvotron_main.h"
 #include "function_registry.h"
-#include "vbox_scrollview.h"
 
-/*! About dialog displays author info, web addresses and license info.
+/*! Dialog controls function weightings and related parameters.
  */
 DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObject* mp)
   :QDialog(parent)
@@ -40,31 +36,49 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
 {
   assert(_parent!=0);
 
-  setCaption("Functions");
+  setWindowTitle("Functions");
+  setMinimumSize(480,360);     // Have to scroll through tabs if don't set this
+  setSizeGripEnabled(true);
 
-  _dialog_content=new QVBox(this);
+  setLayout(new QVBoxLayout);
 
-  QTabWidget* tabs=new QTabWidget(_dialog_content);
-  _ok=new QPushButton("OK",_dialog_content);
-  _ok->setDefault(true);
+  QTabWidget*const tabs=new QTabWidget;
+  layout()->addWidget(tabs);
+
+  QPushButton*const ok=new QPushButton("OK");
+  layout()->addWidget(ok);
+  ok->setDefault(true);
 
   for (int c=-1;c<FnClassifications;c++)
     {
-      QVBox*const tab_content=new QVBox(_dialog_content);
+      QWidget*const tab_content=new QWidget;
+      QVBoxLayout*const tab_content_layout=new QVBoxLayout;
+      tab_content->setLayout(tab_content_layout);
       tabs->addTab(tab_content,(c==-1 ? "All" : function_classification_name[c]));
 
-      QHBox*const buttons=new QHBox(tab_content);
-      QPushButton*const button_less=new QPushButton("Less",buttons);
-      QPushButton*const button_rand=new QPushButton("Randomize",buttons);
-      QPushButton*const button_more=new QPushButton("More",buttons);
+      QWidget*const buttons=new QWidget;
+      buttons->setLayout(new QHBoxLayout);
+      tab_content->layout()->addWidget(buttons);
+      QPushButton*const button_less=new QPushButton("Less");
+      QPushButton*const button_rand=new QPushButton("Randomize");
+      QPushButton*const button_more=new QPushButton("More");
+      buttons->layout()->addWidget(button_less);
+      buttons->layout()->addWidget(button_rand);
+      buttons->layout()->addWidget(button_more);
 
       SignalExpanderClickedUint*const bx_rand=new SignalExpanderClickedUint(this,(c==-1 ? 0xffffffff : (1<<c)));
 
       connect(button_rand,SIGNAL(clicked()),bx_rand,SLOT(clicked()));
       connect(bx_rand,SIGNAL(clicked(uint)),this,SLOT(clicked_button_rand(uint)));
 
-      VBoxScrollView* scrollview=new VBoxScrollView(tab_content);
-      tab_content->setStretchFactor(scrollview,1);
+      QScrollArea*const scrollarea=new QScrollArea;
+      scrollarea->setWidgetResizable(true);
+      tab_content->layout()->addWidget(scrollarea);
+      tab_content_layout->setStretchFactor(scrollarea,1);
+      
+      QWidget*const scrollcontent=new QWidget;
+      scrollcontent->setLayout(new QVBoxLayout);
+      scrollarea->setWidget(scrollcontent);
 
       for (FunctionRegistry::Registrations::const_iterator it=_parent->mutation_parameters().function_registry().registrations().begin();
 	   it!=_parent->mutation_parameters().function_registry().registrations().end();
@@ -78,15 +92,23 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
 #endif
 	  if (c==-1 || fn.classification()&(1<<c))
 	    {
-	      QGroupBox* g=new QGroupBox(3,Qt::Horizontal,fn.name(),scrollview->contentParent());
+	      QGroupBox*const g=new QGroupBox(fn.name().c_str());
+	      scrollarea->widget()->layout()->addWidget(g);
+	      g->setLayout(new QHBoxLayout);
 	      
 	      QSizePolicy spx(QSizePolicy::Expanding,QSizePolicy::Preferred);
 	      g->setSizePolicy(spx);
 	      
-	      new QLabel("2^-10",g);
-	      QSlider* s=new QSlider(-10,0,1,0,Qt::Horizontal,g);
+	      g->layout()->addWidget(new QLabel("2^-10"));
+	      QSlider*const s=new QSlider(Qt::Horizontal);
+	      g->layout()->addWidget(s);
+	      s->setMinimum(-10);
+	      s->setMaximum(0);
+	      s->setValue(0);
+	      s->setTickInterval(1);
+	      s->setTickPosition(QSlider::TicksBothSides);
 	      s->setSizePolicy(spx);
-	      new QLabel("1",g);
+	      g->layout()->addWidget(new QLabel("1"));
 	      
 	      _slider_to_function.insert(std::make_pair(s,&fn));
 
@@ -114,28 +136,55 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
 
   // And add another tab for all the branching-ratio/dilution controls
   {
-    QVBox* vbox=new QVBox(this);
+    QWidget*const vbox=new QWidget;
+    vbox->setLayout(new QVBoxLayout);
     tabs->addTab(vbox,"Dilution");
     
-    _branching_ratio=new QLabel(vbox);
+    _branching_ratio=new QLabel;
+    vbox->layout()->addWidget(_branching_ratio);
     
-    QGroupBox* c0=new QGroupBox(3,Qt::Horizontal,"Required branching ratio after dilution",vbox);
-    new QLabel("0.1",c0);
-    _slider_target_branching_ratio=new QSlider(10,90,1,50,Qt::Horizontal,c0);
-    QToolTip::add(_slider_target_branching_ratio,"The branching ratio must be diluted to <1.0 to prevent formation of infinitely large function-trees.\nWarning: setting a high value results in complex function trees taking a long time to compute.\nSetting a low value results in very simple images.");
-    new QLabel("0.9",c0);
+    QGroupBox*const c0=new QGroupBox("Required branching ratio after dilution");
+    c0->setLayout(new QHBoxLayout);
+    vbox->layout()->addWidget(c0);
 
-    QGroupBox* c1=new QGroupBox(3,Qt::Horizontal,"Of diluting nodes, proportion constant:",vbox);
-    new QLabel("0.0",c1);
-    _slider_proportion_constant=new QSlider(0,100,1,50,Qt::Horizontal,c1);
-    new QLabel("1.0",c1);
-    QToolTip::add(_slider_proportion_constant,"This specifies the proportion of diluting nodes which will be constant.");
+    c0->layout()->addWidget(new QLabel("0.1"));
+    _slider_target_branching_ratio=new QSlider(Qt::Horizontal);
+    c0->layout()->addWidget(_slider_target_branching_ratio);
+    _slider_target_branching_ratio->setMinimum(10);
+    _slider_target_branching_ratio->setMaximum(90);
+    _slider_target_branching_ratio->setValue(50);
+    _slider_target_branching_ratio->setTickInterval(10);
+    _slider_target_branching_ratio->setTickPosition(QSlider::TicksBothSides);
+    _slider_target_branching_ratio->setToolTip("The branching ratio must be diluted to <1.0 to prevent formation of infinitely large function-trees.\nWarning: setting a high value results in complex function trees taking a long time to compute.\nSetting a low value results in very simple images.");
+    c0->layout()->addWidget(new QLabel("0.9"));
+
+    QGroupBox*const c1=new QGroupBox("Of diluting nodes, proportion constant:");
+    c1->setLayout(new QHBoxLayout);
+    vbox->layout()->addWidget(c1);
+    c1->layout()->addWidget(new QLabel("0.0"));
+    _slider_proportion_constant=new QSlider(Qt::Horizontal,c1);
+    c1->layout()->addWidget(_slider_proportion_constant);
+    _slider_proportion_constant->setMinimum(0);
+    _slider_proportion_constant->setMaximum(100);
+    _slider_proportion_constant->setValue(50);
+    _slider_proportion_constant->setTickInterval(10);
+    _slider_proportion_constant->setTickPosition(QSlider::TicksBothSides);
+    _slider_proportion_constant->setToolTip("This specifies the proportion of diluting nodes which will be constant.");
+    c1->layout()->addWidget(new QLabel("1.0"));
     
-    QGroupBox* c2=new QGroupBox(3,Qt::Horizontal,"Of non-constant diluting nodes, proportion transforms",vbox);
-    new QLabel("0.0",c2);
-    _slider_identity_supression=new QSlider(0,100,1,50,Qt::Horizontal,c2);
-    QToolTip::add(_slider_identity_supression,"This specifies the proportion of non-constant diluting nodes which will be transforms (c.f identity nodes).");
-    new QLabel("1.0",c2);
+    QGroupBox*const c2=new QGroupBox("Of non-constant diluting nodes, proportion transforms");
+    c2->setLayout(new QHBoxLayout);
+    vbox->layout()->addWidget(c2);
+    c2->layout()->addWidget(new QLabel("0.0"));
+    _slider_identity_supression=new QSlider(Qt::Horizontal,c2);
+    c2->layout()->addWidget(_slider_identity_supression);
+    _slider_identity_supression->setMinimum(0);
+    _slider_identity_supression->setMaximum(100);
+    _slider_identity_supression->setValue(50);
+    _slider_identity_supression->setTickInterval(10);
+    _slider_identity_supression->setTickPosition(QSlider::TicksBothSides);
+    _slider_identity_supression->setToolTip("This specifies the proportion of non-constant diluting nodes which will be transforms (c.f identity nodes).");
+    c2->layout()->addWidget(new QLabel("1.0"));
 
   connect(
 	  _slider_target_branching_ratio,SIGNAL(valueChanged(int)),
@@ -143,7 +192,7 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
 	  );
 
   connect(
-          _ok,SIGNAL(clicked()),
+          ok,SIGNAL(clicked()),
           this,SLOT(hide())
           );
 
@@ -168,12 +217,6 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
 
 DialogFunctions::~DialogFunctions()
 {}
-
-void DialogFunctions::resizeEvent(QResizeEvent* e)
-{
-  Superclass::resizeEvent(e);
-  _dialog_content->resize(size());
-}
 
 void DialogFunctions::setup_from_mutation_parameters()
 {
@@ -262,4 +305,3 @@ void DialogFunctions::mutation_parameters_changed()
   //std::clog << "[DialogFunctions::mutation_parameters_changed()]\n";
   setup_from_mutation_parameters();  
 }
-

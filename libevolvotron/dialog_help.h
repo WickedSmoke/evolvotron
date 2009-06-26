@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _dialog_help_h_
 #define _dialog_help_h_
 
-#include <qtextbrowser.h>
-
 //! Provides a dialog box with some user documentation.
 /*! More of a quick reference guide than a manual.
  */
@@ -34,27 +32,12 @@ class DialogHelp : public QDialog
   Q_OBJECT
 
  public:
+
   //! Constructor.
   DialogHelp(QWidget* parent,bool full);
 
   //! Destructor.
-  virtual ~DialogHelp()
-    {}
-
- protected:
-  //! Vertical layout.
-  QVBox* _vbox;
-
-  //! Label for name/release/author etc
-  QTextBrowser* _browser;
-
-  //! Button to close dialog.
-  QPushButton* _ok;
-
-  //! Need to pass resizes on to vbox or things just get chopped.
-  virtual void resizeEvent(QResizeEvent*);
+  ~DialogHelp();
 };
-
-
 
 #endif

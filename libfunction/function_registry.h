@@ -39,7 +39,7 @@ class FunctionRegistry
   ~FunctionRegistry();
 
   //! Return the registration for the function named (returns 0 if unknown)
-  const FunctionRegistration*const lookup(const std::string& f) const;
+  const FunctionRegistration* lookup(const std::string& f) const;
 
   //! typedefed for convenience
   typedef boost::ptr_map<std::string,FunctionRegistration> Registrations;

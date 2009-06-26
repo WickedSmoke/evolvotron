@@ -31,33 +31,13 @@ class DialogAbout : public QDialog
  private:
   Q_OBJECT
 
-  typedef QDialog Superclass;
-
  public:
+
   //! Constructor.
   DialogAbout(QWidget* parent,int n_threads,bool separate_farm_for_enlargements);
 
   //! Destructor.
-  virtual ~DialogAbout()
-    {}
-
- protected:
-  //! Vertical layout.
-  QVBox* _vbox;
-
-  //! Label for name/release/author etc
-  QLabel* _label;
-
-  //! Scrolling text area for GPL.
-  QTextEdit* _license;
-
-  //! Button to close dialog.
-  QPushButton* _ok;
-
-  //! Need to pass resizes on to vbox or things just get chopped.
-  virtual void resizeEvent(QResizeEvent*);
+  ~DialogAbout();
 };
-
-
 
 #endif

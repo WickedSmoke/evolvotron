@@ -193,7 +193,7 @@ EvolvotronMain::EvolvotronMain
  uint multisample_level,
  bool function_debug_mode
  )
-  :QMainWindow(parent,0,Qt::WType_TopLevel|Qt::WDestructiveClose)
+  :QMainWindow(parent)
   ,_history(new EvolvotronMain::History(this))
   ,_mutation_parameters(time(0),autocool,function_debug_mode,this)
   ,_render_parameters(jitter,multisample_level,this)
@@ -201,14 +201,16 @@ EvolvotronMain::EvolvotronMain
   ,_statusbar_tasks_enlargement(0)
   ,_last_spawn_method(&EvolvotronMain::spawn_normal)
 {
-  setMinimumSize(600,400);
+  setAttribute(Qt::WA_DeleteOnClose,true);
+
+  setMinimumSize(640,480);
 
   // Need to create this first or DialogMutationParameters might cause one to be created too.
-  _statusbar=new QStatusBar(this);
-  _statusbar->setSizeGripEnabled(false);
+  _statusbar=new QStatusBar;
+  _statusbar->setSizeGripEnabled(true);
+  setStatusBar(_statusbar);
 
-  _statusbar_tasks_label=new QLabel("Ready",_statusbar);
-  _statusbar->addWidget(_statusbar_tasks_label,0,true);
+  _statusbar->addWidget(_statusbar_tasks_label=new QLabel("Ready"));
 
   _dialog_about=new DialogAbout(this,n_threads,separate_farm_for_enlargements);
   _dialog_help_short=new DialogHelp(this,false);
@@ -222,72 +224,58 @@ EvolvotronMain::EvolvotronMain
 
   _dialog_favourite=new DialogFavourite(this);
 
-  _menubar=new QMenuBar(this);
+  _popupmenu_file=menuBar()->addMenu("&File");
+  _popupmenu_file->addAction("Reset (Reset mutation parameters, clear locks)",this,SLOT(reset_cold()),QKeySequence("r"));
+  _popupmenu_file->addAction("Restart (Preserve mutation parameters and locks)",this,SLOT(reset_warm()),QKeySequence("t"));
+  _popupmenu_file->addAction("Remix (Randomize function weights and restart)",this,SLOT(reset_randomized()),QKeySequence("x"));
+  _popupmenu_file->addSeparator();
+  _popupmenu_file->addAction("Quit",qApp,SLOT(quit()),QKeySequence("q"));
 
-  _popupmenu_file=new QPopupMenu;
-  _popupmenu_file->insertItem("Re&set (Reset mutation parameters, clear locks)",this,SLOT(reset_cold()));
-  _popupmenu_file->insertItem("&Restart (Preserve mutation parameters and locks)",this,SLOT(reset_warm()));
-  _popupmenu_file->insertItem("Remi&x (Randomize function weights and restart)",this,SLOT(reset_randomized()));
-  _popupmenu_file->insertSeparator();
-  _popupmenu_file->insertItem("&Quit",qApp,SLOT(quit()));
-  _menubar->insertItem("&File",_popupmenu_file);
-
-  _popupmenu_edit=new QPopupMenu;
-  _popupmenu_edit_undo_id=_popupmenu_edit->insertItem("&Undo",this,SLOT(undo()));
-  _popupmenu_edit->setItemEnabled(_popupmenu_edit_undo_id,false);
-  _popupmenu_edit->insertSeparator();
-  _popupmenu_edit->insertItem("&Simplify all functions",this,SLOT(simplify_constants()));
-  _menubar->insertItem("&Edit",_popupmenu_edit);
+  _popupmenu_edit=menuBar()->addMenu("&Edit");
+  _popupmenu_edit_undo_action=_popupmenu_edit->addAction("Undo",this,SLOT(undo()),QKeySequence("u"));
+  _popupmenu_edit_undo_action->setEnabled(false);
+  _popupmenu_edit->addSeparator();
+  _popupmenu_edit->addAction("Simplify all functions",this,SLOT(simplify_constants()));
   
-  _popupmenu_settings=new QPopupMenu;
+  _popupmenu_settings=menuBar()->addMenu("Se&ttings");
+  _popupmenu_settings->addAction("Mutation parameters...",_dialog_mutation_parameters,SLOT(show()));
+  _popupmenu_settings->addAction("Function weightings...",_dialog_functions,SLOT(show()));
+  _popupmenu_settings->addAction("Favourite function...",_dialog_favourite,SLOT(show()));
 
-  // We want to use a checkmark on some items
-  _popupmenu_settings->setCheckable(true);
+  _popupmenu_settings->addSeparator();
 
-  _popupmenu_settings->insertItem("Mutation &parameters...",_dialog_mutation_parameters,SLOT(show()));
-  _popupmenu_settings->insertItem("&Function weightings...",_dialog_functions,SLOT(show()));
-  _popupmenu_settings->insertItem("Fa&vourite function...",_dialog_favourite,SLOT(show()));
+  _popupmenu_settings->addAction("Render parameters...",_dialog_render_parameters,SLOT(show()));  
 
-  _popupmenu_settings->insertSeparator();
+  _popupmenu_settings->addSeparator();
 
-  _popupmenu_settings->insertItem("Ren&der parameters...",_dialog_render_parameters,SLOT(show()));  
-
-  _popupmenu_settings->insertSeparator();
-
-  _menu_item_number_fullscreen=_popupmenu_settings->insertItem("Full&screen",this,SLOT(toggle_fullscreen()));
-  _menu_item_number_hide_menu=_popupmenu_settings->insertItem("Hide &menu and statusbar",this,SLOT(toggle_hide_menu()));  
-
-  _popupmenu_settings->setItemChecked(_menu_item_number_fullscreen,start_fullscreen);
-  _popupmenu_settings->setItemChecked(_menu_item_number_hide_menu,start_menuhidden);
-
-  _menubar->insertItem("Se&ttings",_popupmenu_settings);
+  _menu_action_fullscreen=_popupmenu_settings->addAction("Fullscreen",this,SLOT(toggle_fullscreen()),QKeySequence("f"));
+  _menu_action_fullscreen->setCheckable(true);
+  _menu_action_fullscreen->setChecked(start_fullscreen);
+  _menu_action_hide_menu=_popupmenu_settings->addAction("Hide menu and statusbar",this,SLOT(toggle_hide_menu()),QKeySequence("m"));  
+  _menu_action_hide_menu->setCheckable(true);
+  _menu_action_hide_menu->setChecked(start_menuhidden);
 
   //! This doesn't seem to do anything (supposed to push help menu over to far end ?)
-  _menubar->insertSeparator();
+  menuBar()->addSeparator();
 
-  _popupmenu_help=new QPopupMenu;
-  _popupmenu_help->insertItem("Quick &Reference",_dialog_help_short,SLOT(show()));
-  _popupmenu_help->insertItem("User &Manual",_dialog_help_long,SLOT(show()));
-  _popupmenu_help->insertSeparator();
-  _popupmenu_help->insertItem("&About",_dialog_about,SLOT(show()));
+  _popupmenu_help=menuBar()->addMenu("&Help");
+  _popupmenu_help->addAction("Quick Reference",_dialog_help_short,SLOT(show()));
+  _popupmenu_help->addAction("User Manual",_dialog_help_long,SLOT(show()));
+  _popupmenu_help->addSeparator();
+  _popupmenu_help->addAction("About",_dialog_about,SLOT(show()));
 
-  _menubar->insertItem("&Help",_popupmenu_help);
-
-  _grid=new QGrid(grid_size.width(),this);
-
-  _label_autocool_enable=new QLabel("",_statusbar);
-  _checkbox_autocool_enable=new QCheckBox("Autocool",_statusbar);
-  QToolTip::add(_checkbox_autocool_enable,"Autocooling gradually reduces the chance and magnitude of mutations with time.");
-  _button_autocool_reheat=new QPushButton("Reheat",_statusbar);
-  QToolTip::add(_button_autocool_reheat,"Reheat restarts the autocooling generation count, restoring the full strength of mutations.");
+  _checkbox_autocool_enable=new QCheckBox("Autocool");
+  _checkbox_autocool_enable->setToolTip("Autocooling gradually reduces the chance and magnitude of mutations with time.");
+  _label_autocool_enable=new QLabel("");  // Used to display generation count
+  _button_autocool_reheat=new QPushButton("Reheat");
+  _button_autocool_reheat->setToolTip("Reheat restarts the autocooling generation count, restoring the full strength of mutations.");
   
   connect(_checkbox_autocool_enable,SIGNAL(stateChanged(int)),_dialog_mutation_parameters,SLOT(changed_autocool_enable(int)));
   connect(_button_autocool_reheat,SIGNAL(clicked()),_dialog_mutation_parameters,SLOT(reheat()));
 
-  _statusbar->addWidget(new QHBox(_statusbar),1,true);
-  _statusbar->addWidget(_checkbox_autocool_enable,0,true);
-  _statusbar->addWidget(_label_autocool_enable,0,true);
-  _statusbar->addWidget(_button_autocool_reheat,0,true);
+  _statusbar->addPermanentWidget(_checkbox_autocool_enable);
+  _statusbar->addPermanentWidget(_label_autocool_enable);
+  _statusbar->addPermanentWidget(_button_autocool_reheat);
 
   connect(
 	  &_render_parameters,SIGNAL(changed()),
@@ -299,15 +287,6 @@ EvolvotronMain::EvolvotronMain
 	  this,SLOT(mutation_parameters_changed())
 	  );
   
-  // We need to make sure the display grid gets all the space it can
-  setCentralWidget(_grid);
-
-  _timer=new QTimer(this);
-
-  connect(
-	  _timer,SIGNAL(timeout()),
-	  this, SLOT(tick()) 
-	  );
 
   _farm[0]=std::auto_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads,niceness_grid));
   if (separate_farm_for_enlargements)
@@ -315,13 +294,25 @@ EvolvotronMain::EvolvotronMain
       _farm[1]=std::auto_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads,niceness_enlargements));
     }
 
+  _grid=new QWidget;
+  QGridLayout*const grid_layout=new QGridLayout;
+  _grid->setLayout(grid_layout);
+  setCentralWidget(_grid);
+
   //! \todo frames and framerate should be retained and modifiable from the GUI
   for (int r=0;r<grid_size.height();r++)
     for (int c=0;c<grid_size.width();c++)
       {
-	displays().push_back(new MutatableImageDisplay(_grid,this,true,false,QSize(0,0),frames,framerate));
+	MutatableImageDisplay*const d=new MutatableImageDisplay(this,true,false,QSize(0,0),frames,framerate);
+	grid_layout->addWidget(d,r,c);
+	displays().push_back(d);
       }
 
+  _timer=new QTimer(this);
+  connect(
+	  _timer,SIGNAL(timeout()),
+	  this, SLOT(tick()) 
+	  );
   // Run tick() at 100Hz
   _timer->start(10);
 
@@ -373,7 +364,7 @@ EvolvotronMain::~EvolvotronMain()
   std::clog << "...completed Evolvotron shutdown\n";  
 }
 
-const bool EvolvotronMain::favourite_function(const std::string& f)
+bool EvolvotronMain::favourite_function(const std::string& f)
 {
   return _dialog_favourite->favourite_function(f);
 }
@@ -427,8 +418,8 @@ void EvolvotronMain::restore(MutatableImageDisplay* display,const boost::shared_
 
 void EvolvotronMain::set_undoable(bool v,const std::string& action_name)
 {
-  _popupmenu_edit->changeItem(_popupmenu_edit_undo_id,QString(("&Undo "+action_name).c_str()));
-  _popupmenu_edit->setItemEnabled(_popupmenu_edit_undo_id,v);
+  _popupmenu_edit_undo_action->setText(QString(("Undo "+action_name).c_str()));
+  _popupmenu_edit_undo_action->setEnabled(v);
 }
 
 void EvolvotronMain::respawn(MutatableImageDisplay* display)
@@ -615,34 +606,19 @@ void EvolvotronMain::keyPressEvent(QKeyEvent* e)
       showNormal();
       menuBar()->show();
       statusBar()->show();
-      _popupmenu_settings->setItemChecked(_menu_item_number_fullscreen,false);
-      _popupmenu_settings->setItemChecked(_menu_item_number_hide_menu,false);
+      _menu_action_fullscreen->setChecked(false);
+      _menu_action_hide_menu->setChecked(false);
     }
-  else if (e->key()==Qt::Key_F && !(e->state()^Qt::ControlButton))
+  else if (e->key()==Qt::Key_Z && !(e->modifiers()^Qt::ControlModifier))
     {
-      //Ctrl-F toggles fullscreen mode
-      toggle_fullscreen();
+      //Ctrl-Z does an undo
+      undo();
     }
-  else if (e->key()==Qt::Key_M && !(e->state()^Qt::ControlButton))
+  else
     {
-      //Ctrl-M toggles menu and status-bar display
-      toggle_hide_menu();
+      // Perhaps it's for someone else
+      e->ignore();
     }
-  else if (e->key()==Qt::Key_R && !(e->state()^Qt::ControlButton))
-      {
-	//Ctrl-R does a restart mainly because that's most useful in full-screen mode
-	reset_warm();
-      }
-    else if (e->key()==Qt::Key_Z && !(e->state()^Qt::ControlButton))
-      {
-	//Ctrl-Z does an undo
-	undo();
-      }
-    else
-      {
-	// Perhaps it's for someone else
-	e->ignore();
-      }
 }
 
 
@@ -651,12 +627,12 @@ void EvolvotronMain::toggle_fullscreen()
   if (isFullScreen()) 
     {
       showNormal();
-      _popupmenu_settings->setItemChecked(_menu_item_number_fullscreen,false);
+      _menu_action_fullscreen->setChecked(false);
     }
   else 
     {
       showFullScreen();
-      _popupmenu_settings->setItemChecked(_menu_item_number_fullscreen,true);
+      _menu_action_fullscreen->setChecked(true);
     }
 }
 
@@ -665,17 +641,17 @@ void EvolvotronMain::toggle_hide_menu()
   if (menuBar()->isHidden())
     {
       menuBar()->show();
-      _popupmenu_settings->setItemChecked(_menu_item_number_hide_menu,false);
+      _menu_action_hide_menu->setChecked(false);
     }
-  else if (menuBar()->isShown())
+  else if (menuBar()->isVisible())
     {
       menuBar()->hide();
-      _popupmenu_settings->setItemChecked(_menu_item_number_hide_menu,true);
+      _menu_action_hide_menu->setChecked(true);
     }
   
   if (statusBar()->isHidden())
     statusBar()->show();
-  else if (statusBar()->isShown())
+  else if (statusBar()->isVisible())
     statusBar()->hide();
 }
 

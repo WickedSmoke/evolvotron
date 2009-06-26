@@ -143,23 +143,23 @@ class MutationParameters
     }
 
   //! Return a number in the range [0,1)
-  const real r01() const
+  real r01() const
     {
       return _r01();
     }
 
-  const real rnegexp() const
+  real rnegexp() const
     {
       return _r_negexp();
     }
 
   //! Accessor, with decay.
-  const real effective_magnitude_parameter_variation() const
+  real effective_magnitude_parameter_variation() const
     {
       return base_magnitude_parameter_variation()*decay_factor();
     }
   //! Accessor.
-  const real base_magnitude_parameter_variation() const
+  real base_magnitude_parameter_variation() const
     {
       return _base_magnitude_parameter_variation;
     }
@@ -171,12 +171,12 @@ class MutationParameters
     }
 
   //! Accessor, with decay.
-  const real effective_probability_parameter_reset() const
+  real effective_probability_parameter_reset() const
     {
       return base_probability_parameter_reset()*decay_factor();
     }
   //! Accessor.
-  const real base_probability_parameter_reset() const
+  real base_probability_parameter_reset() const
     {
       return _base_probability_parameter_reset;
     } 
@@ -188,12 +188,12 @@ class MutationParameters
     }
 
   //! Accessor, with decay.
-  const real effective_probability_glitch() const
+  real effective_probability_glitch() const
     {
       return base_probability_glitch()*decay_factor();
     }
   //! Accessor.
-  const real base_probability_glitch() const
+  real base_probability_glitch() const
     {
       return _base_probability_glitch;
     }
@@ -205,12 +205,12 @@ class MutationParameters
     }
 
   //! Accessor, with decay.
-  const real effective_probability_shuffle() const
+  real effective_probability_shuffle() const
     {
       return base_probability_shuffle()*decay_factor();
     }
   //! Accessor.
-  const real base_probability_shuffle() const
+  real base_probability_shuffle() const
     {
       return _base_probability_shuffle;
     }
@@ -222,12 +222,12 @@ class MutationParameters
     }
 
   //! Accessor, with decay.
-  const real effective_probability_insert() const
+  real effective_probability_insert() const
     {
       return base_probability_insert()*decay_factor();
     }
   //! Accessor.
-  const real base_probability_insert() const
+  real base_probability_insert() const
     {
       return _base_probability_insert;
     }
@@ -239,12 +239,12 @@ class MutationParameters
     }
 
   //! Accessor.
-  const real effective_probability_substitute() const
+  real effective_probability_substitute() const
     {
       return base_probability_substitute()*decay_factor();
     }
   //! Accessor.
-  const real base_probability_substitute() const
+  real base_probability_substitute() const
     {
       return _base_probability_substitute;
     }
@@ -256,7 +256,7 @@ class MutationParameters
     }
 
   //! Accessor.
-  const real proportion_constant() const
+  real proportion_constant() const
     {
       return _proportion_constant;
     }
@@ -268,7 +268,7 @@ class MutationParameters
     }
 
   //! Accessor.
-  const real identity_supression() const
+  real identity_supression() const
     {
       return _identity_supression;
     }
@@ -280,7 +280,7 @@ class MutationParameters
     }
 
   //! Accessor.
-  const uint max_initial_iterations() const
+  uint max_initial_iterations() const
     {
       return _max_initial_iterations;
     }
@@ -292,12 +292,12 @@ class MutationParameters
     }
 
   //! Accessor, with decay.
-  const real effective_probability_iterations_change_step() const
+  real effective_probability_iterations_change_step() const
     {
       return base_probability_iterations_change_step()*decay_factor();
     }
   //! Accessor.
-  const real base_probability_iterations_change_step() const
+  real base_probability_iterations_change_step() const
     {
       return _base_probability_iterations_change_step;
     }
@@ -309,12 +309,12 @@ class MutationParameters
     }
 
   //! Accessor, with decay.
-  const real effective_probability_iterations_change_jump() const
+  real effective_probability_iterations_change_jump() const
     {
       return base_probability_iterations_change_jump()*decay_factor();
     }
   //! Accessor.
-  const real base_probability_iterations_change_jump() const
+  real base_probability_iterations_change_jump() const
     {
       return _base_probability_iterations_change_jump;
     }
@@ -326,7 +326,7 @@ class MutationParameters
     }
 
   //! Accessor.
-  const real proportion_basic() const
+  real proportion_basic() const
     {
       return _proportion_basic;
     }
@@ -338,7 +338,7 @@ class MutationParameters
     }
 
   //! Accessor.
-  const bool autocool_enable() const
+  bool autocool_enable() const
     {
       return _autocool_enable;
     }
@@ -351,7 +351,7 @@ class MutationParameters
     }
 
   //! Accessor.
-  const int autocool_halflife() const
+  int autocool_halflife() const
     {
       return _autocool_halflife;
     }
@@ -363,7 +363,7 @@ class MutationParameters
     }
 
   //! Accessor
-  const int autocool_generations() const
+  int autocool_generations() const
     {
       return _autocool_generations;
     }
@@ -383,7 +383,7 @@ class MutationParameters
   //! Calculate branching ratio for above calls
   /* Call user should be checking this and diluting with boring nodes to keep it under control
    */
-  const real random_function_branching_ratio() const;
+  real random_function_branching_ratio() const;
 
   //! This returns a new random bit of tree.
   /*! Setting the "exciting" flag avoids the most basic node types, but only at the top level of the stub tree.
@@ -394,18 +394,18 @@ class MutationParameters
 
   void randomize_function_weightings_for_classifications(uint classification_mask);
 
-  const real get_weighting(const FunctionRegistration* fn);
+  real get_weighting(const FunctionRegistration* fn);
 
  protected:
 
   //! Compute current decay factor
-  const real decay_factor() const;
+  real decay_factor() const;
 
   //! Return a random function appropriately biased by current settings
   std::auto_ptr<FunctionNode> random_function() const;
 
   //! Return a random function registration, appropriately biased by current settings
-  const FunctionRegistration*const random_weighted_function_registration() const;
+  const FunctionRegistration* random_weighted_function_registration() const;
 
   //! Intended for Qt-world subclass to override to emit signal. 
   virtual void report_change();

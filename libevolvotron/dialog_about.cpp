@@ -29,21 +29,29 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 DialogAbout::DialogAbout(QWidget* parent,int n_threads,bool separate_farm_for_enlargements)
   :QDialog(parent)
 {
-  setCaption("About evolvotron");
-  setMinimumSize(400,300);
+  assert(parent!=0);
 
-  _vbox=new QVBox(this);
+  setWindowTitle("About evolvotron");
+  setMinimumSize(480,360);
+  setSizeGripEnabled(true);
 
-  QTabWidget* tabs=new QTabWidget(_vbox);
-  QVBox* vbox_info=new QVBox(tabs);
-  tabs->addTab(vbox_info,"Info");
-  QVBox* vbox_license=new QVBox(tabs);
-  tabs->addTab(vbox_license,"License");
+  setLayout(new QVBoxLayout);
+
+  QTabWidget*const tabs=new QTabWidget;
+  layout()->addWidget(tabs);
+
+  QWidget*const tab_info=new QWidget;
+  tab_info->setLayout(new QVBoxLayout);
+  tabs->addTab(tab_info,"Info");
+
+  QWidget*const tab_license=new QWidget;
+  tab_license->setLayout(new QVBoxLayout);
+  tabs->addTab(tab_license,"License");
 
   std::ostringstream about_string;
   about_string
     << "Evolvotron "
-    << EVOLVOTRON_BUILD
+    << stringify(EVOLVOTRON_BUILD)
     << "\n\n"
     << "Using "
     << (separate_farm_for_enlargements ? "2 pools" : "1 pool")
@@ -56,25 +64,25 @@ DialogAbout::DialogAbout(QWidget* parent,int n_threads,bool separate_farm_for_en
     << "Home page: http://evolvotron.sourceforge.net\n"
     << "Project page: http://sourceforge.net/projects/evolvotron\n";
 
-  _label=new QLabel(about_string.str().c_str(),vbox_info);
-  _label->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter|_label->alignment());
+  QLabel*const label=new QLabel(about_string.str().c_str());
+  tab_info->layout()->addWidget(label);
+  label->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter|label->alignment());
   
-  _license=new QTextEdit(vbox_license);
-  _license->setReadOnly(true);
-  _license->setTextFormat(PlainText);
-  _license->setText((std::string("License:\n")+std::string(license_string)).c_str());
+  QTextEdit*const license=new QTextEdit;
+  tab_license->layout()->addWidget(license);
+  license->setReadOnly(true);
+  license->setPlainText((std::string("License:\n")+std::string(license_string)).c_str());
 
-  _ok=new QPushButton("OK",_vbox);
-  _ok->setDefault(true);
+  QPushButton* ok=new QPushButton("OK");
+  layout()->addWidget(ok);
+  ok->setDefault(true);
 
-  connect(
-	  _ok,SIGNAL(clicked()),
-	  this,SLOT(hide())
-	  );
+  connect
+    (
+     ok,SIGNAL(clicked()),
+     this,SLOT(hide())
+     );
 }
 
-void DialogAbout::resizeEvent(QResizeEvent* e)
-{
-  Superclass::resizeEvent(e);
-  _vbox->resize(size());
-}
+DialogAbout::~DialogAbout()
+{}

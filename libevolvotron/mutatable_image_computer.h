@@ -23,9 +23,6 @@
 #ifndef _mutatable_image_computer_h_
 #define _mutatable_image_computer_h_
 
-#include <qthread.h>
-#include <qmutex.h>
-
 #include "mutatable_image.h"
 #include "random.h"
 
@@ -84,7 +81,7 @@ class MutatableImageComputer : public QThread
       /*! Mutex is recursive to allow nesting.
        */
       Communications()
-	:_mutex(true)
+	:_mutex()
 	,_defer(false)
 	,_abort(false)
 	,_kill(false)
@@ -97,7 +94,7 @@ class MutatableImageComputer : public QThread
 	  _defer=v;
 	}
       //! Mutex-protected accessor.
-      const bool defer() const
+      bool defer() const
 	{
 	  QMutexLocker lock(&_mutex);
 	  const bool ret=_defer;
@@ -110,7 +107,7 @@ class MutatableImageComputer : public QThread
 	  _abort=v;
 	}
       //! Mutex-protected accessor.
-      const bool abort() const
+      bool abort() const
 	{
 	  QMutexLocker lock(&_mutex);
 	  const bool ret=_abort;
@@ -123,14 +120,14 @@ class MutatableImageComputer : public QThread
 	  _kill=v;
 	}
       //! Mutex-protected accessor.
-      const bool kill() const
+      bool kill() const
 	{
 	  QMutexLocker lock(&_mutex);
 	  const bool ret=_kill;
 	  return ret;
 	}
       //! Check union of all flags with only one mutex lock.
-      const bool kill_or_abort_or_defer() const
+      bool kill_or_abort_or_defer() const
 	{
 	  QMutexLocker lock(&_mutex);
 	  const bool ret=(_kill || _abort || _defer);
@@ -162,7 +159,7 @@ class MutatableImageComputer : public QThread
     }
 
   //! Accessor.
-  MutatableImageComputerFarm*const farm() const
+  MutatableImageComputerFarm* farm() const
     {
       return _farm;
     }

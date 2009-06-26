@@ -34,7 +34,7 @@ FUNCTION_BEGIN(FunctionComposeTriple,0,3,false,0)
   //! Is constant if any (rather than default "all") function is constant.
   /*! One of the few cases it's worth overriding this method
    */
-  virtual const bool is_constant() const
+  virtual bool is_constant() const
     {
       return (arg(0).is_constant() || arg(1).is_constant() || arg(2).is_constant());
     }

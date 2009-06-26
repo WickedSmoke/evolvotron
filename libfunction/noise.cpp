@@ -60,22 +60,22 @@ Noise::Noise(uint seed)
     }
 }
 
-inline const real value(const XYZ& q,real rx,real ry,real rz)
+inline real value(const XYZ& q,real rx,real ry,real rz)
 {
   return rx*q.x()+ry*q.y()+rz*q.z();
 }
 
-inline const real surve(real t)
+inline real surve(real t)
 {
   return t*t*(3.0-2.0*t);
 }
 
-inline const real lerp(real t,real a,real b)
+inline real lerp(real t,real a,real b)
 {
   return a+t*(b-a);
 }
 
-const real Noise::operator()(const XYZ& p) const
+real Noise::operator()(const XYZ& p) const
 {
   // Crank up the frequency a bit otherwise don't see much variation in base case
   const real tx=2.0*p.x()+10000.0;

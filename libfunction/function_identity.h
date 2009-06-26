@@ -24,6 +24,7 @@
 #ifndef _function_identity_h_
 #define _function_identity_h_
 
+//------------------------------------------------------------------------------------------
 
 //! Function class simply returning the position argument.
 FUNCTION_BEGIN(FunctionIdentity,0,0,false,FnCore)

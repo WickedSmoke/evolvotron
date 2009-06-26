@@ -37,15 +37,15 @@ class XYZ
 
   //@{
   //! Accessor.
-  const real x() const
+  real x() const
     {
       return rep[0];
     }
-  const real y() const
+  real y() const
     {
       return rep[1];
     }
-  const real z() const
+  real z() const
     {
       return rep[2];
     }
@@ -150,19 +150,19 @@ class XYZ
     }
 
   //! Return the square of the magnitude.
-  const real magnitude2() const
+  real magnitude2() const
     {
       return x()*x()+y()*y()+z()*z();
     }
 
   //! Return the magnitude.
-  const real magnitude() const
+  real magnitude() const
     {
       return sqrt(magnitude2());
     }
 
   //! Returns sum of x, y and z components.
-  const real sum_of_components() const
+  real sum_of_components() const
     {
       return x()+y()+z();
     }
@@ -174,7 +174,7 @@ class XYZ
   void normalise();
 
   //! Returns true if an origin centred cuboid with this vectors semi-axes contains the argument.
-  const bool origin_centred_rect_contains(const XYZ& p) const
+  bool origin_centred_rect_contains(const XYZ& p) const
     {
       return (-x()<=p.x() && p.x()<=x() && -y()<=p.y() && p.y()<=y() && -z()<=p.z() && p.z()<=z()); 
     }
@@ -187,7 +187,6 @@ class XYZ
     {
       return XYZ(v,v,v);
     }
-
 };
 
 //! Cross product.
@@ -203,7 +202,7 @@ inline const XYZ operator*(const XYZ& a,const XYZ& b)
 //! Dot product.
 /*! Perhaps a curious choice of operator but it works for me.
  */
-inline const real operator%(const XYZ& a,const XYZ& b)
+inline real operator%(const XYZ& a,const XYZ& b)
 {
   return a.x()*b.x()+a.y()*b.y()+a.z()*b.z();
 } 
@@ -294,7 +293,6 @@ class RandomXYZSphereNormal : public XYZ
   //! Constructor.
   RandomXYZSphereNormal(Random01& rng);
 };
-
 
 //! Generates a random point in or on an origin-centred ellipsoid with semi-axes of the specified size.
 class RandomXYZInEllipsoid : public XYZ

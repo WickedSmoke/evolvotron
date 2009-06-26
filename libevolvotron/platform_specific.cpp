@@ -25,8 +25,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "platform_specific.h"
 
-#include <boost/optional.hpp>
-
 #ifdef PLATFORM_LINUX
 #include <sched.h>           // for CPU count
 #include <sys/resource.h>    // for getpriority/setprioirty
@@ -38,7 +36,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <sys/resource.h>    // for getpriority/setprioirty
 #endif
 
-const uint get_number_of_processors()
+uint get_number_of_processors()
 {
   boost::optional<uint> num_processors;
 

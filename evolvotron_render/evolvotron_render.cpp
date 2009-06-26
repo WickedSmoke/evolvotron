@@ -109,11 +109,11 @@ int main(int argc,char* argv[])
 	  QString save_filename(QString::fromLocal8Bit(args.last(1).c_str()));
 
 	  const char* save_format="PPM";
-	  if (save_filename.upper().endsWith(".PPM"))
+	  if (save_filename.toUpper().endsWith(".PPM"))
 	    {
 	      save_format="PPM";
 	    }
-	  else if (save_filename.upper().endsWith(".PNG"))
+	  else if (save_filename.toUpper().endsWith(".PNG"))
 	    {
 	      save_format="PNG";
 	    }
@@ -129,7 +129,7 @@ int main(int argc,char* argv[])
 	    {
 	      QString frame_component;
 	      frame_component.sprintf(".f%06d",frame);
-	      int insert_point=save_filename.findRev(QString("."));
+	      int insert_point=save_filename.lastIndexOf(QString("."));
 	      if (insert_point==-1)
 		{
 		  save_filename.append(frame_component);
@@ -141,27 +141,24 @@ int main(int argc,char* argv[])
 	    }
     
 	  QImage image(
-		       (uchar*)&(image_data[0]),
+		       reinterpret_cast<uchar*>(&(image_data[0])),
 		       width,
 		       height,
-		       32,
-		       0,
-		       0,
-		       QImage::LittleEndian
+		       QImage::Format_RGB32
 		       );
 
 	  if (!image.save(save_filename,save_format))
 	    {
 	      std::cerr 
 		<< "evolvotron_render: Error: Couldn't save file "
-		<< save_filename.local8Bit()
+		<< save_filename.toLocal8Bit().data()
 		<< "\n";
 	      exit(1);
 	    }
 	
 	  std::clog
 	    << "Wrote file " 
-	    << save_filename.local8Bit()
+	    << save_filename.toLocal8Bit().data()
 	    << "\n";
 	}
       }

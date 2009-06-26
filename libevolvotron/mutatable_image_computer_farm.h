@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _mutatable_image_computer_farm_h_
 #define _mutatable_image_computer_farm_h_
 
-#include <qthread.h>
-
 #include "useful.h"
 
 #include "mutatable_image_computer.h"
@@ -107,7 +105,7 @@ class MutatableImageComputerFarm
   ~MutatableImageComputerFarm();
 
   //! Accessor.
-  const uint num_threads() const
+  uint num_threads() const
     {
       return _computers.size();
     }
@@ -134,7 +132,7 @@ class MutatableImageComputerFarm
   void abort_for(const MutatableImageDisplay* disp);
 
   //! Number of tasks in queues
-  const uint tasks() const;
+  uint tasks() const;
 };
 
 #endif

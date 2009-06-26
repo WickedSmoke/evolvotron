@@ -24,14 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define _useful_h_
 
 #include <algorithm>
-#include <boost/ptr_container/ptr_map.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/random.hpp>
-#include <boost/shared_array.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <boost/utility.hpp>
-#include <boost/version.hpp>
 #include <cassert>
 #include <ctime>
 #include <cmath>
@@ -46,6 +38,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <string>
 #include <sstream>
 #include <vector>
+
+#include <boost/ptr_container/ptr_map.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/random.hpp>
+#include <boost/shared_array.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/utility.hpp>
+#include <boost/version.hpp>
 
 //! Convenience typedef.
 typedef unsigned int uint;
@@ -150,7 +151,7 @@ class InstanceCounted
   InstanceCounted(const std::string& what,bool verbose);
   virtual ~InstanceCounted();
 
-  static const bool is_clear();
+  static bool is_clear();
 
  private:
   const std::string _what;

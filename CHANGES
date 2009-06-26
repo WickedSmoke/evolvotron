@@ -1,13 +1,15 @@
 [Most recent at top]
 
 From release 0.5.1:
- - Version to 0.5.2dev
- - Remove non-standard Qt animated PNG support
-   (apparently dies in Qt4 anyway)
+ - Version to 0.6.0dev
+ - Switch to Qt4.
+ - (Qt4 related) keyboard shortcuts rationalized (many removed)
+ - (Qt4 related) image displays now have a frame around them
+ - (Qt4 related) Remove non-standard Qt animated PNG support
  - Platform specific code (e.g number of processors identification)
    isolated in libevolvotron/platform_specific.[h|cpp]
    and selected by PLATFORM_LINUX or PLATFORM_BSD
-   (Fink Qt3's __DARWIN_X11__ also detected and used to select PLATFORM_BSD).
+   (Fink Qt's __DARWIN_X11__ also detected and used to select PLATFORM_BSD).
  - Repository migrated to svn
 
 From release 0.5.0:

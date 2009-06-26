@@ -25,11 +25,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "mutatable_image_display.h"
 
-#include <qscrollview.h>
-#include <qmessagebox.h>
-#include <qfiledialog.h>
-#include <qpngio.h>
-
 #include "mutatable_image_display_big.h"
 #include "evolvotron_main.h"
 #include "mutatable_image_computer_task.h"
@@ -45,95 +40,90 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     - and the size of the offscreen buffer (only used if fixed_size is true).
     Note that we use Qt's WDestructiveCode flag to ensure the destructor is called on close
  */
-MutatableImageDisplay::MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full,bool fixed_size,const QSize& sz,uint f,uint fr)
-  :QWidget(parent,0,Qt::WDestructiveClose)
-   ,_main(mn)
-   ,_full_functionality(full)
-   ,_fixed_size(fixed_size)
-   ,_image_size(sz)
-   ,_frames(f)
-   ,_framerate(fr)
-   ,_current_frame(0)
-   ,_animate_reverse(false)
-   ,_timer(0)
-   ,_resize_in_progress(false)
-   ,_current_display_level(0)
-   ,_current_display_multisample_grid(0)
-   ,_icon_serial(0LL)
-   ,_properties(0)
-   ,_menu(0)
-   ,_menu_big(0)
-   ,_serial(0LL)
+MutatableImageDisplay::MutatableImageDisplay(EvolvotronMain* mn,bool full_functionality,bool fixed_size,const QSize& sz,uint f,uint fr)
+  :_main(mn)
+  ,_full_functionality(full_functionality)
+  ,_fixed_size(fixed_size)
+  ,_image_size(sz)
+  ,_frames(f)
+  ,_framerate(fr)
+  ,_current_frame(0)
+  ,_animate_reverse(false)
+  ,_timer(0)
+  ,_resize_in_progress(false)
+  ,_current_display_level(0)
+  ,_current_display_multisample_grid(0)
+  ,_icon_serial(0LL)
+  ,_properties(0)
+  ,_menu(0)
+  ,_menu_big(0)
+  ,_menu_item_action_lock(0)
+  ,_serial(0LL)
 {
-  setWFlags(getWFlags()|Qt::WNoAutoErase);
-  setBackgroundMode(Qt::NoBackground);
+  setAttribute(Qt::WA_DeleteOnClose,true);
+
+  setFocusPolicy(Qt::StrongFocus);
 
   _properties=new DialogMutatableImageDisplay(this);
 
-  _menu=new QPopupMenu(this);  
+  _menu=new QMenu(this);  
 
   // Most items on the context menu aren't appropriate for a window displaying a single big image
   if (_full_functionality)
     {
-      // We want to use a checkmark for "Locked"
-      _menu->setCheckable(true);
+      _menu->addAction("Respawn",this,SLOT(menupick_respawn()));
 
-      _menu->insertItem("&Respawn",this,SLOT(menupick_respawn()));
+      _menu->addSeparator();
 
-      _menu->insertSeparator();
+      _menu->addAction("Spawn",this,SLOT(menupick_spawn()));
+      _menu->addAction("Spawn recoloured",this,SLOT(menupick_spawn_recoloured()));
 
-      _menu->insertItem("&Spawn",this,SLOT(menupick_spawn()));
-      _menu->insertItem("Spawn re&coloured",this,SLOT(menupick_spawn_recoloured()));
+      _menu_warped=_menu->addMenu("Spawn warped");
+      _menu_warped->addAction("Random Mix",this,SLOT(menupick_spawn_warped_random())  );
+      _menu_warped->addAction("Zoom In"   ,this,SLOT(menupick_spawn_warped_zoom_in()) );
+      _menu_warped->addAction("Zoom Out"  ,this,SLOT(menupick_spawn_warped_zoom_out()));
+      _menu_warped->addAction("Rotate"    ,this,SLOT(menupick_spawn_warped_rotate())  );
+      _menu_warped->addAction("Pan XY"    ,this,SLOT(menupick_spawn_warped_pan_xy())  );
+      _menu_warped->addAction("Pan X"     ,this,SLOT(menupick_spawn_warped_pan_x())   );
+      _menu_warped->addAction("Pan Y"     ,this,SLOT(menupick_spawn_warped_pan_y())   );
+      _menu_warped->addAction("Pan Z"     ,this,SLOT(menupick_spawn_warped_pan_z())   );
 
-      _menu_warped=new QPopupMenu(this);
-      _menu_warped->insertItem("Random &Mix",this,SLOT(menupick_spawn_warped_random()));
-      _menu_warped->insertItem("Zoom &In",this,SLOT(menupick_spawn_warped_zoom_in()));
-      _menu_warped->insertItem("Zoom &Out",this,SLOT(menupick_spawn_warped_zoom_out()));
-      _menu_warped->insertItem("&Rotate",this,SLOT(menupick_spawn_warped_rotate()));
-      _menu_warped->insertItem("&Pan XY",this,SLOT(menupick_spawn_warped_pan_xy()));
-      _menu_warped->insertItem("Pan &X",this,SLOT(menupick_spawn_warped_pan_x()));
-      _menu_warped->insertItem("Pan &Y",this,SLOT(menupick_spawn_warped_pan_y()));
-      _menu_warped->insertItem("Pan &Z",this,SLOT(menupick_spawn_warped_pan_z()));
+      _menu->addSeparator();
 
-      _menu->insertItem("Spawn &warped",_menu_warped);
+      _menu_item_action_lock=_menu->addAction("Lock",this,SLOT(menupick_lock()));
+      _menu_item_action_lock->setCheckable(true);
 
-      _menu->insertSeparator();
-
-      _menu_item_number_lock =_menu->insertItem("&Lock",this,SLOT(menupick_lock()));
-
-      _menu->insertSeparator();
+      _menu->addSeparator();
     }
   
-  _menu_big=new QPopupMenu(this);
-  _menu_big->insertItem("&Resizable",this,SLOT(menupick_big_resizable()));
-  _menu_big->insertSeparator();
-  _menu_big->insertItem("&256x256",this,SLOT(menupick_big_256x256()));
-  _menu_big->insertItem("&512x512",this,SLOT(menupick_big_512x512()));
-  _menu_big->insertItem("&768x768",this,SLOT(menupick_big_768x768()));
-  _menu_big->insertItem("&1024x1024",this,SLOT(menupick_big_1024x1024()));
-  _menu_big->insertItem("&2048x2048",this,SLOT(menupick_big_2048x2048()));
-  _menu_big->insertItem("&4096x4096",this,SLOT(menupick_big_4096x4096()));
-  _menu_big->insertSeparator();
-  _menu_big->insertItem("640x&480",this,SLOT(menupick_big_640x480()));
-  _menu_big->insertItem("1024x&768",this,SLOT(menupick_big_1024x768()));
-  _menu_big->insertItem("1280x&960",this,SLOT(menupick_big_1280x960()));
-  _menu_big->insertItem("1&600x1200",this,SLOT(menupick_big_1600x1200()));
+  _menu_big=_menu->addMenu("Enlarge");
+  _menu_big->addAction("Resizable",this,SLOT(menupick_big_resizable()));
+  _menu_big->addSeparator();		
+  _menu_big->addAction("256x256"  ,this,SLOT(menupick_big_256x256()));
+  _menu_big->addAction("512x512"  ,this,SLOT(menupick_big_512x512())  );
+  _menu_big->addAction("768x768"  ,this,SLOT(menupick_big_768x768())  );
+  _menu_big->addAction("1024x1024",this,SLOT(menupick_big_1024x1024()));
+  _menu_big->addAction("2048x2048",this,SLOT(menupick_big_2048x2048()));
+  _menu_big->addAction("4096x4096",this,SLOT(menupick_big_4096x4096()));
+  _menu_big->addSeparator();
+  _menu_big->addAction("640x480"  ,this,SLOT(menupick_big_640x480())  );
+  _menu_big->addAction("1024x768" ,this,SLOT(menupick_big_1024x768()) );
+  _menu_big->addAction("1280x960" ,this,SLOT(menupick_big_1280x960()) );
+  _menu_big->addAction("1600x1200",this,SLOT(menupick_big_1600x1200()));
 
-  _menu->insertItem("&Enlarge",_menu_big);
-
-  _menu->insertSeparator();
+  _menu->addSeparator();
   
-  _menu->insertItem("Save &image",this,SLOT(menupick_save_image()));
-  _menu->insertItem("Save &function",this,SLOT(menupick_save_function()));
+  _menu->addAction("Save image",this,SLOT(menupick_save_image()));
+  _menu->addAction("Save function",this,SLOT(menupick_save_function()));
 
   if (_full_functionality)
     {
-      _menu->insertItem("L&oad function",this,SLOT(menupick_load_function()));
+      _menu->addAction("Load function",this,SLOT(menupick_load_function()));
     }
 
-  _menu->insertSeparator();
-  _menu->insertItem("Simplif&y function",this,SLOT(menupick_simplify()));
-  _menu->insertItem("&Properties...",this,SLOT(menupick_properties()));
+  _menu->addSeparator();
+  _menu->addAction("Simplify function",this,SLOT(menupick_simplify()));
+  _menu->addAction("Properties...",this,SLOT(menupick_properties()));
 
   main().hello(this);
 
@@ -176,7 +166,7 @@ MutatableImageDisplay::~MutatableImageDisplay()
   _offscreen_images.clear();
 }
 
-const uint MutatableImageDisplay::simplify_constants(bool single_action)
+uint MutatableImageDisplay::simplify_constants(bool single_action)
 {
   if (single_action) main().history().begin_action("simplify");
 
@@ -204,7 +194,7 @@ const uint MutatableImageDisplay::simplify_constants(bool single_action)
 
   if (single_action)
     {
-      if (_icon.get()) _main->setIcon(*_icon);
+      if (_icon.get()) _main->setWindowIcon(*_icon);
 
       std::stringstream msg;
       msg << "Eliminated " << nodes_eliminated << " redundant function nodes\n";
@@ -234,7 +224,7 @@ void MutatableImageDisplay::frame_advance()
 	  _animate_reverse=true;
 	}
     }
-  repaint(false);  // Use repaint rather than update because we really do want this to happen immediately.
+  repaint();  // Use repaint rather than update because we really do want this to happen immediately.
 }
 
 void MutatableImageDisplay::image_function(const boost::shared_ptr<const MutatableImage>& i,bool one_of_many)
@@ -260,7 +250,7 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
 	{
 	  // Clear any existing image data - stops old animations continuing to play 
 	  for (uint f=0;f<_offscreen_pixmaps.size();f++)
-	    _offscreen_pixmaps[f].fill(black);
+	    _offscreen_pixmaps[f].fill(QColor(0,0,0));
 	  
 	  // Queue a redraw
 	  update();
@@ -275,7 +265,8 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
   _offscreen_images_inbox.clear();
 
   // Update lock status displayed in menu
-  _menu->setItemChecked(_menu_item_number_lock,(_image_function.get() ? _image_function->locked() : false));
+  if (_menu_item_action_lock)
+    _menu_item_action_lock->setChecked(_image_function.get() ? _image_function->locked() : false);
   
   if (_image_function.get())
     {
@@ -396,18 +387,15 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
       _offscreen_images.resize(0);
       for (uint f=0;f<_frames;f++)
 	{
-	  _offscreen_images.push_back(QImage(render_size,32));
+	  _offscreen_images.push_back(QImage(render_size,QImage::Format_RGB32));
 	  
 	  for (OffscreenImageInbox::mapped_type::const_iterator it=inbox_level.begin();it!=inbox_level.end();++it)
 	    {
-	      bitBlt
+	      QPainter painter(&_offscreen_images.back());
+	      painter.drawImage
 		(
-		 &_offscreen_images.back(),
-		 (*it).second->fragment_origin().width(),(*it).second->fragment_origin().height(),
-		 &(*it).second->images()[f],
-		 0,0,
-		 (*it).second->fragment_size().width(),(*it).second->fragment_size().height(),
-		 0
+		 QPoint((*it).second->fragment_origin().width(),(*it).second->fragment_origin().height()),
+		 (*it).second->images()[f]
 		 );
 	    }
 	}
@@ -415,9 +403,9 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
   
   for (uint f=0;f<_frames;f++)
     {
-      //! \todo Pick a scaling mode: smooth or not (or put it under GUI control). 
-      // Curiously, although smoothscale seems to be noticeably slower, it doesn't look any better.
-      _offscreen_pixmaps[f].convertFromImage(_offscreen_images[f].scale(image_size()));
+      //! \todo Pick a scaling mode: Qt::SmoothTransformation vs Qt::FastTransformation (default) (and put it under GUI control). 
+      //! \todo Expose dither mode control: Qt::DiffuseDither vs Qt::ThresholdDither
+      _offscreen_pixmaps[f]=QPixmap::fromImage(_offscreen_images[f].scaled(image_size()),(Qt::ColorOnly|Qt::ThresholdDither));
     }
   
   //! Note the resolution we've displayed so out-of-order low resolution images are dropped
@@ -425,14 +413,14 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
   _current_display_multisample_grid=task->multisample_grid();
   
   // For an icon, take the first image big enough to (hopefully) be filtered down nicely.
-  // The converter seems to auto-create an alpha mask sometimes (images with const-color areas), which is quite cool.
+  // The (Qt3) converter seems to auto-create an alpha mask sometimes (images with const-color areas), which is quite cool.
   const QSize icon_size(32,32);
   if (task->serial()!=_icon_serial && (task->level()==0 || (render_size.width()>=2*icon_size.width() && render_size.height()>=2*icon_size.height())))
     {
-      const QImage icon_image(_offscreen_images[_offscreen_images.size()/2].smoothScale(icon_size));
+      const QImage icon_image(_offscreen_images[_offscreen_images.size()/2].scaled(icon_size));
       
-      _icon=std::auto_ptr<QPixmap>(new QPixmap(icon_size));
-      _icon->convertFromImage(icon_image,QPixmap::Color);
+      if (!_icon.get()) _icon=std::auto_ptr<QPixmap>(new QPixmap(icon_size));
+      (*_icon)=QPixmap::fromImage(icon_image,Qt::ColorOnly);
       
       _icon_serial=task->serial();
     }
@@ -459,7 +447,7 @@ void MutatableImageDisplay::lock(bool l,bool record_in_history)
 	}
     }
 
-  _menu->setItemChecked(_menu_item_number_lock,l);
+  _menu_item_action_lock->setChecked(l);
 }
 
 /*! Enlargements are implied by a non-full-functionality displays.
@@ -472,8 +460,8 @@ MutatableImageComputerFarm& MutatableImageDisplay::farm() const
 void MutatableImageDisplay::paintEvent(QPaintEvent*)
 {
   // Repaint the screen from the offscreen pixmaps
-  // (If there have been resizes they will be black)
-  bitBlt(this,0,0,&_offscreen_pixmaps[_current_frame]);
+  QPainter painter(this);
+  painter.drawPixmap(0,0,_offscreen_pixmaps[_current_frame]);
 
   // If this is the first paint event after a resize we can start computing images for the new size.
   if (_resize_in_progress)
@@ -501,8 +489,8 @@ void MutatableImageDisplay::resizeEvent(QResizeEvent* event)
       // Resize and reset our offscreen pixmap (something to do while we wait)
       for (uint f=0;f<_offscreen_pixmaps.size();f++)
 	{
-	  _offscreen_pixmaps[f].resize(image_size());  // resize destroys contents
-	  _offscreen_pixmaps[f].fill(black);           // so set it 
+	  _offscreen_pixmaps[f]=QPixmap(image_size()); 
+	  _offscreen_pixmaps[f].fill(QColor(0,0,0));           
 	}
       
       // Flag for the next paintEvent to tell it a recompute can be started now.
@@ -512,11 +500,11 @@ void MutatableImageDisplay::resizeEvent(QResizeEvent* event)
 
 void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
 {
-  if (event->button()==RightButton)
+  if (event->button()==Qt::RightButton)
     {
       _menu->exec(QCursor::pos());
     }
-  else if (event->button()==MidButton)
+  else if (event->button()==Qt::MidButton)
     {
       // Take a snapshot to undo back to.
       main().history().begin_action("middle-button drag");
@@ -526,9 +514,9 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
       _mid_button_adjust_start_pos=event->pos();
       _mid_button_adjust_last_pos=event->pos();
     }
-  else if (_full_functionality && event->button()==LeftButton)
+  else if (_full_functionality && event->button()==Qt::LeftButton)
     {
-      if (_icon.get()) _main->setIcon(*_icon);
+      if (_icon.get()) _main->setWindowIcon(*_icon);
 
       menupick_spawn();
     }
@@ -536,7 +524,7 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
 
 void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 {
-  if (event->state()&MidButton)
+  if (event->buttons()&Qt::MidButton)
     {
       if (locked())
 	{
@@ -550,10 +538,10 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	  Transform transform=TransformIdentity();
 	  
 	  // Shift button (no ctrl) is various zooms
-	  if (event->state()&ShiftButton && !(event->state()&ControlButton))
+	  if (event->modifiers()&Qt::ShiftModifier && !(event->modifiers()&Qt::ControlModifier))
 	    {
 	      // Alt-Shift is anisotropic
-	      if (event->state()&AltButton)
+	      if (event->modifiers()&Qt::AltModifier)
 		{
 		  // Only scale in non-degenerate cases
 		  if (
@@ -601,10 +589,10 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 		    }
 		}
 	    }
-	  else if (event->state()&ControlButton)
+	  else if (event->modifiers()&Qt::ControlModifier)
 	    {
 	      // Control-alt is shear
-	      if (event->state()&AltButton)
+	      if (event->modifiers()&Qt::AltModifier)
 		{
 		  const real cx=image_size().width()/2.0;
 		  const real cy=image_size().width()/2.0;
@@ -766,7 +754,7 @@ void MutatableImageDisplay::menupick_simplify()
  */
 void MutatableImageDisplay::menupick_save_image()
 {
-  if (_icon.get()) _main->setIcon(*_icon);
+  if (_icon.get()) _main->setWindowIcon(*_icon);
 
   std::clog << "Save requested...\n";
 
@@ -776,15 +764,15 @@ void MutatableImageDisplay::menupick_save_image()
     }
   else
     {
-      QString save_filename=QFileDialog::getSaveFileName(".","Images (*.ppm *.png)",this,"Save image","Save image to a PPM or PNG file");
+      QString save_filename=QFileDialog::getSaveFileName(this,"Save image to a PNG or PPM file",".","Images (*.png *.ppm)");
       if (!save_filename.isEmpty())
 	{
-	  QString save_format="PPM";
-	  if (save_filename.upper().endsWith(".PPM"))
+	  QString save_format="PNG";
+	  if (save_filename.toUpper().endsWith(".PPM"))
 	    {
 	      save_format="PPM";
 	    }
-	  else if (save_filename.upper().endsWith(".PNG"))
+	  else if (save_filename.toUpper().endsWith(".PNG"))
 	    {
 	      save_format="PNG";
 	    }
@@ -806,7 +794,7 @@ void MutatableImageDisplay::menupick_save_image()
 		{
 		  QString frame_component;
 		  frame_component.sprintf(".f%06d",f);
-		  int insert_point=save_filename.findRev(QString("."));
+		  int insert_point=save_filename.lastIndexOf(QString("."));
 		  if (insert_point==-1)
 		    {
 		      actual_save_filename.append(frame_component);
@@ -817,7 +805,7 @@ void MutatableImageDisplay::menupick_save_image()
 		    }
 		}
 	      
-	      if (!_offscreen_images[f].save(actual_save_filename,save_format.local8Bit()))
+	      if (!_offscreen_images[f].save(actual_save_filename,save_format.toLocal8Bit()))
 		{
 		  QMessageBox::critical(this,"Evolvotron","Failed to write file "+actual_save_filename);
 		  if (f<_offscreen_images.size()-1)
@@ -834,12 +822,12 @@ void MutatableImageDisplay::menupick_save_image()
 
 void MutatableImageDisplay::menupick_save_function()
 {
-  if (_icon.get()) _main->setIcon(*_icon);
+  if (_icon.get()) _main->setWindowIcon(*_icon);
 
-  QString save_filename=QFileDialog::getSaveFileName(".","Functions (*.xml)",this,"Save function","Save image function to an XML file");
+  QString save_filename=QFileDialog::getSaveFileName(this,".","Saved functions (*.xml)","Save image function to an XML file");
   if (!save_filename.isEmpty())
     {
-      std::ofstream file(save_filename.local8Bit());
+      std::ofstream file(save_filename.toLocal8Bit());
       _image_function->save_function(file);
       file.flush();
       if (!file)
@@ -851,10 +839,16 @@ void MutatableImageDisplay::menupick_save_function()
 
 void MutatableImageDisplay::menupick_load_function()
 {
-  QString load_filename=QFileDialog::getOpenFileName(".","Functions (*.xml)",this,"Load function","Load image function from an XML file");
+  QString load_filename=QFileDialog::getOpenFileName
+    (
+     this,
+     "Load image function from an XML file",
+     ".",
+     "Functions (*.xml)"
+     );
   if (!load_filename.isEmpty())
     {
-      std::ifstream file(load_filename.local8Bit());
+      std::ifstream file(load_filename.toLocal8Bit());
       std::string report;
       boost::shared_ptr<const MutatableImage> new_image_function(MutatableImage::load_function(_main->mutation_parameters().function_registry(),file,report));
       if (new_image_function.get()==0)
@@ -952,7 +946,7 @@ void MutatableImageDisplay::menupick_properties()
   image_function()->save_function(xml);
 
   _properties->set_content(msg.str(),xml.str());
-  if (_icon.get()) _properties->setIcon(*_icon);
+  if (_icon.get()) _properties->setWindowIcon(*_icon);
   _properties->exec();
 }
 
@@ -961,22 +955,23 @@ void MutatableImageDisplay::menupick_properties()
 */
 void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
 {
-  MutatableImageDisplayBig*const top_level_widget=new MutatableImageDisplayBig(0,&main());
-  if (_icon.get()) top_level_widget->setIcon(*_icon);
+  MutatableImageDisplayBig*const top_level_widget=new MutatableImageDisplayBig(&main());
+  top_level_widget->setLayout(new QVBoxLayout);
+  if (_icon.get()) top_level_widget->setWindowIcon(*_icon);
 
   MutatableImageDisplay* display=0;
-  
+
   if (scrollable)
     {
-      QScrollView*const scrollview=new QScrollView(top_level_widget,0,Qt::WDestructiveClose);
-      display=new MutatableImageDisplay(scrollview->viewport(),&main(),false,true,sz,_frames,_framerate);
-      scrollview->addChild(display);
-      top_level_widget->hold(scrollview);
+      QScrollArea*const scrollview=new QScrollArea;
+      top_level_widget->layout()->addWidget(scrollview);
+      display=new MutatableImageDisplay(&main(),false,true,sz,_frames,_framerate);
+      scrollview->setWidget(display);
     }
   else
     {
-      display=new MutatableImageDisplay(top_level_widget,&main(),false,false,QSize(0,0),_frames,_framerate);
-      top_level_widget->hold(display);
+      display=new MutatableImageDisplay(&main(),false,false,QSize(0,0),_frames,_framerate);
+      top_level_widget->layout()->addWidget(display);
     }
 
   top_level_widget->show();

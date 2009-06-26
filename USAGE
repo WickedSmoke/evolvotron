@@ -276,10 +276,18 @@ horizontally or vertically).
 KEYBOARD CONTROL
 ================
 
+There are some keyboard shortcuts.
+
 MAIN WINDOW
 -----------
 
-- Ctrl-f [NB only available with fullscreen build option] toggles 
+- "r"/"t"/"x" perform various starts of reset/restart.
+
+- "q" quits the application
+
+- "u" (and also Ctrl-z) does an undo.
+
+- "f": [NB only available with fullscreen build option] toggles 
 full-screen mode (on X11, Qt does this by asking the
 window manager for a screen-filling undecorated window, and the
 documentation contains some dire warnings about problems with broken
@@ -288,30 +296,27 @@ Fullscreen mode propagates to enlarged image display windows.
 NB The application may completely disappear from the screen for 
 a brief interval while switching mode.
 
-- Ctrl-m [NB only available with fullscreen build option]
-toggles status and menu-bar hiding, which can be nice 
-when in full-screen or window-maximised mode.  See also "-M" 
-command line option.
+- "m" : [NB only available with fullscreen build option]
+hides status and menu-bar hiding, which can be nice when 
+in full-screen or window-maximised mode.  See also "-M" 
+command line option.  Also note that while the menu bar
+is hidden, most of these keyboard shortcuts won't function
+as they're tied to the menu system.
 
-- Esc [NB only available with fullscreen build option] kills 
+- Esc : [NB only available with fullscreen build option] kills 
 full-screen and/or menu-hiding, putting the application
 into its normal default state. 
-
-- Ctrl-r does a restart (for convenience when the menu bar
-is hidden, because this is such a common operation).
-
-- Ctrl-z does an undo.
 
 ENLARGEMENT WINDOWS
 -------------------
 The image display windows created by selecting "Enlarge" from a
 context menu also have a couple of keyboard operations:
 
-- Ctrl-f [NB only available with fullscreen build option] toggles 
+- "f" : [NB only available with fullscreen build option] toggles 
 full-screen mode.  When returning to normal mode, if the main app 
 window was fullscreen then it will also drop back to normal mode.
 
-- Esc [NB only available with fullscreen build option]
+- Esc : [NB only available with fullscreen build option]
 completely closes a fullscreen-mode enlargement window.
 
 GUI ELEMENTS
@@ -535,14 +540,6 @@ This release also builds some other executables:
    standard input, mutates it (using the same algorithm and parameters
    as evolvotron in its default state) and writes the new function's XML
    representation to the standard output.
-
- $ evolvotron_match [-v] image[.ppm | .png]
-   An experiment in replacing the human operator with a simple scoring function
-   (minimise sum-of-squares of pixel value differences between evolvotron
-   image and image specified on command line).  Outputs f??????.png whenever
-   it finds a better match.  Terminates after 10000000 iterations and writes
-   match.png.  However, all it has ever done so far is to converge with the
-   average colour of the target image.
 
 EXAMPLES
 --------

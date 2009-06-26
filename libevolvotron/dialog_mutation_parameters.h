@@ -46,26 +46,23 @@ class DialogMutationParameters : public QDialog
    */
   MutationParametersQObject*const _mutation_parameters;
 
-  //! Top level holder of all the dialog content.
-  QVBox* _dialog_content;
-
   //! Tabs for base parameters and autocool
   QTabWidget* _tabs;
 
   //! Tab for base mutation parameter controls
-  QVBox* _vbox_base_mutation;
+  QWidget* _vbox_base_mutation;
 
   //! Grid for buttons;
-  QGrid* _grid_buttons;
+  QWidget* _grid_buttons;
 
   //! Grid for base parameter control spinners
-  QGrid* _grid_base_mutation;
+  QWidget* _grid_base_mutation;
 
   //! Group for autocool parameters
-  QVBox* _vbox_autocool;
+  QWidget* _vbox_autocool;
 
   //! Grid for autocool parameters
-  QGrid* _grid_autocool;
+  QWidget* _grid_autocool;
 
   //! Label to show number of generations
   QLabel* _label_autocool_generations;
@@ -99,9 +96,6 @@ class DialogMutationParameters : public QDialog
   //! Button to close dialog.
   QPushButton* _ok;
 
-  //! Need to pass resizes on to vbox or things just get chopped.
-  virtual void resizeEvent(QResizeEvent*);
-
   //! Reload spinboxes from _mutation_parameters.
   void setup_from_mutation_parameters();
 
@@ -110,8 +104,7 @@ class DialogMutationParameters : public QDialog
   DialogMutationParameters(QMainWindow* parent,MutationParametersQObject* mp);
 
   //! Destructor.
-  virtual ~DialogMutationParameters()
-    {}
+  ~DialogMutationParameters();
 
  public slots:
 

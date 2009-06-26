@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _mutatable_image_computer_task_h_
 #define _mutatable_image_computer_task_h_
 
-#include <qsize.h>
-
 #include "mutatable_image.h"
 #include "mutatable_image_display.h"
 
@@ -145,7 +143,7 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
-  MutatableImageDisplay*const display() const
+  MutatableImageDisplay* display() const
     {
       return _display;
     }
@@ -175,49 +173,49 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
-  const uint frames() const
+  uint frames() const
     {
       return _frames;
     }
 
   //! Accessor.
-  const uint level() const
+  uint level() const
     {
       return _level;
     }
 
   //! Accessor.
-  const uint fragment() const
+  uint fragment() const
     {
       return _fragment;
     }
 
   //! Accessor.
-  const uint number_of_fragments() const
+  uint number_of_fragments() const
     {
       return _number_of_fragments;
     }
 
   //! Accessor.
-  const bool jittered_samples() const
+  bool jittered_samples() const
     {
       return _jittered_samples;
     }
 
   //! Accessor.
-  const uint multisample_grid() const
+  uint multisample_grid() const
     {
       return _multisample_grid;
     }
 
   //! Serial number
-  const unsigned long long int serial() const
+  unsigned long long int serial() const
     {
       return _serial;
     }
 
   //! Accessor.
-  const uint priority() const
+  uint priority() const
     {
       return _priority;
     }
@@ -237,31 +235,31 @@ class MutatableImageComputerTask
     }
 
   //! Accessor.
-  const uint current_col() const
+  uint current_col() const
     {
       return _current_col;
     }
 
   //! Accessor.
-  const uint current_row() const
+  uint current_row() const
     {
       return _current_row;
     }
 
   //! Accessor.
-  const uint current_frame() const
+  uint current_frame() const
     {
       return _current_frame;
     }
 
   //! Accessor.
-  const uint current_pixel() const
+  uint current_pixel() const
     {
       return _current_pixel;
     }
 
   //!Accessor.
-  const bool completed() const
+  bool completed() const
     {
       return _completed;
     }

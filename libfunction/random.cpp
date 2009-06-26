@@ -34,7 +34,7 @@ Random01::Random01(uint seed)
 Random01::~Random01()
 {}
 
-const double Random01::operator()()
+double Random01::operator()()
 {
   return _gen();
 }

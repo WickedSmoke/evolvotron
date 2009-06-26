@@ -78,7 +78,7 @@ InstanceCounted::~InstanceCounted()
   if (_verbose) std::clog << "[-" << _what << ":" << (*_instance_counts)[_what] << "]" << ( (*_instance_counts)[_what]==0 ? "\n" : "");
 }
 
-const bool InstanceCounted::is_clear()
+bool InstanceCounted::is_clear()
 {
   bool ok=true;
   for (std::map<std::string,uint>::const_iterator it=(*_instance_counts).begin();it!=(*_instance_counts).end();it++)

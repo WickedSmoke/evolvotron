@@ -31,8 +31,6 @@ class DialogRenderParameters : public QDialog
  private:
   Q_OBJECT
 
-  typedef QDialog Superclass;
-
  protected:
 
   //! Instance of MutationParameters under dialog control.
@@ -41,23 +39,17 @@ class DialogRenderParameters : public QDialog
    */
   RenderParameters*const _render_parameters;
 
-  //! Top level holder of all the dialog content.
-  QVBox* _dialog_content;
-
-  //! Grid for buttons etc;
-  QGrid* _grid;
-
   //! Enables jittered samples.
   QCheckBox* _checkbox_jittered_samples;
 
   //! Chooses between multisampling levels.
-  QVButtonGroup* _buttongroup;
+  QWidget* _buttonvbox;
+
+  //! Chooses between multisampling levels.
+  QButtonGroup* _buttongroup;
 
   //! Button to close dialog.
   QPushButton* _ok;
-
-  //! Need to pass resizes on to vbox or things just get chopped.
-  virtual void resizeEvent(QResizeEvent*);
 
   //! Reload from _render_parameters.
   void setup_from_render_parameters();
@@ -67,8 +59,7 @@ class DialogRenderParameters : public QDialog
   DialogRenderParameters(QMainWindow* parent,RenderParameters* rp);
 
   //! Destructor.
-  virtual ~DialogRenderParameters()
-    {}
+  ~DialogRenderParameters();
 
  public slots:
 

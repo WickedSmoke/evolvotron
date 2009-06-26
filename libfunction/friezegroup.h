@@ -26,7 +26,7 @@
 //! Functor implementing a pass-through Z coordinate policy
 struct FreeZ
 {
-  const float operator()(float z) const
+  float operator()(float z) const
   {
     return z;
   }
@@ -38,7 +38,7 @@ struct ClampZ
   ClampZ(float z)
     :_z(z)
   {}
-  const float operator()(float) const
+  float operator()(float) const
   {
     return _z;
   }
@@ -110,7 +110,7 @@ struct Friezegroup
     assert(_width>0.0f);
   }
 
-  const real width() const
+  real width() const
   {
     return _width;
   }

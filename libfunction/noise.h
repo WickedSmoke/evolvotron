@@ -31,8 +31,8 @@ public:
   Noise(uint seed);
 
   //! Return noise value at a point.
-  const real operator()(const XYZ& p) const;
-
+  real operator()(const XYZ& p) const;
+  
 protected:
   //! Number of table entries.
   enum {N=256};

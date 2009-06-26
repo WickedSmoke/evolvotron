@@ -25,9 +25,4 @@
 
 #include "libevolvotron_precompiled.h"
 
-#ifndef NONLINUX
-// Used for determining number of processors.
-#include <sched.h>
-#endif
-
 #endif

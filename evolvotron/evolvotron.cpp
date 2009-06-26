@@ -129,7 +129,7 @@ int main(int argc,char* argv[])
 
   std::clog
     << "Evolvotron version "
-    << EVOLVOTRON_BUILD
+    << stringify(EVOLVOTRON_BUILD)
     << " starting with " 
     << cols 
     << " by " 
@@ -179,14 +179,13 @@ int main(int argc,char* argv[])
       main_widget->favourite_function_unwrapped(favourite_function_unwrapped);
     }
   
-  app.setMainWidget(main_widget);
   main_widget->show();
-
+  
   // NB Do this here rather than in constructor so that compute threads aren't being fired off during general GUI set-up
   
   std::clog << "Resetting main widget...\n";
   main_widget->reset_cold();
-    
+  
   // NB No need to worry about deleting EvolvotronMain... QApplication seems to do it for us.
   std::clog << "Commencing main loop...\n";
   return app.exec();

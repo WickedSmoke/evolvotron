@@ -23,13 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _dialog_functions_h_
 #define _dialog_functions_h_
 
-#include <qgrid.h>
-#include <qspinbox.h>
-#include <qslider.h>
-#include <qcheckbox.h>
-#include <qmainwindow.h>
-#include <qstatusbar.h>
-
 #include "mutation_parameters_qobject.h"
 
 class EvolvotronMain;
@@ -86,8 +79,6 @@ class DialogFunctions : public QDialog
  private:
   Q_OBJECT
 
-  typedef QDialog Superclass;
-
  protected:
   //! Owner of dialog
   EvolvotronMain*const _parent;
@@ -98,7 +89,7 @@ class DialogFunctions : public QDialog
   MutationParametersQObject*const _mutation_parameters;
 
   //! Top level holder of all the dialog content.
-  QVBox* _dialog_content;
+  QWidget* _dialog_content;
 
   //! Notification of undiluted branching ratio.
   QLabel* _branching_ratio;
@@ -115,18 +106,12 @@ class DialogFunctions : public QDialog
   //! Lookup from each slider in the weighting controls area to corresponding function.
   std::map<QSlider*,const FunctionRegistration*> _slider_to_function;
 
-  //! Button to close dialog.
-  QPushButton* _ok;
-
-  //! Need to pass resizes on to vbox or things just get chopped.
-  virtual void resizeEvent(QResizeEvent*);
-
  public:
   //! Constructor.
   DialogFunctions(EvolvotronMain* parent,MutationParametersQObject* mp);
 
   //! Destructor.
-  virtual ~DialogFunctions();
+  ~DialogFunctions();
 
   //! Reload from _mutation_parameters
   void setup_from_mutation_parameters();

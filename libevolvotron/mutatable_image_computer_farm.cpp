@@ -62,7 +62,7 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
 }
 
 //! Predicate function to test whether a task has been aborted
-static const bool predicate_aborted(const boost::shared_ptr<const MutatableImageComputerTask> t) 
+static bool predicate_aborted(const boost::shared_ptr<const MutatableImageComputerTask> t) 
 {
   return t->aborted();
 }
@@ -237,7 +237,7 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
     }
 }
 
-const uint MutatableImageComputerFarm::tasks() const
+uint MutatableImageComputerFarm::tasks() const
 {
   uint ret=0;
   

@@ -39,7 +39,7 @@ public:
   //! Return a random number.
   /*! \warning Returns double instead of real because suspect NegExp can return Inf otherwise.
    */
-  virtual const double operator()()
+  virtual double operator()()
     =0;
 };
 
@@ -54,7 +54,7 @@ public:
   virtual ~Random01();
   
   //! Return next number in sequence.
-  virtual const double operator()();
+  virtual double operator()();
 private:
 
   //! Base generator
@@ -91,7 +91,7 @@ public:
     {}
   
   //! Return next number in sequence.
-  virtual const double operator()()
+  virtual double operator()()
     {
       return -_mean*log(1.0-_generator());
     }  

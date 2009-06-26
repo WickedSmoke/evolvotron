@@ -26,35 +26,51 @@
 
 #include "libfunction_precompiled.h"
 
-#include <qapplication.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qcursor.h>
-#include <qdatetime.h>
-#include <qdialog.h>
-#include <qgrid.h>
-#include <qgroupbox.h>
-#include <qhbox.h>
-#include <qhgroupbox.h>
-#include <qimage.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qmainwindow.h>
-#include <qmessagebox.h>
-#include <qobject.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qregexp.h>
-#include <qslider.h>
-#include <qspinbox.h>
-#include <qstatusbar.h>
-#include <qstring.h>
-#include <qtabwidget.h>
-#include <qtextedit.h>
-#include <qtooltip.h>
-#include <qvbox.h>
-#include <qvbuttongroup.h>
-#include <qvgroupbox.h>
-#include <qwidget.h>
+#include <stack>
+
+#include <boost/optional.hpp>
+
+#include <QtXml>
+
+#include <QApplication>
+#include <QButtonGroup>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QCursor>
+#include <QDateTime>
+#include <QDialog>
+#include <QFileDialog>
+#include <QGroupBox>
+#include <QImage>
+#include <QKeyEvent>
+#include <QLabel>
+#include <QList>
+#include <QLayout>
+#include <QMainWindow>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QMutex>
+#include <QObject>
+#include <QPixmap>
+#include <QPainter>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QRegExp>
+#include <QScrollArea>
+#include <QSize>
+#include <QSlider>
+#include <QSpinBox>
+#include <QStatusBar>
+#include <QString>
+#include <QTabWidget>
+#include <QTextBrowser>
+#include <QTextEdit>
+#include <QThread>
+#include <QTimer>
+#include <QToolTip>
+#include <QWaitCondition>
+#include <QWidget>
+
+#define stringify(S) __STRING(S)
 
 #endif

@@ -24,10 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "mutatable_image.h"
 
-#include <stack>
-
-#include <qxml.h>
-
 #include "function_node_info.h"
 #include "function_top.h"
 #include "mutatable_image_display_big.h"
@@ -88,12 +84,12 @@ boost::shared_ptr<const MutatableImage> MutatableImage::deepclone(bool lock) con
   return boost::shared_ptr<const MutatableImage>(new MutatableImage(root,sinusoidal_z(),spheremap(),lock)); 
 }
 
-const bool MutatableImage::is_constant() const
+bool MutatableImage::is_constant() const
 {
   return top().is_constant();
 }
 
-const bool MutatableImage::ok() const
+bool MutatableImage::ok() const
 {
   return top().ok();
 }  
@@ -206,9 +202,8 @@ std::ostream& MutatableImage::save_function(std::ostream& out) const
 {
   out 
     << "<?xml version=\"1.0\"?>\n"
-    << "<evolvotron-image-function version=\"" 
-    << EVOLVOTRON_VERSION 
-    << "\""
+    << "<evolvotron-image-function version=" 
+    << stringify(EVOLVOTRON_VERSION)
     << " zsweep=\""
     << (_sinusoidal_z ? "sinusoidal" : "linear")
     << "\""
@@ -284,11 +279,10 @@ public:
   
   //! Called for start elements.
   /*! Don't know anything about namespaces - parameters ignored.
-    Stick with latin1() conversion because we shouldn't have put anything fancy in the file
    */
   bool startElement(const QString&,const QString& localName,const QString&,const QXmlAttributes& atts)
   {
-    const std::string element(localName.latin1());
+    const std::string element(localName.toLocal8Bit().data());
 
     if (_expect_characters)
       {
@@ -310,11 +304,11 @@ public:
 	    else
 	      {
 		const QString version=atts.value(idx);
-		if (version!=QString(EVOLVOTRON_VERSION))
+		if (version!=QString(stringify(EVOLVOTRON_VERSION)))
 		  {
 		    QString tmp;
-		    tmp="Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+QString(EVOLVOTRON_VERSION)+")\n";
-		    _report+=tmp.latin1();
+		    tmp="Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+QString(stringify(EVOLVOTRON_VERSION))+")\n";
+		    _report+=tmp.toLocal8Bit().data();
 		  }
 	      }
 
@@ -334,7 +328,7 @@ public:
 		  {
 		    QString tmp;
 		    tmp="Error: zsweep attribute expected \"sinusoidal\" or \"linear\", but got \""+zsweep+"\"\n";
-		    _report+=tmp.latin1();
+		    _report+=tmp.toLocal8Bit().data();
 		    return false;
 		  }
 	      }
@@ -355,7 +349,7 @@ public:
 		  {
 		    QString tmp;
 		    tmp="Error: projection attribute expected \"spheremap\" or \"planar\", but got \""+projection+"\"\n";
-		    _report+=tmp.latin1();
+		    _report+=tmp.toLocal8Bit().data();
 		    return false;
 		  }
 	      }
@@ -419,11 +413,10 @@ public:
 
   //! We don't need to check this matches startElement
   /*! Don't know anything about namespaces - parameter ignored.
-    Stick with latin1() conversion because we shouldn't have put anything fancy in the file
   */
   bool endElement(const QString&, const QString& localName, const QString&)
   {
-    const std::string element(localName.latin1());
+    const std::string element(localName.toLocal8Bit().data());
 
     if (_expect_characters)
       {
@@ -441,7 +434,7 @@ public:
   
   bool characters(const QString& s)
   {
-    QString stripped=s.stripWhiteSpace();
+    QString stripped=s.simplified();
     
     if (stripped.isEmpty())
       {
@@ -452,9 +445,9 @@ public:
       {
 	if (!_expect_characters)
 	  {
-          QString tmp;
-          tmp = "Error: Unexpected character data : \""+s+"\"\n";
-	    _report += tmp.latin1();
+	    QString tmp;
+	    tmp = "Error: Unexpected character data : \""+s+"\"\n";
+	    _report += tmp.toLocal8Bit().data();
 	    return false;
 	  }
       }
@@ -463,7 +456,7 @@ public:
 
     if (_expect_characters_type)
       {
-	_stack.top()->type(s.latin1());
+	_stack.top()->type(s.toLocal8Bit().data());
 	_expect_characters_type=false;
       }
     else if (_expect_characters_iterations)
@@ -473,11 +466,11 @@ public:
 	_expect_characters_iterations=false;
 	if (!ok)
 	  {
-          QString tmp;
-          tmp = "Error: Couldn't parse \""+s+"\" as an integer\n";
-	    _report += tmp.latin1();
+	    QString tmp;
+	    tmp = "Error: Couldn't parse \""+s+"\" as an integer\n";
+	    _report += tmp.toLocal8Bit().data();
 	    return false;
-	  }	
+	  }
       }
     else if (_expect_characters_parameter)
       {
@@ -486,9 +479,9 @@ public:
 	_expect_characters_parameter=false;
 	if (!ok)
 	  {
-          QString tmp;
-          tmp = "Error: Couldn't parse \""+s+"\" as a real\n";
-	    _report+=tmp.latin1();
+	    QString tmp;
+	    tmp = "Error: Couldn't parse \""+s+"\" as a real\n";
+	    _report+=tmp.toLocal8Bit().data();
 	    return false;
 	  }
 	
@@ -534,7 +527,7 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
   if (ok)
     {
       // Might be a warning message in there.
-      report=load_handler.errorString().latin1();
+      report=load_handler.errorString().toLocal8Bit().data();
 
       assert(info.get());
       std::auto_ptr<FunctionNode> root(FunctionNode::create(function_registry,*info,report));
@@ -570,7 +563,7 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
     {
       QString tmp;
       tmp = "Parse error: "+load_handler.errorString()+"\n";
-      report=tmp.latin1();
+      report=tmp.toLocal8Bit().data();
       return boost::shared_ptr<const MutatableImage>();
     }
 }

@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 //! Return the number of processors on the system
-extern const uint get_number_of_processors();
+extern uint get_number_of_processors();
 
 //! Lower the priority of the calling thread by increasing its "niceness" (unix 0-19 'nice' scale used)
 extern void add_thread_niceness(uint);

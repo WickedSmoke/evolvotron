@@ -23,8 +23,6 @@
 #ifndef _function_constant_h_
 #define _function_constant_h_
 
- 
-
 //------------------------------------------------------------------------------------------
 
 //! Function class representing a constant value.
@@ -39,7 +37,7 @@ FUNCTION_BEGIN(FunctionConstant,3,0,false,FnCore)
   //! Returns true, obviously.
   /*! One of the few cases this method is overriden; most (all?) other no-argument functions should return false
    */
-  virtual const bool is_constant() const
+  virtual bool is_constant() const
     {
       return true;
     }

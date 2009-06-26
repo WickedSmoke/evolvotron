@@ -39,12 +39,12 @@ public:
 
   virtual const XYZ evaluate(const XYZ& p) const;
 
-  virtual FunctionTop*const is_a_FunctionTop()
+  virtual FunctionTop* is_a_FunctionTop()
   {
       return this;
   }
 
-  virtual const FunctionTop*const is_a_FunctionTop() const
+  virtual const FunctionTop* is_a_FunctionTop() const
   {
       return this;
   }

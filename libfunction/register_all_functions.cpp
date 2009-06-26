@@ -13,9 +13,6 @@ REGISTER_DCL(FunctionConstant);
 REGISTER_DCL(FunctionIdentity);
 REGISTER_DCL(FunctionPostTransform);
 REGISTER_DCL(FunctionPreTransform);
-REGISTER_DCL(FunctionTop);
-REGISTER_DCL(FunctionTransform);
-REGISTER_DCL(FunctionTransformGeneralised);
 REGISTER_DCL(FunctionAdd);
 REGISTER_DCL(FunctionMultiply);
 REGISTER_DCL(FunctionDivide);
@@ -114,6 +111,9 @@ REGISTER_DCL(FunctionPreTransformGeneralised);
 REGISTER_DCL(FunctionPostTransformGeneralised);
 REGISTER_DCL(FunctionTransformQuadratic);
 REGISTER_DCL(FunctionRotate);
+REGISTER_DCL(FunctionTop);
+REGISTER_DCL(FunctionTransformGeneralised);
+REGISTER_DCL(FunctionTransform);
 
 void register_all_functions(FunctionRegistry& r)
 {
@@ -123,9 +123,6 @@ void register_all_functions(FunctionRegistry& r)
   register_FunctionIdentity(r);
   register_FunctionPostTransform(r);
   register_FunctionPreTransform(r);
-  register_FunctionTop(r);
-  register_FunctionTransform(r);
-  register_FunctionTransformGeneralised(r);
   register_FunctionAdd(r);
   register_FunctionMultiply(r);
   register_FunctionDivide(r);
@@ -224,4 +221,7 @@ void register_all_functions(FunctionRegistry& r)
   register_FunctionPostTransformGeneralised(r);
   register_FunctionTransformQuadratic(r);
   register_FunctionRotate(r);
+  register_FunctionTop(r);
+  register_FunctionTransformGeneralised(r);
+  register_FunctionTransform(r);
 }

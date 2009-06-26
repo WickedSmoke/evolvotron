@@ -3,6 +3,7 @@
 
 # append debug or release
 CONFIG+= qt thread stl precompile_header exceptions release       #release  #debug
+QT += xml
 
 #######################################
 # Control platform specific code

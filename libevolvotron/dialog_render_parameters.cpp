@@ -28,34 +28,43 @@ DialogRenderParameters::DialogRenderParameters(QMainWindow* parent,RenderParamet
   :QDialog(parent)
   ,_render_parameters(rp)
 {
-  setCaption("Render Parameters");
+  setWindowTitle("Render Parameters");
+  setSizeGripEnabled(true);
 
-  _dialog_content=new QVBox(this);
+  setLayout(new QVBoxLayout);
   
-  _grid=new QGrid(2,Qt::Horizontal,_dialog_content);
+  layout()->addWidget(_checkbox_jittered_samples=new QCheckBox("Jittered samples"));
+  _checkbox_jittered_samples->setToolTip("Jitter moves sampling positions randomly within a pixel.  This helps to break up aliasing and moire patterns.");
 
-  new QLabel("Jittered samples",_grid);
-  _checkbox_jittered_samples=new QCheckBox(_grid);
-  QToolTip::add(_checkbox_jittered_samples,"Jitter moves sampling positions randomly within a pixel.  This helps to break up aliasing and moire patterns.");
+  _buttonvbox=new QGroupBox("Oversampling (antialiasing)");
+  _buttonvbox->setLayout(new QVBoxLayout);
+  layout()->addWidget(_buttonvbox);
+  
+  QRadioButton* button[4];
+  _buttonvbox->layout()->addWidget(button[0]=new QRadioButton("1x1"));
+  _buttonvbox->layout()->addWidget(button[1]=new QRadioButton("2x2"));
+  _buttonvbox->layout()->addWidget(button[2]=new QRadioButton("3x3"));
+  _buttonvbox->layout()->addWidget(button[3]=new QRadioButton("4x4"));
 
-  _buttongroup=new QVButtonGroup("Oversampling (antialiasing)",_dialog_content);
-  _buttongroup->insert(new QRadioButton("1x1",_buttongroup),1);
-  _buttongroup->insert(new QRadioButton("2x2",_buttongroup),2);
-  _buttongroup->insert(new QRadioButton("3x3",_buttongroup),3);
-  _buttongroup->insert(new QRadioButton("4x4",_buttongroup),4);
-  _buttongroup->setRadioButtonExclusive(true);
-  QToolTip::add(_buttongroup->find(1),"No oversampling");
-  QToolTip::add(_buttongroup->find(2),"Enables a final antialiased rendering with 4 samples per pixel");
-  QToolTip::add(_buttongroup->find(3),"Enables a final antialiased rendering with 3 samples per pixel");
-  QToolTip::add(_buttongroup->find(4),"Enables a final antialiased rendering with 16 samples per pixel");
+  button[0]->setToolTip("No oversampling");
+  button[1]->setToolTip("Enables a final antialiased rendering with 4 samples per pixel");
+  button[2]->setToolTip("Enables a final antialiased rendering with 9 samples per pixel");
+  button[3]->setToolTip("Enables a final antialiased rendering with 16 samples per pixel");
+
+  _buttongroup=new QButtonGroup(_buttonvbox);
+  _buttongroup->addButton(button[0],1);
+  _buttongroup->addButton(button[1],2);
+  _buttongroup->addButton(button[2],3);
+  _buttongroup->addButton(button[3],4);
 
   setup_from_render_parameters();
 
   connect(_checkbox_jittered_samples,SIGNAL(stateChanged(int)),this,SLOT(changed_jittered_samples(int)));
-  connect(_buttongroup,SIGNAL(clicked(int)),this,SLOT(changed_oversampling(int)));
+  connect(_buttongroup,SIGNAL(buttonClicked(int)),this,SLOT(changed_oversampling(int)));
  
-  _ok=new QPushButton("OK",_dialog_content);
+  _ok=new QPushButton("OK");
   _ok->setDefault(true);
+  layout()->addWidget(_ok);
 
   connect(
 	  _ok,SIGNAL(clicked()),
@@ -68,27 +77,24 @@ DialogRenderParameters::DialogRenderParameters(QMainWindow* parent,RenderParamet
 	  );
 }
 
-void DialogRenderParameters::resizeEvent(QResizeEvent* e)
-{
-  Superclass::resizeEvent(e);
-  _dialog_content->resize(size());
-}
+DialogRenderParameters::~DialogRenderParameters()
+{}
 
 void DialogRenderParameters::setup_from_render_parameters()
 {
   _checkbox_jittered_samples->setChecked(_render_parameters->jittered_samples());
 
-  QButton*const which_button=_buttongroup->find(_render_parameters->multisample_grid());
+  QAbstractButton*const which_button=_buttongroup->button(_render_parameters->multisample_grid());
   if (which_button)
     {
-      _buttongroup->setButton(_buttongroup->id(which_button));
+      which_button->click();
     }
 }
 
 void DialogRenderParameters::changed_jittered_samples(int buttonstate)
 {
-  if (buttonstate==QButton::On) _render_parameters->jittered_samples(true);
-  else if (buttonstate==QButton::Off) _render_parameters->jittered_samples(false);
+  if (buttonstate==Qt::Checked) _render_parameters->jittered_samples(true);
+  else if (buttonstate==Qt::Unchecked) _render_parameters->jittered_samples(false);
 }
 
 void DialogRenderParameters::changed_oversampling(int id)

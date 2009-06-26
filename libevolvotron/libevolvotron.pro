@@ -31,8 +31,7 @@ HEADERS += \
         platform_specific.h \
         render_parameters.h \
         transform_factory.h \
-        usage_text.h \
-        vbox_scrollview.h
+        usage_text.h
 
 SOURCES += \
         args.cpp \
@@ -54,6 +53,5 @@ SOURCES += \
         mutation_parameters_qobject.cpp \
         platform_specific.cpp \
         render_parameters.cpp \
-        transform_factory.cpp \
-        vbox_scrollview.cpp
+        transform_factory.cpp
 

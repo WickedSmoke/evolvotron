@@ -160,7 +160,8 @@ const Transform FunctionTop::interesting_pretransform(const MutationParameters& 
 	  t.concatenate_on_right(TransformScale(2.0));
 	}
       while (parameters.r01()<0.125);
-      while (parameters.r01()<0.125);
+
+      while (parameters.r01()<0.125)
 	{
 	  t.concatenate_on_right(TransformScale(0.5));
 	}

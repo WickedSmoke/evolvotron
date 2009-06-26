@@ -24,14 +24,12 @@
 #ifndef _functions_juliabrot_h_
 #define _functions_juliabrot_h_
 
- 
-
 //------------------------------------------------------------------------------------------
 
 //! Mandelbrot/Julia iterator for fractal functions.
 /*! Returns i in 0 to iterations inclusive.  i==iterations implies "in" set.
  */
-inline const uint brot(const real z0r,const real z0i,const real cr,const real ci,const uint iterations)
+inline uint brot(const real z0r,const real z0i,const real cr,const real ci,const uint iterations)
 {
   real zr=z0r;
   real zi=z0i;

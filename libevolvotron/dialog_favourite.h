@@ -31,8 +31,6 @@ class DialogFavourite : public QDialog
  private:
   Q_OBJECT
 
-  typedef QDialog Superclass;
-
  protected:
   //! Owner.
   EvolvotronMain* _parent;
@@ -43,17 +41,14 @@ class DialogFavourite : public QDialog
   //! Flag specifying whether favourite function should be exposed
   bool _favourite_function_unwrapped;
 
-  //! Top level holder of all the dialog content.
-  QVBox* _dialog_content;
-
-  //! Select favourite function, if any.
-  QComboBox* _favourite;
-
   //! Map function names to combo box entries.
   std::map<std::string,unsigned int> _favourite_fn_to_index;
 
   //! Look up function names from combo box.
   std::map<unsigned int,std::string> _index_to_favourite_fn;
+
+  //! Select favourite function, if any.
+  QComboBox* _favourite;
 
   //! Controls unwrapped state.
   QCheckBox* _unwrapped;
@@ -74,7 +69,7 @@ class DialogFavourite : public QDialog
   DialogFavourite(EvolvotronMain* parent);
 
   //! Destructor.
-  virtual ~DialogFavourite();
+  ~DialogFavourite();
 
   //! Accessor
   const std::string& favourite_function() const
@@ -83,20 +78,16 @@ class DialogFavourite : public QDialog
     }
   
   //! Accessor. Returns true if function name recognised.
-  const bool favourite_function(const std::string& f);
+  bool favourite_function(const std::string& f);
   
   //! Accessor.
-  const bool favourite_function_unwrapped() const
+  bool favourite_function_unwrapped() const
     {
       return _favourite_function_unwrapped;
     }
 
   //! Accessor.
   void favourite_function_unwrapped(bool v);
-
-  //! Handle resizes.
-  virtual void resizeEvent(QResizeEvent* e);
-
 };
 
 #endif

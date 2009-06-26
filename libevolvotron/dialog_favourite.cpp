@@ -32,17 +32,21 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
   ,_parent(parent)
   ,_favourite_function_unwrapped(false)
 {
-  setCaption("Favourite");
-  
-  _dialog_content=new QVBox(this);
-  
-  QVGroupBox* group0=new QVGroupBox("Function",_dialog_content);
+  setWindowTitle("Favourite");
+  setSizeGripEnabled(true);
 
-  new QLabel("Root node for new image functions:",group0,0,Qt::WordBreak);
-  _favourite=new QComboBox(false,group0);
+  setLayout(new QVBoxLayout);
+  
+  QGroupBox*const group0=new QGroupBox("Function");
+  group0->setLayout(new QVBoxLayout);
+  layout()->addWidget(group0);
+
+  group0->layout()->addWidget(new QLabel("Root node for new image functions:"));
+  _favourite=new QComboBox;
+  group0->layout()->addWidget(_favourite);
   _favourite_fn_to_index[""]=_favourite->count();
   _index_to_favourite_fn[_favourite->count()]="";
-  _favourite->insertItem("- No preference -");
+  _favourite->addItem("- No preference -");
 
   for (FunctionRegistry::Registrations::const_iterator it=_parent->mutation_parameters().function_registry().registrations().begin();
        it!=_parent->mutation_parameters().function_registry().registrations().end();
@@ -57,15 +61,19 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
 #endif
       _favourite_fn_to_index[fn.name()]=_favourite->count();
       _index_to_favourite_fn[_favourite->count()]=fn.name();
-      _favourite->insertItem(fn.name());
+      _favourite->addItem(fn.name().c_str());
     }
 
-  QVGroupBox* group1=new QVGroupBox("Wrapping",_dialog_content);
+  QGroupBox*const group1=new QGroupBox("Wrapping");
+  group1->setLayout(new QVBoxLayout);
+  layout()->addWidget(group1);
   
-  _unwrapped=new QCheckBox("Disable additional space/colour transforms\n",group1);
+  _unwrapped=new QCheckBox("Disable additional space/colour transforms");
+  group1->layout()->addWidget(_unwrapped);
 
   //! \todo: Add OK & reset/restart versions ?
-  QPushButton* ok=new QPushButton("OK",_dialog_content);
+  QPushButton*const ok=new QPushButton("OK");
+  layout()->addWidget(ok);
   ok->setDefault(true);
 
   update_gui_from_state();
@@ -98,27 +106,20 @@ void DialogFavourite::changed_unwrapped(bool b)
   update_gui_from_state();
 }
 
-
 void DialogFavourite::update_gui_from_state()
 {
   const std::map<std::string,unsigned int>::const_iterator it=_favourite_fn_to_index.find(_favourite_function);
   if (it!=_favourite_fn_to_index.end())
-    _favourite->setCurrentItem((*it).second);
+    _favourite->setCurrentIndex((*it).second);
   else
-    _favourite->setCurrentItem(0);
+    _favourite->setCurrentIndex(0);
 
   _unwrapped->setChecked(_favourite_function_unwrapped);
 
   _unwrapped->setEnabled(!_favourite_function.empty());
 }
 
-void DialogFavourite::resizeEvent(QResizeEvent* e)
-{
-  Superclass::resizeEvent(e);
-  _dialog_content->resize(size());
-}
-
-const bool DialogFavourite::favourite_function(const std::string& f)
+bool DialogFavourite::favourite_function(const std::string& f)
 {
   if (_parent->mutation_parameters().function_registry().lookup(f))
     {

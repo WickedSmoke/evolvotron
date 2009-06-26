@@ -105,7 +105,7 @@ void MutationParameters::reset()
   report_change();
 }
 
-const real MutationParameters::decay_factor() const
+real MutationParameters::decay_factor() const
 {
   assert(_autocool_halflife!=0);
   return (_autocool_enable ? pow(0.5,_autocool_generations/static_cast<double>(_autocool_halflife)) : 1.0);
@@ -160,11 +160,11 @@ std::auto_ptr<FunctionNode> MutationParameters::random_function_stub(bool exciti
 
 std::auto_ptr<FunctionNode> MutationParameters::random_function() const
 {
-  const FunctionRegistration*const fn_reg=random_weighted_function_registration();
+  const FunctionRegistration* fn_reg=random_weighted_function_registration();
   return (*(fn_reg->stubnew_fn()))(*this,false);    
 }
 
-const FunctionRegistration*const MutationParameters::random_weighted_function_registration() const
+const FunctionRegistration* MutationParameters::random_weighted_function_registration() const
 {  
   const real r=r01();
   
@@ -181,7 +181,7 @@ const FunctionRegistration*const MutationParameters::random_weighted_function_re
     }
 }
 
-const real MutationParameters::random_function_branching_ratio() const
+real MutationParameters::random_function_branching_ratio() const
 {
   real weighted_args=0.0;
 
@@ -223,7 +223,7 @@ void MutationParameters::randomize_function_weightings_for_classifications(uint 
   report_change();
 }
 
-const real MutationParameters::get_weighting(const FunctionRegistration* fn)
+real MutationParameters::get_weighting(const FunctionRegistration* fn)
 {
   std::map<const FunctionRegistration*,real>::const_iterator it=_function_weighting.find(fn);
   assert(it!=_function_weighting.end());

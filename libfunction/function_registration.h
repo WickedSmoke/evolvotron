@@ -90,37 +90,37 @@ class FunctionRegistration
     }
 
   //! Accessor.
-  const FunctionNodeStubNewFnPtr stubnew_fn() const
+  FunctionNodeStubNewFnPtr stubnew_fn() const
     {
       return _stubnew_fn;
     }
 
   //! Accessor.
-  const FunctionNodeCreateFnPtr create_fn() const
+  FunctionNodeCreateFnPtr create_fn() const
     {
       return _create_fn;
     }
 
   //! Accessor.
-  const uint params() const
+  uint params() const
     {
       return _params;
     }
 
   //! Accessor.
-  const uint args() const
+  uint args() const
     {
       return _args;
     }
 
   //! Accessor.
-  const bool iterative() const
+  bool iterative() const
     {
       return _iterative;
     }
 
   //! Accessor.
-  const uint classification() const
+  uint classification() const
     {
       return _classification;
     }

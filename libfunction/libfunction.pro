@@ -61,8 +61,8 @@ SOURCES += \
         function_boilerplate.cpp \
         function_compose_pair.cpp \
         function_compose_triple.cpp \
-        function_constant.h \
-        function_identity.h \
+        function_constant.cpp \
+        function_identity.cpp \
         function_node.cpp \
         function_node_info.cpp \
         function_pre_transform.cpp \

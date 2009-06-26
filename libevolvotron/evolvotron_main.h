@@ -23,13 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _evolvotron_main_h_
 #define _evolvotron_main_h_
 
-#include <qcheckbox.h>
-#include <qmenubar.h>
-#include <qstatusbar.h>
-#include <qmainwindow.h>
-#include <qgrid.h>
-#include <qtimer.h>
-
 #include "function_registry.h"
 #include "transform_factory.h"
 
@@ -78,6 +71,8 @@ class EvolvotronMain : public QMainWindow
  protected:
 
   //! Class encapsulating everything needed for undo functionality.
+  /*! \todo This is too big to be a nested class.
+   */
   class History
     {
     protected:
@@ -182,29 +177,26 @@ class EvolvotronMain : public QMainWindow
   //! Dialog for selecting a favourite function (also holds the state for favourite stuff)
   DialogFavourite* _dialog_favourite;
 
-  //! The menubar.
-  QMenuBar* _menubar;
-
   //! The file menu.
-  QPopupMenu* _popupmenu_file;
+  QMenu* _popupmenu_file;
 
   //! The edit menu.
-  QPopupMenu* _popupmenu_edit;
+  QMenu* _popupmenu_edit;
 
   //! ID for the undo item (so we can disable it).
-  int _popupmenu_edit_undo_id;
+  QAction* _popupmenu_edit_undo_action;
 
   //! The settings menu
-  QPopupMenu* _popupmenu_settings;
+  QMenu* _popupmenu_settings;
 
-  //! Item number for setting check mark
-  int _menu_item_number_fullscreen;
+  //! Action for setting fullscreen
+  QAction* _menu_action_fullscreen;
 
-  //! Item number for setting check mark
-  int _menu_item_number_hide_menu;
+  //! Action for hiding menubar
+  QAction* _menu_action_hide_menu;
 
   //! The help menu.
-  QPopupMenu* _popupmenu_help;
+  QMenu* _popupmenu_help;
 
   //! Select autocooling (also serves to reset the generation count).
   QCheckBox* _checkbox_autocool_enable;
@@ -216,7 +208,7 @@ class EvolvotronMain : public QMainWindow
   QPushButton* _button_autocool_reheat;
 
   //! Grid for image display areas
-  QGrid* _grid;
+  QWidget* _grid;
 
   //! Timer to drive tick() slot
   QTimer* _timer;
@@ -251,7 +243,7 @@ class EvolvotronMain : public QMainWindow
     }
   
   //! Accessor.
-  const SpawnMemberFn last_spawn_method() const
+  SpawnMemberFn last_spawn_method() const
     {
       return _last_spawn_method;
     }
@@ -308,7 +300,7 @@ class EvolvotronMain : public QMainWindow
   ~EvolvotronMain();
 
   //! Accessor. Returns true if function name recognised.  Forwards to DialogFavourite.
-  const bool favourite_function(const std::string& f);
+  bool favourite_function(const std::string& f);
 
   //! Accessor.  Forwards to DialogFavourite.
   void favourite_function_unwrapped(bool v);

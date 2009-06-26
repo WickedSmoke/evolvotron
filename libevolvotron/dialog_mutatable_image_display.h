@@ -35,9 +35,6 @@ class DialogMutatableImageDisplay : public QDialog
     
  protected:
 
-  //! Vertical layout.
-  QVBox* _vbox;
-
   //! Tabs for info and xml (summary and detail)
   QTabWidget* _tabs;
 
@@ -55,11 +52,7 @@ class DialogMutatableImageDisplay : public QDialog
   DialogMutatableImageDisplay(QWidget* parent);
 
   //! Destructor.
-  virtual ~DialogMutatableImageDisplay()
-    {}
-
-  //! Need to pass resizes on to vbox or things just get chopped.
-  virtual void resizeEvent(QResizeEvent*);
+  ~DialogMutatableImageDisplay();
 
   //! Set content of main text and scrolling area.
   void set_content(const std::string& m,const std::string& x);

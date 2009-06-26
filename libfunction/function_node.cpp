@@ -98,7 +98,7 @@ void FunctionNode::get_stats(uint& total_nodes,uint& total_parameters,uint& dept
     }
 }
 
-const bool FunctionNode::verify_info(const FunctionNodeInfo& info,unsigned int np,unsigned int na,bool it,std::string& report)
+bool FunctionNode::verify_info(const FunctionNodeInfo& info,unsigned int np,unsigned int na,bool it,std::string& report)
 {
   if (info.params().size()!=np)
     {
@@ -131,7 +131,7 @@ const bool FunctionNode::verify_info(const FunctionNodeInfo& info,unsigned int n
   return true;
 }
 
-const bool FunctionNode::is_constant() const
+bool FunctionNode::is_constant() const
 {
   if (args().empty()) return false;
   for (unsigned int i=0;i<args().size();i++)
@@ -141,7 +141,7 @@ const bool FunctionNode::is_constant() const
   return true;
 }
 
-const bool FunctionNode::ok() const
+bool FunctionNode::ok() const
 {
   bool good=true;
   for (boost::ptr_vector<FunctionNode>::const_iterator it=args().begin();good && it!=args().end();it++)
@@ -152,7 +152,7 @@ const bool FunctionNode::ok() const
   return good;
 }
 
-const bool FunctionNode::create_args(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,boost::ptr_vector<FunctionNode>& args,std::string& report)
+bool FunctionNode::create_args(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,boost::ptr_vector<FunctionNode>& args,std::string& report)
 {
   for (boost::ptr_vector<FunctionNodeInfo>::const_iterator it=info.args().begin();it!=info.args().end();it++)
     {
@@ -189,7 +189,7 @@ void FunctionNode::stubparams(std::vector<real>& v,const MutationParameters& par
     v.push_back((parameters.r01() < 0.5f ? -1.0f : 1.0f)*parameters.rnegexp());
 }
 
-const uint FunctionNode::stubiterations(const MutationParameters& parameters)
+uint FunctionNode::stubiterations(const MutationParameters& parameters)
 {
   return 1+static_cast<uint>(floor(parameters.r01()*parameters.max_initial_iterations()));
 }
@@ -399,12 +399,12 @@ std::auto_ptr<boost::ptr_vector<FunctionNode> > FunctionNode::deepclone_args() c
   return ret;
 }
 
-const FunctionTop*const FunctionNode::is_a_FunctionTop() const
+const FunctionTop* FunctionNode::is_a_FunctionTop() const
 {
   return 0;
 }
 
-FunctionTop*const FunctionNode::is_a_FunctionTop()
+FunctionTop* FunctionNode::is_a_FunctionTop()
 {
   return 0;
 }

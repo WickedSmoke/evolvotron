@@ -23,9 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _mutatable_image_display_h_
 #define _mutatable_image_display_h_
 
-#include <qpixmap.h>
-#include <qpopupmenu.h>
-
 #include "mutatable_image.h"
 #include "mutatable_image_computer.h"
 #include "dialog_mutatable_image_display.h"
@@ -46,6 +43,8 @@ class MutatableImageDisplay : public QWidget
   EvolvotronMain* _main;
 
   //! Flag for whether context menu should display all options.
+  /*! false also implies a standalone window
+   */
   const bool _full_functionality;
 
   //! Flag for whether the offscreen buffer has fixed size
@@ -114,18 +113,18 @@ class MutatableImageDisplay : public QWidget
   DialogMutatableImageDisplay* _properties;
 
   //! Context (right-click) menu.
-  QPopupMenu* _menu;
+  QMenu* _menu;
 
   //! Submenu for spawn warped options.
-  QPopupMenu* _menu_warped;
+  QMenu* _menu_warped;
 
   //! Submenu for Big image options.
-  QPopupMenu* _menu_big;
+  QMenu* _menu_big;
 
   //! Position of item in menu.
   /*! This is the only menu item we need to retain this information for becuase we need it to set the lock check-mark.
    */
-  uint _menu_item_number_lock;
+  QAction* _menu_item_action_lock;
 
   //! Coordinate of mouse event which started mid-button adjustment
   QPoint _mid_button_adjust_start_pos;
@@ -138,7 +137,7 @@ class MutatableImageDisplay : public QWidget
 
  public:
   //! Constructor.  
-  MutatableImageDisplay(QWidget* parent,EvolvotronMain* mn,bool full,bool fixed_size,const QSize& image_size,uint f,uint fr);
+  MutatableImageDisplay(EvolvotronMain* mn,bool full_functionality,bool fixed_size,const QSize& image_size,uint f,uint fr);
 
   //! Destructor.
   virtual ~MutatableImageDisplay();
@@ -150,7 +149,7 @@ class MutatableImageDisplay : public QWidget
     }
 
   //! Accessor.
-  const bool locked() const
+  bool locked() const
     {
       return (_image_function.get()!=0 ? _image_function->locked() : false);
     }
@@ -206,7 +205,7 @@ class MutatableImageDisplay : public QWidget
   public slots:
 
   //! Simplify the held image, return the number of nodes eliminated
-  const uint simplify_constants(bool single);
+  uint simplify_constants(bool single);
 
   protected slots:
 
