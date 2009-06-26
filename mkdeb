@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Before using this you probably need to install
-#   sudo pbuilder yada devscripts lintian linda cdeboostrap (or debootstrap)
+#   sudo pbuilder yada devscripts lintian linda [c?]deboostrap
 # and maybe dpkg-sig.  Also:
 # set up for sudo
 # set up pbuilder with 
@@ -67,9 +67,9 @@ Home-Page: <URL:http://www.bottlenose.demon.co.uk/share/evolvotron>
 Description: Interactive evolutionary texture generator
 Copyright: GPL
  Copyright 2007 Tim Day
-Build-Depends: qt3-dev-tools,libqt3-headers,libqt3-mt-dev,libqt3-mt,libboost-dev,libboost-serialization-dev,python,yada
+Build-Depends: qt4-dev-tools,libqt4-dev,libqt4-xml,libboost-dev,libboost-serialization-dev,python,yada
 Build: sh
- export QTDIR=/usr/share/qt3
+ export QTDIR=/usr/share/qt4
  # Note: yada install deals with DEB_BUILD_OPTIONS 'nostrip'
  if [ "${DEB_BUILD_OPTIONS#*noopt}" != "$DEB_BUILD_OPTIONS" ]; then
    ./configure "CONFIG -= release" "CONFIG += debug"
