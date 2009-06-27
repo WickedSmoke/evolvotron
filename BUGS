@@ -1,7 +1,5 @@
 Known bugs:
 
-- Quitting main app leaves enlargement windows up (bug or feature?)
-
 - Enlargements seem to need silly amount of memory.  Where's it all going ?
 
 - Middle mouse drags sometimes don't seem to have any effect other than
