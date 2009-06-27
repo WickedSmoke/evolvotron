@@ -202,6 +202,7 @@ EvolvotronMain::EvolvotronMain
   ,_last_spawn_method(&EvolvotronMain::spawn_normal)
 {
   setAttribute(Qt::WA_DeleteOnClose,true);
+  setAttribute(Qt::WA_QuitOnClose,true);
 
   setMinimumSize(640,480);
 

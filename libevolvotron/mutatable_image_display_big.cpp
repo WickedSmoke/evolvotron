@@ -28,20 +28,23 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "evolvotron_main.h"
 
 MutatableImageDisplayBig::MutatableImageDisplayBig(EvolvotronMain* mn)
-  :_main(mn)
+  :QWidget(mn,Qt::Window)  // We're a window, but with a parent
+  ,_main(mn)
 {
   setAttribute(Qt::WA_DeleteOnClose,true);
 
   setWindowTitle("Evolvotron");
   setMinimumSize(256,256);
   
-  //setSizeGripEnabled(true); // Would need a statusbar or similar
+  //setSizeGripEnabled(true); // Only an option if we give the window a statusbar, or make it a dialog
 }
 
 /*! Don't think destructor needs to do anything to _display... Qt takes care of it
  */
 MutatableImageDisplayBig::~MutatableImageDisplayBig()
-{}
+{
+  std::clog << "An enlargement was deleted\n";
+}
 
 /*! There's not much point in dropping back to normal mode (from fullscreen) if the main
   app is fullscreen because we'll just be hidden, so close instead under such circumstances.
