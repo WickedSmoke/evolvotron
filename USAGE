@@ -63,8 +63,8 @@ USER OPTIONS
 	evolvotron actions which bring up dialog boxes (e.g save) seem
 	to generally behave fairly sensibly but child windows 
 	(e.g enlargements or dialogs) can show some "interesting" behaviour.  
-	Fullscreen mode can be toggled within the application using ctrl-f.  
-	The Esc key will also exit it.
+	Fullscreen mode can be toggled within the application using "F" key.  
+	The "Esc" key will also exit it.
 
   -g <cols> <rows>
 	Sets number of image display cells (defaults to 6 by 5)
@@ -236,7 +236,7 @@ Right clicking on an image gets you a few more options:
 
 MIDDLE MOUSE BUTTON
 -------------------
-[NB This feature will probably only be of practical use to those with multi-GHz machines].
+[NB This feature will probably only be of practical use to those with high-end machines].
 
 You can use the middle mouse button to drag-adjust individual images.
 This is useful for "final composition" type tweaks, e.g centering an
@@ -283,7 +283,7 @@ MAIN WINDOW
 
 - "r"/"t"/"x" perform various starts of reset/restart.
 
-- "q" quits the application
+- "q" quits the application.
 
 - "u" (and also Ctrl-z) does an undo.
 

@@ -1,9 +1,10 @@
 [Most recent at top]
 
 From release 0.5.1:
- - Version to 0.6.0dev
+ - Version to 0.6.0
  - Switch to Qt4.
- - (Qt4 related) keyboard shortcuts rationalized (many removed)
+ - (Qt4 related) keyboard shortcuts rationalized
+   many removed, ctrl-modifiers dropped
  - (Qt4 related) image displays now have a frame around them
  - (Qt4 related) Remove non-standard Qt animated PNG support
  - evolvotron_match removed
