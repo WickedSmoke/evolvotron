@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Before using this you probably need to install
-#   sudo pbuilder yada devscripts lintian linda [c?]deboostrap
+#   sudo pbuilder yada devscripts lintian linda cdebootstrap
 # and maybe dpkg-sig.  Also:
 # set up for sudo
 # set up pbuilder with 
