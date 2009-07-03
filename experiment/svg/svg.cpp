@@ -15,35 +15,35 @@ class View : public QGLWidget
 {
 public:
   View()
-    :_renderer(this)
+    :QGLWidget()
+    ,_renderer(this)
   {
     setAutoFillBackground(false);
 
     if (!_renderer.load(QString("drawing.svg")))
       throw std::runtime_error(__PRETTY_FUNCTION__+std::string(": loading SVG file failed\n"));
   }
+
   void initializeGL()
   {}
-  /*
-  void paintGL()
-  {
-    QPainter painter;
-    painter.begin(this);
-    painter.end();
-  }
-  */
+
+  //Don't use paintGL when combining 2D/3D
+  //void paintGL()
+  //{}
+
   void paintEvent(QPaintEvent*) 
   {
     glViewport(0,0,static_cast<GLint>(width()),static_cast<GLint>(height()));
 
-    glClearColor(0.25f,0.25f,.25f,1.0f);
+    glClearColor(1.0f,1.0f,1.0f,1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    QPainter painter;
-    painter.begin(this);
+    //glEnable(GL_MULTISAMPLE);
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
     _renderer.render(&painter);
     painter.end();
-    
   }
 protected:
   void resizeGL(int width,int height)
