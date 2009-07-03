@@ -1,5 +1,5 @@
 #!/bin/sh
 
-qmake-qt4 svga.pro
+qmake-qt4 svg.pro
 
 make

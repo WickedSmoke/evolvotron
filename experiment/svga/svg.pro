@@ -3,7 +3,7 @@ TEMPLATE = app
 CONFIG+= qt opengl stl exceptions release   # release debug
 QT += opengl svg
 
-SOURCES += svga.cpp
+SOURCES += svg.cpp
 
 #######################################
 # Disable assertions in release version
