@@ -8,8 +8,12 @@
 
 #include <QtSvg>
 
-// Follow file:///usr/share/doc/qt4-doc-html/html/opengl-overpainting.html
+// Following file:///usr/share/doc/qt4-doc-html/html/opengl-overpainting.html
 // for combining OpenGL with 2D
+
+// Looks nicer run with e.g __GL_FSAA_MODE=13 ./svg
+
+// TODO: Benchmark.  Try and capture SVG rendering in a display list.
 
 class View : public QGLWidget
 {
