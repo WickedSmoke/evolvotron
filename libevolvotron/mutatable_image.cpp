@@ -202,8 +202,10 @@ std::ostream& MutatableImage::save_function(std::ostream& out) const
 {
   out 
     << "<?xml version=\"1.0\"?>\n"
-    << "<evolvotron-image-function version=" 
+    << "<evolvotron-image-function version="
+    << "\""
     << stringify(EVOLVOTRON_VERSION)
+    << "\""
     << " zsweep=\""
     << (_sinusoidal_z ? "sinusoidal" : "linear")
     << "\""

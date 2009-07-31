@@ -764,7 +764,14 @@ void MutatableImageDisplay::menupick_save_image()
     }
   else
     {
-      QString save_filename=QFileDialog::getSaveFileName(this,"Save image to a PNG or PPM file",".","Images (*.png *.ppm)");
+      const QString save_filename=QFileDialog::getSaveFileName
+	(
+	 this,
+	 "Save image to a PNG or PPM file",
+	 ".",
+	 "Images (*.png *.ppm)"
+	 );
+
       if (!save_filename.isEmpty())
 	{
 	  QString save_format="PNG";
@@ -824,7 +831,14 @@ void MutatableImageDisplay::menupick_save_function()
 {
   if (_icon.get()) _main->setWindowIcon(*_icon);
 
-  QString save_filename=QFileDialog::getSaveFileName(this,".","Saved functions (*.xml)","Save image function to an XML file");
+  const QString save_filename=QFileDialog::getSaveFileName
+    (
+     this,
+     "Save image function to an XML file",
+     ".",
+     "Functions (*.xml)"
+     );
+
   if (!save_filename.isEmpty())
     {
       std::ofstream file(save_filename.toLocal8Bit());
@@ -839,13 +853,14 @@ void MutatableImageDisplay::menupick_save_function()
 
 void MutatableImageDisplay::menupick_load_function()
 {
-  QString load_filename=QFileDialog::getOpenFileName
+  const QString load_filename=QFileDialog::getOpenFileName
     (
      this,
      "Load image function from an XML file",
      ".",
      "Functions (*.xml)"
      );
+
   if (!load_filename.isEmpty())
     {
       std::ifstream file(load_filename.toLocal8Bit());
