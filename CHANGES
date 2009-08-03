@@ -2,7 +2,7 @@
 
 From release 0.6.0:
  - Version to 0.6.1
- - Fix bug in saved functions (quotes missing around version attribute)
+ - Fix bug in saved functions: quotes missing around version attribute
 
 From release 0.5.1:
  - Version to 0.6.0
