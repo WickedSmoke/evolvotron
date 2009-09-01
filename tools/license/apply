@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Run this here to update license on all files
+headache -c config -h boilerplate `find ../.. -name '*.cpp' -o -name '*.h'`

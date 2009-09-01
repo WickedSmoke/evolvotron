@@ -1,0 +1,3 @@
+# C/CPP source
+".*\\.[ch]"    -> frame open:"/*" line:"*" close:"*/"
+| ".*\\.cpp"    -> frame open:"/*" line:"*" close:"*/"
