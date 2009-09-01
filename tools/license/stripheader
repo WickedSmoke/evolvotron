@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Used this to remove old header style before using headache
+
+for f in `find ../.. -name '*.cpp' -o -name '*.h'` ; do cat $f | awk '{if (go) print $0;if ($0=="*********************************************************************/") go=1;}' > $f.tmp ; mv $f.tmp $f ; done
