@@ -3,6 +3,7 @@
 From release 0.6.1:
  - Version to 0.6.2
  - CHANGES renamed to NEWS
+ - License boilerplate managed using "headache"
 
 From release 0.6.0:
  - Version to 0.6.1
