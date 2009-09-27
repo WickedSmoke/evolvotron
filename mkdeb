@@ -43,7 +43,7 @@ cp ../${TARBALL} ${TARBALLORIG}
 tar xvfz ${TARBALLORIG}
 mv ${PROJECT} ${PROJECT}-${VER}
 cd ${PROJECT}-${VER}
-mv CHANGES changelog          # As per policy manual
+#mv CHANGES changelog     # As per policy manual.  Not needed now use NEWS ? Or need to copy NEWS ?
 sed -i "s/${VER}/${VER}-${REV}/g" VERSION
 
 mkdir debian

@@ -9,7 +9,7 @@ cd ..
 # NB Don't ship automatically generated .h file or contents of pkg
 PRUNE='-name moc -prune -o -name obj -prune -o -name pkg_* -prune -o -name usage_text.h -prune'
 
-FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,CHANGES,VERSION,USAGE,BUGS,configure,doxygen.cfg,mktgz,mkdeb,mkdoc,text_to_markup.py} evolvotron/libfunction/update_register_all_functions`
+FILES_MISC=`ls evolvotron/{README,BUILD,LICENSE,TODO,NEWS,VERSION,USAGE,BUGS,configure,doxygen.cfg,mktgz,mkdeb,mkdoc,text_to_markup.py} evolvotron/libfunction/update_register_all_functions`
 FILES_EXTRAS="`ls evolvotron/extras/{README,spheremap.pov,spheremap.sh}` `ls evolvotron/rpm/{README,evolvotron.spec}`"
 
 FILES_H=`find evolvotron       ${PRUNE} -o -name '*.h'   -print`
