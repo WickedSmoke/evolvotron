@@ -21,7 +21,7 @@ FILES_MAN=`find ${DIR}/man ${PRUNE} -o -name '*.1'   -print`
 
 FILES="$FILES_MISC $FILES_EXTRAS $FILES_H $FILES_CPP $FILES_PRO $FILES_MAN"
 
-tar cvfz evolvotron/evolvotron.tar.gz $FILES
+tar --transform "s:^${DIR}/:evolvotron/:" -cz -f ${DIR}/evolvotron.tar.gz $FILES
 
 echo "***"
 echo "*** Suggestion: mv evolvotron.tar.gz evolvotron-$VERSION.tar.gz"
