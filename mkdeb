@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Before using this you probably need to install
-#   sudo pbuilder yada devscripts lintian linda cdebootstrap
+#   sudo pbuilder yada devscripts lintian cdebootstrap
 # and maybe dpkg-sig.  Also:
 # set up for sudo
 # set up pbuilder with 
@@ -43,7 +43,6 @@ cp ../${TARBALL} ${TARBALLORIG}
 tar xvfz ${TARBALLORIG}
 mv ${PROJECT} ${PROJECT}-${VER}
 cd ${PROJECT}-${VER}
-#mv CHANGES changelog     # As per policy manual.  Not needed now use NEWS ? Or need to copy NEWS ?
 sed -i "s/${VER}/${VER}-${REV}/g" VERSION
 
 mkdir debian
@@ -95,7 +94,7 @@ Install: sh
  yada install -bin evolvotron_render/evolvotron_render
  yada install -bin evolvotron/evolvotron
  yada install -doc evolvotron.html
- yada install -doc BUGS TODO changelog
+ yada install -doc BUGS TODO NEWS USAGE
  yada install -man man/man1/evolvotron.1
  yada install -man man/man1/evolvotron_mutate.1
  yada install -man man/man1/evolvotron_render.1
@@ -118,6 +117,6 @@ sudo chown ${USER}:${USER} result/*
 
 RESULT=`(cd .. ; find ${WORKDIR} -name '*.deb')`
 echo "Results: ${RESULT}"
-echo "Don't forget to lintian and linda"
+echo "Don't forget to lintian ${RESULT}"
 echo 'Also dpkg-sig --sign builder -k $DPKGSIG_KEYID any .deb files'
 
