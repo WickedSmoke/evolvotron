@@ -26,7 +26,7 @@
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionTartanSelectFree,6,6,false,FnStructure)
+FUNCTION_BEGIN(FunctionTartanSelectFree,10,6,false,FnStructure)
 
   //! Evaluate function.
   /*! Sign of one 1D function's dot product determines one bit, ditto for another bit.  
@@ -35,8 +35,12 @@ FUNCTION_BEGIN(FunctionTartanSelectFree,6,6,false,FnStructure)
    */
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const int b0=(arg(0)(XYZ(p.x(),0.0,0.0))%XYZ(param(0),param(1),param(2))>0.0);
-      const int b1=(arg(1)(XYZ(0.0,p.y(),0.0))%XYZ(param(3),param(4),param(5))>0.0);
+      const XYZ p0(p.x(),param(0),param(1));
+      const XYZ p1(param(2),p.y(),param(3));
+      const XYZ d0(param(4),param(5),param(6));
+      const XYZ d1(param(7),param(8),param(9));
+      const int b0=(arg(0)(p0)%XYZ(d0)>0.0);
+      const int b1=(arg(1)(p1)%XYZ(d1)>0.0);
       const int which=2+b0+2*b1;
       assert(2<=which && which<6);
       return arg(which)(p);
@@ -46,15 +50,21 @@ FUNCTION_END(FunctionTartanSelectFree)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionTartanSelect,6,6,false,FnStructure)
+FUNCTION_BEGIN(FunctionTartanSelect,14,6,false,FnStructure)
 
   //! Evaluate function.
   /*! Similar to function free except the generators repeat.
    */
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const int b0=(arg(0)(XYZ(modulusf(p.x(),1.0),0.0,0.0))%XYZ(param(0),param(1),param(2))>0.0);
-      const int b1=(arg(1)(XYZ(0.0,modulusf(p.y(),1.0),0.0))%XYZ(param(3),param(4),param(5))>0.0);
+      const real x=(param(0)>0.0 ? modulusf(p.x(),param(1)) : trianglef(p.x(),param(1)));
+      const real y=(param(2)>0.0 ? modulusf(p.y(),param(3)) : trianglef(p.y(),param(4)));
+      const XYZ p0(x,param(4),param(5));
+      const XYZ p1(param(6),y,param(7));
+      const XYZ d0(param(8),param(9),param(10));
+      const XYZ d1(param(11),param(12),param(13));
+      const int b0=(arg(0)(p0)%XYZ(d0)>0.0);
+      const int b1=(arg(1)(p1)%XYZ(d1)>0.0);
       const int which=2+b0+2*b1;
       assert(2<=which && which<6);
       return arg(which)(p);
@@ -64,18 +74,24 @@ FUNCTION_END(FunctionTartanSelect)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionTartanSelectRepeat,6,6,false,FnStructure)
+FUNCTION_BEGIN(FunctionTartanSelectRepeat,14,6,false,FnStructure)
 
   //! Evaluate function.
   /*! Similar to above function except the invoked functions repeat too.
    */
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const int b0=(arg(0)(XYZ(modulusf(p.x(),1.0),0.0,0.0))%XYZ(param(0),param(1),param(2))>0.0);
-      const int b1=(arg(1)(XYZ(0.0,modulusf(p.y(),1.0),0.0))%XYZ(param(3),param(4),param(5))>0.0);
+      const real x=(param(0)>0.0 ? modulusf(p.x(),param(1)) : trianglef(p.x(),param(1)));
+      const real y=(param(2)>0.0 ? modulusf(p.y(),param(3)) : trianglef(p.y(),param(4)));
+      const XYZ p0(x,param(4),param(5));
+      const XYZ p1(param(6),y,param(7));
+      const XYZ d0(param(8),param(9),param(10));
+      const XYZ d1(param(11),param(12),param(13));
+      const int b0=(arg(0)(p0)%XYZ(d0)>0.0);
+      const int b1=(arg(1)(p1)%XYZ(d1)>0.0);
       const int which=2+b0+2*b1;
       assert(2<=which && which<6);
-      return arg(which)(modulusf(p));
+      return arg(which)(XYZ(x,y,p.z()));
     }
   
 FUNCTION_END(FunctionTartanSelectRepeat)
