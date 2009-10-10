@@ -25,8 +25,6 @@
 #ifndef _functions_choose_h_
 #define _functions_choose_h_
 
- 
-
 //------------------------------------------------------------------------------------------
 
 // Strip of one function across another

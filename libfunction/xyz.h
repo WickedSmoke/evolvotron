@@ -242,6 +242,28 @@ inline const XYZ operator/(const XYZ& v,real k)
   return v*(1.0/k);
 }
 
+//! Modulus all components by 1.0
+inline const XYZ modulusf(const XYZ& p)
+{
+  return XYZ
+    (
+     modulusf(p.x(),1.0),
+     modulusf(p.y(),1.0),
+     modulusf(p.z(),1.0)
+     );
+}
+
+//! Componentwise modulus
+inline const XYZ modulusf(const XYZ& p,const XYZ& q)
+{
+  return XYZ
+    (
+     modulusf(p.x(),q.x()),
+     modulusf(p.y(),q.y()),
+     modulusf(p.z(),q.z())
+     );
+}
+
 /*! If magnitude is zero we return zero vector.
  */
 inline const XYZ XYZ::normalised() const

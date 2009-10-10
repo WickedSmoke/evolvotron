@@ -1,0 +1,117 @@
+/**************************************************************************/
+/*  Copyright 2009 Tim Day                                                */
+/*                                                                        */
+/*  This file is part of Evolvotron                                       */
+/*                                                                        */
+/*  Evolvotron is free software: you can redistribute it and/or modify    */
+/*  it under the terms of the GNU General Public License as published by  */
+/*  the Free Software Foundation, either version 3 of the License, or     */
+/*  (at your option) any later version.                                   */
+/*                                                                        */
+/*  Evolvotron is distributed in the hope that it will be useful,         */
+/*  but WITHOUT ANY WARRANTY; without even the implied warranty of        */
+/*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         */
+/*  GNU General Public License for more details.                          */
+/*                                                                        */
+/*  You should have received a copy of the GNU General Public License     */
+/*  along with Evolvotron.  If not, see <http://www.gnu.org/licenses/>.   */
+/**************************************************************************/
+
+/*! \file
+  \brief Functions inspired by tartan patterns.
+*/
+
+#ifndef _functions_tartan_h_
+#define _functions_tartan_h_
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionTartanSelectFree,6,6,false,FnStructure)
+
+  //! Evaluate function.
+  /*! Sign of one 1D function's dot product determines one bit, ditto for another bit.  
+      2 bits used to select from 4 possibilities.
+      There's no guarantee of a repetitive pattern unless the generator functions are.
+   */
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const int b0=(arg(0)(XYZ(p.x(),0.0,0.0))%XYZ(param(0),param(1),param(2))>0.0);
+      const int b1=(arg(1)(XYZ(0.0,p.y(),0.0))%XYZ(param(3),param(4),param(5))>0.0);
+      const int which=2+b0+2*b1;
+      assert(2<=which && which<6);
+      return arg(which)(p);
+    }
+  
+FUNCTION_END(FunctionTartanSelectFree)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionTartanSelect,6,6,false,FnStructure)
+
+  //! Evaluate function.
+  /*! Similar to function free except the generators repeat.
+   */
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const int b0=(arg(0)(XYZ(modulusf(p.x(),1.0),0.0,0.0))%XYZ(param(0),param(1),param(2))>0.0);
+      const int b1=(arg(1)(XYZ(0.0,modulusf(p.y(),1.0),0.0))%XYZ(param(3),param(4),param(5))>0.0);
+      const int which=2+b0+2*b1;
+      assert(2<=which && which<6);
+      return arg(which)(p);
+    }
+  
+FUNCTION_END(FunctionTartanSelect)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionTartanSelectRepeat,6,6,false,FnStructure)
+
+  //! Evaluate function.
+  /*! Similar to above function except the invoked functions repeat too.
+   */
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const int b0=(arg(0)(XYZ(modulusf(p.x(),1.0),0.0,0.0))%XYZ(param(0),param(1),param(2))>0.0);
+      const int b1=(arg(1)(XYZ(0.0,modulusf(p.y(),1.0),0.0))%XYZ(param(3),param(4),param(5))>0.0);
+      const int which=2+b0+2*b1;
+      assert(2<=which && which<6);
+      return arg(which)(modulusf(p));
+    }
+  
+FUNCTION_END(FunctionTartanSelectRepeat)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionTartanMixFree,0,2,false,FnStructure)
+
+  //! Evaluate function.
+  /*! As above, but mix 2 functions.
+   */
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const XYZ warp(arg(0)(XYZ(p.x(),0.0,0.0)));
+      const XYZ weft(arg(1)(XYZ(0.0,p.y(),0.0)));
+      return 0.5*(warp+weft);
+    }
+  
+FUNCTION_END(FunctionTartanMixFree)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionTartanMixRepeat,0,2,false,FnStructure)
+
+  //! Evaluate function.
+  /*! As above, but mix 2 functions.
+   */
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const XYZ warp(arg(0)(XYZ(modulusf(p.x(),1.0),0.0,0.0)));
+      const XYZ weft(arg(1)(XYZ(0.0,modulusf(p.y(),1.0),0.0)));
+      return 0.5*(warp+weft);
+    }
+  
+FUNCTION_END(FunctionTartanMixRepeat)
+
+//------------------------------------------------------------------------------------------
+
+#endif

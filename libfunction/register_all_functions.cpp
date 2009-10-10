@@ -1,22 +1,3 @@
-/**************************************************************************/
-/*  Copyright 2009 Tim Day                                                */
-/*                                                                        */
-/*  This file is part of Evolvotron                                       */
-/*                                                                        */
-/*  Evolvotron is free software: you can redistribute it and/or modify    */
-/*  it under the terms of the GNU General Public License as published by  */
-/*  the Free Software Foundation, either version 3 of the License, or     */
-/*  (at your option) any later version.                                   */
-/*                                                                        */
-/*  Evolvotron is distributed in the hope that it will be useful,         */
-/*  but WITHOUT ANY WARRANTY; without even the implied warranty of        */
-/*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         */
-/*  GNU General Public License for more details.                          */
-/*                                                                        */
-/*  You should have received a copy of the GNU General Public License     */
-/*  along with Evolvotron.  If not, see <http://www.gnu.org/licenses/>.   */
-/**************************************************************************/
-
 /* AUTO GENERATED FILE.  DO NOT EDIT */
 
 /* Should be updated by update_register_all_functions script when new functions are added */
@@ -125,6 +106,11 @@ REGISTER_DCL(FunctionSphericalToCartesian);
 REGISTER_DCL(FunctionEvaluateInSpherical);
 REGISTER_DCL(FunctionSpiralLinear);
 REGISTER_DCL(FunctionSpiralLogarithmic);
+REGISTER_DCL(FunctionTartanSelectFree);
+REGISTER_DCL(FunctionTartanSelect);
+REGISTER_DCL(FunctionTartanSelectRepeat);
+REGISTER_DCL(FunctionTartanMixFree);
+REGISTER_DCL(FunctionTartanMixRepeat);
 REGISTER_DCL(FunctionIsotropicScale);
 REGISTER_DCL(FunctionPreTransformGeneralised);
 REGISTER_DCL(FunctionPostTransformGeneralised);
@@ -235,6 +221,11 @@ void register_all_functions(FunctionRegistry& r)
   register_FunctionEvaluateInSpherical(r);
   register_FunctionSpiralLinear(r);
   register_FunctionSpiralLogarithmic(r);
+  register_FunctionTartanSelectFree(r);
+  register_FunctionTartanSelect(r);
+  register_FunctionTartanSelectRepeat(r);
+  register_FunctionTartanMixFree(r);
+  register_FunctionTartanMixRepeat(r);
   register_FunctionIsotropicScale(r);
   register_FunctionPreTransformGeneralised(r);
   register_FunctionPostTransformGeneralised(r);
