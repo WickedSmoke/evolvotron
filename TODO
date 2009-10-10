@@ -13,8 +13,6 @@ Lots of Qthingy* stuff needn't be declared in headers; clean up
 
 Conventional Mode
 -----------------
-- Tartans can either reverse or repeat at the pivots.  Add an extra parameter to control this in each axis.
-- Tartans replace fixed coordinates with parameters
 - Just make "fullscreen mode support" be the default (and remove text in USAGE).
 - Auto-determine HEADERS/SOURCES as per fracplanet
 - Link on webpage to gallery http://gigrafx.110mb.com/evolvotron/index.html

@@ -58,7 +58,7 @@ FUNCTION_BEGIN(FunctionTartanSelect,14,6,false,FnStructure)
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const real x=(param(0)>0.0 ? modulusf(p.x(),param(1)) : trianglef(p.x(),param(1)));
-      const real y=(param(2)>0.0 ? modulusf(p.y(),param(3)) : trianglef(p.y(),param(4)));
+      const real y=(param(2)>0.0 ? modulusf(p.y(),param(3)) : trianglef(p.y(),param(3)));
       const XYZ p0(x,param(4),param(5));
       const XYZ p1(param(6),y,param(7));
       const XYZ d0(param(8),param(9),param(10));
@@ -82,7 +82,7 @@ FUNCTION_BEGIN(FunctionTartanSelectRepeat,14,6,false,FnStructure)
   virtual const XYZ evaluate(const XYZ& p) const
     {
       const real x=(param(0)>0.0 ? modulusf(p.x(),param(1)) : trianglef(p.x(),param(1)));
-      const real y=(param(2)>0.0 ? modulusf(p.y(),param(3)) : trianglef(p.y(),param(4)));
+      const real y=(param(2)>0.0 ? modulusf(p.y(),param(3)) : trianglef(p.y(),param(3)));
       const XYZ p0(x,param(4),param(5));
       const XYZ p1(param(6),y,param(7));
       const XYZ d0(param(8),param(9),param(10));
@@ -98,15 +98,17 @@ FUNCTION_END(FunctionTartanSelectRepeat)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionTartanMixFree,0,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionTartanMixFree,4,2,false,FnStructure)
 
   //! Evaluate function.
   /*! As above, but mix 2 functions.
    */
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ warp(arg(0)(XYZ(p.x(),0.0,0.0)));
-      const XYZ weft(arg(1)(XYZ(0.0,p.y(),0.0)));
+      const XYZ p0(p.x(),param(0),param(1));
+      const XYZ p1(param(2),p.y(),param(3));
+      const XYZ warp(arg(0)(p0));
+      const XYZ weft(arg(1)(p1));
       return 0.5*(warp+weft);
     }
   
@@ -114,15 +116,19 @@ FUNCTION_END(FunctionTartanMixFree)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionTartanMixRepeat,0,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionTartanMixRepeat,8,2,false,FnStructure)
 
   //! Evaluate function.
   /*! As above, but mix 2 functions.
    */
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      const XYZ warp(arg(0)(XYZ(modulusf(p.x(),1.0),0.0,0.0)));
-      const XYZ weft(arg(1)(XYZ(0.0,modulusf(p.y(),1.0),0.0)));
+      const real x=(param(0)>0.0 ? modulusf(p.x(),param(1)) : trianglef(p.x(),param(1)));
+      const real y=(param(2)>0.0 ? modulusf(p.y(),param(3)) : trianglef(p.y(),param(3)));
+      const XYZ p0(x,param(4),param(5));
+      const XYZ p1(param(6),y,param(7));
+      const XYZ warp(arg(0)(p0));
+      const XYZ weft(arg(1)(p1));
       return 0.5*(warp+weft);
     }
   
