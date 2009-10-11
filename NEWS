@@ -5,6 +5,7 @@ From release 0.6.1:
  - CHANGES renamed to NEWS
  - License boilerplate managed using "headache"
  - Add some "tartan" inspired functions.
+ - Add pixel/voxel grid quantizing functions.
  
 From release 0.6.0:
  - Version to 0.6.1
