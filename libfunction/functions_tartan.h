@@ -98,7 +98,7 @@ FUNCTION_END(FunctionTartanSelectRepeat)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionTartanMixFree,4,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionTartanMixFree,4,2,false,0)
 
   //! Evaluate function.
   /*! As above, but mix 2 functions.
@@ -116,7 +116,7 @@ FUNCTION_END(FunctionTartanMixFree)
 
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionTartanMixRepeat,8,2,false,FnStructure)
+FUNCTION_BEGIN(FunctionTartanMixRepeat,8,2,false,0)
 
   //! Evaluate function.
   /*! As above, but mix 2 functions.
