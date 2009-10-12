@@ -4,7 +4,7 @@ include (../common.pro)
 
 PRECOMPILED_HEADER = evolvotron_render_precompiled.h
 
-SOURCES += evolvotron_render.cpp
+SOURCES += $$system(ls *.cpp)
 
 DEPENDPATH += ../libevolvotron ../libfunction
 INCLUDEPATH += ../libevolvotron ../libfunction

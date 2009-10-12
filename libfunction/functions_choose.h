@@ -25,6 +25,8 @@
 #ifndef _functions_choose_h_
 #define _functions_choose_h_
 
+#include "hex.h"
+
 //------------------------------------------------------------------------------------------
 
 // Strip of one function across another
@@ -264,58 +266,11 @@ FUNCTION_END(FunctionChooseFrom3InDiamondGrid)
 //! Function implements selection between 3 functions based on position in grid of hexagons
 FUNCTION_BEGIN(FunctionChooseFrom3InHexagonGrid,0,3,false,FnStructure)
 
-  //! Co-ordinates of hexagon with given hex-grid coords
-  static const XYZ hex(int x,int y)
-    {
-      const real k=sqrt(3.0)/2.0;
-      return XYZ(
-		 x*k,
-		 y+((x&1) ? 0.5 : 0.0),
-		 0.0
-		 );
-    }
-
-  //! Finds hex-grid coordinates of hex containing cartesian px,py
-  static void nearest_hex(real px,real py,int &hx,int& hy)
-    {
-      // Initial guess at which hex we're in:
-      const real k=sqrt(3.0)/2.0;
-
-      const int nx=(int)rintf(px/k);
-      const int ny=(int)(
-			 (nx&1) 
-			 ? 
-			 rintf(py-0.5) 
-			 : 
-			 rintf(py)
-			 );
-
-      hx=nx;
-      hy=ny;
-      const XYZ ph=hex(nx,ny);
-      real m2b=(XYZ(px,py,0.0)-ph).magnitude2();
-      
-      for (int dy=-1;dy<=1;dy++)
-	for (int dx=-1;dx<=1;dx++)
-	  if (!(dy==0 && dx==0))
-	    {
-	      const real m2=(XYZ(px,py,0.0)-hex(nx+dx,ny+dy)).magnitude2();
-	      if (m2<m2b)
-		{
-		  hx=nx+dx;
-		  hy=ny+dy;
-		  m2b=m2;
-		}
-	    }
-    } 
-  
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      int hx;
-      int hy;
-      nearest_hex(p.x(),p.y(),hx,hy);
-      const uint which=hy+((hx&1)? 2 : 0);
+      const std::pair<int,int> h=nearest_hex(p.x(),p.y());
+      const uint which=h.second+((h.first&1)? 2 : 0);
       return arg(modulusi(which,3))(p);
     }
     
@@ -325,58 +280,11 @@ FUNCTION_END(FunctionChooseFrom3InHexagonGrid)
 
 //! Function implements selection between 2 functions based on position in grid of hexagons
 FUNCTION_BEGIN(FunctionChooseFrom2InBorderedHexagonGrid,1,2,false,FnStructure)
-
-  //! Co-ordinates of hexagon with given hex-grid coords
-  static const XYZ hex(int x,int y)
-    {
-      const real k=sqrt(3.0)/2.0;
-      return XYZ(
-		 x*k,
-		 y+((x&1) ? 0.5 : 0.0),
-		 0.0
-		 );
-    }
-
-  //! Finds hex-grid coordinates of hex containing cartesian px,py
-  static void nearest_hex(real px,real py,int &hx,int& hy)
-    {
-      // Initial guess at which hex we're in:
-      const real k=sqrt(3.0)/2.0;
-
-      const int nx=(int)rintf(px/k);
-      const int ny=(int)(
-			 (nx&1) 
-			 ? 
-			 rintf(py-0.5) 
-			 : 
-			 rintf(py)
-			 );
-
-      hx=nx;
-      hy=ny;
-      const XYZ ph=hex(nx,ny);
-      real m2b=(XYZ(px,py,0.0)-ph).magnitude2();
-      
-      for (int dy=-1;dy<=1;dy++)
-	for (int dx=-1;dx<=1;dx++)
-	  if (!(dy==0 && dx==0))
-	    {
-	      const real m2=(XYZ(px,py,0.0)-hex(nx+dx,ny+dy)).magnitude2();
-	      if (m2<m2b)
-		{
-		  hx=nx+dx;
-		  hy=ny+dy;
-		  m2b=m2;
-		}
-	    }
-    } 
   
   //! Evaluate function.
   virtual const XYZ evaluate(const XYZ& p) const
     {
-      int hx;
-      int hy;
-      nearest_hex(p.x(),p.y(),hx,hy);
+      const std::pair<int,int> h=nearest_hex(p.x(),p.y());
 
       bool in_border=false;
 
@@ -384,16 +292,14 @@ FUNCTION_BEGIN(FunctionChooseFrom2InBorderedHexagonGrid,1,2,false,FnStructure)
       const real b=modulusf(param(0),0.5);
 
       // Step along grid co-ordinates in various directions.  If there's a nearer point, we're in the border.
-      for (uint a=0;a<6;a++)
+      for (uint i=0;i<6;i++)
 	{
-	  const real dx=b*sin(a*M_PI/3.0);
-	  const real dy=b*cos(a*M_PI/3.0);
+	  const real dx=b*sin(i*M_PI/3.0);
+	  const real dy=b*cos(i*M_PI/3.0);
 	  
-	  int ax;
-	  int ay;
-	  nearest_hex(p.x()+dx,p.y()+dy,ax,ay);
+	  const std::pair<int,int> a=nearest_hex(p.x()+dx,p.y()+dy);
 
-	  if (hx!=ax || hy!=ay)
+	  if (h!=a)
 	    {
 	      in_border=true;
 	      break;

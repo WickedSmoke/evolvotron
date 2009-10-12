@@ -4,7 +4,7 @@ include (../common.pro)
 
 PRECOMPILED_HEADER = evolvotron_mutate_precompiled.h
 
-SOURCES += evolvotron_mutate.cpp
+SOURCES += $$system(ls *.cpp)
 
 DEPENDPATH += ../libevolvotron ../libfunction
 INCLUDEPATH += ../libevolvotron ../libfunction
