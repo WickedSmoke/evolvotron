@@ -34,7 +34,6 @@
 
 #include "evolvotron_precompiled.h"
 
-#include "args.h"
 #include "platform_specific.h"
 
 #include "evolvotron_main.h"
@@ -44,14 +43,41 @@ int main(int argc,char* argv[])
 {
   QApplication app(argc,argv);
 
-  Args args(argc,argv);
+  // A 4:3 ratio would nice to get square images on most screens, but isn't many images so default to 6:5
+  uint cols;
+  uint rows;
 
-  // A 4:3 ratio would nice to get square images on most screens, but isn't many images
-  uint cols=6;
-  uint rows=5;
+  uint frames;
+  uint framerate;
+
+  int niceness_grid=4;
+  int niceness_enlargement=niceness_grid+4;
+  bool separate_farm_for_enlargements;
+  uint threads;
   
-  uint frames=1;
-  uint framerate=8;
+
+  // TODO: Split this into option groups
+  boost::program_options::options_description desc("Recognized options");
+  desc.add_options()
+    ("help","produce help message and exit")
+    ("cols,c",boost::program_options<uint>(&cols)->default_value(6),"columns in image grid")
+    ("rows,r",boost::program_options<uint>(&rows)->default_value(5),"rows in image grid")
+    ("frames,f",boost::program_options<uint>(&frames)->default_value(1),"frames in an animation")
+    ("fps,s",boost::program_options<uint>(&framerate)->default_value(8),"animation speed (frames per second)")
+    ("fullscreen,F","fullscreen")
+    ("menuhide,M","hide menus")
+    ("autocool,a","enabled autocooling")
+    ("jitter,j","enable rendering jitter")
+    ("multisample,m","enable multisampled antialiasing")
+    ("verbose,v","log some details to stdout")
+    ("favourite,x","favourite function")
+    ("favourite-unwrapped,X","favourite function, unwrapped")
+    ("threads,t",boost::program_options<uint>(&threads)->default_value(get_number_of_processors()),"threads in thread pools")
+    ("nice,n","niceness of compute threads for image grid")
+    ("Nice,N","niceness of compute threads for enlargements (if separate pool)")
+    ("enlargement-threadpoolE","Enlargements computed using a separate threadpool")
+    ("debug,D","enable function debug mode")
+    ;
 
   if (args.option("-v")) 
     std::clog.rdbuf(std::cerr.rdbuf());
@@ -64,9 +90,7 @@ int main(int argc,char* argv[])
       std::cerr << "Must be at least 2 display grid cells (options: -g <cols> <rows>)\n";
       exit(1);
     }
-  
-  uint threads=get_number_of_processors();
-    
+      
   if (args.option("-t",1))
     {
       args.after() >> threads;
@@ -79,12 +103,10 @@ int main(int argc,char* argv[])
 
   std::clog << "Using " << threads << " threads\n";
 
-  int niceness_grid=4;
   if (args.option("-n",1)) args.after() >> niceness_grid;
 
   const bool separate_farm_for_enlargements=args.option("-E");
 
-  int niceness_enlargement=niceness_grid+4;
   if (args.option("-N",1)) args.after() >> niceness_enlargement;
 
   if (args.option("-f",1)) args.after() >> frames;
