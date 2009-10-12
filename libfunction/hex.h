@@ -21,5 +21,10 @@
   \brief Helper functions for hexagons.
 */
 
-//! Finds hex-grid coordinates of hex containing cartesian px,py
+#include "xy.h"
+
+//! Returns cartesian coords of given hex-grid
+const XY hex_coord(int x,int y);
+
+//! Finds integer hex-grid coordinates of hex containing cartesian px,py
 extern const std::pair<int,int> nearest_hex(real px,real py);

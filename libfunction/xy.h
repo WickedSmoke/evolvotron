@@ -30,7 +30,7 @@
 class XY
 {
  protected:
-  real rep[2];
+  boost::array<real,2> _rep;
 
  public:
 
@@ -38,20 +38,20 @@ class XY
   //! Accessor.
   real x() const
     {
-      return rep[0];
+      return _rep[0];
     }
   real y() const
     {
-      return rep[1];
+      return _rep[1];
     }
 
   void x(real v)
     {
-      rep[0]=v;
+      _rep[0]=v;
     }
   void y(real v)
     {
-      rep[1]=v;
+      _rep[1]=v;
     }
   //@}
 
@@ -64,15 +64,15 @@ class XY
   //! Copy constructor.
   XY(const XY& v)
     {
-      rep[0]=v.rep[0];
-      rep[1]=v.rep[1];
+      _rep[0]=v._rep[0];
+      _rep[1]=v._rep[1];
     }
   
   //! Initialise from separate components.
   XY(real vx,real vy)
     {
-      rep[0]=vx;
-      rep[1]=vy;
+      _rep[0]=vx;
+      _rep[1]=vy;
     }
 
   //! Trivial destructor.
@@ -82,22 +82,22 @@ class XY
   //! Subtract a vector
   void operator-=(const XY& v)
     {
-      rep[0]-=v.rep[0];
-      rep[1]-=v.rep[1];
+      _rep[0]-=v._rep[0];
+      _rep[1]-=v._rep[1];
     }
 
   //! Add a vector
   void operator+=(const XY& v)
     {
-      rep[0]+=v.rep[0];
-      rep[1]+=v.rep[1];
+      _rep[0]+=v._rep[0];
+      _rep[1]+=v._rep[1];
     }
 
   //! Multiply by scalar
   void operator*=(real k)
     {
-      rep[0]*=k;
-      rep[1]*=k;
+      _rep[0]*=k;
+      _rep[1]*=k;
     }
 
   //! Divide by scalar.

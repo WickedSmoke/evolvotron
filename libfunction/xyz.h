@@ -32,7 +32,7 @@ class Random01;
 class XYZ
 {
  protected:
-  real rep[3];
+  boost::array<real,3> _rep;
 
  public:
 
@@ -40,15 +40,15 @@ class XYZ
   //! Accessor.
   real x() const
     {
-      return rep[0];
+      return _rep[0];
     }
   real y() const
     {
-      return rep[1];
+      return _rep[1];
     }
   real z() const
     {
-      return rep[2];
+      return _rep[2];
     }
   const XY xy() const
     {
@@ -57,15 +57,15 @@ class XYZ
 
   void x(real v)
     {
-      rep[0]=v;
+      _rep[0]=v;
     }
   void y(real v)
     {
-      rep[1]=v;
+      _rep[1]=v;
     }
   void z(real v)
     {
-      rep[2]=v;
+      _rep[2]=v;
     }
   //@}
 
@@ -78,25 +78,25 @@ class XYZ
   //! Copy constructor.
   XYZ(const XYZ& v)
     {
-      rep[0]=v.rep[0];
-      rep[1]=v.rep[1];
-      rep[2]=v.rep[2];
+      _rep[0]=v._rep[0];
+      _rep[1]=v._rep[1];
+      _rep[2]=v._rep[2];
     }
 
   //! Initialise from an XY and a z component.
   XYZ(const XY& p,real vz)
     {
-      rep[0]=p.x();
-      rep[1]=p.y();
-      rep[2]=vz;
+      _rep[0]=p.x();
+      _rep[1]=p.y();
+      _rep[2]=vz;
     }
   
   //! Initialise from separate components.
   XYZ(real vx,real vy,real vz)
     {
-      rep[0]=vx;
-      rep[1]=vy;
-      rep[2]=vz;
+      _rep[0]=vx;
+      _rep[1]=vy;
+      _rep[2]=vz;
     }
 
   //! Trivial destructor.
@@ -106,25 +106,25 @@ class XYZ
   //! Subtract a vector
   void operator-=(const XYZ& v)
     {
-      rep[0]-=v.rep[0];
-      rep[1]-=v.rep[1];
-      rep[2]-=v.rep[2];
+      _rep[0]-=v._rep[0];
+      _rep[1]-=v._rep[1];
+      _rep[2]-=v._rep[2];
     }
 
   //! Add a vector
   void operator+=(const XYZ& v)
     {
-      rep[0]+=v.rep[0];
-      rep[1]+=v.rep[1];
-      rep[2]+=v.rep[2];
+      _rep[0]+=v._rep[0];
+      _rep[1]+=v._rep[1];
+      _rep[2]+=v._rep[2];
     }
 
   //! Multiply by scalar
   void operator*=(real k)
     {
-      rep[0]*=k;
-      rep[1]*=k;
-      rep[2]*=k;
+      _rep[0]*=k;
+      _rep[1]*=k;
+      _rep[2]*=k;
     }
 
   //! Divide by scalar.
@@ -334,8 +334,3 @@ class RandomXYZInXYDisc : public XYZ
 };
 
 #endif
-
-
-
-
-

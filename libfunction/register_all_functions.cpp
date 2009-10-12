@@ -96,6 +96,7 @@ REGISTER_DCL(FunctionMultiscaleNoiseOneChannel);
 REGISTER_DCL(FunctionNoiseThreeChannel);
 REGISTER_DCL(FunctionMultiscaleNoiseThreeChannel);
 REGISTER_DCL(FunctionPixelize);
+REGISTER_DCL(FunctionPixelizeHex);
 REGISTER_DCL(FunctionVoxelize);
 REGISTER_DCL(FunctionOrthoSphereShaded);
 REGISTER_DCL(FunctionOrthoSphereShadedBumpMapped);
@@ -213,6 +214,7 @@ void register_all_functions(FunctionRegistry& r)
   register_FunctionNoiseThreeChannel(r);
   register_FunctionMultiscaleNoiseThreeChannel(r);
   register_FunctionPixelize(r);
+  register_FunctionPixelizeHex(r);
   register_FunctionVoxelize(r);
   register_FunctionOrthoSphereShaded(r);
   register_FunctionOrthoSphereShadedBumpMapped(r);

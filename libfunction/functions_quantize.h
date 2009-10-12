@@ -24,9 +24,11 @@
 #ifndef _functions_quantize_h_
 #define _functions_quantize_h_
 
+#include "hex.h"
+
 //------------------------------------------------------------------------------------------
 
-FUNCTION_BEGIN(FunctionPixelize,3,0,false,FnStructure)
+FUNCTION_BEGIN(FunctionPixelize,2,0,false,FnStructure)
 
   //! Evaluate function.
   /*! Quantize coordinates to 2D grid
@@ -61,6 +63,26 @@ FUNCTION_BEGIN(FunctionVoxelize,3,0,false,FnStructure)
     }
 
 FUNCTION_END(FunctionVoxelize)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionPixelizeHex,1,0,false,FnStructure)
+
+  //! Evaluate function.
+  /*! Quantize coordinates to 2D hexgrid.
+   */
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      const std::pair<int,int> h=nearest_hex(p.x()/param(0),p.y()/param(0));
+      //std::cerr << h.first << " " << h.second << "\n";
+      return XYZ
+	(
+	 param(0)*hex_coord(h.first,h.second),
+	 p.z()
+	 );
+    }
+
+FUNCTION_END(FunctionPixelizeHex)
 
 //------------------------------------------------------------------------------------------
 

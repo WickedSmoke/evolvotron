@@ -14,15 +14,15 @@ Lots of Qthingy* stuff needn't be declared in headers; clean up
 Conventional Mode
 -----------------
 - Just make "fullscreen mode support" be the default (and remove text in USAGE).
-- Auto-determine HEADERS/SOURCES as per fracplanet
 - Link on webpage to gallery http://gigrafx.110mb.com/evolvotron/index.html
-- ...also flikr stuff
+- ...also flickr stuff
 - Switch to boost::program_options
 - Mouse manipulations: frame rate should be clamped to allow some time to produce a nice image
 - At least split out evolvotron_main_history.cpp, even if the class remains nested in .h
 - Smaller fragments for big enlargements; seeing unused processors.
 - More feedback on when enlargements are ready for saving (have split tasks count now... need more ? yes)
-
+- Triangles quantization mode (c.f hexes, pixels and voxels)
+- Linear and cubic interpolation for pixel and voxel mode quantizer
 - Enlargement menu: submenus for square, 4:3, 8:5, 16:9.  5:4 SXGA 1024x1024 is a bit of an oddball.
   And name them, see http://en.wikipedia.org/wiki/Computer_display_standard
 

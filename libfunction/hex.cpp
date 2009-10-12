@@ -21,18 +21,14 @@
   \brief Implementation of helper functions for hexagons.
 */
 
-namespace
+//! Co-ordinates of hexagon with given hex-grid coords
+const XY hex_coord(int x,int y)
 {
-  //! Co-ordinates of hexagon with given hex-grid coords
-  inline const XYZ hex(int x,int y)
-  {
-    const real k=sqrt(3.0)/2.0;
-    return XYZ(
-	       x*k,
-	       y+((x&1) ? 0.5 : 0.0),
-	       0.0
-	       );
-  }
+  const real k=sqrt(3.0)/2.0;
+  return XY(
+	    x*k,
+	    y+((x&1) ? 0.5 : 0.0)
+	    );
 }
  
 const std::pair<int,int> nearest_hex(real px,real py)
@@ -46,20 +42,20 @@ const std::pair<int,int> nearest_hex(real px,real py)
      (nx&1) 
      ? 
      rintf(py-0.5) 
-     : 
+     :
      rintf(py)
      );
   
   int hx=nx;
   int hy=ny;
-  const XYZ ph=hex(nx,ny);
-  real m2b=(XYZ(px,py,0.0)-ph).magnitude2();
+  const XY ph=hex_coord(nx,ny);
+  real m2b=(XY(px,py)-ph).magnitude2();
   
   for (int dy=-1;dy<=1;dy++)
     for (int dx=-1;dx<=1;dx++)
       if (!(dy==0 && dx==0))
 	{
-	  const real m2=(XYZ(px,py,0.0)-hex(nx+dx,ny+dy)).magnitude2();
+	  const real m2=(XY(px,py)-hex_coord(nx+dx,ny+dy)).magnitude2();
 	  if (m2<m2b)
 	    {
 	      hx=nx+dx;
