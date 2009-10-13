@@ -47,79 +47,64 @@ int main(int argc,char* argv[])
   uint cols;
   uint rows;
 
-  uint frames;
-  uint framerate;
+  int frames;
+  int framerate;
 
-  int niceness_grid=4;
-  int niceness_enlargement=niceness_grid+4;
-  bool separate_farm_for_enlargements;
+  int niceness_grid;
+  int niceness_enlargement;
   uint threads;
   
-
   // TODO: Split this into option groups
-  boost::program_options::options_description desc("Recognized options");
-  desc.add_options()
+  boost::program_options::options_description args_desc("Recognized options");
+  args_desc.add_options()
     ("help","produce help message and exit")
-    ("cols,c",boost::program_options<uint>(&cols)->default_value(6),"columns in image grid")
-    ("rows,r",boost::program_options<uint>(&rows)->default_value(5),"rows in image grid")
-    ("frames,f",boost::program_options<uint>(&frames)->default_value(1),"frames in an animation")
-    ("fps,s",boost::program_options<uint>(&framerate)->default_value(8),"animation speed (frames per second)")
+    ("cols,c",boost::program_options::value<uint>(&cols)->default_value(6),"columns in image grid")
+    ("rows,r",boost::program_options::value<uint>(&rows)->default_value(5),"rows in image grid")
+    ("frames,f",boost::program_options::value<int>(&frames)->default_value(1),"frames in an animation")
+    ("fps,s",boost::program_options::value<int>(&framerate)->default_value(8),"animation speed (frames per second)")
     ("fullscreen,F","fullscreen")
     ("menuhide,M","hide menus")
     ("autocool,a","enabled autocooling")
     ("jitter,j","enable rendering jitter")
     ("multisample,m","enable multisampled antialiasing")
-    ("verbose,v","log some details to stdout")
+    ("verbose,v","log some details to stderr")
     ("favourite,x","favourite function")
     ("favourite-unwrapped,X","favourite function, unwrapped")
-    ("threads,t",boost::program_options<uint>(&threads)->default_value(get_number_of_processors()),"threads in thread pools")
-    ("nice,n","niceness of compute threads for image grid")
-    ("Nice,N","niceness of compute threads for enlargements (if separate pool)")
-    ("enlargement-threadpoolE","Enlargements computed using a separate threadpool")
+    ("threads,t",boost::program_options::value<uint>(&threads)->default_value(get_number_of_processors()),"threads in thread pools")
+    ("nice,n",boost::program_options::value<int>(&niceness_grid)->default_value(4),"niceness of compute threads for image grid")
+    ("Nice,N",boost::program_options::value<int>(&niceness_enlargement)->default_value(8),"niceness of compute threads for enlargements (if separate pool)")
+    ("enlargement-threadpool,E","Enlargements computed using a separate threadpool")
     ("debug,D","enable function debug mode")
     ;
 
-  if (args.option("-v")) 
+  boost::program_options::variables_map opts;
+  boost::program_options::store(boost::program_options::parse_command_line(argc,argv,args_desc),opts);
+  boost::program_options::notify(opts);
+  
+  if (opts.count("verbose")) 
     std::clog.rdbuf(std::cerr.rdbuf());
   else
     std::clog.rdbuf(sink_ostream.rdbuf());
 
-  if (args.option("-g",2)) args.after() >> cols >> rows;
   if (cols*rows<2)
     {
       std::cerr << "Must be at least 2 display grid cells (options: -g <cols> <rows>)\n";
-      exit(1);
+      return 1;
     }
       
-  if (args.option("-t",1))
-    {
-      args.after() >> threads;
-      if (threads<1)
-	{
-	  std::cerr << "Must specify at least one thread for option -t <threads>)\n";
-	  exit(1);
-	}
-    }
-
   std::clog << "Using " << threads << " threads\n";
 
-  if (args.option("-n",1)) args.after() >> niceness_grid;
+  const bool separate_farm_for_enlargements=opts.count("E");
 
-  const bool separate_farm_for_enlargements=args.option("-E");
-
-  if (args.option("-N",1)) args.after() >> niceness_enlargement;
-
-  if (args.option("-f",1)) args.after() >> frames;
   if (frames<1)
     {
       std::cerr << "Must specify at least 1 frame (option: -f <frames>)\n";
-      exit(1);
+      return 1;
     }
 
-  if (args.option("-r",1)) args.after() >> framerate;
   if (framerate<1)
     {
-      std::cerr << "Must specify framerate of at least 1 (option: -r <framerate>)\n";
+      std::cerr << "Must specify framerate of at least 1 (option: -s <framerate>)\n";
       exit(1);
     }
 
@@ -137,8 +122,8 @@ int main(int argc,char* argv[])
     }
 
   // Use same keys as used by app to toggle modes
-  bool start_fullscreen=args.option("-F");
-  bool start_menuhidden=args.option("-M");
+  const bool start_fullscreen=args.option("-F");
+  const bool start_menuhidden=args.option("-M");
 
   const bool autocool=args.option("-a");
 
