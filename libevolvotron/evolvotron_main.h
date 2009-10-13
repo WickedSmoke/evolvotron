@@ -141,6 +141,12 @@ class EvolvotronMain : public QMainWindow
   //! Instance of render parameters for the app
   RenderParameters _render_parameters;
 
+  //! Sweep z linearly through animations
+  const bool _linear_zsweep;
+
+  //! Generate spheremaps
+  const bool _spheremap;
+  
   //! Somewhere to report what's going on
   QStatusBar* _statusbar;
 
@@ -294,7 +300,9 @@ class EvolvotronMain : public QMainWindow
      bool autocool,
      bool jitter,
      uint multisample_level,
-     bool function_debug_mode
+     bool function_debug_mode,
+     bool linear_zsweep,
+     bool spheremap
      );
 
   //! Destructor.

@@ -65,10 +65,12 @@ int main(int argc,char* argv[])
     ("rows,r",boost::program_options::value<uint>(&rows)->default_value(5),"rows in image grid")
     ("frames,f",boost::program_options::value<int>(&frames)->default_value(1),"frames in an animation")
     ("fps,s",boost::program_options::value<int>(&framerate)->default_value(8),"animation speed (frames per second)")
+    ("linz,l","sweep z linearly in animations") // bool
     ("fullscreen,F","fullscreen")               // bool
     ("menuhide,M","hide menus")                 // bool
     ("autocool,a","enabled autocooling")        // bool
     ("jitter,j","enable rendering jitter")      // bool
+    ("spheremap","generate spheremaps")         // bool
     ("multisample,m",boost::program_options::value<uint>(&multisample_level)->default_value(1),"multisampling grid (NxN)")
     ("verbose,v","log some details to stderr")  // bool
     ("favourite,x",boost::program_options::value<std::string>(&favourite_function),"favourite function, wrapped")
@@ -94,8 +96,10 @@ int main(int argc,char* argv[])
   const bool autocool=opts.count("autocool");
   const bool jitter=opts.count("jitter");
   const bool function_debug_mode=opts.count("debug");
-  const bool separate_farm_for_enlargements=opts.count("E");
-  const bool favourite_function_unwrapped=opts.count("X");
+  const bool separate_farm_for_enlargements=opts.count("enlargement-threadpool");
+  const bool favourite_function_unwrapped=opts.count("favourite-unwrapped");
+  const bool linear_zsweep=opts.count("linz");
+  const bool spheremap=opts.count("spheremap");
 
   if (cols*rows<2)
     {
@@ -147,7 +151,9 @@ int main(int argc,char* argv[])
        autocool,
        jitter,
        multisample_level,
-       function_debug_mode
+       function_debug_mode,
+       linear_zsweep,
+       spheremap
        );
 
   main_widget->mutation_parameters().function_registry().status(std::clog);

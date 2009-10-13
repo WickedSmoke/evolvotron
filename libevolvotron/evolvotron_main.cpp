@@ -26,7 +26,6 @@
 
 #include "evolvotron_main.h"
 
-#include "args.h"
 #include "dialog_about.h"
 #include "dialog_help.h"
 #include "dialog_mutation_parameters.h"
@@ -192,12 +191,16 @@ EvolvotronMain::EvolvotronMain
  bool autocool,
  bool jitter,
  uint multisample_level,
- bool function_debug_mode
+ bool function_debug_mode,
+ bool linear_zsweep,
+ bool spheremap
  )
   :QMainWindow(parent)
   ,_history(new EvolvotronMain::History(this))
   ,_mutation_parameters(time(0),autocool,function_debug_mode,this)
   ,_render_parameters(jitter,multisample_level,this)
+  ,_linear_zsweep(linear_zsweep)
+  ,_spheremap(spheremap)
   ,_statusbar_tasks_main(0)
   ,_statusbar_tasks_enlargement(0)
   ,_last_spawn_method(&EvolvotronMain::spawn_normal)
@@ -682,7 +685,7 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
 
   history().replacing(display);
   //! \todo sinz and spheremap should be obtained from mutation parameters
-  const boost::shared_ptr<const MutatableImage> image_function(new MutatableImage(root,!Args::global().option("-linz"),Args::global().option("-spheremap"),false));
+  const boost::shared_ptr<const MutatableImage> image_function(new MutatableImage(root,!_linear_zsweep,_spheremap,false));
   display->image_function(image_function,true);
 }
 
