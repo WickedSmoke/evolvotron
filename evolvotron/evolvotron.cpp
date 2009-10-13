@@ -49,32 +49,35 @@ int main(int argc,char* argv[])
 
   int frames;
   int framerate;
+  uint multisample_level;
 
   int niceness_grid;
   int niceness_enlargement;
   uint threads;
+
+  std::string favourite_function;
   
   // TODO: Split this into option groups
   boost::program_options::options_description args_desc("Recognized options");
   args_desc.add_options()
-    ("help","produce help message and exit")
+    ("help","produce help message and exit")    // bool
     ("cols,c",boost::program_options::value<uint>(&cols)->default_value(6),"columns in image grid")
     ("rows,r",boost::program_options::value<uint>(&rows)->default_value(5),"rows in image grid")
     ("frames,f",boost::program_options::value<int>(&frames)->default_value(1),"frames in an animation")
     ("fps,s",boost::program_options::value<int>(&framerate)->default_value(8),"animation speed (frames per second)")
-    ("fullscreen,F","fullscreen")
-    ("menuhide,M","hide menus")
-    ("autocool,a","enabled autocooling")
-    ("jitter,j","enable rendering jitter")
-    ("multisample,m","enable multisampled antialiasing")
-    ("verbose,v","log some details to stderr")
-    ("favourite,x","favourite function")
-    ("favourite-unwrapped,X","favourite function, unwrapped")
+    ("fullscreen,F","fullscreen")               // bool
+    ("menuhide,M","hide menus")                 // bool
+    ("autocool,a","enabled autocooling")        // bool
+    ("jitter,j","enable rendering jitter")      // bool
+    ("multisample,m",boost::program_options::value<uint>(&multisample_level)->default_value(1),"multisampling grid (NxN)")
+    ("verbose,v","log some details to stderr")  // bool
+    ("favourite,x",boost::program_options::value<std::string>(&favourite_function),"favourite function, wrapped")
+    ("favourite-unwrapped,X",boost::program_options::value<std::string>(&favourite_function),"favourite function, no wrapper")
     ("threads,t",boost::program_options::value<uint>(&threads)->default_value(get_number_of_processors()),"threads in thread pools")
     ("nice,n",boost::program_options::value<int>(&niceness_grid)->default_value(4),"niceness of compute threads for image grid")
     ("Nice,N",boost::program_options::value<int>(&niceness_enlargement)->default_value(8),"niceness of compute threads for enlargements (if separate pool)")
-    ("enlargement-threadpool,E","Enlargements computed using a separate threadpool")
-    ("debug,D","enable function debug mode")
+    ("enlargement-threadpool,E","Enlargements computed using a separate threadpool") // bool
+    ("debug,D","enable function debug mode")                                         // bool
     ;
 
   boost::program_options::variables_map opts;
@@ -86,6 +89,14 @@ int main(int argc,char* argv[])
   else
     std::clog.rdbuf(sink_ostream.rdbuf());
 
+  const bool start_fullscreen=opts.count("fullscreen");
+  const bool start_menuhidden=opts.count("menuhide");
+  const bool autocool=opts.count("autocool");
+  const bool jitter=opts.count("jitter");
+  const bool function_debug_mode=opts.count("debug");
+  const bool separate_farm_for_enlargements=opts.count("E");
+  const bool favourite_function_unwrapped=opts.count("X");
+
   if (cols*rows<2)
     {
       std::cerr << "Must be at least 2 display grid cells (options: -g <cols> <rows>)\n";
@@ -93,8 +104,6 @@ int main(int argc,char* argv[])
     }
       
   std::clog << "Using " << threads << " threads\n";
-
-  const bool separate_farm_for_enlargements=opts.count("E");
 
   if (frames<1)
     {
@@ -107,32 +116,6 @@ int main(int argc,char* argv[])
       std::cerr << "Must specify framerate of at least 1 (option: -s <framerate>)\n";
       exit(1);
     }
-
-  std::string favourite_function;
-  bool favourite_function_unwrapped=false;
-  if (args.option("-x",1))
-    {
-      args.after() >> favourite_function;
-    }
-
-  if (args.option("-X",1))
-    {
-      args.after() >> favourite_function;
-      favourite_function_unwrapped=true;
-    }
-
-  // Use same keys as used by app to toggle modes
-  const bool start_fullscreen=args.option("-F");
-  const bool start_menuhidden=args.option("-M");
-
-  const bool autocool=args.option("-a");
-
-  const bool jitter=args.option("-j");
-
-  uint multisample_level=1;
-  if (args.option("-m",1)) args.after() >> multisample_level;
-
-  const bool function_debug_mode=args.option("-D");
 
   std::clog
     << "Evolvotron version "
