@@ -132,6 +132,12 @@ class EvolvotronMain : public QMainWindow
   //! Instance of History object to track activity.
   std::auto_ptr<History> _history;
 
+  //! Sweep z linearly through animations
+  const bool _linear_zsweep;
+
+  //! Generate spheremaps
+  const bool _spheremap;
+  
   //! Instance of mutation parameters for the app
   /*! This used to be held by DialogMutationParameters, but now we want to share it around a bit
     (although modifications should always be via the dialog slots, to keep the dialogs up to date)
@@ -141,12 +147,6 @@ class EvolvotronMain : public QMainWindow
   //! Instance of render parameters for the app
   RenderParameters _render_parameters;
 
-  //! Sweep z linearly through animations
-  const bool _linear_zsweep;
-
-  //! Generate spheremaps
-  const bool _spheremap;
-  
   //! Somewhere to report what's going on
   QStatusBar* _statusbar;
 

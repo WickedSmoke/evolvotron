@@ -185,4 +185,7 @@ int main(int argc,char* argv[])
   // NB No need to worry about deleting EvolvotronMain... QApplication seems to do it for us.
   std::clog << "Commencing main loop...\n";
   return app.exec();
+  std::clog << "...returned from main loop\n";
+  
+  return 0;
 }
