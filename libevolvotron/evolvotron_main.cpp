@@ -684,7 +684,6 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
     }
 
   history().replacing(display);
-  //! \todo sinz and spheremap should be obtained from mutation parameters
   const boost::shared_ptr<const MutatableImage> image_function(new MutatableImage(root,!_linear_zsweep,_spheremap,false));
   display->image_function(image_function,true);
 }

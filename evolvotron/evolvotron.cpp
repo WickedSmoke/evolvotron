@@ -58,20 +58,28 @@ int main(int argc,char* argv[])
   std::string favourite_function;
   
   // TODO: Split this into option groups
-  boost::program_options::options_description args_desc("Recognized options");
-  args_desc.add_options()
-    ("help","produce help message and exit")    // bool
+  boost::program_options::options_description opts_desc("Recognized options");
+  opts_desc.add_options()
+    ("autocool,a","enable autocooling")         // bool
     ("cols,c",boost::program_options::value<uint>(&cols)->default_value(6),"columns in image grid")
-    ("rows,r",boost::program_options::value<uint>(&rows)->default_value(5),"rows in image grid")
-    ("frames,f",boost::program_options::value<int>(&frames)->default_value(1),"frames in an animation")
-    ("fps,s",boost::program_options::value<int>(&framerate)->default_value(8),"animation speed (frames per second)")
-    ("linz,l","sweep z linearly in animations") // bool
-    ("fullscreen,F","fullscreen")               // bool
-    ("menuhide,M","hide menus")                 // bool
-    ("autocool,a","enabled autocooling")        // bool
+    ("fullscreen,F","fullscreen window")        // bool
+    ("help,h","produce command-line options help message and exit")  // bool
     ("jitter,j","enable rendering jitter")      // bool
-    ("spheremap","generate spheremaps")         // bool
+    ("menuhide,M","hide menus")                 // bool
     ("multisample,m",boost::program_options::value<uint>(&multisample_level)->default_value(1),"multisampling grid (NxN)")
+    ("rows,r",boost::program_options::value<uint>(&rows)->default_value(5),"rows in image grid")
+    ("spheremap,p","generate spheremaps")       // bool
+    ;
+
+  boost::program_options::options_description animation_opts_desc("Animation options");
+  animation_opts_desc.add_options()
+    ("frames,f",boost::program_options::value<int>(&frames)->default_value(1),"frames in an animation")
+    ("linz,l","sweep z linearly in animations") // bool
+    ("fps,s",boost::program_options::value<int>(&framerate)->default_value(8),"animation speed (frames per second)")
+    ;
+
+  boost::program_options::options_description advanced_opts_desc("Advanced options");
+  advanced_opts_desc.add_options()
     ("verbose,v","log some details to stderr")  // bool
     ("favourite,x",boost::program_options::value<std::string>(&favourite_function),"favourite function, wrapped")
     ("favourite-unwrapped,X",boost::program_options::value<std::string>(&favourite_function),"favourite function, no wrapper")
@@ -82,9 +90,18 @@ int main(int argc,char* argv[])
     ("debug,D","enable function debug mode")                                         // bool
     ;
 
+  opts_desc.add(animation_opts_desc);
+  opts_desc.add(advanced_opts_desc);
+
   boost::program_options::variables_map opts;
-  boost::program_options::store(boost::program_options::parse_command_line(argc,argv,args_desc),opts);
+  boost::program_options::store(boost::program_options::parse_command_line(argc,argv,opts_desc),opts);
   boost::program_options::notify(opts);
+
+  if (opts.count("help"))
+    {
+      std::cerr << opts_desc;
+      return 0;
+    }
   
   if (opts.count("verbose")) 
     std::clog.rdbuf(std::cerr.rdbuf());

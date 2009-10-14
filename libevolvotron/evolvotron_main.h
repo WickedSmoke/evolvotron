@@ -133,9 +133,13 @@ class EvolvotronMain : public QMainWindow
   std::auto_ptr<History> _history;
 
   //! Sweep z linearly through animations
+  /*! \todo Move to mutation or render paraemeters ?
+   */
   const bool _linear_zsweep;
 
   //! Generate spheremaps
+  /*! \todo Move to mutation or render paraemeters ?
+   */
   const bool _spheremap;
   
   //! Instance of mutation parameters for the app
