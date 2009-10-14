@@ -49,9 +49,11 @@ QMAKE_CFLAGS_RELEASE += -DNDEBUG
 # NB We don't use the corresponding -DQT_NO_CAST_ASCII because it breaks QString("...") which is used all over the place
 # This probably wouldn't be usable until all the strings were moved out of the app - see Qt I18N docs.
 # Also add gcc threading option (not entirely clear whether this is needed but it doesn't seem to hurt)
-# -DBOOST_SP_USE_PTHREADS is a workround for debian bug 485434 (maybe only needed on sparc?)
-QMAKE_CXXFLAGS_RELEASE += -DQT_NO_ASCII_CAST -pthread -DBOOST_SP_USE_PTHREADS
-QMAKE_CXXFLAGS_DEBUG += -DQT_NO_ASCII_CAST -pthread -DBOOST_SP_USE_PTHREADS
+# Used to use -pthread -DBOOST_SP_USE_PTHREADS as a workround for debian bug 485434 (maybe only needed on sparc?)
+# but it seemed to cause problems with app not quitting once boost::program_options started being used.
+
+QMAKE_CXXFLAGS_RELEASE += -DQT_NO_ASCII_CAST
+QMAKE_CXXFLAGS_DEBUG += -DQT_NO_ASCII_CAST
 
 ######################################
 # Hide those crufty moc_ files away

@@ -118,7 +118,7 @@ int main(int argc,char* argv[])
   if (framerate<1)
     {
       std::cerr << "Must specify framerate of at least 1 (option: -s <framerate>)\n";
-      exit(1);
+      return 1;
     }
 
   std::clog
@@ -169,7 +169,7 @@ int main(int argc,char* argv[])
       if (!main_widget->favourite_function(favourite_function))
 	{
 	  std::cerr << "Unrecognised function name specified for -x/-X option\n";
-	  exit(1);
+	  return 1;
 	}
 
       main_widget->favourite_function_unwrapped(favourite_function_unwrapped);
