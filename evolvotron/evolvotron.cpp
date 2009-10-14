@@ -46,85 +46,85 @@ int main(int argc,char* argv[])
   // A 4:3 ratio would nice to get square images on most screens, but isn't many images so default to 6:5
   uint cols;
   uint rows;
+  uint multisample_level;
+  boost::program_options::options_description options_desc("Recognized options");
+  options_desc.add_options()
+    ("autocool,a","enable autocooling")
+    ("cols,c",boost::program_options::value<uint>(&cols)->default_value(6),"columns in image grid")
+    ("fullscreen,F","fullscreen window")
+    ("help,h","produce command-line options help message and exit")
+    ("jitter,j","enable rendering jitter")
+    ("menuhide,M","hide menus")
+    ("multisample,m",boost::program_options::value<uint>(&multisample_level)->default_value(1),"multisampling grid (NxN)")
+    ("rows,r",boost::program_options::value<uint>(&rows)->default_value(5),"rows in image grid")
+    ("spheremap,p","generate spheremaps")
+    ;
 
   int frames;
   int framerate;
-  uint multisample_level;
-
-  int niceness_grid;
-  int niceness_enlargement;
-  uint threads;
-
-  std::string favourite_function;
-  
-  // TODO: Split this into option groups
-  boost::program_options::options_description opts_desc("Recognized options");
-  opts_desc.add_options()
-    ("autocool,a","enable autocooling")         // bool
-    ("cols,c",boost::program_options::value<uint>(&cols)->default_value(6),"columns in image grid")
-    ("fullscreen,F","fullscreen window")        // bool
-    ("help,h","produce command-line options help message and exit")  // bool
-    ("jitter,j","enable rendering jitter")      // bool
-    ("menuhide,M","hide menus")                 // bool
-    ("multisample,m",boost::program_options::value<uint>(&multisample_level)->default_value(1),"multisampling grid (NxN)")
-    ("rows,r",boost::program_options::value<uint>(&rows)->default_value(5),"rows in image grid")
-    ("spheremap,p","generate spheremaps")       // bool
-    ;
-
-  boost::program_options::options_description animation_opts_desc("Animation options");
-  animation_opts_desc.add_options()
+  boost::program_options::options_description animation_options_desc("Animation options");
+  animation_options_desc.add_options()
     ("frames,f",boost::program_options::value<int>(&frames)->default_value(1),"frames in an animation")
-    ("linz,l","sweep z linearly in animations") // bool
+    ("linear,l","sweep z linearly in animations")
     ("fps,s",boost::program_options::value<int>(&framerate)->default_value(8),"animation speed (frames per second)")
     ;
 
-  boost::program_options::options_description advanced_opts_desc("Advanced options");
-  advanced_opts_desc.add_options()
-    ("verbose,v","log some details to stderr")  // bool
+  std::string favourite_function;
+  int niceness_grid;
+  int niceness_enlargement;
+  uint threads;
+  boost::program_options::options_description advanced_options_desc("Advanced options");
+  advanced_options_desc.add_options()
+    ("debug,D","enable function debug mode")
+    ("enlargement-threadpool,E","Enlargements computed using a separate threadpool")
     ("favourite,x",boost::program_options::value<std::string>(&favourite_function),"favourite function, wrapped")
     ("favourite-unwrapped,X",boost::program_options::value<std::string>(&favourite_function),"favourite function, no wrapper")
-    ("threads,t",boost::program_options::value<uint>(&threads)->default_value(get_number_of_processors()),"threads in thread pools")
     ("nice,n",boost::program_options::value<int>(&niceness_grid)->default_value(4),"niceness of compute threads for image grid")
     ("Nice,N",boost::program_options::value<int>(&niceness_enlargement)->default_value(8),"niceness of compute threads for enlargements (if separate pool)")
-    ("enlargement-threadpool,E","Enlargements computed using a separate threadpool") // bool
-    ("debug,D","enable function debug mode")                                         // bool
+    ("threads,t",boost::program_options::value<uint>(&threads)->default_value(get_number_of_processors()),"threads in thread pools")
+    ("verbose,v","log some details to stderr")  // bool
     ;
 
-  opts_desc.add(animation_opts_desc);
-  opts_desc.add(advanced_opts_desc);
+  options_desc.add(animation_options_desc);
+  options_desc.add(advanced_options_desc);
 
-  boost::program_options::variables_map opts;
-  boost::program_options::store(boost::program_options::parse_command_line(argc,argv,opts_desc),opts);
-  boost::program_options::notify(opts);
+  boost::program_options::variables_map options;
+  boost::program_options::store(boost::program_options::parse_command_line(argc,argv,options_desc),options);
+  boost::program_options::notify(options);
 
-  if (opts.count("help"))
+  // General options
+  const bool autocool=options.count("autocool");
+  const bool fullscreen=options.count("fullscreen");
+  const bool help=options.count("help");
+  const bool jitter=options.count("jitter");
+  const bool menuhide=options.count("menuhide");
+  const bool spheremap=options.count("spheremap");
+
+  // Animation options
+  const bool linear=options.count("linear");
+
+  // Advanced options
+  const bool debug=options.count("debug");
+  const bool enlargement_threadpool=options.count("enlargement-threadpool");
+  const bool favourite_unwrapped=options.count("favourite-unwrapped");
+  const bool verbose=options.count("verbose");
+
+  if (help)
     {
-      std::cerr << opts_desc;
+      std::cerr << options_desc;
       return 0;
     }
   
-  if (opts.count("verbose")) 
+  if (verbose)
     std::clog.rdbuf(std::cerr.rdbuf());
   else
     std::clog.rdbuf(sink_ostream.rdbuf());
-
-  const bool start_fullscreen=opts.count("fullscreen");
-  const bool start_menuhidden=opts.count("menuhide");
-  const bool autocool=opts.count("autocool");
-  const bool jitter=opts.count("jitter");
-  const bool function_debug_mode=opts.count("debug");
-  const bool separate_farm_for_enlargements=opts.count("enlargement-threadpool");
-  const bool favourite_function_unwrapped=opts.count("favourite-unwrapped");
-  const bool linear_zsweep=opts.count("linz");
-  const bool spheremap=opts.count("spheremap");
 
   if (cols*rows<2)
     {
       std::cerr << "Must be at least 2 display grid cells (options: -g <cols> <rows>)\n";
       return 1;
     }
-      
-  std::clog << "Using " << threads << " threads\n";
 
   if (frames<1)
     {
@@ -160,16 +160,16 @@ int main(int argc,char* argv[])
        frames,
        framerate,
        threads,
-       separate_farm_for_enlargements,
+       enlargement_threadpool,
        niceness_grid,
        niceness_enlargement,
-       start_fullscreen,
-       start_menuhidden,
+       fullscreen,
+       menuhide,
        autocool,
        jitter,
        multisample_level,
-       function_debug_mode,
-       linear_zsweep,
+       debug,
+       linear,
        spheremap
        );
 
@@ -180,7 +180,7 @@ int main(int argc,char* argv[])
       std::clog
 	<< "Selected specific function: "
 	<< favourite_function
-	<< (favourite_function_unwrapped ? " (unwrapped)" : " (wrapped)")
+	<< (favourite_unwrapped ? " (unwrapped)" : " (wrapped)")
 	<< "\n";
 
       if (!main_widget->favourite_function(favourite_function))
@@ -189,7 +189,7 @@ int main(int argc,char* argv[])
 	  return 1;
 	}
 
-      main_widget->favourite_function_unwrapped(favourite_function_unwrapped);
+      main_widget->favourite_function_unwrapped(favourite_unwrapped);
     }
   
   main_widget->show();
