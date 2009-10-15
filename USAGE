@@ -211,10 +211,10 @@ Right clicking on an image gets you a few more options:
    Submenu items select either a freely resizable window or
    a scrollable view of a fixed size image.
    If the application is running in fullscreen mode (NB this is
-   NOT the same as "Maximised": see the -F command line option)
-   then the enlarged image will also be fullscreen (the "Resizeable" 
-   mode is probably what you want in this case as the image will
-   automatically be rendered at the correct resolution). 
+   NOT the same as a simply "maximised" window) then the enlarged
+   image will also be fullscreen (the "Resizeable" mode is probably
+   what you want in this case as the image will automatically be
+   rendered at the correct resolution). 
 
  - "Save image" to save the image in a file (.ppm or .png).
    You generally want to save an enlarged image: if you
@@ -295,8 +295,7 @@ MAIN WINDOW
 
 - "u" (and also Ctrl-z) does an undo.
 
-- "f": [NB only available with fullscreen build option] toggles 
-full-screen mode (on X11, Qt does this by asking the
+- "f": full-screen mode (on X11, Qt does this by asking the
 window manager for a screen-filling undecorated window, and the
 documentation contains some dire warnings about problems with broken
 window managers).  See also "-F" command line option.
@@ -304,16 +303,14 @@ Fullscreen mode propagates to enlarged image display windows.
 NB The application may completely disappear from the screen for 
 a brief interval while switching mode.
 
-- "m" : [NB only available with fullscreen build option]
-hides status and menu-bar hiding, which can be nice when 
+- "m" : hides status and menu-bar hiding, which can be nice when 
 in full-screen or window-maximised mode.  See also "-M" 
 command line option.  Also note that while the menu bar
 is hidden, most of these keyboard shortcuts won't function
 as they're tied to the menu system.
 
-- Esc : [NB only available with fullscreen build option] kills 
-full-screen and/or menu-hiding, putting the application
-into its normal default state. 
+- Esc : exits full-screen and/or menu-hiding mode, putting the
+application into its normal default state. 
 
 ENLARGEMENT WINDOWS
 -------------------
