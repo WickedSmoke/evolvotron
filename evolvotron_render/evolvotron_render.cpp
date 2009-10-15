@@ -23,7 +23,6 @@
 
 #include "evolvotron_render_precompiled.h"
 
-#include "args.h"
 #include "function_registry.h"
 #include "mutatable_image.h"
 #include "random.h"
@@ -32,12 +31,63 @@
 int main(int argc,char* argv[])
 {
   {
-    Args args(argc,argv);
+    uint frames;
+    int height;
+    bool help;
+    bool jitter;
+    int multisample;
+    std::string output_filename;
+    bool verbose;
+    int width;
     
-    if (args.option("-v")) 
+    boost::program_options::options_description options_desc("Options");
+    boost::program_options::positional_options_description pos_options_desc;
+    {
+      using namespace boost::program_options;
+      options_desc.add_options()
+	("frames,f"     ,value<uint>(&frames)->default_value(1)    ,"Frames in an animation")
+	("height,y"     ,value<int>(&height)->default_value(512)   ,"Height of rendered image")
+	("help,h"       ,bool_switch(&help)                        ,"Print command-line options help message and exit")
+	("jitter,j"     ,bool_switch(&jitter)                      ,"Enable rendering jitter")
+	("multisample,m",value<int>(&multisample)->default_value(1),"Multisampling grid (NxN)")
+	("output,o"     ,value<std::string>(&output_filename)      ,"Output filename (.png or .ppm suffix).  (Or use first positional argument.)")
+	("verbose,v"    ,bool_switch(&verbose)                     ,"Log some details to stderr")
+	("width,x"      ,value<int>(&width)->default_value(512)    ,"Width of rendered image")
+	;
+      pos_options_desc.add("output",1);
+    }
+
+    boost::program_options::variables_map options;
+    boost::program_options::store
+      (
+       boost::program_options::command_line_parser(argc,argv)
+       .options(options_desc).positional(pos_options_desc).run()
+       ,options
+       );
+    boost::program_options::notify(options);
+    
+    if (help)
+      {
+	std::cerr << options_desc;
+	return 0;
+      }
+
+    if (verbose)
       std::clog.rdbuf(std::cerr.rdbuf());
     else
       std::clog.rdbuf(sink_ostream.rdbuf());
+
+    if (frames<1)
+      {
+	std::cerr << "Must specify at least 1 frame (option: -f <frames>)\n";
+	return 1;
+      }
+
+    if (output_filename.empty())
+      {
+	std::cerr << "Must specify an output filename\n";
+	return 1;
+      }
     
     FunctionRegistry function_registry;
     
@@ -47,32 +97,15 @@ int main(int argc,char* argv[])
     if (imagefn.get()==0)
       {
 	std::cerr << "evolvotron_render: Error: Function not loaded due to errors:\n" << report;
-	exit(1);
+	return 1;
       }
     else if (!report.empty())
       {
 	std::cerr << "evolvotron_render: Warning: Function loaded with warnings:\n" << report;
       }
 
-    int width=512;
-    int height=512;
-  
-    if (args.option("-s",2)) args.after() >> width >> height;
-
-    uint frames=1;
-    if (args.option("-f",1)) args.after() >> frames;
-    if (frames<1)
-      {
-	std::cerr << "Must specify at least 1 frame (option: -f <frames>)\n";
-	exit(1);
-      }
-
-    const bool jitter=args.option("-j");
-  
-    uint multisample_level=1;
-    if (args.option("-m",1)) args.after() >> multisample_level;
-
-    Random01 r01(23);     // Seed pretty unimportant; only used for sample jitter.
+    // Seed value pretty unimportant; only used for sample jitter.
+    Random01 r01(23);
 
     for (uint frame=0;frame<frames;frame++)
       {
@@ -87,7 +120,7 @@ int main(int argc,char* argv[])
 	    {
 	      const XYZ v(imagefn->sampling_coordinate(col,row,frame,width,height,frames));
 	    
-	      const XYZ colour(imagefn->get_rgb(col,row,frame,width,height,frames,(jitter ? &r01 : 0),multisample_level));
+	      const XYZ colour(imagefn->get_rgb(col,row,frame,width,height,frames,(jitter ? &r01 : 0),multisample));
 	    
 	      const uint col0=lrint(clamped(colour.x(),0.0,255.0));
 	      const uint col1=lrint(clamped(colour.y(),0.0,255.0));
@@ -106,7 +139,7 @@ int main(int argc,char* argv[])
 
 	{
 	  //! \todo If filename is "-", write PPM to stdout (QImage save only supports write-to-a-filenames though)
-	  QString save_filename(QString::fromLocal8Bit(args.last(1).c_str()));
+	  QString save_filename(QString::fromLocal8Bit(output_filename.c_str()));
 
 	  const char* save_format="PPM";
 	  if (save_filename.toUpper().endsWith(".PPM"))
@@ -140,12 +173,13 @@ int main(int argc,char* argv[])
 		}
 	    }
     
-	  QImage image(
-		       reinterpret_cast<uchar*>(&(image_data[0])),
-		       width,
-		       height,
-		       QImage::Format_RGB32
-		       );
+	  QImage image
+	    (
+	     reinterpret_cast<uchar*>(&(image_data[0])),
+	     width,
+	     height,
+	     QImage::Format_RGB32
+	     );
 
 	  if (!image.save(save_filename,save_format))
 	    {
@@ -153,7 +187,7 @@ int main(int argc,char* argv[])
 		<< "evolvotron_render: Error: Couldn't save file "
 		<< save_filename.toLocal8Bit().data()
 		<< "\n";
-	      exit(1);
+	      return 1;
 	    }
 	
 	  std::clog
@@ -168,5 +202,5 @@ int main(int argc,char* argv[])
   assert(InstanceCounted::is_clear());
 #endif
   
-  exit(0);
+  return 0;
 }

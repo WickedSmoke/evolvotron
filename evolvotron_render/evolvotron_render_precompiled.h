@@ -26,4 +26,6 @@
 
 #include "libevolvotron_precompiled.h"
 
+#include <boost/program_options.hpp>
+
 #endif
