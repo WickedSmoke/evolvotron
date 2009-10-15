@@ -5,46 +5,8 @@ evolvotron \- Creates generative art by an interactive evolutionary process.
 
 .SH SYNOPSIS
 evolvotron
-[\-a]
-[\-D]
-[\-E]
-[\-f 
-.I <frames>
-]
-[\-F]
-[\-g
-.I <cols>
-.I <rows>
-]
-[\-j]
-[\-linz]
-[\-m
-.I <multisample>
-]
-[\-M]
-[\-n
-.I niceness
-]
-[\-N
-.I enlargement niceness
-]
-[\-r
-.I <framerate>
-]
-[\-spheremap]
-[\-t
-.I <threads>
-]
-[\-v]
-[\-x
-.I <functionname>
-|
-\-X
-.I <functionname>
-]
-[
-.I <QtOptions>
-]
+[Qt options]
+[options]
 
 .SH DESCRIPTION
 
@@ -63,8 +25,72 @@ is accessible from the application's "Help" menu once it is running.
 .SH GENERAL OPTIONS
 
 .TP 0.5i
-.B \-a
+.B \-\-autocool | \-a
 Enable autocooling by default.
+
+.TP 0.5i
+.B \-\-cols | \-c
+.I cols
+Number of columns in image display grid (defaults to 6).
+
+.TP 0.5i
+.B \-\-fullscreen | \-F
+Start in "fullscreen" mode (window manager permitting).
+[Press "Esc" key to revert to normal windowed mode].
+
+.TP 0.5i
+.B \-\-help | \-h
+Display a summary of command-line options and exit.
+
+.TP 0.5i
+.B \-\-jitter | \-j
+Enable sample jittering.
+
+.TP 0.5i
+.B \-\-multisample | \-m
+.I multisample
+Enables antialiased rendering.
+Valid values are 1,2,3,4.
+This specifies the size of the sub-pixel sampling grid,
+so 1 provides the default one-sample-per-pixel behaviour,
+while 4 provides 16 samples per pixel on a 4x4 grid.
+
+.TP
+.B \-\-menuhide | \-M
+Start with menu and status bars supressed.
+[Press "Esc" key to display them].
+
+.TP 0.5i
+.B \-\-rows | \-r
+.I rows
+Number of rows in image display grid (defaults to 5).
+
+.TP 0.5i
+.B \-spheremap | \-s
+Create spheremaps instead of planar textures.
+NB The middle-mouse adjustments will not behave as expected in this mode.
+
+.SH ANIMATION OPTIONS
+
+.TP 0.5i
+.B \-\-frames | \-f
+.I frames
+Number of frames to animate (defaults to 1 i.e no animaton)
+
+.TP 0.5i
+.B \-\-linear | \-l
+Vary z linearly with time rather than sinusoidally over animation period.
+
+.TP 0.5i
+.B \-\-fps | \-s
+.I framerate
+Specify rate at which animations are displayed
+(as an integer number of frames per second).
+Defaults to 8.
+
+.SH POWER-USER / DEBUG OPTIONS
+
+UPDATE BELOW HERE
 
 .TP 0.5i
 .B \-E
@@ -76,35 +102,6 @@ Without this option, enlargements' final high-resolution renderings are
 invariably lower priority than computation for images in the main
 grid.
 See also the \-N option to control the priority of threads in this pool.
-
-.TP 0.5i
-.B \-F
-Start in "fullscreen" mode (window manager permitting).
-[Press "Esc" key to revert to normal windowed mode].
-
-.TP 0.5i
-.B \-g
-.I <cols>
-.I <rows>
-Number of image display cells (defaults to 6 by 5).
-
-.TP 0.5i
-.B -j
-Enable sample jittering.
-
-.TP
-.B \-M
-Start with menu and status bars supressed.
-[Press "Esc" key to display them].
-
-.TP 0.5i
-.B \-m
-.I <multisample>
-Enables antialiased rendering.
-Valid values are 1,2,3,4.
-This specifies the size of the sub-pixel sampling grid,
-so 1 provides the default one-sample-per-pixel behaviour,
-while 4 provides 16 samples per pixel on a 4x4 grid.
 
 .TP 0.5i
 .B \-n
@@ -127,36 +124,11 @@ Number of compute threads (defaults to number of CPUs)
 The Qt GUI system recognizes an number of additional options
 (for example, standard X11 things like -geometry <width>x<height>).
 
-.SH ANIMATION OPTIONS
-
-.TP 0.5i
-.B \-f
-.I <frames>
-Number of frames to animate (defaults to 1 i.e no animaton)
-
-.TP 0.5i
-.B \-linz
-Vary z linearly with time rather than sinusoidally.
-
-.TP 0.5i
-.B \-r
-.I <framerate>
-Specify rate at which animations are displayed
-(as an integer number of frames per second).
-Defaults to 8.
-
-.SH POWER-USER / DEBUG OPTIONS
-
 .TP 0.5i
 .B \-D
 Debug mode.
 Currently simply sets function weightings so virtually all function nodes are FunctionNoiseOneChannel.
 This is really only useful to developers in conjunction with the -x/-X options.
-
-.TP 0.5i
-.B \-spheremap
-Create spheremaps instead of planar textures.
-NB The middle-mouse adjustments will not behave as expected in this mode.
 
 .TP 0.5i
 .B \-v

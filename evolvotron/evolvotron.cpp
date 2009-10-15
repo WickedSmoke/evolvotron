@@ -47,15 +47,15 @@ int main(int argc,char* argv[])
   uint cols;
   uint rows;
   uint multisample_level;
-  boost::program_options::options_description options_desc("Recognized options");
+  boost::program_options::options_description options_desc("General options");
   options_desc.add_options()
     ("autocool,a","enable autocooling")
     ("cols,c",boost::program_options::value<uint>(&cols)->default_value(6),"columns in image grid")
     ("fullscreen,F","fullscreen window")
     ("help,h","produce command-line options help message and exit")
     ("jitter,j","enable rendering jitter")
-    ("menuhide,M","hide menus")
     ("multisample,m",boost::program_options::value<uint>(&multisample_level)->default_value(1),"multisampling grid (NxN)")
+    ("menuhide,M","hide menus")
     ("rows,r",boost::program_options::value<uint>(&rows)->default_value(5),"rows in image grid")
     ("spheremap,p","generate spheremaps")
     ;
