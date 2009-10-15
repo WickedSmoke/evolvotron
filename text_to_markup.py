@@ -9,7 +9,6 @@
 # - Other text to p, blank lines break a p
 # - Lines beginning with "- " (NB space) to ul/li (bulleted)
 # - Lines beginning with "-?" (no space) to ul/li (?) with <br> at end of first line
-# - Lines ending with ":" <br> 
 # - Words delim <xxx> to <i>xxx</i>
 # "$ " at start of line indicates one line of code (add <br> too)
 
@@ -80,7 +79,7 @@ class TextToMarkup:
     def process_paragraph_text(self,txt):
 
         is_code=0 # False
-        specialbreak=txt[len(txt)-1]==":" 
+        specialbreak=0 # False 
         r="  "
 
         if txt[0]=="-":
@@ -102,7 +101,6 @@ class TextToMarkup:
             is_code=1           # True
             r+="<code>"
             txt=txt[2:]
-            specialbreak=1      # True
 
         for w in txt.split():
             r+=self.process_word(w)
