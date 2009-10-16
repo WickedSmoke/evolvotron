@@ -1,32 +1,18 @@
-.TH EVOLVOTRON_RENDER 1 "25 Feb 2004" "www.timday.com" "Evolvotron"
+.TH EVOLVOTRON_RENDER 1 "16 Oct 2009" "www.timday.com" "Evolvotron"
 
 .SH NAME
 evolvotron_render \- Render an evolvotron function tree to an image.
 
 .SH SYNOPSIS
 evolvotron_render
-[\-f 
-.I <frames>
-]
-[\-j]
-[\-m
-.I <multisample>
-]
-[\-s
-.I <width>
-.I <height>
-]
-[\-spheremap]
-[\-v]
-.I <imagefile.[png|ppm]>
-<
-.I <file.xml>
+[options]
+.I imagefile.[png|ppm]
 
 .SH DESCRIPTION
 
 .B evolvotron_render 
-reads an evolvotron image function from it's
-standard input and renders it to the file specified
+reads an evolvotron image function from its
+standard input and renders it to an image in the file specified
 (suffix determines type, defaults to ppm if not recognised).
 
 Image functions can be obtained by saving them from the
@@ -38,12 +24,24 @@ application's Help menu) for more information on image functions.
 .SH COMMAND-LINE OPTIONS
 
 .TP 0.5i
-.B -j
+.B \-\-frames | \-f
+.I frames
+Generates multi-frame animations.  .fnnnnnn is inserted into
+the specified filename (before the filetype suffix, if any).
+You can use this on functions which weren't evolved in animation mode,
+but there's no guarantee they have any interesting time/z variation.
+
+.TP 0.5i
+.B \-\-help | \-h
+Display a summary of command-line options and exit.
+
+.TP 0.5i
+.B \-\-jitter | \-j
 Enable sample jittering.
 
 .TP 0.5i
-.B \-m
-.I <multisample>
+.B \-\-multisample | \-m
+.I multisample
 Enables antialiased rendering.
 This specifies the size of the sub-pixel sampling grid,
 so 1 provides the default one-sample-per-pixel behaviour,
@@ -52,33 +50,23 @@ Unlike the main evolvotron application, there is no upper limit,
 but of course rendering time increases as the square of this number.
 
 .TP 0.5i
-.B \-s
-.I <width>
-.I <height>
+.B \-\-output | \-o
+.I imagefile.[ppm|png]
+This option is an alternative to specifying the output filename as a positional argument.
+
+.TP 0.5i
+.B \-\-size | \-s
+.I widthxheight
 Specify resolution of output image.
-Defaults to 512 512.
+Defaults to 512x512.
 
 .TP 0.5i
-.B \-v
+.B \-\-verbose | \-v
 Verbose mode; useful for monitoring progress of large renders.
-
-.TP 0.5i
-.B \-f
-.I <frames>
-Generates multi-frame animations.  .fnnnnnn is inserted into
-the specified filename (before the filetype suffix, if any).
-You can use this on functions which weren't evolved in animation mode, but there's
-no guarantee they have any interesting time/z variation.
-
-.TP 0.5i
-.B \-spheremap
-Create a spheremap instead of a planar texture.
 
 .SH EXAMPLES
 
-evolvotron_mutate \-g > function.xml
-
-evolvotron_render \-v \-s 2048 2048 function.ppm < function.xml
+evolvotron_mutate \-g | evolvotron_render \-s 1024x1024 function.ppm
 
 .SH AUTHOR
 .B evolvotron_render

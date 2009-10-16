@@ -1,4 +1,4 @@
-.TH EVOLVOTRON_MUTATE 1 "25 Feb 2004" "www.timday.com" "Evolvotron"
+.TH EVOLVOTRON_MUTATE 1 "16 Oct 2009" "www.timday.com" "Evolvotron"
 
 .SH NAME
 evolvotron_mutate \- Render an evolvotron function tree to an image.
@@ -13,12 +13,12 @@ evolvotron_mutate
 \-g
 > function_out.xml
 
-
 .SH DESCRIPTION
 
 .B evolvotron_mutate 
-either mutates an existing image function (saved to an XML file), 
+either mutates an existing image function read from standard input, 
 or (with the \-g option) creates a new image function.
+In either case the output image function is written to standard output.
 
 The mutation parameters and function weightings are the same as used
 by
@@ -31,9 +31,26 @@ application's Help menu) for more information on image functions.
 .SH COMMANDLINE OPTIONS
 
 .TP 0.5i
-.B -g
+.B \-\-genesis | \-g
 Specifies that no function should be read from standard input.
 The output function is created at random.
+
+.TP 0.5i
+.B \-\-help | \-h
+Display information on command line arguments and exit.
+
+.TP 0.5i
+.B \-\-linear | \-l
+Created functions (if they are rendered as animations) will sweep z linearly (rather than sinusoidally).
+
+.TP 0.5i
+.B \-\-spheremap | \-p
+Created functions will be tagged as spheremaps.
+
+.TP 0.5i
+.B \-\-verbose | \-v
+Enables some additional logging to standard error.
+
 
 .SH EXAMPLES
 

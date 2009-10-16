@@ -418,7 +418,7 @@ THE STATIC IMAGE MODE.
 Simply supply a -f <frames> command line option and evolvotron will
 generate animated sequences with the specified number of frames.
 These will be displayed at the frame rate specified by the
-optional -r <framerate> option (default 8).  So "evolvotron -f 24" 
+optional -s <framerate> option (default 8).  So "evolvotron -s 24" 
 will generate 3 second long animations.  Animations reverse direction
 at each end to avoid a sudden jump.
 
@@ -521,30 +521,14 @@ dialog there are two slider controls to affect things related to these:
 
 OTHER EXECUTABLES
 =================
-This release also builds some other executables:
+This release also builds some other command-line driven (non-GUI, non-interactive) utilities.
+Consult the man pages for full details.
 
-$ evolvotron_render [-v] [-j] [-m <multisample>] [-s <width> <height>] [-f <frames>] [<file.ppm> | <file.png>] < <file.xml>
+evolvotron_render reads a XML function description from its standard input and renders it to the
+file specified.
 
-Reads a XML function description from it's standard input and renders it to the
-file specified (suffix determines type, defaults to ppm if not recognised) at the
-specified resolution.  Image size is specified by -s option and defaults to 512x512.
-The -f option generates multi-frame animations.  .fnnnnnn is inserted/appended to
-the specified filename in the same way as animations saved from evolvotron.
-(You can use this on functions which weren't evolved in animation mode, but there's
-no guarantee they have any interesting time/z variation).
-Use the -v option to monitor the progress of a long animation run.
-[NB This app does not use multiple compute threads].
-The -j and -m options control sample jitter and multisampling as for the main application.
-There is no upper limit on the number of multisampling points.
-
-$ evolvotron_mutate [-g [-linz] [-spheremap] | < <file_in.xml>] > <file_out.xml>
-
-With the -g (generate, genesis?) option, creates a new random
-evolvotron function and writes its XML description to standard out.
-Without the -g option, reads an XML function description from
-standard input, mutates it (using the same algorithm and parameters
-as evolvotron in its default state) and writes the new function's XML
-representation to the standard output.
+evolvotron_mutate reads an XML function description from its standard input and outputs a mutated version.
+A command line option allows the "genesis" situation of creating a random function description with no input.
 
 EXAMPLES
 --------
