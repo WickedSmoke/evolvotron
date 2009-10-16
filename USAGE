@@ -32,9 +32,9 @@ are actually implemented by a single function node and may leave you stuck too.
 COMMAND LINE OPTIONS
 ====================
 The following are equivalent:
-  - evolvotron --rows 8 --cols 12
-  - evolvotron --rows=8 --cols=12  
-  - evolvotron -r 8 -c 12
+  - evolvotron --grid 8x12
+  - evolvotron --grid=8x12
+  - evolvotron -g 8x12
 
 GENERAL OPTIONS
 ---------------
@@ -42,9 +42,6 @@ GENERAL OPTIONS
   --autocool (-a)
 	Enable autocooling by default, and cause resets of mutation
 	parameters to re-enable autocooling if it was disabled.
-
-  --cols (-c) <cols>
-	Sets number of image display cells (defaults to 6 by 5)
 
   --fullscreen (-S)
 	Start in "fullscreen" mode (NB for Qt on X11 this means 
@@ -58,6 +55,9 @@ GENERAL OPTIONS
 	(e.g enlargements or dialogs) can show some "interesting" behaviour.  
 	Fullscreen mode can be toggled within the application using "F" key.  
 	The "Esc" key will also exit it.
+
+  --grid (-g) <rows>x<cols>
+	Sets size of the grid of image display cells in the main application area (defaults to 5x6)
 
   --help (-h)
 	Print summary of command line options and exit.
@@ -77,9 +77,6 @@ GENERAL OPTIONS
 	Specifiying 4 (of higher) will provide a 2x2 and a final 4x4 pass.
 	Specifying 1 provides the default behaviour of one sample per pixel.
 	For best rendering quality also specify -j.
-
-  --rows (-r) <rows>
-	Sets number of image display cells (defaults to 6 by 5)
 
   --spheremap (-p)
         Images are produced by sampling the underlying 3D function on the

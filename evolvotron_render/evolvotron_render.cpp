@@ -32,13 +32,12 @@ int main(int argc,char* argv[])
 {
   {
     uint frames;
-    int height;
     bool help;
     bool jitter;
     int multisample;
     std::string output_filename;
+    std::string size;
     bool verbose;
-    int width;
     
     boost::program_options::options_description options_desc("Options");
     boost::program_options::positional_options_description pos_options_desc;
@@ -46,13 +45,12 @@ int main(int argc,char* argv[])
       using namespace boost::program_options;
       options_desc.add_options()
 	("frames,f"     ,value<uint>(&frames)->default_value(1)    ,"Frames in an animation")
-	("height,y"     ,value<int>(&height)->default_value(512)   ,"Height of rendered image")
 	("help,h"       ,bool_switch(&help)                        ,"Print command-line options help message and exit")
 	("jitter,j"     ,bool_switch(&jitter)                      ,"Enable rendering jitter")
 	("multisample,m",value<int>(&multisample)->default_value(1),"Multisampling grid (NxN)")
 	("output,o"     ,value<std::string>(&output_filename)      ,"Output filename (.png or .ppm suffix).  (Or use first positional argument.)")
+	("size,s"       ,value<std::string>(&size)->default_value("512x515"),"Generated image size")
 	("verbose,v"    ,bool_switch(&verbose)                     ,"Log some details to stderr")
-	("width,x"      ,value<int>(&width)->default_value(512)    ,"Width of rendered image")
 	;
       pos_options_desc.add("output",1);
     }
@@ -77,6 +75,21 @@ int main(int argc,char* argv[])
     else
       std::clog.rdbuf(sink_ostream.rdbuf());
 
+    //! \todo Could be done better maybe (set 'x' as input separator)
+    const std::string::size_type p=size.find("x");
+    if (p==std::string::npos || p==0 || p==size.size()-1)
+      {
+	std::cerr << "--size option argument isn't in <width>x<height> format\n";
+	return 1;
+      }
+    else
+      {
+	size[p]=' ';
+      }
+    int width=512;
+    int height=512;
+    std::stringstream(size) >> width >> height;
+    
     if (frames<1)
       {
 	std::cerr << "Must specify at least 1 frame (option: -f <frames>)\n";

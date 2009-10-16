@@ -29,14 +29,14 @@ is accessible from the application's "Help" menu once it is running.
 Enable autocooling by default.
 
 .TP 0.5i
-.B \-\-cols | \-c
-.I cols
-Number of columns in image display grid (defaults to 6).
-
-.TP 0.5i
 .B \-\-fullscreen | \-S
 Start in "fullscreen" mode (window manager permitting).
 [Press "Esc" key to revert to normal windowed mode].
+
+.TP 0.5i
+.B \-\-grid | \-g
+.I rowsxcols
+Number of columns in image display grid (defaults to 5x6).
 
 .TP 0.5i
 .B \-\-help | \-h
@@ -59,11 +59,6 @@ Valid values are 1,2,3,4.
 This specifies the size of the sub-pixel sampling grid,
 so 1 provides the default one-sample-per-pixel behaviour,
 while 4 provides 16 samples per pixel on a 4x4 grid.
-
-.TP 0.5i
-.B \-\-rows | \-r
-.I rows
-Number of rows in image display grid (defaults to 5).
 
 .TP 0.5i
 .B \-spheremap | \-p

@@ -45,9 +45,8 @@ int main(int argc,char* argv[])
   
   // General options
   bool autocool;
-  uint cols; // A 4:3 ratio would nice to get square images on most screens,
-  uint rows; // but isn't many images so default to 6:5
   bool fullscreen;
+  std::string grid;
   bool help;
   bool jitter;
   bool menuhide;
@@ -57,15 +56,14 @@ int main(int argc,char* argv[])
   {
     using namespace boost::program_options;
     options_desc.add_options()
-      ("autocool,a"   ,bool_switch(&autocool)                     ,"Enable autocooling")
-      ("cols,c"       ,value<uint>(&cols)->default_value(6)       ,"Columns in image grid")
-      ("fullscreen,S" ,bool_switch(&fullscreen)                   ,"Fullscreen window")
-      ("help,h"       ,bool_switch(&help)                         ,"Print command-line options help message and exit")
-      ("jitter,j"     ,bool_switch(&jitter)                       ,"Enable rendering jitter")
-      ("menuhide,M"   ,bool_switch(&menuhide)                     ,"Hide menus")
-      ("multisample,m",value<uint>(&multisample)->default_value(1),"Multisampling grid (NxN)")
-      ("rows,r"       ,value<uint>(&rows)->default_value(5)       ,"Rows in image grid")
-      ("spheremap,p"  ,bool_switch(&spheremap)                    ,"Generate spheremaps")
+      ("autocool,a"   ,bool_switch(&autocool)                         ,"Enable autocooling")
+      ("grid,g"       ,value<std::string>(&grid)->default_value("5x6"),"Rows x columns in image grid")
+      ("fullscreen,S" ,bool_switch(&fullscreen)                       ,"Fullscreen window")
+      ("help,h"       ,bool_switch(&help)                             ,"Print command-line options help message and exit")
+      ("jitter,j"     ,bool_switch(&jitter)                           ,"Enable rendering jitter")
+      ("menuhide,M"   ,bool_switch(&menuhide)                         ,"Hide menus")
+      ("multisample,m",value<uint>(&multisample)->default_value(1)    ,"Multisampling grid (NxN)")
+      ("spheremap,p"  ,bool_switch(&spheremap)                        ,"Generate spheremaps")
       ;
   }
 
@@ -127,6 +125,21 @@ int main(int argc,char* argv[])
     std::clog.rdbuf(std::cerr.rdbuf());
   else
     std::clog.rdbuf(sink_ostream.rdbuf());
+
+  //! \todo Could be done better maybe (set 'x' as input separator)
+  const std::string::size_type p=grid.find("x");
+  if (p==std::string::npos || p==0 || p==grid.size()-1)
+    {
+      std::cerr << "--grid option argument isn't in <rows>x<cols> format\n";
+      return 1;
+    }
+  else
+    {
+      grid[p]=' ';
+    }
+  int rows=5;
+  int cols=6;
+  std::stringstream(grid) >> rows >> cols;
 
   if (cols*rows<2)
     {

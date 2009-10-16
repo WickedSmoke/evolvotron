@@ -1,11 +1,18 @@
 #include <boost/program_options.hpp>
 #include <iostream>
 
+namespace boost {
+  namespace program_options {
+    
+    BOOST_PROGRAM_OPTIONS_DECL typed_value<std::pair<int,int> >* intpair(std::pair<int,int>*);
+    
+  }
+}
+
 using namespace boost::program_options;
 
 int main(int argc,char** argv)
 {
-  
   bool flag;
   int number;
   std::pair<int,int> pair;
@@ -18,9 +25,9 @@ int main(int argc,char** argv)
     ("number,n"
      ,value<int>(&number)->default_value(23)
      ,"Specify a number")
-    //("pair,p"
-    // ,value<std::pair<int,int> >->default_value(std::make_pair(2,3))
-    // ,"Specify 2 numbers")
+    ("pair,p"
+     ,intpair(&pair)->default_value(std::make_pair(2,3))
+     ,"Specify 2 numbers")
     ;
 
   variables_map options;
