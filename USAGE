@@ -32,18 +32,18 @@ are actually implemented by a single function node and may leave you stuck too.
 COMMAND LINE OPTIONS
 ====================
 The following are equivalent:
-  - evolvotron --grid 8x12
-  - evolvotron --grid=8x12
-  - evolvotron -g 8x12
+  - evolvotron --grid 12x8
+  - evolvotron --grid=12x8
+  - evolvotron -g 12x8
 
 GENERAL OPTIONS
 ---------------
 
-  --autocool (-a)
+  -a, --autocool
 	Enable autocooling by default, and cause resets of mutation
 	parameters to re-enable autocooling if it was disabled.
 
-  --fullscreen (-S)
+  -F, --fullscreen
 	Start in "fullscreen" mode (NB for Qt on X11 this means 
 	a screen-filling borderless/undecorated window is used; 
 	it's not simply maximising the window, and it's not the 
@@ -56,29 +56,29 @@ GENERAL OPTIONS
 	Fullscreen mode can be toggled within the application using "F" key.  
 	The "Esc" key will also exit it.
 
-  --grid (-g) <rows>x<cols>
+  -g, --grid <cols>x<rows>
 	Sets size of the grid of image display cells in the main application area (defaults to 5x6)
 
-  --help (-h)
+  -h, --help
 	Print summary of command line options and exit.
 
-  --jitter (-j)
+  -j, --jitter
 	Enable sample jittering.  Samples will be made at a random position
 	within a pixel instead of on a regular grid, providing some antialiasing.
 
-  --menuhide (-M)	
-	Start with menu and status bar hidden.  Nice with --fullscreen.
-	Hiding can be toggled within the application using ctrl-m.
-	The Esc key will also bring them back.
-
-  --multisample (-m) <multisample grid>
+  -m, --multisample <multisample grid>
 	Enables additional antialiasing passes.
 	Specifing 2 or 3 will provide an additional pass with 2x2 or 3x3 samples per pixel.
 	Specifiying 4 (of higher) will provide a 2x2 and a final 4x4 pass.
 	Specifying 1 provides the default behaviour of one sample per pixel.
 	For best rendering quality also specify -j.
 
-  --spheremap (-p)
+  -M, --menuhide
+	Start with menu and status bar hidden.  Nice with --fullscreen.
+	Hiding can be toggled within the application using ctrl-m.
+	The Esc key will also bring them back.
+
+  -p, --spheremap
         Images are produced by sampling the underlying 3D function on the
         latitude-longitude grid of a sphere.  The resulting images should be
         usable as spheremaps/spherical environment maps.  Animations vary
@@ -88,17 +88,17 @@ GENERAL OPTIONS
 ANIMATION OPTIONS
 -----------------
 
-  --fps (-s) <framerate>
-	Rate at which frames are displayed per second (integer).  (Defaults to 8).
-
-  --frames (-f) <frames>
+  -f, --frames <frames>
 	Number of frames in animations (defaults to 1 i.e no animation)
 
-  --linear (-l)
+  -l, --linear
         Vary z linearly with time rather than sinusoidally.
         Sinusoidal variation generally looks better when animations are "bounced"
         forwards and backwards, but this option is useful when generating slices to
         use as volumetric textures.
+
+  -s, --fps <framerate>
+	Rate at which frames are displayed per second (integer).  (Defaults to 8).
 
 POWER-USER & DEBUG OPTIONS
 --------------------------
@@ -107,14 +107,14 @@ Note that the usual Qt/X11 options
 (for example, -geometry <width>x<height> option to set on-screen size in pixels)
 are processed and removed before evolvotron options are checked.
 
-  --debug (-D)
+  -D, --debug
         Puts the certain aspects of the app into a more debug oriented mode.
         Currently (ie this may change) it simply changes function weightings
         so virtually all function nodes are FunctionNoiseOneChannel. By itself
 	this is a pretty pointless thing to do, but in conjunction with the -X
         options it's useful for examining the behaviour of specific functions.
         
-  --enlargement-threadpool (-E)
+  -E, --enlargement-threadpool
 	Use a separate thread pool for computing enlargements.
 	Using this option ensures computation of enlargements
 	continue to make some progress even while the main grid
@@ -126,17 +126,7 @@ are processed and removed before evolvotron options are checked.
 	See also the -N option to control the priority of threads
 	in this pool.
 
-  --favourite (-F) <functionname>
-	Force a specific "favourite" function type to be used at the top level 
-	of all function trees.  The specifed function is still wrapped 
-	by spatial and colour warping functions which may disguise 
-	it considerably.  A list of all the function names understood 
-	by evolvotron is output during app startup when the -v option 
-	is specified.  Function name recognition is case sensitive.
-	Example: 
-        $ evolvotron -F FunctionSpiralLinear
-
-  -n <niceness>
+  -n, --nice <niceness>
         Sets additional niceness (relative to the main application thread)
 	of the compute (rendering) thread(s).
         It's useful to run compute threads at a slightly lower priority
@@ -145,12 +135,12 @@ are processed and removed before evolvotron options are checked.
         priority tasks running on your machine may slow evolvotron down
         a bit more than expected).
 
-  -N <enlargement niceness>
+  -N, --Nice <enlargement niceness>
         Sets additional niceness (relative to the main application thread)
 	of the compute thread(s) computing enlargements (default value is 8).
 	Only effective in conjunction with -E option.
 
-  --threads (-t) <threads>
+  -t, --threads <threads>
 	Sets number of compute threads.
         If this is not specified, then as many compute threads are created
         as there are processors on the system (unless this cannot be
@@ -158,7 +148,7 @@ are processed and removed before evolvotron options are checked.
         Non-linux builds will likely not include code to determine processor count
         (suitable patches gratefully received). 
 
-  --unwrapped (-u)
+  -u, --unwrapped
 	Modifies -F behaviour so that the specified "favourite" function 
         is NOT wrapped by space/colour transforms.  NB For functions without leaf nodes 
 	or parameters (e.g FunctionSphericalToCartesian) this doesn't
@@ -167,12 +157,22 @@ are processed and removed before evolvotron options are checked.
         Example:
 	$ evolvotron -F FunctionKaleidoscope -u
 
-  --verbose (-v) 
+  -v, --verbose
 	Verbose mode, writes various things to application stderr. 
 	This is primarily intended to assist debugging.
         This option used to be useful for getting a list of supported function 
 	names for use with the -F option, but those can also be inspected
         via the Settings dialogs.
+
+  -x, --favourite <functionname>
+	Force a specific "favourite" function type to be used at the top level 
+	of all function trees.  The specifed function is still wrapped 
+	by spatial and colour warping functions which may disguise 
+	it considerably.  A list of all the function names understood 
+	by evolvotron is output during app startup when the -v option 
+	is specified.  Function name recognition is case sensitive.
+	Example: 
+        $ evolvotron -F FunctionSpiralLinear
 
 MOUSE CONTROL
 ============= 

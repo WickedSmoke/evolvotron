@@ -57,12 +57,12 @@ int main(int argc,char* argv[])
     using namespace boost::program_options;
     options_desc.add_options()
       ("autocool,a"   ,bool_switch(&autocool)                         ,"Enable autocooling")
-      ("grid,g"       ,value<std::string>(&grid)->default_value("5x6"),"Rows x columns in image grid")
-      ("fullscreen,S" ,bool_switch(&fullscreen)                       ,"Fullscreen window")
+      ("fullscreen,F" ,bool_switch(&fullscreen)                       ,"Fullscreen window")
+      ("grid,g"       ,value<std::string>(&grid)->default_value("6x5"),"Columns x rows in image grid")
       ("help,h"       ,bool_switch(&help)                             ,"Print command-line options help message and exit")
       ("jitter,j"     ,bool_switch(&jitter)                           ,"Enable rendering jitter")
-      ("menuhide,M"   ,bool_switch(&menuhide)                         ,"Hide menus")
       ("multisample,m",value<uint>(&multisample)->default_value(1)    ,"Multisampling grid (NxN)")
+      ("menuhide,M"   ,bool_switch(&menuhide)                         ,"Hide menus")
       ("spheremap,p"  ,bool_switch(&spheremap)                        ,"Generate spheremaps")
       ;
   }
@@ -75,9 +75,9 @@ int main(int argc,char* argv[])
   {
     using namespace boost::program_options;
     animation_options_desc.add_options()
-      ("fps,s"        ,value<int>(&framerate)->default_value(8)   ,"Animation speed (frames-per-second)")
       ("frames,f"     ,value<int>(&frames)->default_value(1)      ,"Frames in an animation")
       ("linear,l"     ,bool_switch(&linear)                       ,"Sweep z linearly in animations")
+      ("fps,s"        ,value<int>(&framerate)->default_value(8)   ,"Animation speed (frames-per-second)")
       ;
   }
 
@@ -97,7 +97,6 @@ int main(int argc,char* argv[])
     advanced_options_desc.add_options()
       ("debug,D"                 ,bool_switch(&debug)                    ,"Enable function debug mode")
       ("enlargement-threadpool,E",bool_switch(&enlargement_threadpool)   ,"Enlargements computed using a separate threadpool")
-      ("favourite,F"             ,value<std::string>(&favourite)         ,"Favourite function")
       ("nice,n"                  ,value<int>(&niceness_grid)->default_value(4)
        ,"Niceness of compute threads for image grid")
       ("Nice,N"                  ,value<int>(&niceness_enlargement)->default_value(8)
@@ -106,6 +105,7 @@ int main(int argc,char* argv[])
        ,"Number of threads in a thread pool")
       ("unwrapped,u"             ,bool_switch(&unwrapped)                ,"Don't wrap favourite function")
       ("verbose,v"               ,bool_switch(&verbose)                  ,"Log some details to stderr")
+      ("favourite,x"             ,value<std::string>(&favourite)         ,"Favourite function")
       ;
   }
 
@@ -137,25 +137,25 @@ int main(int argc,char* argv[])
     {
       grid[p]=' ';
     }
-  int rows=5;
   int cols=6;
-  std::stringstream(grid) >> rows >> cols;
+  int rows=5;
+  std::stringstream(grid) >> cols >> rows;
 
   if (cols*rows<2)
     {
-      std::cerr << "Must be at least 2 display grid cells (options: -g <cols> <rows>)\n";
+      std::cerr << "Must be at least 2 display grid cells\n";
       return 1;
     }
 
   if (frames<1)
     {
-      std::cerr << "Must specify at least 1 frame (option: -f <frames>)\n";
+      std::cerr << "Must specify at least 1 frame\n";
       return 1;
     }
 
   if (framerate<1)
     {
-      std::cerr << "Must specify framerate of at least 1 (option: -s <framerate>)\n";
+      std::cerr << "Must specify framerate of at least 1\n";
       return 1;
     }
 

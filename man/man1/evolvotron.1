@@ -25,34 +25,29 @@ is accessible from the application's "Help" menu once it is running.
 .SH GENERAL OPTIONS
 
 .TP 0.5i
-.B \-\-autocool | \-a
+.B \-a, \-\-autocool
 Enable autocooling by default.
 
 .TP 0.5i
-.B \-\-fullscreen | \-S
+.B  \-F, \-\-fullscreen
 Start in "fullscreen" mode (window manager permitting).
 [Press "Esc" key to revert to normal windowed mode].
 
 .TP 0.5i
-.B \-\-grid | \-g
-.I rowsxcols
+.B \-g, \-\-grid
+.I colsxrows
 Number of columns in image display grid (defaults to 5x6).
 
 .TP 0.5i
-.B \-\-help | \-h
+.B \-h, \-\-help
 Display a summary of command-line options and exit.
 
 .TP 0.5i
-.B \-\-jitter | \-j
+.B \-j, \-\-jitter 
 Enable sample jittering.
 
-.TP
-.B \-\-menuhide | \-M
-Start with menu and status bars supressed.
-[Press "Esc" key to display them].
-
 .TP 0.5i
-.B \-\-multisample | \-m
+.B \-m, \-\-multisample
 .I multisample
 Enables antialiased rendering.
 Valid values are 1,2,3,4.
@@ -60,39 +55,44 @@ This specifies the size of the sub-pixel sampling grid,
 so 1 provides the default one-sample-per-pixel behaviour,
 while 4 provides 16 samples per pixel on a 4x4 grid.
 
+.TP
+.B \-M, \-\-menuhide
+Start with menu and status bars supressed.
+[Press "Esc" key to display them].
+
 .TP 0.5i
-.B \-spheremap | \-p
+.B \-p, \-spheremap
 Create spheremaps instead of planar textures.
 NB The middle-mouse adjustments will not behave as expected in this mode.
 
 .SH ANIMATION OPTIONS
 
 .TP 0.5i
-.B \-\-fps | \-s
+.B \-f, \-\-frames
+.I frames
+Number of frames to animate (defaults to 1 i.e no animaton)
+
+.TP 0.5i
+.B \-l, \-\-linear
+Vary z linearly with time rather than sinusoidally over animation period.
+
+.TP 0.5i
+.B \-s, \-\-fps
 .I framerate
 Specify rate at which animations are displayed
 (as an integer number of frames per second).
 Defaults to 8.
 
-.TP 0.5i
-.B \-\-frames | \-f
-.I frames
-Number of frames to animate (defaults to 1 i.e no animaton)
-
-.TP 0.5i
-.B \-\-linear | \-l
-Vary z linearly with time rather than sinusoidally over animation period.
-
 .SH POWER-USER / DEBUG OPTIONS
 
 .TP 0.5i
-.B \-\-debug | \-D
+.B \-D, \-\-debug
 Debug mode.
 Currently simply sets function weightings so virtually all function nodes are FunctionNoiseOneChannel.
 This is really only useful to developers in conjunction with the -F/-u options.
 
 .TP 0.5i
-.B \-\-enlarement-threadpool | \-E
+.B \-E, \-\-enlarement-threadpool
 Use a separate thread pool for computing enlargements.
 Using this option ensures computation of enlargements continue to make
 some progress even while the main grid is being actively worked on.
@@ -102,20 +102,12 @@ invariably lower priority than computation for images in the main grid.
 See also the \-N option to control the priority of threads in this pool.
 
 .TP 0.5i
-.B \-\-favourite | \-F
-.I functionname
-Force a specific function type to be used at the top level of
-all new image function trees (wrapped by random colour and
-spatial transforms, unless the \-\-unwrapped option is also specified).
-This can also be controlled from the "Favourite" dialog.
-
-.TP 0.5i
-.B \-\-nice | \-n
+.B \-n, \-\-nice
 .I niceness
 Niceness of compute threads relative to the main application thread (defaults to 4).
 
 .TP 0.5i
-.B \-\-Nice | \-N
+.B \-N, \-\-Nice
 .I niceness
 Niceness (relative to the main application thread) 
 of compute threads dealing with enlargements (defaults to 8).
@@ -124,24 +116,33 @@ Only effective in conjunction with a separate enlargement threadool (\-\-E optio
 .TP 0.5i
 .I QtOptions
 The Qt GUI system recognizes an number of additional options
-(for example, standard X11 things like -geometry <width>x<height>).
+(for example, standard X11 things like -geometry <width>x<height>;
+consult the Qt documentation for more information).
 Note that these don't use the Gnu "double minus" option style
 used for evolvotron options.
 
 .TP 0.5i
-.B \-\-threads | \-t
+.B \-t, \-\-threads
 .I threads
 Number of compute threads in a thread pool (defaults to number of CPUs)
 
 .TP 0.5i
-.B \-\-unwrapped | \-u
+.B \-u, \-\-unwrapped
 Use with the \-F option to stop the specified function from being wrapped by a random colouring and spatial transform node.
 
 .TP 0.5i
-.B \-\-verbose | \-v
+.B \-v, \-\-verbose
 Verbose mode.
 Probably most useful for getting a list of supported
 function names for use with the \-\-F option.
+
+.TP 0.5i
+.B \-x, \-\-favourite
+.I functionname
+Force a specific function type to be used at the top level of
+all new image function trees (wrapped by random colour and
+spatial transforms, unless the \-\-unwrapped option is also specified).
+This can also be controlled from the "Favourite" dialog.
 
 .SH EXAMPLES
 

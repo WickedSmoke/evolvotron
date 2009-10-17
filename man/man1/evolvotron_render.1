@@ -24,7 +24,7 @@ application's Help menu) for more information on image functions.
 .SH COMMAND-LINE OPTIONS
 
 .TP 0.5i
-.B \-\-frames | \-f
+.B \-f, \-\-frames
 .I frames
 Generates multi-frame animations.  .fnnnnnn is inserted into
 the specified filename (before the filetype suffix, if any).
@@ -32,15 +32,15 @@ You can use this on functions which weren't evolved in animation mode,
 but there's no guarantee they have any interesting time/z variation.
 
 .TP 0.5i
-.B \-\-help | \-h
+.B \-h, \-\-help
 Display a summary of command-line options and exit.
 
 .TP 0.5i
-.B \-\-jitter | \-j
+.B \-j, \-\-jitter
 Enable sample jittering.
 
 .TP 0.5i
-.B \-\-multisample | \-m
+.B \-m, \-\-multisample
 .I multisample
 Enables antialiased rendering.
 This specifies the size of the sub-pixel sampling grid,
@@ -50,18 +50,18 @@ Unlike the main evolvotron application, there is no upper limit,
 but of course rendering time increases as the square of this number.
 
 .TP 0.5i
-.B \-\-output | \-o
+.B \-o, \-\-output
 .I imagefile.[ppm|png]
 This option is an alternative to specifying the output filename as a positional argument.
 
 .TP 0.5i
-.B \-\-size | \-s
+.B \-s, \-\-size
 .I widthxheight
 Specify resolution of output image.
 Defaults to 512x512.
 
 .TP 0.5i
-.B \-\-verbose | \-v
+.B \-v, \-\-verbose
 Verbose mode; useful for monitoring progress of large renders.
 
 .SH EXAMPLES
