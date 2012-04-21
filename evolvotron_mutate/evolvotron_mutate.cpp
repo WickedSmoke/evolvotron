@@ -87,20 +87,19 @@ int main(int argc,char* argv[])
       }
     else
       {
-	
 	const boost::shared_ptr<const MutatableImage> imagefn_in
 	  (
 	   MutatableImage::load_function(mutation_parameters.function_registry(),std::cin,report)
 	   );
 	
-	if (imagefn_in)
+	if (imagefn_in.get()==0)
 	  {
-	    std::cerr << "evolvotron_render: Error: Function not loaded due to errors:\n" << report;
+	    std::cerr << "evolvotron_mutate: Error: Function not loaded due to errors:\n" << report;
 	    return 1;
 	  }
 	else if (!report.empty())
 	  {
-	    std::cerr << "evolvotron_render: Warning: Function loaded with warnings:\n" << report;
+	    std::cerr << "evolvotron_mutate: Warning: Function loaded with warnings:\n" << report;
 	  }
 	
 	imagefn_out=imagefn_in->mutated(mutation_parameters);
