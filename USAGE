@@ -166,7 +166,7 @@ are processed and removed before evolvotron options are checked.
 
   -x, --favourite <functionname>
 	Force a specific "favourite" function type to be used at the top level 
-	of all function trees.  The specifed function is still wrapped 
+	of all function trees.  The specified function is still wrapped 
 	by spatial and colour warping functions which may disguise 
 	it considerably.  A list of all the function names understood 
 	by evolvotron is output during app startup when the -v option 
