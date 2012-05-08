@@ -9,6 +9,7 @@ From release 0.6.1:
  - Port command line options to boost::program_options,
    rationalize commandline options.
  - Fix to evolvotron_mutate from Pedro Gimeno.
+ - Update mkdeb script to work on squeeze
  
 From release 0.6.0:
  - Version to 0.6.1

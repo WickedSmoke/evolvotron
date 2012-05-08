@@ -4,10 +4,8 @@
 #   sudo pbuilder yada devscripts lintian cdebootstrap
 # and maybe dpkg-sig.  Also:
 # set up for sudo
-# set up pbuilder with 
-#   sudo emacs -nw /etc/pbuilderrc
-#   ...change MIRRORSITE & DEBSECSERVER
-#   sudo pbuilder create --distribution sarge/etch/whatever
+# set up pbuilder's /etc/pbuilderrc (maybe no attention needed these days)
+#   sudo pbuilder create --distribution squeeze
 # and/or update with 
 #   sudo pbuilder update
 # Expect a lot of warnings re LOGNAME - see Debian bug Bug#275118
@@ -25,10 +23,9 @@ fi
 
 export DISTRIBUTION=`lsb_release -s -c`
 
-
 echo "*** Will package ${TARBALL} for distribution \"${DISTRIBUTION}\""
-echo -n "*** Starting in 10 seconds..."
-for t in 10 9 8 7 6 5 4 3 2 1 ; do sleep 1 ; echo -n "." ; done
+echo -n "*** Starting in 5 seconds..."
+for t in 5 4 3 2 1 ; do sleep 1 ; echo -n "." ; done
 
 PROJECT=`echo $TARBALL | sed 's/-.*//'`
 TARBALLORIG="${PROJECT}_${VER}.orig.tar.gz"
@@ -46,14 +43,7 @@ cd ${PROJECT}-${VER}
 sed -i "s/${VER}/${VER}-${REV}/g" VERSION
 
 mkdir debian
-echo "${PROJECT} (${VER}-${REV}) ${DISTRIBUTION}; urgency=low" > debian/changelog
-echo >> debian/changelog
-echo "  * Package created by ${PROJECT}'s mkdeb script." >> debian/changelog
-echo >> debian/changelog
-DATE=`822-date`
-echo " -- $USER <$EMAIL>  $DATE" >> debian/changelog
-
-# Presumably a dch -i here would increment revision
+dch --create --package evolvotron --distribution stable --newversion ${VER}-${REV} "Created by mkdeb script"
 
 cat << EOF > debian/packages
 Source: evolvotron
