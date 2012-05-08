@@ -66,7 +66,7 @@ Home-Page: <URL:http://www.bottlenose.demon.co.uk/share/evolvotron>
 Description: Interactive evolutionary texture generator
 Copyright: GPL
  Copyright 2009 Tim Day
-Build-Depends: qt4-qmake,libqt4-dev,libqt4-xml,libboost1.35-dev,python,yada
+Build-Depends: qt4-qmake,qt4-dev-tools,libqt4-dev,libqt4-xml,libboost-dev,libboost-program-options-dev,python,yada
 Build: sh
  export QTDIR=/usr/share/qt4
  # Note: yada install deals with DEB_BUILD_OPTIONS 'nostrip'
