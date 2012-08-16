@@ -141,6 +141,9 @@ class EvolvotronMain : public QMainWindow
   /*! \todo Move to mutation or render paraemeters ?
    */
   const bool _spheremap;
+
+  //! Name of files to load on a reset.
+  const std::vector<std::string> _startup_filenames;
   
   //! Instance of mutation parameters for the app
   /*! This used to be held by DialogMutationParameters, but now we want to share it around a bit
@@ -306,7 +309,8 @@ class EvolvotronMain : public QMainWindow
      uint multisample_level,
      bool function_debug_mode,
      bool linear_zsweep,
-     bool spheremap
+     bool spheremap,
+     const std::vector<std::string>& startup_filenames
      );
 
   //! Destructor.

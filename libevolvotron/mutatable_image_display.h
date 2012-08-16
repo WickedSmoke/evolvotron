@@ -208,6 +208,9 @@ class MutatableImageDisplay : public QWidget
   //! Simplify the held image, return the number of nodes eliminated
   uint simplify_constants(bool single);
 
+  //! Load a function from the given filename.
+  void load_function_file(const QString&);
+
   protected slots:
 
   //! Called by timer

@@ -65,6 +65,18 @@ Start with menu and status bars supressed.
 Create spheremaps instead of planar textures.
 NB The middle-mouse adjustments will not behave as expected in this mode.
 
+.TP 0.5i
+.B \-S, \-\-startup
+.I filename
+Specify a function file to be loaded on startup.
+This option can be used multiple times, and any positional arguments will also be interpreted as such.
+Loaded functions are placed on the grid from left to right, top to bottom; 
+if multiple functions in excess of what is needed to fill the grid cells are provided, the extras will be ignored.
+If the grid is not fully filled with startup functions, the remaining cells are filled at random normally.
+Note that resetting the application will reload the specified function files again.
+Also note that using this option multiple times has the potential to generate a lot of
+loading error dialogs if e.g the path to all the files is wrong.
+
 .SH ANIMATION OPTIONS
 
 .TP 0.5i

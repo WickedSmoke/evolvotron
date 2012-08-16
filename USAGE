@@ -84,6 +84,12 @@ GENERAL OPTIONS
         usable as spheremaps/spherical environment maps.  Animations vary
         the radius of the sphere.  NB when in spheremap mode,
         middle mouse button adjustments do not yet behave like you'd expect.
+
+  -S, --startup <function_filename>
+        Specify a function filename (evolvotron's XML format) to load on startup
+        (or reset).  The option can be provided multiple times, and this is
+        also the interpretation of any positional arguments.  Startup functions
+        are placed in the grid from left to right, top to bottom.
        
 ANIMATION OPTIONS
 -----------------

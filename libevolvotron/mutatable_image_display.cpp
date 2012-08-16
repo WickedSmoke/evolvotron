@@ -851,6 +851,53 @@ void MutatableImageDisplay::menupick_save_function()
     }
 }
 
+void MutatableImageDisplay::load_function_file(const QString& load_filename)
+{
+  const std::string filename(load_filename.toLocal8Bit());
+  std::ifstream file(filename.c_str());
+
+  if (!file)
+  {
+    QMessageBox::critical(
+      this,
+      "Evolvotron",
+      ("Filename '"+filename+"' could not be opened\n").c_str()
+    );
+  }
+  else
+  {
+    std::string report;
+    boost::shared_ptr<const MutatableImage> new_image_function(MutatableImage::load_function(_main->mutation_parameters().function_registry(),file,report));
+
+    if (new_image_function.get()==0)
+    {
+      QMessageBox::critical(
+	this,
+	"Evolvotron",
+	("Function in filename '"+filename+"' not loaded due to errors:\n"+report).c_str()
+      );
+    }
+    else
+    {
+      if (!report.empty())
+      {
+	QMessageBox::warning(
+	  this,
+	  "Evolvotron",
+	  ("Function in filename '"+filename+"' +loaded with warnings:\n"+report).c_str(),
+	  QMessageBox::Ok,
+	  QMessageBox::NoButton
+	);
+      }
+      
+      main().history().begin_action("load");
+      main().history().replacing(this);
+      main().history().end_action();
+      image_function(new_image_function,false);
+    }
+  }
+}
+
 void MutatableImageDisplay::menupick_load_function()
 {
   const QString load_filename=QFileDialog::getOpenFileName
@@ -863,25 +910,7 @@ void MutatableImageDisplay::menupick_load_function()
 
   if (!load_filename.isEmpty())
     {
-      std::ifstream file(load_filename.toLocal8Bit());
-      std::string report;
-      boost::shared_ptr<const MutatableImage> new_image_function(MutatableImage::load_function(_main->mutation_parameters().function_registry(),file,report));
-      if (new_image_function.get()==0)
-	{
-	  QMessageBox::critical(this,"Evolvotron",("Function not loaded due to errors:\n"+report).c_str());
-	}
-      else
-	{
-	  if (!report.empty())
-	    {
-	      QMessageBox::warning(this,"Evolvotron",("Function loaded with warnings:\n"+report).c_str(),QMessageBox::Ok,QMessageBox::NoButton);
-	    }
-	  
-	  main().history().begin_action("load");
-	  main().history().replacing(this);
-	  main().history().end_action();
-	  image_function(new_image_function,false);
-	}
+      load_function_file(load_filename);
     }
 }
 

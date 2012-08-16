@@ -193,12 +193,14 @@ EvolvotronMain::EvolvotronMain
  uint multisample_level,
  bool function_debug_mode,
  bool linear_zsweep,
- bool spheremap
+ bool spheremap,
+ const std::vector<std::string>& startup_filenames
  )
   :QMainWindow(parent)
   ,_history(new EvolvotronMain::History(this))
   ,_linear_zsweep(linear_zsweep)
   ,_spheremap(spheremap)
+  ,_startup_filenames(startup_filenames)
   ,_mutation_parameters(time(0),autocool,function_debug_mode,this)
   ,_render_parameters(jitter,multisample_level,this)
   ,_statusbar_tasks_main(0)
@@ -726,14 +728,20 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
       _mutation_parameters.autocool_generations(0);
     }
 
-  for (std::vector<MutatableImageDisplay*>::iterator it=displays().begin();it!=displays().end();it++)
-    {
-      if (clear_locks)
-	(*it)->lock(false,false);  // lock method mustn't make it's own history recording
+  for (size_t i=0;i<displays().size();++i)
+  {
+    if (clear_locks)
+      displays()[i]->lock(false,false);  // lock method mustn't make it's own history recording
+  }
 
-      if (!(*it)->locked())
-	reset(*it);
+  for (size_t i=0;i<displays().size();++i) {
+    if (!displays()[i]->locked()) {
+      if (i<_startup_filenames.size())
+	displays()[i]->load_function_file(_startup_filenames[i].c_str());
+      else
+	reset(displays()[i]);
     }
+  }
 
   last_spawned_image(boost::shared_ptr<const MutatableImage>(),&EvolvotronMain::spawn_normal);
 

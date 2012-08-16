@@ -215,7 +215,8 @@ int main(int argc,char* argv[])
        multisample,
        debug,
        linear,
-       spheremap
+       spheremap,
+       startup
        );
 
   main_widget->mutation_parameters().function_registry().status(std::clog);
