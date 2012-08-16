@@ -52,6 +52,7 @@ int main(int argc,char* argv[])
   bool menuhide;
   uint multisample;
   bool spheremap;
+  std::vector<std::string> startup;
   boost::program_options::options_description options_desc("General options");
   {
     using namespace boost::program_options;
@@ -64,6 +65,7 @@ int main(int argc,char* argv[])
       ("multisample,m",value<uint>(&multisample)->default_value(1)    ,"Multisampling grid (NxN)")
       ("menuhide,M"   ,bool_switch(&menuhide)                         ,"Hide menus")
       ("spheremap,p"  ,bool_switch(&spheremap)                        ,"Generate spheremaps")
+      ("startup,S"    ,value<std::vector<std::string> >(&startup)     ,"Startup function (multiples allowed, or positional)")
       ;
   }
 
@@ -109,10 +111,23 @@ int main(int argc,char* argv[])
       ;
   }
 
+  boost::program_options::positional_options_description positional_options_desc;
+  positional_options_desc.add("startup",-1);
+
   options_desc.add(animation_options_desc);
   options_desc.add(advanced_options_desc);
+  
   boost::program_options::variables_map options;
-  boost::program_options::store(boost::program_options::parse_command_line(argc,argv,options_desc),options);
+  boost::program_options::store(
+    boost::program_options::command_line_parser(
+      argc,argv
+    ).options(
+      options_desc
+    ).positional(
+      positional_options_desc
+    ).run()
+    ,options
+  );
   boost::program_options::notify(options);
 
   if (help)
@@ -173,6 +188,15 @@ int main(int argc,char* argv[])
     << " and "
     << niceness_enlargement
     << ")\n";
+
+  if (!startup.empty()) {
+    std::clog << "Startup functions to be loaded: ";
+    for (size_t i=0;i<startup.size();++i) {
+      if (i>0) std::clog << ", ";
+      std::clog << startup[i];
+    }
+    std::clog << "\n";
+  }
 
   EvolvotronMain*const main_widget=new EvolvotronMain
       (
