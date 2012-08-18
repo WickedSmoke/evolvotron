@@ -194,13 +194,15 @@ EvolvotronMain::EvolvotronMain
  bool function_debug_mode,
  bool linear_zsweep,
  bool spheremap,
- const std::vector<std::string>& startup_filenames
+ const std::vector<std::string>& startup_filenames,
+ bool startup_shuffle
  )
   :QMainWindow(parent)
   ,_history(new EvolvotronMain::History(this))
   ,_linear_zsweep(linear_zsweep)
   ,_spheremap(spheremap)
   ,_startup_filenames(startup_filenames)
+  ,_startup_shuffle(startup_shuffle)
   ,_mutation_parameters(time(0),autocool,function_debug_mode,this)
   ,_render_parameters(jitter,multisample_level,this)
   ,_statusbar_tasks_main(0)
@@ -732,6 +734,10 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
   {
     if (clear_locks)
       displays()[i]->lock(false,false);  // lock method mustn't make it's own history recording
+  }
+
+  if (_startup_shuffle) {
+    std::random_shuffle(_startup_filenames.begin(),_startup_filenames.end());
   }
 
   for (size_t i=0;i<displays().size();++i) {

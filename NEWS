@@ -11,6 +11,7 @@ From release 0.6.1:
  - Fix to evolvotron_mutate from Pedro Gimeno.
  - Update mkdeb script to work on squeeze
  - Functions to be loaded on startup can be specified on the commandline.
+ - Add option to shuffle startup functions.
  
 From release 0.6.0:
  - Version to 0.6.1

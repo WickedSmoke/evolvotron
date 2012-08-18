@@ -53,6 +53,7 @@ int main(int argc,char* argv[])
   uint multisample;
   bool spheremap;
   std::vector<std::string> startup;
+  bool startup_shuffle;
   boost::program_options::options_description options_desc("General options");
   {
     using namespace boost::program_options;
@@ -66,6 +67,7 @@ int main(int argc,char* argv[])
       ("menuhide,M"   ,bool_switch(&menuhide)                         ,"Hide menus")
       ("spheremap,p"  ,bool_switch(&spheremap)                        ,"Generate spheremaps")
       ("startup,S"    ,value<std::vector<std::string> >(&startup)     ,"Startup function (multiples allowed, or positional)")
+      ("shuffle,U"    ,bool_switch(&startup_shuffle)                  ,"Shuffle startup functions")
       ;
   }
 
@@ -216,7 +218,8 @@ int main(int argc,char* argv[])
        debug,
        linear,
        spheremap,
-       startup
+       startup,
+       startup_shuffle
        );
 
   main_widget->mutation_parameters().function_registry().status(std::clog);

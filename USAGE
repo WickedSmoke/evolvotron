@@ -91,6 +91,11 @@ GENERAL OPTIONS
         also the interpretation of any positional arguments.  Startup functions
         are placed in the grid from left to right, top to bottom.
        
+  -U, --shuffle
+        Use in conjunction with -S / --startup options, to display the specified
+        functions in random order, both on application startup and on each
+        reset of the application.
+
 ANIMATION OPTIONS
 -----------------
 
