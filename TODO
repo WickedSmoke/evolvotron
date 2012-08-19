@@ -1,6 +1,10 @@
 Proximity to one end or the other of this list does not necessarily
 imply it will be done sooner or later than other items!
 
+Infrastructure
+--------------
+- Ditch yada; migrate to...? dh? (yada gone in Debian Wheezy and Ubuntu P.)
+
 Consequences of Qt4 port
 ------------------------
 mutableimagedisplay actions need attention - hmmm shorcuts would need to be installed for the grid, then dispatched.
@@ -13,11 +17,10 @@ Lots of Qthingy* stuff needn't be declared in headers; clean up
 
 Conventional Mode
 -----------------
-- startup functions on command-line: should be an option to randomize the order (just shuffle the vector before use).
+- Migrate to a stock threading/thread pool/futures lib.
 - Just make "fullscreen mode support" be the default (and remove text in USAGE).
 - Link on webpage to gallery http://gigrafx.110mb.com/evolvotron/index.html
 - ...also flickr stuff (xargs?)
-- Switch to boost::program_options
 - Mouse manipulations: frame rate should be clamped to allow some time to produce a nice image
 - At least split out evolvotron_main_history.cpp, even if the class remains nested in .h
 - Smaller fragments for big enlargements; seeing unused processors.
