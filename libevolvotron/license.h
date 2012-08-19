@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  Copyright 2009 Tim Day                                                */
+/*  Copyright 2012 Tim Day                                                */
 /*                                                                        */
 /*  This file is part of Evolvotron                                       */
 /*                                                                        */
