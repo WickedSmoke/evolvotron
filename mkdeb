@@ -101,7 +101,7 @@ dpkg-source -b ${PROJECT}-${VER} ${TARBALLORIG}
 
 mkdir result
 echo "Building package"
-sudo pbuilder build --buildresult ./result ${PROJECT}_${VER}-${REV}.dsc
+sudo pbuilder build --allow-untrusted --buildresult ./result ${PROJECT}_${VER}-${REV}.dsc
 
 sudo chown ${USER}:${USER} result/*
 
