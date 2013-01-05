@@ -8,10 +8,10 @@ DIR=${PWD##*/}
 
 cd ..
 
-# NB Don't ship automatically generated .h file or contents of pkg
-PRUNE='-name moc -prune -o -name obj -prune -o -name pkg_* -prune -o -name usage_text.h -prune'
+# NB Don't ship contents of pkg
+PRUNE='-name moc -prune -o -name obj -prune -o -name pkg_* -prune'
 
-FILES_MISC=`ls ${DIR}/{README,BUILD,LICENSE,TODO,NEWS,VERSION,USAGE,BUGS,configure,doxygen.cfg,mktgz,mkdeb,mkdoc,text_to_markup.py} ${DIR}/libfunction/update_register_all_functions`
+FILES_MISC=`ls ${DIR}/{README,BUILD,LICENSE,TODO,NEWS,VERSION,USAGE,BUGS,configure,doxygen.cfg,mktgz,mkdeb,mkdoc,text_to_markup.py,evolvtron.html} ${DIR}/libfunction/update_register_all_functions`
 FILES_EXTRAS="`ls ${DIR}/extras/{README,spheremap.pov,spheremap.sh}` `ls ${DIR}/rpm/{README,evolvotron.spec}`"
 
 FILES_H=`find ${DIR}       ${PRUNE} -o -name '*.h'   -print`
