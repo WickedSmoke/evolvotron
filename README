@@ -178,12 +178,6 @@ the ones I test on.  A COMPLETE record of a failed build would be
 appreciated (including the initial display of the gcc version).
 If you can fix it, then patches would be even better!
 
-Another possibly problematic area (only because it's new and not widely tested)
-is the automatic building of a marked-up version of the USAGE file.
-If this causes problems, comment out the two lines running ./text_to_markup.py
-in the ./configure file and just retain the echo.  The important thing is that
-there be a quote-delimited string in ./libevolvotron/usage_text.h
-
 And the hackiest build yet:
 A Debian (3.0r1) user reported Debian's Qt package not including qmake.
 (Having since played with Debian myself I now know this is probably
@@ -266,6 +260,7 @@ mkdeb
 "yada", and pbuilder).  This is used to build the .debs put
 up on sourceforge, but the "official" Debian ones (and Ubuntu
 derivatives) are more conventionally packaged by Gurkan Sengun. 
+Yada is obsoleted as of Debian's "Wheezy" release however.
 
 rpm/
  - directory for contributed RPM related resources.
