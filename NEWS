@@ -5,6 +5,8 @@ From release 0.6.2:
  - Files derived from USAGE (evolvotron.html and usage_text.h) are now under
    svn control and no longer need to be generated as part of the build of a
    fresh checkout.
+ - Migrated to new SourceForge platform.
+   Needed: svn switch --relocate https://evolvotron.svn.sourceforge.net/svnroot/evolvotron "svn+ssh://timday@svn.code.sf.net/p/evolvotron/code/"
    
 From release 0.6.1:
  - Version to 0.6.2
