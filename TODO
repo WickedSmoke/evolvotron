@@ -3,11 +3,11 @@ imply it will be done sooner or later than other items!
 
 Infrastructure
 --------------
-- Ditch yada; migrate to...? dh? (yada gone in Debian Wheezy and Ubuntu P.)
+- Update mkdeb as per fracplanet's debhelper experiment
 
 Consequences of Qt4 port
 ------------------------
-mutableimagedisplay actions need attention - hmmm shorcuts would need to be installed for the grid, then dispatched.
+mutableimagedisplay actions need attention - hmmm shortcuts would need to be installed for the grid, then dispatched.
 Margins in display grid - add command line option to control size ?
 Why was DialogMutatableImageDisplay created with :QDialog(parent,0,TRUE) ?
 EvolvotronMain destructor called on close ?
@@ -59,7 +59,6 @@ Conventional Mode
 - GPLv3 ?  Don't understand what else needs to be (e.g Qt3 etc)
 - Maybe icon setting could do with some more attention; probably there are more things which should set it
   (e.g respawn coloured) and loading could set a flag defering icon setting until that view is ready.
-- Boost post-1.33 changes usage of ptr_map, apparently.  (Waiting for 1.34 to hit Debian Testing).
 - MutatableImageComputer::push_todo could handle defer a bit better.
   Actually, complete overhaul of queue/computer kill/defer/abort would be better.
   Computers should check priority on head of queue periodically and switch if there's
@@ -227,6 +226,10 @@ Conventional Mode
     Concentric rings
     Iterative function generating a list of point co-ordinates... then test for blobs or make paths
     (would be more efficient with a cached/precomputed element to functions).
+- Vector/SVG mode, using Qt SVG creation/rendering support
+- User defined functions using Qt's javascript engine
+- (Re)consider options for root node colour space transformations.
+- Builtin XML editor, or better still treeview of structure with all parameters tweakable by slider, wheel, data-entry etc, and nodes changeable by pull-down maybe.
 
 Animation
 ---------
