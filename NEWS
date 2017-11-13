@@ -1,5 +1,9 @@
 [Most recent at top]
 
+Release 0.7.0:
+ - Got to compile vs Qt5.9.1 on Debian/Stretch.
+ - Get rid of precompiled header use.
+
 From release 0.6.3:
  - Version to 0.6.4
 

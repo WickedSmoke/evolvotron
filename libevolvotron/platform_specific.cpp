@@ -23,6 +23,8 @@
 
 #include "platform_specific.h"
 
+#include <boost/optional.hpp>
+
 #ifdef PLATFORM_LINUX
 #include <sched.h>           // for CPU count
 #include <sys/resource.h>    // for getpriority/setprioirty

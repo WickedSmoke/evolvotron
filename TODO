@@ -5,16 +5,6 @@ Infrastructure
 --------------
 - Update mkdeb as per fracplanet's debhelper experiment
 
-Consequences of Qt4 port
-------------------------
-mutableimagedisplay actions need attention - hmmm shortcuts would need to be installed for the grid, then dispatched.
-Margins in display grid - add command line option to control size ?
-Why was DialogMutatableImageDisplay created with :QDialog(parent,0,TRUE) ?
-EvolvotronMain destructor called on close ?
-statusbar needs right justification ?
-New-style include files; move to common
-Lots of Qthingy* stuff needn't be declared in headers; clean up
-
 Conventional Mode
 ----------------
 - Commandline option/control for grid spacing.
