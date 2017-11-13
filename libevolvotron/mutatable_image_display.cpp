@@ -21,8 +21,6 @@
   \brief Implementation of class MutatableImageDisplay.
 */
 
-
-
 #include "mutatable_image_display.h"
 
 #include "mutatable_image_display_big.h"
@@ -419,7 +417,7 @@ void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImage
     {
       const QImage icon_image(_offscreen_images[_offscreen_images.size()/2].scaled(icon_size));
       
-      if (!_icon.get()) _icon=std::auto_ptr<QPixmap>(new QPixmap(icon_size));
+      if (!_icon.get()) _icon=std::unique_ptr<QPixmap>(new QPixmap(icon_size));
       (*_icon)=QPixmap::fromImage(icon_image,Qt::ColorOnly);
       
       _icon_serial=task->serial();
@@ -644,7 +642,7 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	      std::clog << "[Pan]";
 	    }
 	  
-	  std::auto_ptr<FunctionTop> new_root(image_function()->top().typed_deepclone());
+	  std::unique_ptr<FunctionTop> new_root(image_function()->top().typed_deepclone());
 	  new_root->concatenate_pretransform_on_right(transform);
 
 	  // Install new image (triggers recompute).

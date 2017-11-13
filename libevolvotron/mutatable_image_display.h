@@ -85,7 +85,7 @@ class MutatableImageDisplay : public QWidget
   uint _current_display_multisample_grid;
 
   //! An image suitable for setting as an icon.
-  std::auto_ptr<QPixmap> _icon;
+  std::unique_ptr<QPixmap> _icon;
 
   //! Track which image the icon is actually of.
   unsigned long long int _icon_serial;

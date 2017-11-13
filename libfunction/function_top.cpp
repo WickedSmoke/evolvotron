@@ -21,8 +21,6 @@
   \brief Implementation for FunctionTop
 */
 
-
-
 #include "function_boilerplate_instantiate.h"
 #include "function_top.h"
 
@@ -40,9 +38,9 @@ const XYZ FunctionTop::evaluate(const XYZ& p) const
   return colour_transform.transformed(tv);
 }
 
-std::auto_ptr<FunctionTop> FunctionTop::initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn,bool unwrapped)
+std::unique_ptr<FunctionTop> FunctionTop::initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn,bool unwrapped)
 {
-  std::auto_ptr<FunctionNode> fn;
+  std::unique_ptr<FunctionNode> fn;
   
   do
     {
@@ -76,7 +74,7 @@ std::auto_ptr<FunctionTop> FunctionTop::initial(const MutationParameters& parame
   p.insert(p.end(),tiv.begin(),tiv.end());
   p.insert(p.end(),tiv.begin(),tiv.end());
 
-  std::auto_ptr<FunctionTop> fn_top(new FunctionTop(p,a,0));
+  std::unique_ptr<FunctionTop> fn_top(new FunctionTop(p,a,0));
   if (unwrapped)
     {
       // For unwrapped just allow a scale factor and scramble colours

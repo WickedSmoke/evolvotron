@@ -60,18 +60,18 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
   virtual uint self_classification() const;
 
   //! Factory method to create a stub node for this type
-  static std::auto_ptr<FunctionNode> stubnew(const MutationParameters& mutation_parameters,bool exciting);
+  static std::unique_ptr<FunctionNode> stubnew(const MutationParameters& mutation_parameters,bool exciting);
 
   //! Factory method to create a node given contents.
   /*! Returns null if there's a problem, in which case explanation is in report
    */
-  static std::auto_ptr<FunctionNode> create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report);
+  static std::unique_ptr<FunctionNode> create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report);
 
   //! Return a deeploned copy.
-  virtual std::auto_ptr<FunctionNode> deepclone() const;
+  virtual std::unique_ptr<FunctionNode> deepclone() const;
 
   //! Return a deeploned copy with more specific type (but of course this can't be virtual).
-  std::auto_ptr<FUNCTION> typed_deepclone() const;
+  std::unique_ptr<FUNCTION> typed_deepclone() const;
     
   //! Internal self-consistency check.  We can add some extra checks.
   virtual bool ok() const;
@@ -116,7 +116,7 @@ uint FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>
 }
 
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION>
-std::auto_ptr<FunctionNode> FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::stubnew(const MutationParameters& mutation_parameters,bool exciting)
+std::unique_ptr<FunctionNode> FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::stubnew(const MutationParameters& mutation_parameters,bool exciting)
 {
   static constexpr uint _PARAMETERS=PARAMETERS;
   static constexpr uint _ARGUMENTS=ARGUMENTS;
@@ -127,7 +127,7 @@ std::auto_ptr<FunctionNode> FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,IT
   boost::ptr_vector<FunctionNode> args;
   stubargs(args,mutation_parameters,_ARGUMENTS,exciting);
   
-  return std::auto_ptr<FunctionNode>
+  return std::unique_ptr<FunctionNode>
     (
      new FUNCTION
      (
@@ -139,26 +139,26 @@ std::auto_ptr<FunctionNode> FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,IT
 }
 
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION>
-std::auto_ptr<FunctionNode> FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report)
+std::unique_ptr<FunctionNode> FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report)
 {
-  if (!verify_info(info,PARAMETERS,ARGUMENTS,ITERATIVE,report)) return std::auto_ptr<FunctionNode>();
+  if (!verify_info(info,PARAMETERS,ARGUMENTS,ITERATIVE,report)) return std::unique_ptr<FunctionNode>();
   
   boost::ptr_vector<FunctionNode> args;
-  if (!create_args(function_registry,info,args,report)) return std::auto_ptr<FunctionNode>();
+  if (!create_args(function_registry,info,args,report)) return std::unique_ptr<FunctionNode>();
   
-  return std::auto_ptr<FunctionNode>(new FUNCTION(info.params(),args,info.iterations()));
+  return std::unique_ptr<FunctionNode>(new FUNCTION(info.params(),args,info.iterations()));
 }
 
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION>
-std::auto_ptr<FunctionNode> FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::deepclone() const
+std::unique_ptr<FunctionNode> FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::deepclone() const
 {
-  return std::auto_ptr<FunctionNode>(typed_deepclone());
+  return std::unique_ptr<FunctionNode>(typed_deepclone());
 }
 
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION>
-std::auto_ptr<FUNCTION> FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::typed_deepclone() const
+std::unique_ptr<FUNCTION> FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::typed_deepclone() const
 {
-  return std::auto_ptr<FUNCTION>(new FUNCTION(cloneparams(),*cloneargs(),iterations()));
+  return std::unique_ptr<FUNCTION>(new FUNCTION(cloneparams(),*cloneargs(),iterations()));
 }
 
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION>

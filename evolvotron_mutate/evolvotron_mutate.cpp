@@ -81,7 +81,7 @@ int main(int argc,char* argv[])
     
     if (genesis)
       {
-	std::auto_ptr<FunctionTop> fn_top(FunctionTop::initial(mutation_parameters));
+	std::unique_ptr<FunctionTop> fn_top(FunctionTop::initial(mutation_parameters));
 	
 	imagefn_out=boost::shared_ptr<const MutatableImage>(new MutatableImage(fn_top,!linear,spheremap,false));
       }

@@ -47,7 +47,7 @@ class MutatableImage
     the node it is invoked on (only child nodes can be zapped), partly so we
     can keep colour and space transforms under control.
    */
-  std::auto_ptr<FunctionTop> _top;
+  std::unique_ptr<FunctionTop> _top;
 
   //! Whether to sweep z sinusoidally (vs linearly)
   bool _sinusoidal_z;
@@ -67,7 +67,7 @@ class MutatableImage
  public:
   
   //! Take ownership of the image tree with the specified root node.
-  MutatableImage(std::auto_ptr<FunctionTop>&,bool sinz,bool sm,bool lock);
+  MutatableImage(std::unique_ptr<FunctionTop>&,bool sinz,bool sm,bool lock);
   
   //! Create a new random image tree.
   MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm);

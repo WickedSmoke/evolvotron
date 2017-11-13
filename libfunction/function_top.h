@@ -40,7 +40,7 @@ FUNCTION_BEGIN(FunctionTop,24,1,false,0)
 
 public:
   //! This returns a random tree suitable for use as a starting image.
-  static std::auto_ptr<FunctionTop> initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn=0,bool unwrapped=false);
+  static std::unique_ptr<FunctionTop> initial(const MutationParameters& parameters,const FunctionRegistration* specific_fn=0,bool unwrapped=false);
 
   virtual const XYZ evaluate(const XYZ& p) const;
 

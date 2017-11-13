@@ -95,6 +95,7 @@ void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImag
     // We could be in a situation where there are tasks with lower priority which should be defered in favour of this one.
     // Currently we simply defer everything with a lower priority and let the queue sort them out.
     //! \todo: It would be better to just defer the lowest priority task if there's any less than the queued task.
+    /*
     bool any_deferred=false;
     for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++)
       {
@@ -103,6 +104,7 @@ void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImag
 	    any_deferred=true;
 	  }
       }
+    */
 
     _todo.insert(task);
   }

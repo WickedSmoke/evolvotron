@@ -39,7 +39,7 @@ class MutationParameters
 {
  private:
 
-  const std::auto_ptr<FunctionRegistry> _function_registry;
+  const std::unique_ptr<FunctionRegistry> _function_registry;
 
  protected:
 
@@ -390,7 +390,7 @@ class MutationParameters
   //! This returns a new random bit of tree.
   /*! Setting the "exciting" flag avoids the most basic node types, but only at the top level of the stub tree.
    */
-  std::auto_ptr<FunctionNode> random_function_stub(bool exciting) const;
+  std::unique_ptr<FunctionNode> random_function_stub(bool exciting) const;
     
   void change_function_weighting(const FunctionRegistration* fn,real w);
 
@@ -404,7 +404,7 @@ class MutationParameters
   real decay_factor() const;
 
   //! Return a random function appropriately biased by current settings
-  std::auto_ptr<FunctionNode> random_function() const;
+  std::unique_ptr<FunctionNode> random_function() const;
 
   //! Return a random function registration, appropriately biased by current settings
   const FunctionRegistration* random_weighted_function_registration() const;

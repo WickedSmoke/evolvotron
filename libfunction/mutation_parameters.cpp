@@ -133,7 +133,7 @@ void MutationParameters::general_cool(real f)
   \warning Too much probability of highly branching nodes could result in infinite sized stubs.
   \todo Compute (statistically) the expected number of nodes in a stub.
  */
-std::auto_ptr<FunctionNode> MutationParameters::random_function_stub(bool exciting) const
+std::unique_ptr<FunctionNode> MutationParameters::random_function_stub(bool exciting) const
 {
   // Base mutations are Constant or Identity types.  
   // (Identity can be Identity or PositionTransformed, proportions depending on identity_supression parameter)
@@ -159,7 +159,7 @@ std::auto_ptr<FunctionNode> MutationParameters::random_function_stub(bool exciti
     }
 }
 
-std::auto_ptr<FunctionNode> MutationParameters::random_function() const
+std::unique_ptr<FunctionNode> MutationParameters::random_function() const
 {
   const FunctionRegistration* fn_reg=random_weighted_function_registration();
   return (*(fn_reg->stubnew_fn()))(*this,false);    

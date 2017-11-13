@@ -31,8 +31,8 @@
 
 unsigned long long MutatableImage::_count=0;
 
-MutatableImage::MutatableImage(std::auto_ptr<FunctionTop>& r,bool sinz,bool sm,bool lock)
-  :_top(r)
+MutatableImage::MutatableImage(std::unique_ptr<FunctionTop>& r,bool sinz,bool sm,bool lock)
+  :_top(r.release())
   ,_sinusoidal_z(sinz)
   ,_spheremap(sm)
   ,_locked(lock)
@@ -51,7 +51,7 @@ MutatableImage::MutatableImage(const MutationParameters& parameters,bool excitin
   FunctionNode::stubparams(pv,parameters,12);
   boost::ptr_vector<FunctionNode> av;
   av.push_back(FunctionNode::stub(parameters,exciting).release());
-  _top=std::auto_ptr<FunctionTop>(new FunctionTop(pv,av,0));
+  _top=std::unique_ptr<FunctionTop>(new FunctionTop(pv,av,0));
   //! \todo _sinusoidal_z should be obtained from AnimationParameters when it exists
 }
 
@@ -71,7 +71,7 @@ boost::shared_ptr<const MutatableImage> MutatableImage::deepclone() const
 
 boost::shared_ptr<const MutatableImage> MutatableImage::deepclone(bool lock) const
 {
-  std::auto_ptr<FunctionTop> root(top().typed_deepclone());
+  std::unique_ptr<FunctionTop> root(top().typed_deepclone());
   return boost::shared_ptr<const MutatableImage>(new MutatableImage(root,sinusoidal_z(),spheremap(),lock)); 
 }
 
@@ -125,14 +125,14 @@ const XYZ MutatableImage::sampling_coordinate(real x,real y,uint z,uint sx,uint 
 
 boost::shared_ptr<const MutatableImage> MutatableImage::mutated(const MutationParameters& p) const
 {
-  std::auto_ptr<FunctionTop> c(top().typed_deepclone());  
+  std::unique_ptr<FunctionTop> c(top().typed_deepclone());  
   c->mutate(p);
   return boost::shared_ptr<const MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap(),false));
 }
 
 boost::shared_ptr<const MutatableImage> MutatableImage::simplified() const
 {
-  std::auto_ptr<FunctionTop> c(top().typed_deepclone());  
+  std::unique_ptr<FunctionTop> c(top().typed_deepclone());  
   c->simplify_constants();
   return boost::shared_ptr<const MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap(),false));
 }
@@ -222,7 +222,7 @@ protected:
 
   std::string _report;
 
-  std::auto_ptr<FunctionNodeInfo>& _root;
+  std::unique_ptr<FunctionNodeInfo>& _root;
 
   bool* _ret_sinusoidal_z;
   bool* _ret_spheremap;
@@ -240,7 +240,7 @@ protected:
 
 public:
 
-  LoadHandler(std::auto_ptr<FunctionNodeInfo>& root,bool* sinz,bool* smap)
+  LoadHandler(std::unique_ptr<FunctionNodeInfo>& root,bool* sinz,bool* smap)
     :_root(root)
      ,_ret_sinusoidal_z(sinz)
      ,_ret_spheremap(smap)
@@ -358,13 +358,13 @@ public:
       {
 	if (element=="f")
 	  {
-	    std::auto_ptr<FunctionNodeInfo> f(new FunctionNodeInfo());
+	    std::unique_ptr<FunctionNodeInfo> f(new FunctionNodeInfo());
 	    if (_stack.empty())
 	      {
 		if (_root.get()==0)
 		  {
 		    _stack.push(f.get());
-		    _root=f;
+		    _root.reset(f.release());
 		  }
 		else
 		  {
@@ -506,7 +506,7 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
   xml_source.setData(QString(in_data.c_str()));
 
   // The LoadHandler will set this to point at the root node.
-  std::auto_ptr<FunctionNodeInfo> info;
+  std::unique_ptr<FunctionNodeInfo> info;
 
   bool sinusoidal_z;
   bool spheremap;
@@ -523,7 +523,7 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
       report=load_handler.errorString().toLocal8Bit().data();
 
       assert(info.get());
-      std::auto_ptr<FunctionNode> root(FunctionNode::create(function_registry,*info,report));
+      std::unique_ptr<FunctionNode> root(FunctionNode::create(function_registry,*info,report));
       info.reset();
       
       if (root.get())
@@ -541,10 +541,10 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
 	      p.insert(p.end(),tiv.begin(),tiv.end());
 	      p.insert(p.end(),tiv.begin(),tiv.end());
 	      
-	      root=std::auto_ptr<FunctionTop>(new FunctionTop(p,a,0));
+	      root=std::unique_ptr<FunctionTop>(new FunctionTop(p,a,0));
 	    }
 	  assert(root->is_a_FunctionTop());
-	  std::auto_ptr<FunctionTop> root_as_top(root.release()->is_a_FunctionTop());  // Interestingly, if is_a_FunctionTop threw, the root would be leaked.
+	  std::unique_ptr<FunctionTop> root_as_top(root.release()->is_a_FunctionTop());  // Interestingly, if is_a_FunctionTop threw, the root would be leaked.
 	  return boost::shared_ptr<const MutatableImage>(new MutatableImage(root_as_top,sinusoidal_z,spheremap,false));
 	}
       else

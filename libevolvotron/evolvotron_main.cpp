@@ -22,8 +22,6 @@
   \todo Eliminate need to include function.h (and instantiate lots of stuff) by moving more into function_node.h/.cpp
 */
 
-
-
 #include "evolvotron_main.h"
 
 #include "dialog_about.h"
@@ -297,10 +295,10 @@ EvolvotronMain::EvolvotronMain
 	  );
   
 
-  _farm[0]=std::auto_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads,niceness_grid));
+  _farm[0]=std::unique_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads,niceness_grid));
   if (separate_farm_for_enlargements)
     {
-      _farm[1]=std::auto_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads,niceness_enlargements));
+      _farm[1]=std::unique_ptr<MutatableImageComputerFarm>(new MutatableImageComputerFarm(n_threads,niceness_enlargements));
     }
 
   _grid=new QWidget;
@@ -395,7 +393,7 @@ void EvolvotronMain::spawn_normal(const boost::shared_ptr<const MutatableImage>&
 
 void EvolvotronMain::spawn_recoloured(const boost::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display,bool one_of_many)
 {  
-  std::auto_ptr<FunctionTop> new_root(image_function->top().typed_deepclone());
+  std::unique_ptr<FunctionTop> new_root(image_function->top().typed_deepclone());
   
   new_root->reset_posttransform_parameters(mutation_parameters());
   history().replacing(display);
@@ -405,7 +403,7 @@ void EvolvotronMain::spawn_recoloured(const boost::shared_ptr<const MutatableIma
 
 void EvolvotronMain::spawn_warped(const boost::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display,bool one_of_many)
 {
-  std::auto_ptr<FunctionTop> new_root=std::auto_ptr<FunctionTop>(image_function->top().typed_deepclone());
+  std::unique_ptr<FunctionTop> new_root=std::unique_ptr<FunctionTop>(image_function->top().typed_deepclone());
 
   // Get the transform from whatever factory is currently set
   const Transform transform(transform_factory()(mutation_parameters().rng01()));
@@ -665,14 +663,14 @@ void EvolvotronMain::toggle_hide_menu()
  */
 void EvolvotronMain::reset(MutatableImageDisplay* display)
 {
-  std::auto_ptr<FunctionTop> root;
+  std::unique_ptr<FunctionTop> root;
   if (_dialog_favourite->favourite_function().empty())
     {
-      root=std::auto_ptr<FunctionTop>(FunctionTop::initial(mutation_parameters()));
+      root=std::unique_ptr<FunctionTop>(FunctionTop::initial(mutation_parameters()));
     }
   else
     {
-      root=std::auto_ptr<FunctionTop>
+      root=std::unique_ptr<FunctionTop>
 	(
 	 FunctionTop::initial
 	 (

@@ -45,8 +45,8 @@ enum
 extern const char*const function_classification_name[FnClassifications];
 
 //! Define FunctionNodeStubNewFnPtr for convenience.
-typedef std::auto_ptr<FunctionNode> (*FunctionNodeStubNewFnPtr)(const MutationParameters&,bool);
-typedef std::auto_ptr<FunctionNode> (*FunctionNodeCreateFnPtr)(const FunctionRegistry&,const FunctionNodeInfo&,std::string&);
+typedef std::unique_ptr<FunctionNode> (*FunctionNodeStubNewFnPtr)(const MutationParameters&,bool);
+typedef std::unique_ptr<FunctionNode> (*FunctionNodeCreateFnPtr)(const FunctionRegistry&,const FunctionNodeInfo&,std::string&);
 
 //! Class for meta information about functions.
 class FunctionRegistration

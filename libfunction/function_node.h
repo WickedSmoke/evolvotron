@@ -84,7 +84,7 @@ class FunctionNode : public Function
  protected:
 
   //! This returns a deep-cloned copy of the node's children.
-  std::auto_ptr<boost::ptr_vector<FunctionNode> > cloneargs() const;
+  std::unique_ptr<boost::ptr_vector<FunctionNode> > cloneargs() const;
 
   //! This returns a copy of the node's parameters
   const std::vector<real> cloneparams() const;
@@ -129,7 +129,7 @@ class FunctionNode : public Function
   //@}
 
   //! This returns a new random bit of tree.  Setting the "exciting" flag avoids basic node types, but only at the top level of the stub tree.
-  static std::auto_ptr<FunctionNode> stub(const MutationParameters& parameters,bool exciting);
+  static std::unique_ptr<FunctionNode> stub(const MutationParameters& parameters,bool exciting);
 
   //! This returns a vector of random parameter values.
   static void stubparams(std::vector<real>&,const MutationParameters& parameters,uint n);
@@ -146,7 +146,7 @@ class FunctionNode : public Function
   FunctionNode(const std::vector<real>& p,boost::ptr_vector<FunctionNode>& a,uint iter);
   
   //! Build a FunctionNode given a description
-  static std::auto_ptr<FunctionNode> create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report);
+  static std::unique_ptr<FunctionNode> create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report);
   
   //! Destructor.
   virtual ~FunctionNode();
@@ -199,14 +199,14 @@ class FunctionNode : public Function
   virtual void mutate(const MutationParameters&,bool mutate_own_parameters=true);
   
   //! Return an clone of this image node and all its children.
-  virtual std::auto_ptr<FunctionNode> deepclone() const
+  virtual std::unique_ptr<FunctionNode> deepclone() const
     =0;
 
   //! Prune any is_constant() nodes and replace them with an actual constant node
   virtual void simplify_constants();
 
   //! Return a deepcloned copy of the node's arguments
-  virtual std::auto_ptr<boost::ptr_vector<FunctionNode> > deepclone_args() const;
+  virtual std::unique_ptr<boost::ptr_vector<FunctionNode> > deepclone_args() const;
   
   //! Save the function tree.
   virtual std::ostream& save_function(std::ostream& out,uint indent) const

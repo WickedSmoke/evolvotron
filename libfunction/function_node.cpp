@@ -31,9 +31,9 @@
 #include "margin.h"
 #include "mutation_parameters.h"
 
-std::auto_ptr<boost::ptr_vector<FunctionNode> > FunctionNode::cloneargs() const
+std::unique_ptr<boost::ptr_vector<FunctionNode> > FunctionNode::cloneargs() const
 {
-  std::auto_ptr<boost::ptr_vector<FunctionNode> > ret(new boost::ptr_vector<FunctionNode>());
+  std::unique_ptr<boost::ptr_vector<FunctionNode> > ret(new boost::ptr_vector<FunctionNode>());
   for (boost::ptr_vector<FunctionNode>::const_iterator it=args().begin();it!=args().end();it++)
     {
       ret->push_back(it->deepclone().release());
@@ -157,7 +157,7 @@ bool FunctionNode::create_args(const FunctionRegistry& function_registry,const F
 {
   for (boost::ptr_vector<FunctionNodeInfo>::const_iterator it=info.args().begin();it!=info.args().end();it++)
     {
-      std::auto_ptr<FunctionNode> fn(FunctionNode::create(function_registry,*it,report));
+      std::unique_ptr<FunctionNode> fn(FunctionNode::create(function_registry,*it,report));
       // Check whether something has gone wrong.  If it has, delete everything allocated so far and return false.
       if (!fn.get())
 	{
@@ -169,7 +169,7 @@ bool FunctionNode::create_args(const FunctionRegistry& function_registry,const F
   return true;
 }
 
-std::auto_ptr<FunctionNode> FunctionNode::stub(const MutationParameters& parameters,bool exciting)
+std::unique_ptr<FunctionNode> FunctionNode::stub(const MutationParameters& parameters,bool exciting)
 {
   return parameters.random_function_stub(exciting);
 }
@@ -203,17 +203,17 @@ FunctionNode::FunctionNode(const std::vector<real>& p,boost::ptr_vector<Function
 
 /*! Returns null ptr if there's a problem, in which case there will be an explanation in report.
  */
-std::auto_ptr<FunctionNode> FunctionNode::create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report)
+std::unique_ptr<FunctionNode> FunctionNode::create(const FunctionRegistry& function_registry,const FunctionNodeInfo& info,std::string& report)
 {
   const FunctionRegistration*const reg=function_registry.lookup(info.type());
   if (reg)
     {
-      return std::auto_ptr<FunctionNode>((*(reg->create_fn()))(function_registry,info,report));
+      return std::unique_ptr<FunctionNode>((*(reg->create_fn()))(function_registry,info,report));
     }
   else
     {
       report+="Error: Unrecognised function name: "+info.type()+"\n";
-      return std::auto_ptr<FunctionNode>();
+      return std::unique_ptr<FunctionNode>();
     }
 }
 
@@ -307,7 +307,7 @@ void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_p
       if (parameters.r01()<parameters.effective_probability_substitute())
 	{
 	  // Take a copy of the nodes parameters and arguments
-	  std::auto_ptr<boost::ptr_vector<FunctionNode> > a(args()[i].deepclone_args());
+	  std::unique_ptr<boost::ptr_vector<FunctionNode> > a(args()[i].deepclone_args());
 	  std::vector<real> p(args()[i].params());
 	  
 	  // Replace the node with something interesting (maybe this should depend on how complex the original node was)
@@ -345,7 +345,7 @@ void FunctionNode::mutate(const MutationParameters& parameters,bool mutate_own_p
 	    }
 
 	  // Impose the new parameters and arguments on the new node (iterations not touched)
-	  it.args()=a;
+	  it.args(*a);
 	  it.params()=p;
 	}
     }
@@ -383,7 +383,7 @@ void FunctionNode::simplify_constants()
 	  vp.push_back(v.y());
 	  vp.push_back(v.z());
 	  boost::ptr_vector<FunctionNode> va;
-          std::auto_ptr<FunctionConstant> replacement(new FunctionConstant(vp,va,0));
+          std::unique_ptr<FunctionConstant> replacement(new FunctionConstant(vp,va,0));
 	  args().replace(i,replacement.release());
 	}
       else
@@ -393,9 +393,9 @@ void FunctionNode::simplify_constants()
     }
 }
 
-std::auto_ptr<boost::ptr_vector<FunctionNode> > FunctionNode::deepclone_args() const
+std::unique_ptr<boost::ptr_vector<FunctionNode> > FunctionNode::deepclone_args() const
 {
-  std::auto_ptr<boost::ptr_vector<FunctionNode> > ret(new boost::ptr_vector<FunctionNode>());
+  std::unique_ptr<boost::ptr_vector<FunctionNode> > ret(new boost::ptr_vector<FunctionNode>());
   for (boost::ptr_vector<FunctionNode>::const_iterator it=args().begin();it!=args().end();it++)
     ret->push_back(it->deepclone().release());
   return ret;

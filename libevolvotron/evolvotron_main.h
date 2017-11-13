@@ -132,7 +132,7 @@ class EvolvotronMain : public QMainWindow
   typedef void (EvolvotronMain::* SpawnMemberFn)(const boost::shared_ptr<const MutatableImage>& image,MutatableImageDisplay* display,bool one_of_many);
 
   //! Instance of History object to track activity.
-  std::auto_ptr<History> _history;
+  std::unique_ptr<History> _history;
 
   //! Sweep z linearly through animations
   /*! \todo Move to mutation or render paraemeters ?
@@ -233,7 +233,7 @@ class EvolvotronMain : public QMainWindow
   QTimer* _timer;
 
   //! Two farms of compute threads.  One for the main display, one for enlargements.
-  std::auto_ptr<MutatableImageComputerFarm> _farm[2];
+  std::unique_ptr<MutatableImageComputerFarm> _farm[2];
 
   //! All the displays in the grid.
   std::vector<MutatableImageDisplay*> _displays;
@@ -253,7 +253,7 @@ class EvolvotronMain : public QMainWindow
   SpawnMemberFn _last_spawn_method;
 
   //! An owned pointer to the current transform factory (needed for Respawn).
-  std::auto_ptr<TransformFactory> _transform_factory;
+  std::unique_ptr<TransformFactory> _transform_factory;
 
   //! Accessor.
   const boost::shared_ptr<const MutatableImage> last_spawned_image() const
