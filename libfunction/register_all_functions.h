@@ -25,6 +25,8 @@
 #ifndef _libevolvotron_register_all_functions_h_
 #define _libevolvotron_register_all_functions_h_
 
+#include "common.h"
+
 class FunctionRegistry;
 
 extern void register_all_functions(FunctionRegistry&);

@@ -20,16 +20,11 @@
 /*! \file 
   \brief Modifications to function_boilerplate macros.
   Include this in function .cpp files before the header is included.
-  (This used to be simulated by putting #define INSTANTIATE_FN in front of function_boilerplate.h,
-  but we wanted function_boilerplate.h to go in precompiled header.
 */
 
 #ifndef _function_boilerplate_instantiate_h_
 #define _function_boilerplate_instantiate_h_
 
-#undef FUNCTION_END
-
-//! Replace definition to obtain concrete implementations
-#define FUNCTION_END(FN) };FN_CTOR_IMP(FN);FN_DTOR_IMP(FN);FN_VNAME_IMP(FN);FN_SNAME_IMP(FN);REGISTER_IMP(FN);
+#define FUNCTION_BOILERPLATE_INSTANTIATE
 
 #endif

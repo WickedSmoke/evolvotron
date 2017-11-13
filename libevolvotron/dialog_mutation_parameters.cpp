@@ -21,7 +21,7 @@
   \brief Implementation of class DialogMutationParameters.
 */
 
-#include "libevolvotron_precompiled.h"
+
 
 #include "dialog_mutation_parameters.h"
 

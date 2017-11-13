@@ -25,7 +25,9 @@
 #ifndef _functions_arithmetic_h_
 #define _functions_arithmetic_h_
 
- 
+#include "common.h" 
+
+#include "function_boilerplate.h"
 
 //------------------------------------------------------------------------------------------
 

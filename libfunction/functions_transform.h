@@ -25,7 +25,10 @@
 #ifndef _functions_transform_h_
 #define _functions_transform_h_
 
- 
+#include "common.h"
+
+#include "function_boilerplate.h"
+
 #include "transform.h"
 
 //------------------------------------------------------

@@ -21,11 +21,11 @@
   \brief Standalone mutator for evolvotron function files.
 */
 
-#include "evolvotron_mutate_precompiled.h"
-
 #include "mutatable_image.h"
 #include "mutation_parameters.h"
 #include "function_top.h"
+
+#include <boost/program_options.hpp>
 
 //! Application code
 int main(int argc,char* argv[])
@@ -107,10 +107,6 @@ int main(int argc,char* argv[])
     
     imagefn_out->save_function(std::cout);
   }
-
-#ifndef NDEBUG
-    assert(InstanceCounted::is_clear());
-#endif
     
   return 0;
 }

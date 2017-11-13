@@ -21,7 +21,7 @@
   \brief Implementation of class DialogFunctions.
 */
 
-#include "libevolvotron_precompiled.h"
+
 
 #include "dialog_functions.h"
 
@@ -125,12 +125,13 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
 
 	      // Wire up buttons
 	      connect(
-		      button_less,SIGNAL(clicked()),
-		      s,SLOT(subtractStep())
-		      );
-	      connect(button_more,SIGNAL(clicked()),
-		      s,SLOT(addStep())
-		      );
+                button_less,&QPushButton::clicked,
+                s,[&s](){s->triggerAction(QAbstractSlider::SliderSingleStepSub);}
+              );
+	      connect(
+                button_more,&QPushButton::clicked,
+                s,[&s](){s->triggerAction(QAbstractSlider::SliderSingleStepAdd);}
+              );
 	    }
 	}
     }

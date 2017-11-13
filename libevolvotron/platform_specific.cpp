@@ -21,8 +21,6 @@
   \brief Implementation of platform specific functions.
 */
 
-#include "libevolvotron_precompiled.h"
-
 #include "platform_specific.h"
 
 #ifdef PLATFORM_LINUX

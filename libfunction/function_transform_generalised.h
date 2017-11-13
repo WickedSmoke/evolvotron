@@ -24,7 +24,10 @@
 #ifndef _function_transform_generalised_h_
 #define _function_transform_generalised_h_
 
- 
+#include "common.h"
+
+#include "function_boilerplate.h"
+
 #include "transform.h"
 
 FUNCTION_BEGIN(FunctionTransformGeneralised,0,4,false,0)

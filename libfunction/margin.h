@@ -24,6 +24,8 @@
 #ifndef _margin_h_
 #define _margin_h_
 
+#include "common.h"
+
 //! Utility class for outputting the margin for a given level of indentation.
 class Margin
 {

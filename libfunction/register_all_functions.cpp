@@ -21,7 +21,7 @@
 
 /* Should be updated by update_register_all_functions script when new functions are added */
 
-#include "libfunction_precompiled.h"
+
 
 #include "register_all_functions.h"
 

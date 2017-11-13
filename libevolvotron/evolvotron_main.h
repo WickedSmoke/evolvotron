@@ -24,6 +24,8 @@
 #ifndef _evolvotron_main_h_
 #define _evolvotron_main_h_
 
+#include "common.h"
+
 #include "function_registry.h"
 #include "transform_factory.h"
 

@@ -17,8 +17,6 @@
 /*  along with Evolvotron.  If not, see <http://www.gnu.org/licenses/>.   */
 /**************************************************************************/
 
-#include "libfunction_precompiled.h"
-
 #include "useful.h"
 
 /*! \file
@@ -59,40 +57,3 @@ void constraint_violation(const char* test,const char* src_file,uint src_line)
 }
 
 std::ofstream sink_ostream("/dev/null");
-
-#ifndef NDEBUG
-
-InstanceCounted::InstanceCounted(const std::string& what,bool verbose)
-:_what(what)
-,_verbose(verbose)
-{
-  if (!_instance_counts.get()) _instance_counts=std::auto_ptr<std::map<std::string,uint> >(new std::map<std::string,uint>());
-  (*_instance_counts)[_what]++;
-  if (_verbose) std::clog << "[+" << _what << ":" << (*_instance_counts)[_what] << "]";
-}
-
-InstanceCounted::~InstanceCounted()
-{
-  assert(_instance_counts.get());
-  assert((*_instance_counts)[_what]>0);
-  (*_instance_counts)[_what]--;
-  if (_verbose) std::clog << "[-" << _what << ":" << (*_instance_counts)[_what] << "]" << ( (*_instance_counts)[_what]==0 ? "\n" : "");
-}
-
-bool InstanceCounted::is_clear()
-{
-  bool ok=true;
-  for (std::map<std::string,uint>::const_iterator it=(*_instance_counts).begin();it!=(*_instance_counts).end();it++)
-    {
-      if ((*it).second>0) {
-	std::clog << "InstanceCounted::is_clear() violated by " << (*it).first << " (" << (*it).second << " instances)\n";
-	ok=false;
-      }
-    }
-  if (ok) std::clog << "InstanceCounted::is_clear() - no remaining instances\n";	
-  return ok;
-}
-
-std::auto_ptr<std::map<std::string,uint> > InstanceCounted::_instance_counts;
-
-#endif

@@ -22,7 +22,7 @@
   \todo Eliminate need to include function.h (and instantiate lots of stuff) by moving more into function_node.h/.cpp
 */
 
-#include "libevolvotron_precompiled.h"
+
 
 #include "evolvotron_main.h"
 
@@ -365,10 +365,6 @@ EvolvotronMain::~EvolvotronMain()
   _history.reset();
 
   std::clog << "...deleted history\n";
-
-#ifndef NDEBUG
-  assert(InstanceCounted::is_clear());
-#endif
 
   std::clog << "...completed Evolvotron shutdown\n";  
 }

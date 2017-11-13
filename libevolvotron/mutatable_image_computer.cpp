@@ -21,8 +21,6 @@
   \brief Implementation of class MutatableImageComputer.
 */
 
-#include "libevolvotron_precompiled.h"
-
 #include "mutatable_image_computer.h"
 
 #include "mutatable_image.h"
@@ -32,13 +30,9 @@
 #include "platform_specific.h"
 
 MutatableImageComputer::MutatableImageComputer(MutatableImageComputerFarm* frm,int niceness)
-  :
-#ifndef NDEBUG
-  InstanceCounted(typeid(this).name(),false),
-#endif
-  _farm(frm),
-  _niceness(niceness),
-  _r01(23)  // Seed pretty unimportant; only used for sample jitter
+  :_farm(frm)
+  ,_niceness(niceness)
+  ,_r01(23)  // Seed pretty unimportant; only used for sample jitter
 {
   start();
 }

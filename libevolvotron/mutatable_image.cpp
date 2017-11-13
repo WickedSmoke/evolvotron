@@ -21,8 +21,6 @@
   \brief Implementation of class MutatableImage.
 */
 
-#include "libevolvotron_precompiled.h"
-
 #include "mutatable_image.h"
 
 #include "function_node_info.h"
@@ -34,11 +32,7 @@
 unsigned long long MutatableImage::_count=0;
 
 MutatableImage::MutatableImage(std::auto_ptr<FunctionTop>& r,bool sinz,bool sm,bool lock)
-  :
-#ifndef NDEBUG
-  InstanceCounted(typeid(this).name(),false),
-#endif
-  _top(r)
+  :_top(r)
   ,_sinusoidal_z(sinz)
   ,_spheremap(sm)
   ,_locked(lock)
@@ -48,11 +42,7 @@ MutatableImage::MutatableImage(std::auto_ptr<FunctionTop>& r,bool sinz,bool sm,b
 }
 
 MutatableImage::MutatableImage(const MutationParameters& parameters,bool exciting,bool sinz,bool sm)
-  :
-#ifndef NDEBUG
-  InstanceCounted(typeid(this).name(),false),
-#endif
-  _sinusoidal_z(sinz)
+  :_sinusoidal_z(sinz)
   ,_spheremap(sm)
   ,_locked(false)
   ,_serial(_count++)

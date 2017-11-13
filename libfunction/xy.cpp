@@ -21,8 +21,6 @@
   \brief Implementation for class XY.
 */
 
-#include "libfunction_precompiled.h"
-
 #include "xy.h"
 
 /*! Outputs whitespace-separated co-ordinates.

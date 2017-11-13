@@ -32,11 +32,10 @@
   \todo For new features to be added, see the TODO file.
  */
 
-#include "evolvotron_precompiled.h"
-
+#include "evolvotron_main.h"
 #include "platform_specific.h"
 
-#include "evolvotron_main.h"
+#include <boost/program_options.hpp>
 
 //! Application code
 int main(int argc,char* argv[])

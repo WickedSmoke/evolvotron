@@ -144,24 +144,4 @@ inline real trianglef(real x,real y)
 //! Use this to divert clog to supress verbose logging.  Needs longer life than scope of main().
 extern std::ofstream sink_ostream;
 
-#ifndef NDEBUG 
-
-//! Inherit from this class (in debug only) and then assert(InstanceCounted::is_clean) at progam exit to check all instances are gone.
-class InstanceCounted
-{
- public:
-  InstanceCounted(const std::string& what,bool verbose);
-  virtual ~InstanceCounted();
-
-  static bool is_clear();
-
- private:
-  const std::string _what;
-  const bool _verbose;
-
-  static std::auto_ptr<std::map<std::string,uint> > _instance_counts;
-};
-
-#endif
-
 #endif

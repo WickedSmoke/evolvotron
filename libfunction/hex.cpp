@@ -21,6 +21,8 @@
   \brief Implementation of helper functions for hexagons.
 */
 
+#include "hex.h"
+
 //! Co-ordinates of hexagon with given hex-grid coords
 const XY hex_coord(int x,int y)
 {

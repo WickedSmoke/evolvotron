@@ -27,6 +27,10 @@
 #ifndef _function_top_h_
 #define _function_top_h_
 
+#include "common.h"
+
+#include "function_boilerplate.h"
+
 class Transform;
 
 //! Function intended primarily to be the top level function node.

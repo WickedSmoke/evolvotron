@@ -24,8 +24,11 @@
 #ifndef _functions_noise_h_
 #define _functions_noise_h_
 
+#include "common.h"
+
+#include "function_boilerplate.h"
+
 #include "noise.h"
- 
 
 //------------------------------------------------------------------------------------------
 

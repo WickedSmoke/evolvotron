@@ -24,6 +24,8 @@
 #ifndef _dialog_mutation_parameters_h_
 #define _dialog_mutation_parameters_h_
 
+#include "common.h"
+
 #include "mutation_parameters_qobject.h"
 
 //! Provides an dialog box for controlling MutationParameters.

@@ -21,7 +21,7 @@
   \brief Implementation of class DialogMutatableImageDisplay.
 */
 
-#include "libevolvotron_precompiled.h"
+
 
 #include "dialog_mutatable_image_display.h"
 

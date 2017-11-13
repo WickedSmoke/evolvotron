@@ -22,7 +22,7 @@
   Except there's nothing here because it's all in the header.
 */
 
-#include "libfunction_precompiled.h"
+
  
 #include "function_boilerplate_instantiate.h"
 #include "function_compose_triple.h"

@@ -21,7 +21,7 @@
   \brief Implementation for class FunctionRegistry and associated classes.
 */
 
-#include "libfunction_precompiled.h"
+
 
 #include "function_registry.h"
 

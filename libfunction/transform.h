@@ -24,6 +24,10 @@
 #ifndef _transform_h_
 #define _transform_h_
 
+#include "common.h"
+
+#include "xyz.h"
+
 //! Class representing 3d linear transforms.
 /*! Not much functionality currently because is used mainly to pass info around for warp functionality
  */

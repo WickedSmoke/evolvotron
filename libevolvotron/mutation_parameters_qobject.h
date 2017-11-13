@@ -24,6 +24,8 @@
 #ifndef _mutation_parameters_qobject_h_
 #define _mutation_parameters_qobject_h_
 
+#include "common.h"
+
 #include "mutation_parameters.h"
 
 //! class extending MutationParameters to emit changed signal when appropriate.

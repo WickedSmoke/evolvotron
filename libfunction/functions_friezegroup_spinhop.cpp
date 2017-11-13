@@ -21,7 +21,7 @@
   \brief Implementation for FunctionFriezeGroupSpinhop functions.
 */
 
-#include "libfunction_precompiled.h"
+
 
 #include "function_boilerplate_instantiate.h"
 #include "functions_friezegroup_spinhop.h"

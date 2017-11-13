@@ -24,6 +24,10 @@
 #ifndef _functions_friezegroup_jump_h_
 #define _functions_friezegroup_jump_h_
 
+#include "common.h"
+
+#include "function_boilerplate.h"
+
 #include "friezegroup.h"
 
 //------------------------------------------------------------------------------------------

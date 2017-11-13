@@ -24,6 +24,8 @@
 #ifndef _mutatable_image_computer_h_
 #define _mutatable_image_computer_h_
 
+#include "common.h"
+
 #include "mutatable_image.h"
 #include "random.h"
 
@@ -36,9 +38,6 @@ class MutatableImageComputerTask;
   The parent farm thread can communicate when necessary using the public methods of the class.
  */
 class MutatableImageComputer : public QThread
-#ifndef NDEBUG
-, public InstanceCounted
-#endif
 {
  protected:
   //! Pointer to compute farm of which this thread is part.
@@ -193,7 +192,7 @@ class MutatableImageComputer : public QThread
   //! Indicate whether computation us taking place (only intended for counting outstanding threads).
   bool active() const
     {
-      return _task;
+      return (_task!=0);
     }
 };
 

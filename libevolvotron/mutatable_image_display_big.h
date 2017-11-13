@@ -24,6 +24,8 @@
 #ifndef _mutatable_image_display_big_h_
 #define _mutatable_image_display_big_h_
 
+#include "common.h"
+
 class EvolvotronMain;
 
 //! Intended to be used as a top-level widget holding a single MutatableImageDisplay

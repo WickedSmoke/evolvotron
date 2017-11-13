@@ -21,7 +21,7 @@
   \brief Implementation of class DialogRenderParameters.
 */
 
-#include "libevolvotron_precompiled.h"
+
 
 #include "dialog_render_parameters.h"
 

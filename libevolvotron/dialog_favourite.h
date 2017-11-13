@@ -24,6 +24,8 @@
 #ifndef _dialog_favourite_h_
 #define _dialog_favourite_h_
 
+#include "common.h"
+
 class EvolvotronMain;
 
 //! Provides a dialog for controlling which functions are available.

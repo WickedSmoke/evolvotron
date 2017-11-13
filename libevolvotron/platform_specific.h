@@ -24,6 +24,8 @@
 #ifndef _platform_specific_h_
 #define _platform_specific_h_
 
+#include "../libfunction/useful.h"
+
 // qt3 for Darwin appears to define this, so use it to definitely select the PLATFORM_BSD option
 #ifdef __DARWIN_X11__
 #define PLATFORM_BSD

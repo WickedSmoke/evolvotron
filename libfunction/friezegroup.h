@@ -24,6 +24,10 @@
 #ifndef _friezegroup_h_
 #define _friezegroup_h_
 
+#include "common.h"
+
+#include "function_node.h"
+
 //! Functor implementing a pass-through Z coordinate policy
 struct FreeZ
 {

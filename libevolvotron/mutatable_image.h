@@ -24,8 +24,14 @@
 #ifndef _mutatable_image_h_
 #define _mutatable_image_h_
 
+#include "common.h"
+
+#include "xyz.h"
+
 class FunctionNull;
+class FunctionRegistry;
 class FunctionTop;
+class MutationParameters;
 
 //! Class to hold the base FunctionNode of an image.
 /*! Once it owns a root FunctionNode* the whole structure should be fixed (mutate isn't available, only mutated).
@@ -33,9 +39,6 @@ class FunctionTop;
   \todo Generally tighten up const-ness of interfaces.
  */
 class MutatableImage
-#ifndef NDEBUG
-: public InstanceCounted
-#endif
 {
  protected:
 
@@ -134,14 +137,14 @@ class MutatableImage
   //! Save the function-tree to the stream
   std::ostream& save_function(std::ostream& out) const;
 
-  //! Read a new function tree from the given stream.
-  static boost::shared_ptr<const MutatableImage> load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report);
-
   //! Obtain some statistics about the image function
   void get_stats(uint& total_nodes,uint& total_parameters,uint& depth,uint& width,real& proportion_constant) const;
 
   //! Check the function tree is ok.
   bool ok() const;
+
+  //! Read a new function tree from the given stream.
+  static boost::shared_ptr<const MutatableImage> load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report);
 };
 
 #endif

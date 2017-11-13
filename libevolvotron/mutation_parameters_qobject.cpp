@@ -21,7 +21,7 @@
   \brief Implementation of class MutationParametersQObject.
 */
 
-#include "libevolvotron_precompiled.h"
+
 
 #include "mutation_parameters_qobject.h"
 

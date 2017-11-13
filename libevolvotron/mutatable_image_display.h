@@ -24,6 +24,8 @@
 #ifndef _mutatable_image_display_h_
 #define _mutatable_image_display_h_
 
+#include "common.h"
+
 #include "mutatable_image.h"
 #include "mutatable_image_computer.h"
 #include "dialog_mutatable_image_display.h"

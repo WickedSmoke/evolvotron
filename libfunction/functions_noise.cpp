@@ -21,7 +21,7 @@
   \brief Implementation of noise related function classes.
 */
 
-#include "libfunction_precompiled.h"
+
  
 #include "function_boilerplate_instantiate.h"
 #include "functions_noise.h"

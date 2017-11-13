@@ -21,11 +21,10 @@
   \brief Implementation for class XYZ.
 */
 
-#include "libfunction_precompiled.h"
-
 #include "xyz.h"
 
 #include "random.h"
+#include "xy.h"
 
 /*! Outputs whitespace-separated co-ordinates.
  */

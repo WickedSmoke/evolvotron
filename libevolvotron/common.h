@@ -18,14 +18,60 @@
 /**************************************************************************/
 
 /*! \file 
-  \brief Precompiled header for evolvotron_render
+  \brief Precompiled header for libevolvotron
+  Could load this up with Qt headers maybe.
 */
 
-#ifndef _evolvotron_render_precompiled_h_
-#define _evolvotron_render_precompiled_h_
+#ifndef _libevolvotron_precompiled_h_
+#define _libevolvotron_precompiled_h_
 
-#include "libevolvotron_precompiled.h"
+#include "../libfunction/common.h"
 
-#include <boost/program_options.hpp>
+#include <stack>
+
+#include <boost/optional.hpp>
+
+#include <QtXml>
+
+#include <QApplication>
+#include <QButtonGroup>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QCursor>
+#include <QDateTime>
+#include <QDialog>
+#include <QFileDialog>
+#include <QGroupBox>
+#include <QImage>
+#include <QKeyEvent>
+#include <QLabel>
+#include <QList>
+#include <QLayout>
+#include <QMainWindow>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QMutex>
+#include <QObject>
+#include <QPixmap>
+#include <QPainter>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QRegExp>
+#include <QScrollArea>
+#include <QSize>
+#include <QSlider>
+#include <QSpinBox>
+#include <QStatusBar>
+#include <QString>
+#include <QTabWidget>
+#include <QTextBrowser>
+#include <QTextEdit>
+#include <QThread>
+#include <QTimer>
+#include <QToolTip>
+#include <QWaitCondition>
+#include <QWidget>
+
+#define stringify(S) __STRING(S)
 
 #endif

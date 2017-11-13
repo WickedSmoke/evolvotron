@@ -21,6 +21,8 @@
   \brief Helper functions for hexagons.
 */
 
+#include "common.h"
+
 #include "xy.h"
 
 //! Returns cartesian coords of given hex-grid

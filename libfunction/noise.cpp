@@ -21,7 +21,7 @@
   \brief Implementation of Noise class
 */
 
-#include "libfunction_precompiled.h"
+
 
 #include "noise.h"
 #include "random.h"

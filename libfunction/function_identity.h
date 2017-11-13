@@ -25,6 +25,10 @@
 #ifndef _function_identity_h_
 #define _function_identity_h_
 
+#include "common.h"
+
+#include "function_boilerplate.h"
+
 //------------------------------------------------------------------------------------------
 
 //! Function class simply returning the position argument.

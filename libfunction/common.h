@@ -18,60 +18,12 @@
 /**************************************************************************/
 
 /*! \file 
-  \brief Precompiled header for libevolvotron
-  Could load this up with Qt headers maybe.
+  \brief Common headers for libfunction
 */
 
-#ifndef _libevolvotron_precompiled_h_
-#define _libevolvotron_precompiled_h_
+#ifndef _libfunction_common_h_
+#define _libfunction_common_h_
 
-#include "libfunction_precompiled.h"
-
-#include <stack>
-
-#include <boost/optional.hpp>
-
-#include <QtXml>
-
-#include <QApplication>
-#include <QButtonGroup>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QCursor>
-#include <QDateTime>
-#include <QDialog>
-#include <QFileDialog>
-#include <QGroupBox>
-#include <QImage>
-#include <QKeyEvent>
-#include <QLabel>
-#include <QList>
-#include <QLayout>
-#include <QMainWindow>
-#include <QMenuBar>
-#include <QMessageBox>
-#include <QMutex>
-#include <QObject>
-#include <QPixmap>
-#include <QPainter>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QRegExp>
-#include <QScrollArea>
-#include <QSize>
-#include <QSlider>
-#include <QSpinBox>
-#include <QStatusBar>
-#include <QString>
-#include <QTabWidget>
-#include <QTextBrowser>
-#include <QTextEdit>
-#include <QThread>
-#include <QTimer>
-#include <QToolTip>
-#include <QWaitCondition>
-#include <QWidget>
-
-#define stringify(S) __STRING(S)
+#include "useful.h"
 
 #endif

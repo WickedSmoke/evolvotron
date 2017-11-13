@@ -24,6 +24,8 @@
 #ifndef _dialog_help_h_
 #define _dialog_help_h_
 
+#include "common.h"
+
 //! Provides a dialog box with some user documentation.
 /*! More of a quick reference guide than a manual.
  */

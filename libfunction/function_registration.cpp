@@ -21,7 +21,7 @@
   \brief Implementation for class FunctionRegistration
 */
 
-#include "libfunction_precompiled.h"
+
 
 #include "function_registration.h"
 

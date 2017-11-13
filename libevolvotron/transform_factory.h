@@ -24,8 +24,11 @@
 #ifndef _transform_factory_h_
 #define _transform_factory_h_
 
+#include "common.h"
+
 class Random01;
-class Transform;
+
+#include "transform.h"
 
 //! Abstract base class for classes creating Transforms
 class TransformFactory 

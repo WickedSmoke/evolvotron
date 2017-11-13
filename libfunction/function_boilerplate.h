@@ -25,6 +25,8 @@
 #ifndef _function_boilerplate_h_
 #define _function_boilerplate_h_
 
+#include "common.h"
+
 #include "function_node.h"
 #include "function_node_info.h"
 #include "function_registry.h"
@@ -116,11 +118,14 @@ uint FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION>
 std::auto_ptr<FunctionNode> FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::stubnew(const MutationParameters& mutation_parameters,bool exciting)
 {
+  static constexpr uint _PARAMETERS=PARAMETERS;
+  static constexpr uint _ARGUMENTS=ARGUMENTS;
+  
   std::vector<real> params;
-  stubparams(params,mutation_parameters,PARAMETERS);
+  stubparams(params,mutation_parameters,_PARAMETERS);
   
   boost::ptr_vector<FunctionNode> args;
-  stubargs(args,mutation_parameters,ARGUMENTS,exciting);
+  stubargs(args,mutation_parameters,_ARGUMENTS,exciting);
   
   return std::auto_ptr<FunctionNode>
     (
@@ -204,6 +209,10 @@ std::ostream& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSI
 #define REGISTER_DCL(FN) extern void register_ ## FN(FunctionRegistry&);
 #define REGISTER_IMP(FN) void register_ ## FN(FunctionRegistry& r){REGISTER(r,FN);}
 
+#ifdef FUNCTION_BOILERPLATE_INSTANTIATE
+#define FUNCTION_END(FN) };FN_CTOR_IMP(FN);FN_DTOR_IMP(FN);FN_VNAME_IMP(FN);FN_SNAME_IMP(FN);REGISTER_IMP(FN);
+#else
 #define FUNCTION_END(FN) };REGISTER_DCL(FN);
+#endif
 
 #endif

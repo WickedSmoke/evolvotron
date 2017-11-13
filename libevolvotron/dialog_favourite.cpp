@@ -21,7 +21,7 @@
   \brief Implementation of class DialogFavourite.
 */
 
-#include "libevolvotron_precompiled.h"
+
 
 #include "dialog_favourite.h"
 

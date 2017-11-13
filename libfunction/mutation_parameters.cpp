@@ -21,7 +21,7 @@
   \brief Implementation of class MutationParameters.
 */
 
-#include "libfunction_precompiled.h"
+
 
 #include "mutation_parameters.h"
 

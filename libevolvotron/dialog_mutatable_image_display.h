@@ -24,6 +24,8 @@
 #ifndef _dialog_mutatable_image_display_h_
 #define _dialog_mutatable_image_display_h_
 
+#include "common.h"
+
 //! Provides a "Properties" style dialog box for manipulating 
 /*! Make this modal for simplicity: 
   avoids spawned images changing underneath us, 

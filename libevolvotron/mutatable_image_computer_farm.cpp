@@ -21,7 +21,7 @@
   \brief Implementation of class MutatableImageComputerFarm.
 */
 
-#include "libevolvotron_precompiled.h"
+
 
 #include "mutatable_image_computer_farm.h"
 

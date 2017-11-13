@@ -24,6 +24,10 @@
 #ifndef _functions_tartan_h_
 #define _functions_tartan_h_
 
+#include "common.h"
+
+#include "function_boilerplate.h"
+
 //------------------------------------------------------------------------------------------
 
 FUNCTION_BEGIN(FunctionTartanSelectFree,10,6,false,FnStructure)

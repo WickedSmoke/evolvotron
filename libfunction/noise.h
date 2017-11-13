@@ -24,6 +24,10 @@
 #ifndef _noise_h_
 #define _noise_h_
 
+#include "common.h"
+
+#include "xyz.h"
+
 //! Perlin noise generator.
 class Noise
 {

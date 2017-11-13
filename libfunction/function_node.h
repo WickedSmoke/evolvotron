@@ -24,6 +24,11 @@
 #ifndef _function_node_h_
 #define _function_node_h_
 
+#include "common.h"
+
+#include "xy.h"
+#include "xyz.h"
+
 class FunctionNodeInfo;
 class FunctionTop;
 class FunctionPreTransform;

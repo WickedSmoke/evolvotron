@@ -21,7 +21,7 @@
   \brief Implementation of class DialogHelp.
 */
 
-#include "libevolvotron_precompiled.h"
+
 
 #include "dialog_help.h"
 

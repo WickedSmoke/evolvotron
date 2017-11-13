@@ -21,6 +21,6 @@
   \brief Implementation for friezegroup related code.
 */
 
-#include "libfunction_precompiled.h"
+
 
 #include "friezegroup.h"

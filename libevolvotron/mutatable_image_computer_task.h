@@ -24,14 +24,13 @@
 #ifndef _mutatable_image_computer_task_h_
 #define _mutatable_image_computer_task_h_
 
+#include "common.h"
+
 #include "mutatable_image.h"
 #include "mutatable_image_display.h"
 
 //! Class encapsulating all the parameters of, and output from, a single image generation run.
 class MutatableImageComputerTask
-#ifndef NDEBUG
-: public InstanceCounted
-#endif
 {
  protected:
 

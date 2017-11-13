@@ -24,6 +24,7 @@
 #ifndef _mutatable_image_computer_farm_h_
 #define _mutatable_image_computer_farm_h_
 
+#include "common.h"
 #include "useful.h"
 
 #include "mutatable_image_computer.h"

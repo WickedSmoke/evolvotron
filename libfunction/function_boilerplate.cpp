@@ -22,7 +22,7 @@
   Except there's virtually nothing here because it's all in the header (templates).
 */
 
-#include "libfunction_precompiled.h"
+
 
 #include "function_boilerplate.h"
  

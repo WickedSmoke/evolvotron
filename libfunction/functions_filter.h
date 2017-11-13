@@ -25,7 +25,9 @@
 #ifndef _functions_filter_h_
 #define _functions_filter_h_
 
- 
+#include "common.h" 
+
+#include "function_boilerplate.h"
 
 //------------------------------------------------------------------------------------------
 

@@ -25,7 +25,9 @@
 #ifndef _functions_gradient_h_
 #define _functions_gradient_h_
 
- 
+#include "common.h" 
+
+#include "function_boilerplate.h"
 
 //------------------------------------------------------------------------------------------
 

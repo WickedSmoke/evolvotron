@@ -21,7 +21,7 @@
   \brief Implementation of class MutatableImageComputerTask
 */
 
-#include "libevolvotron_precompiled.h"
+
 
 #include "mutatable_image_computer_task.h"
 
@@ -41,11 +41,7 @@ MutatableImageComputerTask::MutatableImageComputerTask
  uint ms,
  unsigned long long int n
  )
-  :
-#ifndef NDEBUG
-  InstanceCounted(typeid(this).name(),false),
-#endif
-  _aborted(false)
+  :_aborted(false)
   ,_display(disp)
   ,_image_function(fn)
   ,_priority(pri)

@@ -24,7 +24,9 @@
 #ifndef _functions_shadow_h_
 #define _functions_shadow_h_
 
- 
+#include "common.h" 
+
+#include "function_boilerplate.h"
 
 //------------------------------------------------------------------------------------------
 

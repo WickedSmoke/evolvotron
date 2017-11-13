@@ -21,7 +21,7 @@
   \brief Implementation of class MutatableImageDisplay.
 */
 
-#include "libevolvotron_precompiled.h"
+
 
 #include "mutatable_image_display.h"
 

@@ -24,6 +24,8 @@
 #ifndef _xy_h_
 #define _xy_h_
 
+#include "common.h"
+
 //! Class to hold vectors in 2D cartesian co-ordinates.
 /*! Direct access to the x,y members is not permitted.
  */

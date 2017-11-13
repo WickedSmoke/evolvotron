@@ -24,6 +24,8 @@
 #ifndef _dialog_about_h_
 #define _dialog_about_h_
 
+#include "common.h"
+
 //! Provides an "About" dialog box.
 /*! About dialog displays author info, web addresses and license info.
  */

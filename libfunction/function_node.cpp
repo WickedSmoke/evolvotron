@@ -21,7 +21,7 @@
   \brief Implementation of class FunctionNode and derived classes.
 */
 
-#include "libfunction_precompiled.h"
+
 #include "function_node.h"
 
 #include "function_compose_pair.h"
@@ -382,8 +382,9 @@ void FunctionNode::simplify_constants()
 	  vp.push_back(v.x());
 	  vp.push_back(v.y());
 	  vp.push_back(v.z());
-	  boost::ptr_vector<FunctionNode> va; 
-	  args().replace(i,new FunctionConstant(vp,va,0));
+	  boost::ptr_vector<FunctionNode> va;
+          std::auto_ptr<FunctionConstant> replacement(new FunctionConstant(vp,va,0));
+	  args().replace(i,replacement.release());
 	}
       else
 	{

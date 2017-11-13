@@ -25,6 +25,10 @@
 #ifndef _functions_choose_h_
 #define _functions_choose_h_
 
+#include "common.h"
+
+#include "function_boilerplate.h"
+
 #include "hex.h"
 
 //------------------------------------------------------------------------------------------

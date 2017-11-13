@@ -24,6 +24,8 @@
 #ifndef _function_registry_h_
 #define _function_registry_h_
 
+#include "common.h"
+
 #include "function_registration.h"
 
 //! Class acting as a dictionary from function name to registration info.

@@ -24,6 +24,8 @@
 #ifndef _dialog_render_parameters_h_
 #define _dialog_render_parameters_h_
 
+#include "common.h"
+
 #include "render_parameters.h"
 
 //! Provides an dialog box for controlling RenderParameters.

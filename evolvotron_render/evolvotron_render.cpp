@@ -21,11 +21,11 @@
   \brief Standalone renderer for evolvotron function files.
 */
 
-#include "evolvotron_render_precompiled.h"
-
 #include "function_registry.h"
 #include "mutatable_image.h"
 #include "random.h"
+
+#include <boost/program_options.hpp>
 
 //! Application code
 int main(int argc,char* argv[])
@@ -210,10 +210,6 @@ int main(int argc,char* argv[])
 	}
       }
   }
-
-#ifndef NDEBUG
-  assert(InstanceCounted::is_clear());
-#endif
   
   return 0;
 }

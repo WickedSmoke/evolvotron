@@ -21,7 +21,7 @@
   \brief Implementation of class DialogAbout.
 */
 
-#include "libevolvotron_precompiled.h"
+
 
 #include "dialog_about.h"
 

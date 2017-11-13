@@ -24,6 +24,8 @@
 #ifndef _dialog_functions_h_
 #define _dialog_functions_h_
 
+#include "common.h"
+
 #include "mutation_parameters_qobject.h"
 
 class EvolvotronMain;

@@ -1,10 +1,10 @@
 TEMPLATE = app
 
+QT += widgets
+  
 include (../common.pro)
 
-PRECOMPILED_HEADER = evolvotron_precompiled.h
-
-SOURCES += $$system(ls *.cpp)
+SOURCES += $$files(*.cpp)
 
 DEPENDPATH += ../libevolvotron ../libfunction
 INCLUDEPATH += ../libevolvotron ../libfunction

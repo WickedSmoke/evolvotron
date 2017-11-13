@@ -1,6 +1,5 @@
 #!/bin/sh
 
-PATH=$QTDIR/bin:$PATH
-export PATH
+export PATH=$QTDIR/bin:$PATH
 
 ./configure && make

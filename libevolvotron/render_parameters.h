@@ -24,6 +24,8 @@
 #ifndef _render_parameters_h_
 #define _render_parameters_h_
 
+#include "common.h"
+
 template <typename T> bool change(T& dst,const T& src)
 {
   const T previous=dst;

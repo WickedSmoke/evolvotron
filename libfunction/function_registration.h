@@ -24,6 +24,8 @@
 #ifndef _function_registration_h_
 #define _function_registration_h_
 
+#include "common.h"
+
 class FunctionNode;
 class FunctionRegistry;
 class MutationParameters;

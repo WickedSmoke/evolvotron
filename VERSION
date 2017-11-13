@@ -5,4 +5,4 @@
 
 # NB If you edit this, "make distclean" and then rebuild (./BUILD) as there is no dependency checking
 
-echo "0.6.4dev"
+echo "0.7.0dev"

@@ -25,6 +25,10 @@
 #ifndef _functions_juliabrot_h_
 #define _functions_juliabrot_h_
 
+#include "common.h"
+
+#include "function_boilerplate.h"
+
 //------------------------------------------------------------------------------------------
 
 //! Mandelbrot/Julia iterator for fractal functions.
