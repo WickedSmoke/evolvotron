@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Script to echo the current version number.
 # THIS IS THE ONLY PLACE IN ALL THE EVOLVOTRON SOURCE A HARDWIRED VERSION NUMBER SHOULD APPEAR

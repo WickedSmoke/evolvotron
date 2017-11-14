@@ -58,6 +58,8 @@ or just have both done for you by doing
 
   ./BUILD.sh
 
+which will pick up the VERSION_NUMBER from the file VERSION in this directory.
+
 Make will recurse into and build the libfunction & libevolvotron directories
 (which is 99% of the work) and some additional subdirectories with 
 executables.
