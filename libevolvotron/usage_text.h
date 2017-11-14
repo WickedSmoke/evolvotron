@@ -741,6 +741,7 @@
 "  </li><li>Massimiliano Guastafierro \n"
 "  </li><li>Goetz Waschk \n"
 "  </li><li>Forrest Walter \n"
+"  </li><li>&quot;chr_bl&quot; at web.de \n"
 "</li>\n"
 "</ul>\n"
 "</p>\n"
