@@ -2,6 +2,8 @@
 
 Release 0.7.1:
  - Uses `CONFIG += ordered` in `main.pro`; enables parallelised make.
+ - Fold in typos fixed by Debian downstream.
+ - tarball on Sourceforge files.
 
 Release 0.7.0:
  - Got to compile vs Qt5.9.1 on Debian Stretch & Jessie; preparing for Qt5-only on Buster.
