@@ -122,6 +122,8 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
 		      );
 
 	      // Wire up buttons
+#if QT_VERSION >= 0x050000
+	      // New Qt5 style supports lambdas!
 	      connect(
                 button_less,&QPushButton::clicked,
                 s,[s](){s->triggerAction(QAbstractSlider::SliderSingleStepSub);}
@@ -130,6 +132,18 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
                 button_more,&QPushButton::clicked,
                 s,[s](){s->triggerAction(QAbstractSlider::SliderSingleStepAdd);}
               );
+#else
+	      // Otherwise fall back to old way
+	      // Fortunately the deprecated subtractStep/addStep members are still available in Qt4
+	      connect(
+                button_less,SIGNAL(clicked()),
+                s,SLOT(subtractStep())
+              );
+	      connect(
+                button_more,SIGNAL(clicked()),
+                s,SLOT(addStep())
+              );
+#endif
 	    }
 	}
     }
