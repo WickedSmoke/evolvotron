@@ -68,8 +68,8 @@ GENERAL OPTIONS
 
   -m, --multisample <multisample grid>
 	Enables additional antialiasing passes.
-	Specifing 2 or 3 will provide an additional pass with 2x2 or 3x3 samples per pixel.
-	Specifiying 4 (of higher) will provide a 2x2 and a final 4x4 pass.
+	Specifying 2 or 3 will provide an additional pass with 2x2 or 3x3 samples per pixel.
+	Specifying 4 (or higher) will provide a 2x2 and a final 4x4 pass.
 	Specifying 1 provides the default behaviour of one sample per pixel.
 	For best rendering quality also specify -j.
 
@@ -344,7 +344,7 @@ MAIN MENU BAR
   The "randomize function weights" version of restart scrambles
   the relative probability of the various function types (if you
   think evolvotron just keeps generating the same kinds of
-  images give it a try).  The "restart with specifc function"
+  images give it a try).  The "restart with specific function"
   item duplicates the functionality of the "-x" and "-X" command-line
   options.
 - Edit menu:
@@ -361,7 +361,7 @@ MAIN MENU BAR
   "Functions" brings up a dialog to modify the relative probability
   of functions being used.  By default all functions are equally
   likely except for iterative functions and fractals, which are
-  almost but not completely supressed.  But if you think there
+  almost but not completely suppressed.  But if you think there
   are too many spirals or grids (or not enough fractals) then this
   is the place to adjust the frequency with which they appear.
   If the software was built with the fullscreen option,
@@ -466,7 +466,7 @@ via the Settings menu, and the "autocool" mechanism exposed in the
 status bar also has some influence.
 
 There are two kinds of mutation: perturbations to the magnitude of constants, 
-and structural mutations which rearrage the function tree of an image.  
+and structural mutations which re-arrange the function tree of an image.  
 Four types of structural mutations are currently implemented:
   - replacement of a function branch by a new random stub (a "Glitch" mutation).
   - a random shuffle of a node's sub-nodes
@@ -482,7 +482,7 @@ It is useful to think of the perturbations to constant parameters as
 being a thermal effect (hence the "heat" and "cool" buttons), while 
 structural alterations are more drastic and are caused by high energy
 gamma rays or something (hence "irradiate" and "shield" buttons to
-adjust the probability of structual mutations). 
+adjust the probability of structural mutations). 
 
 So why would you want to change the mutation parameters from the initial
 defaults ?  Basically, if you're getting too much variation in spawned images 
@@ -518,7 +518,7 @@ while reducing the ratio results in simple, boring images.
 
 3 types of function node are considered fundamental: constant nodes
 (which return a constant), identity nodes (which return their
-position argument) and transform nodes (which transform their positon
+position argument) and transform nodes (which transform their position
 argument by random parameters).  On the "Dilution" tab of the "Functions"
 dialog there are two slider controls to affect things related to these:
  - "proportion constant" controls the proportion of diluting fundamental nodes

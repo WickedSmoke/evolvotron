@@ -1,5 +1,10 @@
 #!/bin/sh
 
+echo "***"
+echo "*** This script assumes Debian's Qt setup with a qtchooser supporting the -qt=5 option."
+echo "*** Other Qt setups may require removing the -qt=5 option from qmake and setting QTDIR and PATH as usual."
+echo "***"
+
 VERSION_NUMBER=`./VERSION`
 
 # Assume Debian qtchooser available (wrapper implementing -qt 5 option).
