@@ -1,7 +1,9 @@
 TEMPLATE = app
 
 QT += widgets
-  
+
+CONFIG += c++11
+
 include (../common.pro)
 
 SOURCES += $$files(*.cpp)

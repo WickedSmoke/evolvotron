@@ -1,5 +1,9 @@
 [Most recent at top]
 
+Release 0.7.2:
+ - Update build to work on Debian jessie.
+ - Some untouched repos needed `svn relocate svn+ssh://timday@svn.code.sf.net/p/evolvotron/code https://svn.code.sf.net/p/evolvotron/code .`
+
 Release 0.7.1:
  - Uses `CONFIG += ordered` in `main.pro`; enables parallelised make.
  - Fold in typos fixed by Debian downstream.

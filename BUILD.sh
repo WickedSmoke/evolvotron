@@ -8,4 +8,4 @@ echo "***"
 
 VERSION_NUMBER=`./VERSION`
 
-qmake -qt=5 "VERSION_NUMBER=$VERSION_NUMBER" main.pro && make -j 4
+qtchooser -run-tool=qmake -qt=5 "VERSION_NUMBER=$VERSION_NUMBER" main.pro && make -j 4
