@@ -21,23 +21,21 @@
   \brief Implementation of class MutatableImageComputerFarm.
 */
 
-
-
 #include "mutatable_image_computer_farm.h"
 
 #include "mutatable_image_computer.h"
 
 /*! Creates the specified number of threads and store pointers to them.
  */
-MutatableImageComputerFarm::MutatableImageComputerFarm(uint n_threads,int niceness)
+MutatableImageComputerFarm::MutatableImageComputerFarm(uint n_threads, int niceness)
 {
-  _done_position=_done.end();
-  
-  for (uint i=0;i<n_threads;i++)
-    {
-      // The computer's constructor includes a start()
-      _computers.push_back(new MutatableImageComputer(this,niceness));
-    }
+  _done_position = _done.end();
+
+  for (uint i = 0; i < n_threads; i++)
+  {
+    // The computer's constructor includes a start()
+    _computers.push_back(new MutatableImageComputer(this, niceness));
+  }
 }
 
 /*! Destructor kills off all compute threads and frees their resources.  
@@ -48,13 +46,14 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
   std::clog << "Compute farm shut down begun...\n";
 
   // Kill all the computers (care needed to wake any waiting ones).
-  for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++) (*it).kill();
+  for (boost::ptr_vector<MutatableImageComputer>::iterator it = _computers.begin(); it != _computers.end(); it++)
+    (*it).kill();
   _wait_condition.wakeAll();
   _computers.clear();
 
   // Clear all the tasks in queues
   {
-    QMutexLocker lock(&_mutex);    
+    QMutexLocker lock(&_mutex);
     _todo.clear();
     _done.clear();
   }
@@ -63,7 +62,7 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
 }
 
 //! Predicate function to test whether a task has been aborted
-static bool predicate_aborted(const boost::shared_ptr<const MutatableImageComputerTask> t) 
+static bool predicate_aborted(const boost::shared_ptr<const MutatableImageComputerTask> t)
 {
   return t->aborted();
 }
@@ -71,23 +70,27 @@ static bool predicate_aborted(const boost::shared_ptr<const MutatableImageComput
 void MutatableImageComputerFarm::fasttrack_aborted()
 {
   QMutexLocker lock(&_mutex);
-  
-  // \todo: Inefficient starting search again each time.  Some problem with erase otherwise though, but might have been task abort mem leak.
-  TodoQueue::iterator it;
-  while (
-	 (
-	  it=std::find_if(_todo.begin(),_todo.end(),predicate_aborted)
-	  )
-	 !=
-	 _todo.end()
-	 )
+
+  // == PATCH START ==
+
+  // -- code modified --
+  TodoQueue::iterator it = _todo.begin();
+
+  while (it != _todo.end())
+  {
+    if ((*it)->aborted())
     {
       _done[(*it)->display()].insert(*it);
-      _todo.erase(it);
-    }  
+      it = _todo.erase(it);
+    }
+    else
+      it++;
+  }
+
+  // == PATCH END ==
 }
 
-void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImageComputerTask>& task)
+void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImageComputerTask> &task)
 {
   {
     QMutexLocker lock(&_mutex);
@@ -113,31 +116,32 @@ void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImag
   _wait_condition.wakeOne();
 }
 
-const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_todo(MutatableImageComputer& requester)
+const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_todo(MutatableImageComputer &requester)
 {
   _mutex.lock();
   boost::shared_ptr<MutatableImageComputerTask> ret;
   while (!ret)
+  {
+    TodoQueue::iterator it = _todo.begin();
+    if (it != _todo.end())
     {
-      TodoQueue::iterator it=_todo.begin();
-      if (it!=_todo.end())
-	{
-	  ret=(*it);
-	  _todo.erase(it);
-	}
-      else
-	{
-	  std::clog << "Thread waiting\n";
-	  _wait_condition.wait(&_mutex);
-	  std::clog << "Thread woken\n";
-	  if (requester.killed()) break;
-	}
+      ret = (*it);
+      _todo.erase(it);
     }
+    else
+    {
+      std::clog << "Thread waiting\n";
+      _wait_condition.wait(&_mutex);
+      std::clog << "Thread woken\n";
+      if (requester.killed())
+        break;
+    }
+  }
   _mutex.unlock();
   return ret;
 }
 
-void MutatableImageComputerFarm::push_done(const boost::shared_ptr<MutatableImageComputerTask>& task)
+void MutatableImageComputerFarm::push_done(const boost::shared_ptr<MutatableImageComputerTask> &task)
 {
   QMutexLocker lock(&_mutex);
   _done[task->display()].insert(task);
@@ -145,119 +149,131 @@ void MutatableImageComputerFarm::push_done(const boost::shared_ptr<MutatableImag
 
 const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_done()
 {
-  QMutexLocker lock(&_mutex); 
+  QMutexLocker lock(&_mutex);
 
-  boost::shared_ptr<MutatableImageComputerTask> ret;  
-  if (_done_position==_done.end())
+  boost::shared_ptr<MutatableImageComputerTask> ret;
+  if (_done_position == _done.end())
+  {
+    _done_position = _done.begin();
+  }
+
+  if (_done_position != _done.end())
+  {
+    DoneQueue &q = (*_done_position).second;
+    DoneQueue::iterator it = q.begin();
+    if (it != q.end())
     {
-      _done_position=_done.begin();
+      ret = (*it);
+      q.erase(it);
     }
 
-  if (_done_position!=_done.end())
+    if (q.empty())
     {
-      DoneQueue& q=(*_done_position).second;
-      DoneQueue::iterator it=q.begin();
-      if (it!=q.end())
-	{
-	  ret=(*it);
-	  q.erase(it);
-	}
-
-      if (q.empty())
-	{
-	  DoneQueueByDisplay::iterator advanced_done_position=_done_position;
-	  advanced_done_position++;	  
-	  _done.erase(_done_position);
-	  _done_position=advanced_done_position;
-	}
-      else
-	{
-	  _done_position++;
-	}
+      DoneQueueByDisplay::iterator advanced_done_position = _done_position;
+      advanced_done_position++;
+      _done.erase(_done_position);
+      _done_position = advanced_done_position;
     }
+    else
+    {
+      _done_position++;
+    }
+  }
 
   return ret;
 }
 
 void MutatableImageComputerFarm::abort_all()
 {
-  QMutexLocker lock(&_mutex); 
+  QMutexLocker lock(&_mutex);
 
-  for (TodoQueue::iterator it=_todo.begin();it!=_todo.end();it++)
-    {
-      (*it)->abort();
-    }
+  for (TodoQueue::iterator it = _todo.begin(); it != _todo.end(); it++)
+  {
+    (*it)->abort();
+  }
   _todo.clear();
 
-  for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++)
-    {
-      (*it).abort();
-    }
+  for (boost::ptr_vector<MutatableImageComputer>::iterator it = _computers.begin(); it != _computers.end(); it++)
+  {
+    (*it).abort();
+  }
 
-  for (DoneQueueByDisplay::iterator it0=_done.begin();it0!=_done.end();it0++)
+  for (DoneQueueByDisplay::iterator it0 = _done.begin(); it0 != _done.end(); it0++)
+  {
+    DoneQueue &q = (*it0).second;
+    for (DoneQueue::iterator it1 = q.begin(); it1 != q.end(); it1++)
     {
-      DoneQueue& q=(*it0).second;
-      for (DoneQueue::iterator it1=q.begin();it1!=q.end();it1++)
-	{
-	  (*it1)->abort();
-	}
+      (*it1)->abort();
     }
+  }
   _done.clear();
 }
 
-void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay* disp)
+void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay *disp)
 {
-  QMutexLocker lock(&_mutex); 
+  QMutexLocker lock(&_mutex);
 
-  for (TodoQueue::iterator it=_todo.begin();it!=_todo.end();it++)
+  for (TodoQueue::iterator it = _todo.begin(); it != _todo.end(); it++)
+  {
+    if ((*it)->display() == disp)
     {
-      if ((*it)->display()==disp)
-	{
-	  (*it)->abort();
-	  _todo.erase(it);
-	}
-    }
-  
-  for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++)
-    {      
-      (*it).abort_for(disp);
-    }
-  
-  DoneQueueByDisplay::iterator it0=_done.find(disp);
-  if (it0!=_done.end())
-    {
-      DoneQueue& q=(*it0).second;
+      (*it)->abort();
 
-      //! \todo It would be pretty odd if display didn't match the queue bin: change to assert
-      for (DoneQueue::iterator it1=q.begin();it1!=q.end();it1++)
-	{
-	  if ((*it1)->display()==disp)
-	    {
-	      (*it1)->abort();
-	      q.erase(it1);
-	    }
-	}
+      // == PATCH START ==
+      // -- code modified --
+      it = _todo.erase(it);
+      if (it == _todo.end())
+        break;
+      // == PATCH END ==
     }
+  }
+
+  for (boost::ptr_vector<MutatableImageComputer>::iterator it = _computers.begin(); it != _computers.end(); it++)
+  {
+    (*it).abort_for(disp);
+  }
+
+  DoneQueueByDisplay::iterator it0 = _done.find(disp);
+  if (it0 != _done.end())
+  {
+    DoneQueue &q = (*it0).second;
+
+    //! \todo It would be pretty odd if display didn't match the queue bin: change to assert
+    for (DoneQueue::iterator it1 = q.begin(); it1 != q.end(); it1++)
+    {
+      if ((*it1)->display() == disp)
+      {
+        (*it1)->abort();
+
+        // == PATCH START ==
+        // -- code modified --
+        it1 = q.erase(it1);
+        if (it1 == q.end())
+          break;
+        // == PATCH END ==
+      }
+    }
+  }
 }
 
 uint MutatableImageComputerFarm::tasks() const
 {
-  uint ret=0;
-  
-  for (boost::ptr_vector<MutatableImageComputer>::const_iterator it=_computers.begin();it!=_computers.end();it++)
-    {      
-      if ((*it).active())
-	{
-	  ret++;
-	}
+  uint ret = 0;
+
+  for (boost::ptr_vector<MutatableImageComputer>::const_iterator it = _computers.begin(); it != _computers.end(); it++)
+  {
+    if ((*it).active())
+    {
+      ret++;
     }
+  }
 
-  QMutexLocker lock(&_mutex); 
+  QMutexLocker lock(&_mutex);
 
-  ret+=_todo.size();
+  ret += _todo.size();
 
-  for (DoneQueueByDisplay::const_iterator it=_done.begin();it!=_done.end();it++)
-    ret+=(*it).second.size();
+  for (DoneQueueByDisplay::const_iterator it = _done.begin(); it != _done.end(); it++)
+    ret += (*it).second.size();
 
   return ret;
 }
