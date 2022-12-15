@@ -56,9 +56,10 @@ QMAKE_CXXFLAGS_RELEASE += -DQT_NO_ASCII_CAST
 QMAKE_CXXFLAGS_DEBUG += -DQT_NO_ASCII_CAST
 
 ######################################
-# Hide those crufty moc_ files away
+# Hide intermediate build files away
 
 MOC_DIR = moc
+OBJECTS_DIR = ../obj
 
 ##################
 # OPTION: Enable these options for profiling
