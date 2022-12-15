@@ -1,5 +1,5 @@
-INTRODUCTION
-============
+Evolvotron
+==========
 
 Evolvotron is interactive "generative art" software to evolve
 images/textures/patterns through an iterative process of random
@@ -26,7 +26,7 @@ Have fun
 Tim
 
 LICENSE
-=======
+-------
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
@@ -45,7 +45,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 README]
 
 BUILDING
-========
+--------
 There's no reason it shouldn't work on any platform with a correctly
 set up qmake.  You do NOT need to be root (there is no install stage).
 
@@ -74,8 +74,8 @@ See the USAGE file (or in-app manual) for instructions.
 
 The author mainly tracks Debian stable.
 
-Non-linux platform issues
--------------------------
+### Non-linux platform issues
+
 On the whole, Qt does an excellent job of insulating code from
 platform specific details.  However, there is a little bit of
 linux-specific code in evolvotron.
@@ -103,8 +103,7 @@ file.  Qt doesn't make a fine enough distinction between unix platforms
 to decide completely automatically, and the situation is further complicated
 by e.g Fink's Qt not considering itself to be a Qt 'macx' build.
 
-Debugging builds
-----------------
+### Debugging builds
 
 Many build failures are simply because the necessary Qt build tools
 aren't in your path:
@@ -126,7 +125,7 @@ If you can fix it, then patches would be even better!
 
 
 INSTALL
-=======
+-------
 The evolvotron sources don't try to provide an installer.
 The assumption is that packagers will have a better idea of where
 files should be copied to on their systems, and the tools to do it.
@@ -158,7 +157,7 @@ There are NO extra supporting files built
 which need to be in special places for the software to work.
 
 PACKAGING
-=========
+---------
 There are a few things which might be useful to packagers:
 
 mkdeb
@@ -172,7 +171,7 @@ rpm/
  - directory for contributed RPM related resources.
 
 BUILDING CODE DOCUMENTATION
-===========================
+---------------------------
 If you have doxygen (and graphviz too) and want to build
 the source code documentation, execute 
   ./mkdoc
