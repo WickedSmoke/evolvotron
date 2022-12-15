@@ -827,26 +827,25 @@ void MutatableImageDisplay::menupick_save_image()
 
 void MutatableImageDisplay::menupick_save_function()
 {
-  if (_icon.get()) _main->setWindowIcon(*_icon);
+  if (_icon.get())
+      _main->setWindowIcon(*_icon);
 
-  const QString save_filename=QFileDialog::getSaveFileName
-    (
-     this,
+  const QString fn = QFileDialog::getSaveFileName(this,
      "Save image function to an XML file",
-     ".",
+     _main->functionPath,
      "Functions (*.xml)"
      );
 
-  if (!save_filename.isEmpty())
-    {
-      std::ofstream file(save_filename.toLocal8Bit());
+  if (! fn.isEmpty())
+  {
+      std::ofstream file(fn.toLocal8Bit());
       _image_function->save_function(file);
       file.flush();
-      if (!file)
-	{
-	  QMessageBox::critical(this,"Evolvotron","File write failed");
-	}
-    }
+      if (file)
+         _main->functionPath = fn;
+      else
+         QMessageBox::critical(this,"Evolvotron","File write failed");
+  }
 }
 
 void MutatableImageDisplay::load_function_file(const QString& load_filename)
@@ -898,18 +897,17 @@ void MutatableImageDisplay::load_function_file(const QString& load_filename)
 
 void MutatableImageDisplay::menupick_load_function()
 {
-  const QString load_filename=QFileDialog::getOpenFileName
-    (
-     this,
+  const QString fn = QFileDialog::getOpenFileName(this,
      "Load image function from an XML file",
-     ".",
+     _main->functionPath,
      "Functions (*.xml)"
      );
 
-  if (!load_filename.isEmpty())
-    {
-      load_function_file(load_filename);
-    }
+  if (! fn.isEmpty())
+  {
+      _main->functionPath = fn;
+      load_function_file(fn);
+  }
 }
 
 void MutatableImageDisplay::menupick_big_resizable()

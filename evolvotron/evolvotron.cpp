@@ -199,6 +199,9 @@ int main(int argc,char* argv[])
     std::clog << "\n";
   }
 
+  app.setOrganizationName("Evolvotron");
+  app.setApplicationName("Evolvotron");
+
   EvolvotronMain*const main_widget=new EvolvotronMain
       (
        0,

@@ -333,6 +333,12 @@ EvolvotronMain::EvolvotronMain
       menuBar()->hide();
       statusBar()->hide();
     }
+
+  {
+  QSettings settings;
+  resize( settings.value("window-size", QSize(640, 480)).toSize() );
+  functionPath = settings.value("func-path").toString();
+  }
 }
 
 /*! If this is being destroyed then the whole application is going down.
@@ -599,6 +605,15 @@ void EvolvotronMain::tick()
 	}
     }
 }    
+
+void EvolvotronMain::closeEvent(QCloseEvent* e)
+{
+  QSettings settings;
+  settings.setValue("window-size", size());
+  settings.setValue("func-path", functionPath);
+
+  QMainWindow::closeEvent(e);
+}
 
 void EvolvotronMain::keyPressEvent(QKeyEvent* e)
 {

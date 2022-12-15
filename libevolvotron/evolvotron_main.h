@@ -296,6 +296,9 @@ class EvolvotronMain : public QMainWindow
   void spawn_all(MutatableImageDisplay* display,SpawnMemberFn method,const std::string& action_name);
 
  public:
+  //! Last browsed function load/save directory.
+  QString functionPath;
+
   //! Constructor.
   EvolvotronMain
     (
@@ -393,6 +396,8 @@ class EvolvotronMain : public QMainWindow
   void list_known(std::ostream& out) const;
 
  protected:
+  void closeEvent(QCloseEvent* e);
+
   //! Handle key-presses
   void keyPressEvent(QKeyEvent* e);
 
