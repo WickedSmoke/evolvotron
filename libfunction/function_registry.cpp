@@ -21,61 +21,46 @@
   \brief Implementation for class FunctionRegistry and associated classes.
 */
 
-
-
 #include "function_registry.h"
-
 #include "register_all_functions.h"
 
 FunctionRegistry::FunctionRegistry()
 {
-  register_all_functions(*this);
-  std::clog << "FunctionRegistry created\n";
+    register_all_functions(*this);
+    std::clog << "FunctionRegistry created\n";
 }
 
 FunctionRegistry::~FunctionRegistry()
 {
-  _registry_by_name.clear();
-  std::clog << "FunctionRegistry destroyed\n";
+    for (iterator it = begin(); it != end(); it++)
+        delete it->second;
+    std::clog << "FunctionRegistry destroyed\n";
 }
 
 //! Return the registration for the function named (returns 0 if unknown)
 const FunctionRegistration* FunctionRegistry::lookup(const std::string& f) const
 {
-  Registrations::const_iterator it=_registry_by_name.find(f);
-  if (it==_registry_by_name.end())
-    return 0;
-  else
-    {
-#if BOOST_VERSION >= 103400
-      return it->second;
-#else
-      return &*it;
-#endif
-    }
+    const_iterator it = find(f);
+    if (it == end())
+        return 0;
+    else
+        return it->second;
 }
 
 std::ostream& FunctionRegistry::status(std::ostream& out) const
 {
-  out << "Registered functions:\n";
-  for (Registrations::const_iterator it=_registry_by_name.begin();it!=_registry_by_name.end();it++)
-    {
-      out 
-	<< "  " 
-#if BOOST_VERSION >= 103400
-	<< it->first
-#else
-	<< it.key() 
-#endif
-	<< "\n";
-    }
-  return out;
+    out << "Registered functions:\n";
+    for (const_iterator it = begin(); it != end(); it++)
+        out << "  " << it->first << "\n";
+    return out;
 }
 
-void FunctionRegistry::register_function(const FunctionRegistration& r)
+bool FunctionRegistry::register_function(FunctionRegistration* r)
 {
-  if (_registry_by_name.find(r.name())==_registry_by_name.end())
+    if (find(r->name) == end())
     {
-      _registry_by_name[r.name()]=r;
+        (*this)[r->name] = r;
+        return true;
     }
+    return false;
 }

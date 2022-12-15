@@ -69,37 +69,26 @@ void MutationParameters::reset()
   _base_probability_iterations_change_jump=0.02;
 
   _function_weighting.clear();
-  for (
-       FunctionRegistry::Registrations::const_iterator it=_function_registry->registrations().begin();
-       it!=_function_registry->registrations().end();
-       it++
-       )
-    {
-      if (_debug_mode)
+  for (FunctionRegistry::const_iterator it = _function_registry->begin();
+       it != _function_registry->end();
+       it++)
+  {
+	const FunctionRegistration* fn = it->second;
+    if (_debug_mode)
 	{
-	  const FunctionRegistration*const fn=
-#if BOOST_VERSION >= 103400
-	    it->second;
-#else
-	    &*it;
-#endif
-	  real initial_weight=(fn->name()=="FunctionNoiseOneChannel" ? 1.0 : 1.0/1024.0);
+	  real initial_weight=(fn->name == "FunctionNoiseOneChannel" ? 1.0 : 1.0/1024.0);
 	  _function_weighting.insert(std::make_pair(fn,initial_weight));
 	}
-      else
+    else
 	{
 	  real initial_weight=1.0;
-	  const FunctionRegistration*const fn=
-#if BOOST_VERSION >= 103400
-	    it->second;
-#else
-	    &*it;
-#endif
-	  if (fn->classification() & FnIterative) initial_weight=1.0/1024.0;  // Ouch iterative functions are expensive
-	  if (fn->classification() & FnFractal) initial_weight=1.0/1024.0;  // Yuk fractals are ugly
+	  if (fn->classification & FnIterative)
+          initial_weight=1.0/1024.0;  // Ouch iterative functions are expensive
+	  if (fn->classification & FnFractal)
+          initial_weight=1.0/1024.0;  // Yuk fractals are ugly
 	  _function_weighting.insert(std::make_pair(fn,initial_weight));
 	}
-    }
+  }
 
   recalculate_function_stuff();
 
@@ -162,7 +151,7 @@ std::unique_ptr<FunctionNode> MutationParameters::random_function_stub(bool exci
 std::unique_ptr<FunctionNode> MutationParameters::random_function() const
 {
   const FunctionRegistration* fn_reg=random_weighted_function_registration();
-  return (*(fn_reg->stubnew_fn()))(*this,false);    
+  return (*(fn_reg->stubnew_fn))(*this,false);
 }
 
 const FunctionRegistration* MutationParameters::random_weighted_function_registration() const
@@ -192,7 +181,7 @@ real MutationParameters::random_function_branching_ratio() const
        it++
        )
     {
-      weighted_args+=(*it).second*(*it).first->args();
+      weighted_args += (*it).second*(*it).first->args;
     }
   return weighted_args/_function_weighting_total;
 }
@@ -212,7 +201,7 @@ void MutationParameters::randomize_function_weightings_for_classifications(uint 
        it++
        )
     {
-      if (classification_mask==0 || classification_mask==static_cast<uint>(-1) || ((*it).first->classification() & classification_mask))
+      if (classification_mask==0 || classification_mask==static_cast<uint>(-1) || ((*it).first->classification & classification_mask))
 	{
 	  const int i=static_cast<int>(floor(11.0*r01()));
 	  (*it).second=pow(2,-i);

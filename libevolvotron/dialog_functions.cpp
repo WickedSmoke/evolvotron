@@ -79,19 +79,14 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
       scrollcontent->setLayout(new QVBoxLayout);
       scrollarea->setWidget(scrollcontent);
 
-      for (FunctionRegistry::Registrations::const_iterator it=_parent->mutation_parameters().function_registry().registrations().begin();
-	   it!=_parent->mutation_parameters().function_registry().registrations().end();
-	   it++)
-	{
-	  const FunctionRegistration& fn=
-#if BOOST_VERSION >= 103400
-	    *(it->second);
-#else
-	    *it;
-#endif
-	  if (c==-1 || fn.classification()&(1<<c))
+      const FunctionRegistry& reg =
+           _parent->mutation_parameters().function_registry();
+      for (const auto& it : reg)
+      {
+        const FunctionRegistration* fn = it.second;
+        if (c==-1 || fn->classification & (1<<c))
 	    {
-	      QGroupBox*const g=new QGroupBox(fn.name().c_str());
+	      QGroupBox*const g=new QGroupBox(fn->name.c_str());
 	      scrollarea->widget()->layout()->addWidget(g);
 	      g->setLayout(new QHBoxLayout);
 	      
@@ -109,7 +104,7 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
 	      s->setSizePolicy(spx);
 	      g->layout()->addWidget(new QLabel("1"));
 	      
-	      _slider_to_function.insert(std::make_pair(s,&fn));
+	      _slider_to_function.insert(std::make_pair(s,fn));
 
 	      SignalExpanderValueChangedQSlider*const sx=new SignalExpanderValueChangedQSlider(this,s);
 	      connect(
@@ -144,8 +139,8 @@ DialogFunctions::DialogFunctions(EvolvotronMain* parent,MutationParametersQObjec
                 s,SLOT(addStep())
               );
 #endif
-	    }
-	}
+        }
+      }
     }
 
   // And add another tab for all the branching-ratio/dilution controls
@@ -300,10 +295,10 @@ void DialogFunctions::changed_function_weighting(QSlider* s,int v)
     }
   else
     {
-      const FunctionRegistration* fn=(*it).second;
+      const FunctionRegistration* fn = (*it).second;
       
       const real w=pow(2,v);
-      std::clog << fn->name() << " weighting changed to " << w << "\n";
+      std::clog << fn->name << " weighting changed to " << w << "\n";
       _mutation_parameters->change_function_weighting(fn,w);
     }
 }

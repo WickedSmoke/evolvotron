@@ -46,7 +46,7 @@ std::unique_ptr<FunctionTop> FunctionTop::initial(const MutationParameters& para
     {
       if (specific_fn)
 	{
-	  fn=(*(specific_fn->stubnew_fn()))(parameters,true);
+	  fn=(*(specific_fn->stubnew_fn))(parameters,true);
 	}
       else
 	{
@@ -56,7 +56,7 @@ std::unique_ptr<FunctionTop> FunctionTop::initial(const MutationParameters& para
   
       assert(fn->ok());
       
-      if (fn->is_constant() && !(specific_fn && specific_fn->name()=="FunctionConstant"))
+      if (fn->is_constant() && !(specific_fn && specific_fn->name == "FunctionConstant"))
 	{
 	  fn.reset();
 	}

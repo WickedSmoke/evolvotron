@@ -25,43 +25,25 @@
 #define _function_registry_h_
 
 #include "common.h"
-
 #include "function_registration.h"
 
 //! Class acting as a dictionary from function name to registration info.
 /*! Intended to be used as singleton; get() obtains instance.
   This holds the "definitive" collection of registrations.  FunctionRegistrations can be compared using pointer identiy.
  */
-class FunctionRegistry
+struct FunctionRegistry : public std::map<std::string,FunctionRegistration*>
 {
- public:
-  //! Constuctor public to Singleton boilerplate can new it.
-  /*! \todo Figure out how to make this protected/private.
-   */
-  FunctionRegistry();
-  ~FunctionRegistry();
+    FunctionRegistry();
+    ~FunctionRegistry();
 
-  //! Return the registration for the function named (returns 0 if unknown)
-  const FunctionRegistration* lookup(const std::string& f) const;
+    //! Return the registration for the function named (returns 0 if unknown)
+    const FunctionRegistration* lookup(const std::string& f) const;
 
-  //! typedefed for convenience
-  typedef boost::ptr_map<std::string,FunctionRegistration> Registrations;
-  
-  //! Just get the collection of registrations.
-  const Registrations& registrations() const
-    {
-      return _registry_by_name;
-    }
+    //! Dump list of registered functions
+    std::ostream& status(std::ostream& out) const;
 
-  //! Dump list of registered functions
-  std::ostream& status(std::ostream& out) const;
-
-  //! Register a function.  Handles duplicates gracefully. 
-  void register_function(const FunctionRegistration& r);
-
- protected:
-  //! Dictionary from names to Registration objects
-  Registrations _registry_by_name;
+    //! Register a function.  Handles duplicates gracefully.
+    bool register_function(FunctionRegistration* r);
 };
 
 #endif

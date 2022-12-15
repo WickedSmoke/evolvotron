@@ -208,7 +208,7 @@ std::unique_ptr<FunctionNode> FunctionNode::create(const FunctionRegistry& funct
   const FunctionRegistration*const reg=function_registry.lookup(info.type());
   if (reg)
     {
-      return std::unique_ptr<FunctionNode>((*(reg->create_fn()))(function_registry,info,report));
+      return std::unique_ptr<FunctionNode>((*(reg->create_fn))(function_registry,info,report));
     }
   else
     {

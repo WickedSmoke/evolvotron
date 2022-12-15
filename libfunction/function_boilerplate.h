@@ -50,8 +50,8 @@ template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint C
   virtual const char* thisname() const
     =0;
 
-  //! Registration member returns a reference to class meta-information.
-  static const FunctionRegistration get_registration(const char* fn_name);
+  //! Make function meta-information.
+  static FunctionRegistration* make_registration(const char* fn_name);
     
   //! Bits give some classification of the function type
   static uint type_classification() {return CLASSIFICATION;}
@@ -95,9 +95,9 @@ FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::~Fu
 
 //! Provide a complete registration for the function
 template <typename FUNCTION,uint PARAMETERS,uint ARGUMENTS,bool ITERATIVE,uint CLASSIFICATION> 
-const FunctionRegistration FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::get_registration(const char* fn_name)
+FunctionRegistration* FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::make_registration(const char* fn_name)
 {
-  return FunctionRegistration
+  return new FunctionRegistration
     (
      std::string(fn_name),
      &FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSIFICATION>::stubnew,
@@ -205,7 +205,7 @@ std::ostream& FunctionBoilerplate<FUNCTION,PARAMETERS,ARGUMENTS,ITERATIVE,CLASSI
 //! Macro to push registrations through to registry.
 /*! Used by register_all_functions.h/register_all_functions.cpp
 */
-#define REGISTER(R,FN) R.register_function(FN::get_registration(#FN));
+#define REGISTER(R,FN) R.register_function(FN::make_registration(#FN));
 #define REGISTER_DCL(FN) extern void register_ ## FN(FunctionRegistry&);
 #define REGISTER_IMP(FN) void register_ ## FN(FunctionRegistry& r){REGISTER(r,FN);}
 

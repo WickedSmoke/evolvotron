@@ -48,108 +48,40 @@ extern const char*const function_classification_name[FnClassifications];
 typedef std::unique_ptr<FunctionNode> (*FunctionNodeStubNewFnPtr)(const MutationParameters&,bool);
 typedef std::unique_ptr<FunctionNode> (*FunctionNodeCreateFnPtr)(const FunctionRegistry&,const FunctionNodeInfo&,std::string&);
 
-//! Class for meta information about functions.
-class FunctionRegistration
+//! Holds meta information about functions.
+struct FunctionRegistration
 {
- public:
-  
   //! Constructor.
   FunctionRegistration(const std::string& n,FunctionNodeStubNewFnPtr fs,FunctionNodeCreateFnPtr fc,uint np,uint na,bool i,uint fnc)
-    :_name(n)
-    ,_stubnew_fn(fs)
-    ,_create_fn(fc)
-    ,_params(np)
-    ,_args(na)
-    ,_iterative(i)
-    ,_classification(fnc)
+    : name(n)
+    ,stubnew_fn(fs)
+    ,create_fn(fc)
+    ,params(np)
+    ,args(na)
+    ,iterative(i)
+    ,classification(fnc)
     {}
-
-  //! Void constructor
-  FunctionRegistration()
-    :_name()
-    ,_stubnew_fn(0)
-    ,_create_fn(0)
-    ,_params(0)
-    ,_args(0)
-    ,_iterative(false)
-    ,_classification(0)
-    {}
-  
-  //! Constructor (copy)
-  FunctionRegistration(const FunctionRegistration& f)
-    :_name(f._name)
-    ,_stubnew_fn(f._stubnew_fn)
-    ,_create_fn(f._create_fn)
-    ,_params(f._params)
-    ,_args(f._args)
-    ,_iterative(f._iterative)
-    ,_classification(f._classification)
-    {}
-
-  //! Accessor.
-  const std::string& name() const
-    {
-       return _name;
-    }
-
-  //! Accessor.
-  FunctionNodeStubNewFnPtr stubnew_fn() const
-    {
-      return _stubnew_fn;
-    }
-
-  //! Accessor.
-  FunctionNodeCreateFnPtr create_fn() const
-    {
-      return _create_fn;
-    }
-
-  //! Accessor.
-  uint params() const
-    {
-      return _params;
-    }
-
-  //! Accessor.
-  uint args() const
-    {
-      return _args;
-    }
-
-  //! Accessor.
-  bool iterative() const
-    {
-      return _iterative;
-    }
-
-  //! Accessor.
-  uint classification() const
-    {
-      return _classification;
-    }
-
- protected:
 
   //! Name of the function.
-  std::string _name;
+  std::string name;
 
   //! The FunctionNodeUsing's stubnew function.
-  FunctionNodeStubNewFnPtr _stubnew_fn;
+  FunctionNodeStubNewFnPtr stubnew_fn;
 
   //! The FunctionNodeUsing's create function.
-  FunctionNodeCreateFnPtr _create_fn;
+  FunctionNodeCreateFnPtr create_fn;
 
   //! Number of parameters
-  uint _params;
+  uint params;
 
   //! Number of arguments
-  uint _args;
+  uint args;
 
   //! Whether iterative
-  bool _iterative;
+  bool iterative;
 
   //! Classification bits
-  uint _classification;
+  uint classification;
 };
 
 #endif
