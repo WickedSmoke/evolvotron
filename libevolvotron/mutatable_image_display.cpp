@@ -797,8 +797,7 @@ void MutatableImageDisplay::menupick_save_image()
 	      
 	      if (_offscreen_images.size()>1)
 		{
-		  QString frame_component;
-		  frame_component.sprintf(".f%06d",f);
+		  QString frame_component = QString::asprintf(".f%06d",f);
 		  int insert_point=save_filename.lastIndexOf(QString("."));
 		  if (insert_point==-1)
 		    {

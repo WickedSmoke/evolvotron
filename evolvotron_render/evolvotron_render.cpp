@@ -173,8 +173,7 @@ int main(int argc,char* argv[])
 
 	  if (frames>1)
 	    {
-	      QString frame_component;
-	      frame_component.sprintf(".f%06d",frame);
+	      QString frame_component = QString::asprintf(".f%06d",frame);
 	      int insert_point=save_filename.lastIndexOf(QString("."));
 	      if (insert_point==-1)
 		{

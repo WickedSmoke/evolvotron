@@ -7,8 +7,7 @@ mutation and user-selection driven evolution.  If you like lava-lamps,
 and still think the Mandelbrot set is cool, this could be the software
 for you.
 
-It uses C++ (and STL+Boost) & Qt (which is Qt Group's GUI
-toolkit; it's ABSOLUTELY NOTHING TO DO WITH APPLE'S QUICKTIME!).
+It uses C++, Boost, and the Qt GUI toolkit (v5.5 or later).
 It's multithreaded (using Qt's threading API).
 
 Home page: http://www.bottlenose.net/share/evolvotron
