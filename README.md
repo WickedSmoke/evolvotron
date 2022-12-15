@@ -50,12 +50,12 @@ set up qmake.  You do NOT need to be root (there is no install stage).
 
 In the top level directory, you can either do
 
-  qmake "VERSION_NUMBER=x.x.x" main.pro
-  make
+    qmake "VERSION_NUMBER=x.x.x" main.pro
+    make
 
 or just have both done for you by doing
 
-  ./BUILD.sh
+    ./BUILD.sh
 
 which will pick up the VERSION_NUMBER from the file VERSION in this directory.
 
@@ -63,13 +63,15 @@ Make will recurse into and build the libfunction & libevolvotron directories
 (which is 99% of the work) and some additional subdirectories with 
 executables.
 
-Among other things, this will give you an "evolvotron" 
+Among other things, this will give you an `evolvotron`
 executable which you can run immediately with
-  ./evolvotron/evolvotron
+
+    ./evolvotron/evolvotron
+
 and/or copy where you like (there are no shared libs or "resource files"
 needing additional attention). 
 
-See the USAGE file (or in-app manual) for instructions.
+See the `USAGE` file (or in-app manual) for instructions.
 
 The author mainly tracks Debian stable.
 
@@ -86,19 +88,20 @@ with regard to automatically choosing how many threads to run and controlling
 thread priority).
 
 All the platform specific code should live in
-  libevolvtron/platform_specific.cpp
+  `libevolvtron/platform_specific.cpp`
 and is selected by compile options
-  -DPLATFORM_LINUX or -DPLATFORM_BSD
+  `-DPLATFORM_LINUX` or `-DPLATFORM_BSD`
 (with more potentially addable for other platforms).
 
 Setting the appropriate build options is most easily set by editing
 an appropriate
-  DEFINES+=PLATFORM_LINUX
-or 
-  DEFINES+=PLATFORM_BSD
-near the top of the
-  common.pro 
-file.  Qt doesn't make a fine enough distinction between unix platforms
+
+    DEFINES+=PLATFORM_LINUX
+      or 
+    DEFINES+=PLATFORM_BSD
+
+near the top of the `common.pro` file.
+Qt doesn't make a fine enough distinction between unix platforms
 to decide completely automatically, and the situation is further complicated
 by e.g Fink's Qt not considering itself to be a Qt 'macx' build.
 
@@ -106,14 +109,16 @@ by e.g Fink's Qt not considering itself to be a Qt 'macx' build.
 
 Many build failures are simply because the necessary Qt build tools
 aren't in your path:
-  which qmake
-  which moc
+
+    which qmake
+    which moc
+
 should both find something.
 
 If you have gcc/c++ compile problems problems:
 
 If you have to change anything, the chances are it should be changed in
-common.pro.  Remember that any Makefiles you can see are generated
+`common.pro`.  Remember that any Makefiles you can see are generated
 by qmake from .pro files and therefore hacking on the Makefiles is
 generally a fruitless exercise.
 
@@ -128,28 +133,31 @@ INSTALL
 The evolvotron sources don't try to provide an installer.
 The assumption is that packagers will have a better idea of where
 files should be copied to on their systems, and the tools to do it.
-Doing
-  make install
-will recursively descend into the various build directories, but
-does nothing in each one.
+Doing `make install` will recursively descend into the various build
+directories, but does nothing in each one.
 
 The things you're likely to want to install are
 (in order of interest):
 
 The main executable and man page:
-  ./evolvotron/evolvotron
-  ./man/man1/evolvotron.1
+
+    ./evolvotron/evolvotron
+    ./man/man1/evolvotron.1
 
 User documentation (standalone version of the builtin manual):
-  USAGE
+
+    USAGE
+
 An HTML version of the above:
-  ./evolvotron.html
+
+    ./evolvotron.html
 
 Command-line driven tools and their man pages:
-  ./evolvotron_render/evolvotron_render
-  ./man/man1/evolvotron_render.1
-  ./evolvotron_mutate/evolvotron_mutate
-  ./man/man1/evolvotron_mutate.1
+
+    ./evolvotron_render/evolvotron_render
+    ./man/man1/evolvotron_render.1
+    ./evolvotron_mutate/evolvotron_mutate
+    ./man/man1/evolvotron_mutate.1
 
 There are NO extra supporting files built
 (e.g shared libraries, config files, "resource" files)
@@ -172,9 +180,7 @@ rpm/
 BUILDING CODE DOCUMENTATION
 ---------------------------
 If you have doxygen (and graphviz too) and want to build
-the source code documentation, execute 
-  ./mkdoc
-at the top level.
-The code documentation then appears in ./doc/html/
+the source code documentation, execute `./mkdoc` at the top level.
+The code documentation then appears in `./doc/html/`.
 This hasn't been tested in a long while now, although the
 doxygen commenting style has been kept up.
