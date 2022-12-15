@@ -32,7 +32,7 @@
 class XY
 {
  protected:
-  boost::array<real,2> _rep;
+  real _rep[2];
 
  public:
 
@@ -63,13 +63,6 @@ class XY
   XY()
     {}
 
-  //! Copy constructor.
-  XY(const XY& v)
-    {
-      _rep[0]=v._rep[0];
-      _rep[1]=v._rep[1];
-    }
-  
   //! Initialise from separate components.
   XY(real vx,real vy)
     {

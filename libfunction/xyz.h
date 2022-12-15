@@ -36,7 +36,7 @@ class Random01;
 class XYZ
 {
  protected:
-  boost::array<real,3> _rep;
+  real _rep[3];
 
  public:
 
@@ -78,14 +78,6 @@ class XYZ
    */
   XYZ()
     {}
-
-  //! Copy constructor.
-  XYZ(const XYZ& v)
-    {
-      _rep[0]=v._rep[0];
-      _rep[1]=v._rep[1];
-      _rep[2]=v._rep[2];
-    }
 
   //! Initialise from an XY and a z component.
   XYZ(const XY& p,real vz)
