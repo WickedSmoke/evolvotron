@@ -61,11 +61,13 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
   std::clog << "...completed compute farm shut down\n";
 }
 
+#if 0
 //! Predicate function to test whether a task has been aborted
 static bool predicate_aborted(const boost::shared_ptr<const MutatableImageComputerTask> t)
 {
   return t->aborted();
 }
+#endif
 
 void MutatableImageComputerFarm::fasttrack_aborted()
 {

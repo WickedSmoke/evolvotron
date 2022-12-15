@@ -581,7 +581,7 @@ void EvolvotronMain::tick()
   _farm[0]->fasttrack_aborted();
   if (_farm[1].get()) _farm[1]->fasttrack_aborted();
 
-  QTime watchdog;
+  QElapsedTimer watchdog;
   watchdog.start();
 
   for (int which_farm=0;which_farm<(_farm[1].get() ? 2 : 1);which_farm++)
