@@ -24,6 +24,8 @@ mass media, I'd love to hear about it: please email!
 Have fun
 Tim
 
+![Screenshot](https://wickedsmoke.github.io/image/evolvotron.jpg)
+
 LICENSE
 -------
 This program is free software; you can redistribute it and/or
