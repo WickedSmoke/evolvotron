@@ -299,6 +299,8 @@ class EvolvotronMain : public QMainWindow
   //! Last browsed function load/save directory.
   QString functionPath;
 
+  QPixmap lockPix;
+
   //! Constructor.
   EvolvotronMain
     (

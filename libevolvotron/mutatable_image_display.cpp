@@ -461,6 +461,11 @@ void MutatableImageDisplay::paintEvent(QPaintEvent*)
   QPainter painter(this);
   painter.drawPixmap(0,0,_offscreen_pixmaps[_current_frame]);
 
+  if (_full_functionality && locked()) {
+      const QPixmap& pix = _main->lockPix;
+      painter.drawPixmap(width() - (pix.width()+2), 2, pix);
+  }
+
   // If this is the first paint event after a resize we can start computing images for the new size.
   if (_resize_in_progress)
     {
@@ -514,9 +519,17 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
     }
   else if (_full_functionality && event->button()==Qt::LeftButton)
     {
-      if (_icon.get()) _main->setWindowIcon(*_icon);
+      if (event->x() > (width() - 32) && event->y() < 32)
+      {
+        menupick_lock();
+      }
+      else
+      {
+        if (_icon.get())
+          _main->setWindowIcon(*_icon);
 
-      menupick_spawn();
+        menupick_spawn();
+      }
     }
 }
 

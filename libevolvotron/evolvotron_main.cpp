@@ -207,6 +207,8 @@ EvolvotronMain::EvolvotronMain
   ,_statusbar_tasks_enlargement(0)
   ,_last_spawn_method(&EvolvotronMain::spawn_normal)
 {
+  lockPix = QPixmap(":/icons/lock.png");
+
   setAttribute(Qt::WA_DeleteOnClose,true);
   setAttribute(Qt::WA_QuitOnClose,true);
 
