@@ -209,9 +209,6 @@ EvolvotronMain::EvolvotronMain
 {
   lockPix = QPixmap(":/icons/lock.png");
 
-  setAttribute(Qt::WA_DeleteOnClose,true);
-  setAttribute(Qt::WA_QuitOnClose,true);
-
   setMinimumSize(640,480);
 
   // Need to create this first or DialogMutationParameters might cause one to be created too.
@@ -238,7 +235,7 @@ EvolvotronMain::EvolvotronMain
   _popupmenu_file->addAction("Restart (Preserve mutation parameters and locks)",this,SLOT(reset_warm()),QKeySequence("t"));
   _popupmenu_file->addAction("Remix (Randomize function weights and restart)",this,SLOT(reset_randomized()),QKeySequence("x"));
   _popupmenu_file->addSeparator();
-  _popupmenu_file->addAction("Quit",qApp,SLOT(quit()),QKeySequence("q"));
+  _popupmenu_file->addAction("&Quit", this, SLOT(close()), QKeySequence::Quit);
 
   _popupmenu_edit=menuBar()->addMenu("&Edit");
   _popupmenu_edit_undo_action=_popupmenu_edit->addAction("Undo",this,SLOT(undo()),QKeySequence("u"));
@@ -257,10 +254,10 @@ EvolvotronMain::EvolvotronMain
 
   _popupmenu_settings->addSeparator();
 
-  _menu_action_fullscreen=_popupmenu_settings->addAction("Fullscreen",this,SLOT(toggle_fullscreen()),QKeySequence("f"));
+  _menu_action_fullscreen=_popupmenu_settings->addAction("Fullscreen",this,SLOT(toggle_fullscreen()),QKeySequence(Qt::CTRL + Qt::Key_F));
   _menu_action_fullscreen->setCheckable(true);
   _menu_action_fullscreen->setChecked(start_fullscreen);
-  _menu_action_hide_menu=_popupmenu_settings->addAction("Hide menu and statusbar",this,SLOT(toggle_hide_menu()),QKeySequence("m"));  
+  _menu_action_hide_menu=_popupmenu_settings->addAction("Hide menu and statusbar",this,SLOT(toggle_hide_menu()),QKeySequence(Qt::CTRL + Qt::Key_M));
   _menu_action_hide_menu->setCheckable(true);
   _menu_action_hide_menu->setChecked(start_menuhidden);
 
@@ -268,10 +265,10 @@ EvolvotronMain::EvolvotronMain
   menuBar()->addSeparator();
 
   _popupmenu_help=menuBar()->addMenu("&Help");
-  _popupmenu_help->addAction("Quick Reference",_dialog_help_short,SLOT(show()));
-  _popupmenu_help->addAction("User Manual",_dialog_help_long,SLOT(show()));
+  _popupmenu_help->addAction("Quick &Reference",_dialog_help_short,SLOT(show()));
+  _popupmenu_help->addAction("User &Manual",_dialog_help_long,SLOT(show()),QKeySequence::HelpContents);
   _popupmenu_help->addSeparator();
-  _popupmenu_help->addAction("About",_dialog_about,SLOT(show()));
+  _popupmenu_help->addAction("&About",_dialog_about,SLOT(show()));
 
   _checkbox_autocool_enable=new QCheckBox("Autocool");
   _checkbox_autocool_enable->setToolTip("Autocooling gradually reduces the chance and magnitude of mutations with time.");

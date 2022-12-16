@@ -70,8 +70,8 @@
   evolvotron actions which bring up dialog boxes (e.g save) seem 
   to generally behave fairly sensibly but child windows 
   (e.g enlargements or dialogs) can show some &quot;interesting&quot; behaviour. 
-  Fullscreen mode can be toggled within the application using &quot;F&quot; key. 
-  The &quot;Esc&quot; key will also exit it. 
+  Fullscreen mode can be toggled within the application using CTRL-F key. 
+  The Esc key will also exit it. 
 </li>
 </ul>
 </p>
@@ -107,7 +107,7 @@
 <p>
   <ul><li>-M, --menuhide <br>
   Start with menu and status bar hidden. Nice with --fullscreen. 
-  Hiding can be toggled within the application using ctrl-m. 
+  Hiding can be toggled within the application using CTRL-M. 
   The Esc key will also bring them back. 
 </li>
 </ul>
@@ -419,20 +419,17 @@
 </ul>
 </p>
 <p>
-  <ul><li>&quot;q&quot; quits the application. 
+  <ul><li>&quot;CTRL-Q&quot; quits the application. 
 </li>
 </ul>
 </p>
 <p>
-  <ul><li>&quot;u&quot; (and also Ctrl-z) does an undo. 
+  <ul><li>&quot;u&quot; (and also CTRL-Z) does an undo. 
 </li>
 </ul>
 </p>
 <p>
-  <ul><li>&quot;f&quot;: full-screen mode (on X11, Qt does this by asking the 
-  window manager for a screen-filling undecorated window, and the 
-  documentation contains some dire warnings about problems with broken 
-  window managers). See also &quot;-F&quot; command line option. 
+  <ul><li>&quot;CTRL-F&quot;: full-screen mode. See also &quot;-F&quot; command line option. 
   Fullscreen mode propagates to enlarged image display windows. 
   NB The application may completely disappear from the screen for 
   a brief interval while switching mode. 
@@ -440,7 +437,7 @@
 </ul>
 </p>
 <p>
-  <ul><li>&quot;m&quot; : hides status and menu-bar hiding, which can be nice when 
+  <ul><li>&quot;CTRL-M&quot;: hides status and menu-bar hiding, which can be nice when 
   in full-screen or window-maximised mode. See also &quot;-M&quot; 
   command line option. Also note that while the menu bar 
   is hidden, most of these keyboard shortcuts won't function 
@@ -449,7 +446,7 @@
 </ul>
 </p>
 <p>
-  <ul><li>Esc : exits full-screen and/or menu-hiding mode, putting the 
+  <ul><li>Esc: exits full-screen and/or menu-hiding mode, putting the 
   application into its normal default state. 
 </li>
 </ul>
@@ -547,7 +544,7 @@
   adjustments every iteration... use those tools for final 
   polishing of your masterpiece. 
   </li><li>You can quickly cycle through a lot of initial images (until 
-  you find one with real potential) by bashing on Ctrl-r to 
+  you find one with real potential) by bashing on CTRL-R to 
   repeatedly restart. 
   </li><li>To add variety to an image's mutations, nudge it with a small 
   middle-mouse drag. This introduces a top level transform, and 

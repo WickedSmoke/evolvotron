@@ -53,8 +53,8 @@ GENERAL OPTIONS
 	evolvotron actions which bring up dialog boxes (e.g save) seem
 	to generally behave fairly sensibly but child windows 
 	(e.g enlargements or dialogs) can show some "interesting" behaviour.  
-	Fullscreen mode can be toggled within the application using "F" key.  
-	The "Esc" key will also exit it.
+	Fullscreen mode can be toggled within the application using CTRL-F key.
+	The Esc key will also exit it.
 
   -g, --grid <cols>x<rows>
 	Sets size of the grid of image display cells in the main application area (defaults to 5x6)
@@ -75,7 +75,7 @@ GENERAL OPTIONS
 
   -M, --menuhide
 	Start with menu and status bar hidden.  Nice with --fullscreen.
-	Hiding can be toggled within the application using ctrl-m.
+	Hiding can be toggled within the application using CTRL-M.
 	The Esc key will also bring them back.
 
   -p, --spheremap
@@ -301,25 +301,22 @@ MAIN WINDOW
 
 - "r"/"t"/"x" perform various starts of reset/restart.
 
-- "q" quits the application.
+- "CTRL-Q" quits the application.
 
-- "u" (and also Ctrl-z) does an undo.
+- "u" (and also CTRL-Z) does an undo.
 
-- "f": full-screen mode (on X11, Qt does this by asking the
-window manager for a screen-filling undecorated window, and the
-documentation contains some dire warnings about problems with broken
-window managers).  See also "-F" command line option.
+- "CTRL-F": full-screen mode.  See also "-F" command line option.
 Fullscreen mode propagates to enlarged image display windows.
 NB The application may completely disappear from the screen for 
 a brief interval while switching mode.
 
-- "m" : hides status and menu-bar hiding, which can be nice when 
+- "CTRL-M": hides status and menu-bar hiding, which can be nice when
 in full-screen or window-maximised mode.  See also "-M" 
 command line option.  Also note that while the menu bar
 is hidden, most of these keyboard shortcuts won't function
 as they're tied to the menu system.
 
-- Esc : exits full-screen and/or menu-hiding mode, putting the
+- Esc: exits full-screen and/or menu-hiding mode, putting the
 application into its normal default state. 
 
 ENLARGEMENT WINDOWS
@@ -407,7 +404,7 @@ TIPS
   adjustments every iteration... use those tools for final
   polishing of your masterpiece.
 - You can quickly cycle through a lot of initial images (until
-  you find one with real potential) by bashing on Ctrl-r to
+  you find one with real potential) by bashing on CTRL-R to
   repeatedly restart.
 - To add variety to an image's mutations, nudge it with a small
   middle-mouse drag.  This introduces a top level transform, and

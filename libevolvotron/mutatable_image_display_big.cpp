@@ -59,7 +59,7 @@ void MutatableImageDisplayBig::keyPressEvent(QKeyEvent* e)
       else
 	showNormal();  
     }
-  else if (e->key()==Qt::Key_F && !e->modifiers())
+  else if (e->key()==Qt::Key_F && (e->modifiers() & Qt::ControlModifier))
     {
       if (isFullScreen())
 	{
