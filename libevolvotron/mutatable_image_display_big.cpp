@@ -32,11 +32,6 @@ MutatableImageDisplayBig::MutatableImageDisplayBig(EvolvotronMain* mn)
   ,_main(mn)
 {
   setAttribute(Qt::WA_DeleteOnClose,true);
-
-  setWindowTitle("Evolvotron");
-  setMinimumSize(256,256);
-  
-  //setSizeGripEnabled(true); // Only an option if we give the window a statusbar, or make it a dialog
 }
 
 /*! Don't think destructor needs to do anything to _display... Qt takes care of it

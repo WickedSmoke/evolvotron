@@ -924,57 +924,57 @@ void MutatableImageDisplay::menupick_load_function()
 
 void MutatableImageDisplay::menupick_big_resizable()
 {
-  spawn_big(false,QSize(0,0));
+  spawn_big(0,0);
 }
 
 void MutatableImageDisplay::menupick_big_640x480()
 {
-  spawn_big(true,QSize(640,480));
+  spawn_big(640,480);
 }
 
 void MutatableImageDisplay::menupick_big_1024x768()
 {
-  spawn_big(true,QSize(1024,768));
+  spawn_big(1024,768);
 }
 
 void MutatableImageDisplay::menupick_big_1280x960()
 {
-  spawn_big(true,QSize(1280,960));
+  spawn_big(1280,960);
 }
 
 void MutatableImageDisplay::menupick_big_1600x1200()
 {
-  spawn_big(true,QSize(1600,1200));
+  spawn_big(1600,1200);
 }
 
 void MutatableImageDisplay::menupick_big_256x256()
 {
-  spawn_big(true,QSize(256,256));
+  spawn_big(256,256);
 }
 
 void MutatableImageDisplay::menupick_big_512x512()
 {
-  spawn_big(true,QSize(512,512));
+  spawn_big(512,512);
 }
 
 void MutatableImageDisplay::menupick_big_768x768()
 {
-  spawn_big(true,QSize(768,768));
+  spawn_big(768,768);
 }
 
 void MutatableImageDisplay::menupick_big_1024x1024()
 {
-  spawn_big(true,QSize(1024,1024));
+  spawn_big(1024,1024);
 }
 
 void MutatableImageDisplay::menupick_big_2048x2048()
 {
-  spawn_big(true,QSize(2048,2048));
+  spawn_big(2048,2048);
 }
 
 void MutatableImageDisplay::menupick_big_4096x4096()
 {
-  spawn_big(true,QSize(4096,4096));
+  spawn_big(4096,4096);
 }
 
 void MutatableImageDisplay::menupick_properties()
@@ -1002,34 +1002,54 @@ void MutatableImageDisplay::menupick_properties()
   _properties->exec();
 }
 
-/*! Create an image display with no parent: becomes a top level window 
+/*! Create an image display as a top level window.
   Disable full menu functionality because there's less we can do with a single image (e.g no spawn_target)
+
+  \param w  Fixed pixel width or zero if resizeable.
+  \param h  Fixed pixel height or zero if resizeable.
 */
-void MutatableImageDisplay::spawn_big(bool scrollable,const QSize& sz)
+void MutatableImageDisplay::spawn_big(int w, int h)
 {
-  MutatableImageDisplayBig*const top_level_widget=new MutatableImageDisplayBig(&main());
-  top_level_widget->setLayout(new QVBoxLayout);
-  if (_icon.get()) top_level_widget->setWindowIcon(*_icon);
+  MutatableImageDisplayBig*const window = new MutatableImageDisplayBig(&main());
+  QBoxLayout* lo = new QVBoxLayout;
+  lo->setContentsMargins(0, 0, 0, 0);
+  window->setLayout(lo);
 
-  MutatableImageDisplay* display=0;
+  if (_icon.get())
+    window->setWindowIcon(*_icon);
 
-  if (scrollable)
-    {
-      QScrollArea*const scrollview=new QScrollArea;
-      top_level_widget->layout()->addWidget(scrollview);
-      display=new MutatableImageDisplay(&main(),false,true,sz,_frames,_framerate);
-      scrollview->setWidget(display);
-    }
+  bool fixedSize = (w && h);
+  MutatableImageDisplay* display = new MutatableImageDisplay(&main(),false,fixedSize,QSize(w,h),_frames,_framerate);
+  if (fixedSize)
+  {
+      window->setWindowTitle(QString::asprintf("Image (%dx%d)",w,h));
+      if (w <= 512 && h <= 512)
+      {
+          window->setFixedSize(w, h);
+          lo->addWidget(display);
+      }
+      else
+      {
+          QScrollArea*const scrollview=new QScrollArea;
+          scrollview->setMinimumSize(256, 256);
+          //scrollview->setMaximumSize(w, h);
+          scrollview->setWidget(display);
+          lo->addWidget(scrollview);
+      }
+  }
   else
-    {
-      display=new MutatableImageDisplay(&main(),false,false,QSize(0,0),_frames,_framerate);
-      top_level_widget->layout()->addWidget(display);
-    }
+  {
+      window->setWindowTitle("Image (resizeable)");
+      window->setMinimumSize(256, 256);
+      window->resize(512, 512);
+      lo->addWidget(display);
+  }
 
-  top_level_widget->show();
+  window->show();
 
   //Propagate full screen mode 
-  if (main().isFullScreen()) top_level_widget->showFullScreen();
+  if (main().isFullScreen())
+    window->showFullScreen();
 
   // Fire up image calculation
   display->image_function(_image_function,false);

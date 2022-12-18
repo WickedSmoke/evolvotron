@@ -304,7 +304,7 @@ class MutatableImageDisplay : public QWidget
 
  protected:
   //! Common code for big slots.
-  void spawn_big(bool scrollable,const QSize& sz);
+  void spawn_big(int w, int h);
 };
 
 #endif
