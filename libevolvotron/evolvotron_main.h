@@ -296,8 +296,8 @@ class EvolvotronMain : public QMainWindow
   void spawn_all(MutatableImageDisplay* display,SpawnMemberFn method,const std::string& action_name);
 
  public:
-  //! Last browsed function load/save directory.
-  QString functionPath;
+  QString functionPath;     //!< Last browsed function load/save directory.
+  QString imagePath;        //!< Last browsed image save directory.
 
   QPixmap lockPix;
 

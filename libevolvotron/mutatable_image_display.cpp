@@ -111,12 +111,12 @@ MutatableImageDisplay::MutatableImageDisplay(EvolvotronMain* mn,bool full_functi
 
   _menu->addSeparator();
   
-  _menu->addAction("Save image",this,SLOT(menupick_save_image()));
-  _menu->addAction("Save function",this,SLOT(menupick_save_function()));
+  _menu->addAction("Save image...",this,SLOT(menupick_save_image()));
+  _menu->addAction("Save function...",this,SLOT(menupick_save_function()));
 
   if (_full_functionality)
     {
-      _menu->addAction("Load function",this,SLOT(menupick_load_function()));
+      _menu->addAction("Load function...",this,SLOT(menupick_load_function()));
     }
 
   _menu->addSeparator();
@@ -765,75 +765,68 @@ void MutatableImageDisplay::menupick_simplify()
  */
 void MutatableImageDisplay::menupick_save_image()
 {
-  if (_icon.get()) _main->setWindowIcon(*_icon);
+  if (_icon.get())
+      _main->setWindowIcon(*_icon);
 
   std::clog << "Save requested...\n";
 
   if (_current_display_level!=0 || _current_display_multisample_grid!=main().render_parameters().multisample_grid())
-    {
+  {
       QMessageBox::information(this,"Evolvotron","The selected image has not yet been generated at maximum resolution.\nPlease try again later.");
-    }
+  }
   else
-    {
-      const QString save_filename=QFileDialog::getSaveFileName
-	(
-	 this,
-	 "Save image to a PNG or PPM file",
-	 ".",
-	 "Images (*.png *.ppm)"
-	 );
+  {
+    const QString save_filename = QFileDialog::getSaveFileName(this,
+        "Save image to a PNG or PPM file",
+        _main->imagePath,
+        "Images (*.png *.ppm)"
+        );
 
-      if (!save_filename.isEmpty())
-	{
+    if (! save_filename.isEmpty())
+    {
 	  QString save_format="PNG";
-	  if (save_filename.toUpper().endsWith(".PPM"))
+	  if (save_filename.endsWith(".ppm", Qt::CaseInsensitive))
 	    {
 	      save_format="PPM";
 	    }
-	  else if (save_filename.toUpper().endsWith(".PNG"))
+	  else if (! save_filename.endsWith(".png", Qt::CaseInsensitive))
 	    {
-	      save_format="PNG";
+	      QMessageBox::warning(this, "Evolvotron",
+		    QString("Unrecognised file suffix.\nFile will be written in ")+save_format+QString(" format.")
+		  );
 	    }
-	  else
-	    {
-	      QMessageBox::warning
-		(
-		 this,
-		 "Evolvotron",
-		 QString("Unrecognised file suffix.\nFile will be written in ")+save_format+QString(" format.")
-		 );
-	    }
-	  
+
+      bool ok = true;
 	  for (uint f=0;f<_offscreen_images.size();f++)
 	    {
 	      QString actual_save_filename(save_filename);
-	      
+
 	      if (_offscreen_images.size()>1)
 		{
 		  QString frame_component = QString::asprintf(".f%06d",f);
-		  int insert_point=save_filename.lastIndexOf(QString("."));
+		  int insert_point = save_filename.lastIndexOf('.');
 		  if (insert_point==-1)
-		    {
 		      actual_save_filename.append(frame_component);
-		    }
 		  else
-		    {
 		      actual_save_filename.insert(insert_point,frame_component);
-		    }
 		}
-	      
+
 	      if (!_offscreen_images[f].save(actual_save_filename,save_format.toLocal8Bit()))
 		{
 		  QMessageBox::critical(this,"Evolvotron","Failed to write file "+actual_save_filename);
 		  if (f<_offscreen_images.size()-1)
 		    {
-		      QMessageBox::critical(this,"Evolvotron","Not attempting to save remaining images in animation");		    
+		      QMessageBox::critical(this,"Evolvotron","Not attempting to save remaining images in animation");
 		    }
+		  ok = false;
 		  break;
 		}
 	    }
-	}
+
+      if (ok)
+        _main->imagePath = save_filename;
     }
+  }
   std::clog << "...save done\n";
 }
 

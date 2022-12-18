@@ -337,6 +337,7 @@ EvolvotronMain::EvolvotronMain
   QSettings settings;
   resize( settings.value("window-size", QSize(640, 480)).toSize() );
   functionPath = settings.value("func-path").toString();
+  imagePath    = settings.value("image-path").toString();
   }
 }
 
@@ -610,6 +611,7 @@ void EvolvotronMain::closeEvent(QCloseEvent* e)
   QSettings settings;
   settings.setValue("window-size", size());
   settings.setValue("func-path", functionPath);
+  settings.setValue("image-path", imagePath);
 
   QMainWindow::closeEvent(e);
 }
