@@ -11,8 +11,8 @@ cd ..
 # NB Don't ship contents of pkg
 PRUNE='-name moc -prune -o -name obj -prune -o -name pkg_* -prune'
 
-FILES_MISC=`ls ${DIR}/{README.md,BUILD.sh,LICENSE,TODO,NEWS,VERSION,USAGE,USAGE-update.sh,BUGS,doxygen.cfg,mktgz,mkdeb,mkdoc,text_to_markup.py,evolvotron.html} ${DIR}/libfunction/update_register_all_functions`
-FILES_EXTRAS="`ls ${DIR}/extras/{README,spheremap.pov,spheremap.sh}` `ls ${DIR}/rpm/{README,evolvotron.spec}`"
+FILES_MISC=`ls ${DIR}/{README.md,BUILD.sh,LICENSE,TODO,NEWS,VERSION,USAGE,USAGE-update.sh,BUGS,doxygen.cfg,mktgz,mkdeb,mkdoc,text_to_markup.py,evolvotron.html,evolvotron.spec} ${DIR}/libfunction/update_register_all_functions`
+FILES_EXTRAS=`ls ${DIR}/extras/{README,spheremap.pov,spheremap.sh}`
 
 FILES_H=`find ${DIR}       ${PRUNE} -o -name '*.h'   -print`
 FILES_CPP=`find ${DIR}     ${PRUNE} -o -name '*.cpp' -print`
