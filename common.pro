@@ -59,6 +59,7 @@ QMAKE_CXXFLAGS_DEBUG += -DQT_NO_ASCII_CAST
 # Hide intermediate build files away
 
 MOC_DIR = moc
+RCC_DIR = moc
 OBJECTS_DIR = ../obj
 
 ##################

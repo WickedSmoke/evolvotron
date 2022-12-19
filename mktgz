@@ -11,15 +11,17 @@ cd ..
 # NB Don't ship contents of pkg
 PRUNE='-name moc -prune -o -name obj -prune -o -name pkg_* -prune'
 
-FILES_MISC=`ls ${DIR}/{README,BUILD.sh,LICENSE,TODO,NEWS,VERSION,USAGE,USAGE-update.sh,BUGS,doxygen.cfg,mktgz,mkdeb,mkdoc,text_to_markup.py,evolvotron.html} ${DIR}/libfunction/update_register_all_functions`
+FILES_MISC=`ls ${DIR}/{README.md,BUILD.sh,LICENSE,TODO,NEWS,VERSION,USAGE,USAGE-update.sh,BUGS,doxygen.cfg,mktgz,mkdeb,mkdoc,text_to_markup.py,evolvotron.html} ${DIR}/libfunction/update_register_all_functions`
 FILES_EXTRAS="`ls ${DIR}/extras/{README,spheremap.pov,spheremap.sh}` `ls ${DIR}/rpm/{README,evolvotron.spec}`"
 
 FILES_H=`find ${DIR}       ${PRUNE} -o -name '*.h'   -print`
 FILES_CPP=`find ${DIR}     ${PRUNE} -o -name '*.cpp' -print`
 FILES_PRO=`find ${DIR}     ${PRUNE} -o -name '*.pro' -print`
+FILES_RES=`find ${DIR}/evolvotron/icons -name '*.png'`
+FILES_RES="$FILES_RES ${DIR}/evolvotron/icons.qrc"
 FILES_MAN=`find ${DIR}/man ${PRUNE} -o -name '*.1'   -print`
 
-FILES="$FILES_MISC $FILES_EXTRAS $FILES_H $FILES_CPP $FILES_PRO $FILES_MAN"
+FILES="$FILES_MISC $FILES_EXTRAS $FILES_H $FILES_CPP $FILES_PRO $FILES_RES $FILES_MAN"
 
 tar --transform "s:^${DIR}/:evolvotron/:" -cz -f ${DIR}/evolvotron.tar.gz $FILES
 
