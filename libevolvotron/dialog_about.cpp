@@ -32,7 +32,7 @@ DialogAbout::DialogAbout(QWidget* parent,int n_threads,bool separate_farm_for_en
 {
   assert(parent!=0);
 
-  setWindowTitle("About evolvotron");
+  setWindowTitle("About Evolvotron");
   setMinimumSize(480,360);
   setSizeGripEnabled(true);
 
@@ -51,23 +51,27 @@ DialogAbout::DialogAbout(QWidget* parent,int n_threads,bool separate_farm_for_en
 
   std::ostringstream about_string;
   about_string
-    << "Evolvotron "
-    << stringify(EVOLVOTRON_BUILD)
-    << "\n\n"
-    << "Using "
+    << "<h1>Evolvotron</h1>\n"
+    << "<h3>" << stringify(EVOLVOTRON_BUILD) << "</h3>\n"
+    << "<p>Using "
     << (separate_farm_for_enlargements ? "2 pools" : "1 pool")
     << " of "
     << n_threads
     << " compute thread"
     << (n_threads>1 ? "s" : "")
-    << "\n\n"
-    << "Author: timday@timday.com\n\n"
-    << "Home page: http://evolvotron.sourceforge.net\n"
-    << "Project page: http://sourceforge.net/projects/evolvotron\n";
+    << "</p>\n"
+       "<p>Authors: <a href=\"mailto:timday@timday.com\">Tim Day</a>, "
+       "<a href=\"mailto:wickedsmoke@users.sf.net\">Karl Robillard</a></p>\n"
+       "<p><a href=\"http://www.bottlenose.net/share/evolvotron/\">[Home Page]"
+       "</a>&nbsp;&nbsp;"
+       "<a href=\"http://sourceforge.net/projects/evolvotron\">[Project Page]"
+       "</a></p>\n";
 
   QLabel*const label=new QLabel(about_string.str().c_str());
   tab_info->layout()->addWidget(label);
-  label->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter|label->alignment());
+  label->setIndent(32);
+  label->setAlignment(Qt::AlignTop);
+  label->setOpenExternalLinks(true);
   
   QTextEdit*const license=new QTextEdit;
   tab_license->layout()->addWidget(license);
