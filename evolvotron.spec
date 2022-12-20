@@ -1,7 +1,7 @@
 Summary: Evolvotron Interactive Art Generator
 Name: evolvotron
 Version: 0.7.2
-Release: 1
+Release: 1%{?dist}
 License: GPLv2+
 URL: http://sourceforge.net/projects/evolvotron
 Group: Applications/Graphics
@@ -18,7 +18,7 @@ Evolvotron is interactive "generative art" software to evolve images/textures/pa
 %setup -q -n %{name}
 
 %build
-qmake-qt5 main.pro
+qmake-qt5 VERSION_NUMBER=%{version} main.pro
 make -j 4
 
 %install
