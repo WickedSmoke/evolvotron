@@ -73,11 +73,7 @@ void MutatableImageComputerFarm::fasttrack_aborted()
 {
   QMutexLocker lock(&_mutex);
 
-  // == PATCH START ==
-
-  // -- code modified --
   TodoQueue::iterator it = _todo.begin();
-
   while (it != _todo.end())
   {
     if ((*it)->aborted())
@@ -88,8 +84,6 @@ void MutatableImageComputerFarm::fasttrack_aborted()
     else
       it++;
   }
-
-  // == PATCH END ==
 }
 
 void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImageComputerTask> &task)
@@ -221,12 +215,9 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay *disp)
     {
       (*it)->abort();
 
-      // == PATCH START ==
-      // -- code modified --
       it = _todo.erase(it);
       if (it == _todo.end())
         break;
-      // == PATCH END ==
     }
   }
 
@@ -247,12 +238,9 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay *disp)
       {
         (*it1)->abort();
 
-        // == PATCH START ==
-        // -- code modified --
         it1 = q.erase(it1);
         if (it1 == q.end())
           break;
-        // == PATCH END ==
       }
     }
   }
