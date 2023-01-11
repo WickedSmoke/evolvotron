@@ -533,6 +533,16 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
     }
 }
 
+void MutatableImageDisplay::mouseTransform(const Transform& tf)
+{
+  std::unique_ptr<FunctionTop> new_root(image_function()->top().typed_deepclone());
+  new_root->concatenate_pretransform_on_right(tf);
+
+  // Install new image (triggers recompute).
+  const boost::shared_ptr<const MutatableImage> new_image_function(new MutatableImage(new_root,image_function()->sinusoidal_z(),image_function()->spheremap(),false));
+  image_function(new_image_function,false);
+}
+
 void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 {
   if (event->buttons()&Qt::MidButton)
@@ -655,16 +665,32 @@ void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 	      std::clog << "[Pan]";
 	    }
 	  
-	  std::unique_ptr<FunctionTop> new_root(image_function()->top().typed_deepclone());
-	  new_root->concatenate_pretransform_on_right(transform);
-
-	  // Install new image (triggers recompute).
-	  const boost::shared_ptr<const MutatableImage> new_image_function(new MutatableImage(new_root,image_function()->sinusoidal_z(),image_function()->spheremap(),false));
-	  image_function(new_image_function,false);
+      mouseTransform(transform);
 
 	  // Finally, record position of this event as last event
 	  _mid_button_adjust_last_pos=event->pos();
 	}
+    }
+}
+
+void MutatableImageDisplay::wheelEvent(QWheelEvent *event)
+{
+    int dy = event->angleDelta().y() / 120;
+    if (dy)
+    {
+        real scale = 1.0;
+        for (; dy > 0; --dy)
+            scale *= 0.8;
+        for (; dy < 0; ++dy)
+            scale *= 1.2;
+
+        Transform tf;
+        tf.translate(XYZ(0.0, 0.0, 0.0));
+        tf.basis_x(XYZ(scale, 0.0, 0.0));
+        tf.basis_y(XYZ(0.0, scale, 0.0));
+        tf.basis_z(XYZ(0.0, 0.0, 1.0));
+
+        mouseTransform(tf);
     }
 }
 

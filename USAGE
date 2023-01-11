@@ -291,6 +291,10 @@ A CTRL-ALT-middle drag shears the image (the best way to see what
 this does is to click in the corner of an image and move the mouse
 horizontally or vertically).
 
+MOUSE WHEEL
+-----------
+Scrolling the mouse wheel zooms the image in and out.
+
 KEYBOARD CONTROL
 ================
 

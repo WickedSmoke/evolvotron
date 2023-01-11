@@ -32,6 +32,7 @@
 
 class EvolvotronMain;
 class MutatableImageComputerTask;
+class Transform;
 
 //! Widget responsible for displaying a MutatableImage.
 /*! A MutatableImageDisplay is responsible for displaying the image computed from the MutatableImage it owns.
@@ -193,6 +194,8 @@ class MutatableImageDisplay : public QWidget
   //! Which farm this display should use.
   MutatableImageComputerFarm& farm() const;
 
+  void mouseTransform(const Transform& tf);
+
   //! Usual handler for repaint events.
   virtual void paintEvent(QPaintEvent* event);
 
@@ -204,6 +207,8 @@ class MutatableImageDisplay : public QWidget
 
   //! Handler for mouse events.
   virtual void mouseMoveEvent(QMouseEvent* event);
+
+  virtual void wheelEvent(QWheelEvent *event);
 
   public slots:
 
