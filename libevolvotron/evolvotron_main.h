@@ -114,6 +114,9 @@ class EvolvotronMain : public QMainWindow
       //! Record that we are overwriting the given display.
       void replacing(MutatableImageDisplay* display);
 
+      //! Returns true if the most recent action has the given name.
+      bool last_action_named(MutatableImageDisplay*, const char* name);
+
       //! Starts a new action slot
       void begin_action(const std::string& action_name);
 

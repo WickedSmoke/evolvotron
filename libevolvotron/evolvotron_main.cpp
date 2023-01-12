@@ -93,6 +93,16 @@ void EvolvotronMain::History::replacing(MutatableImageDisplay* display)
     }
 }
 
+bool EvolvotronMain::History::last_action_named(MutatableImageDisplay* display, const char* name)
+{
+  if (_archive.empty())
+      return false;
+  const ArchiveRecord& record = _archive.front();
+  if (record.first != name || record.second.empty())
+      return false;
+  return record.second.find(display) != record.second.end();
+}
+
 /*! Only creates a new slot for display-image pairs if the current top one (if any) isn't empty.
  */
 void EvolvotronMain::History::begin_action(const std::string& action_name)

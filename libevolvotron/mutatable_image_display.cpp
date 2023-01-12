@@ -501,6 +501,13 @@ void MutatableImageDisplay::resizeEvent(QResizeEvent* event)
     }
 }
 
+void MutatableImageDisplay::snapshot(const char* name)
+{
+  main().history().begin_action(name);
+  main().history().replacing(this);
+  main().history().end_action();
+}
+
 void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
 {
   if (event->button()==Qt::RightButton)
@@ -509,10 +516,7 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
     }
   else if (event->button()==Qt::MidButton)
     {
-      // Take a snapshot to undo back to.
-      main().history().begin_action("middle-button drag");
-      main().history().replacing(this);
-      main().history().end_action();
+      snapshot("middle-button drag");
 
       _mid_button_adjust_start_pos=event->pos();
       _mid_button_adjust_last_pos=event->pos();
@@ -678,6 +682,9 @@ void MutatableImageDisplay::wheelEvent(QWheelEvent *event)
     int dy = event->angleDelta().y() / 120;
     if (dy)
     {
+        if (! main().history().last_action_named(this, "mouse-wheel"))
+          snapshot("mouse-wheel");
+
         real scale = 1.0;
         for (; dy > 0; --dy)
             scale *= 0.8;
@@ -918,9 +925,7 @@ void MutatableImageDisplay::load_function_file(const QString& load_filename)
 	);
       }
       
-      main().history().begin_action("load");
-      main().history().replacing(this);
-      main().history().end_action();
+      snapshot("load");
       image_function(new_image_function,false);
     }
   }

@@ -194,6 +194,9 @@ class MutatableImageDisplay : public QWidget
   //! Which farm this display should use.
   MutatableImageComputerFarm& farm() const;
 
+  //! Take a snapshot to undo back to.
+  void snapshot(const char* name);
+
   void mouseTransform(const Transform& tf);
 
   //! Usual handler for repaint events.
