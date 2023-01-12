@@ -1,6 +1,6 @@
 Summary: Evolvotron Interactive Art Generator
 Name: evolvotron
-Version: 0.7.2
+Version: 0.8.0
 Release: 1%{?dist}
 License: GPLv2+
 URL: http://sourceforge.net/projects/evolvotron

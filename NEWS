@@ -1,8 +1,13 @@
 [Most recent at top]
 
-Release 0.7.2:
- - Update build to work on Debian jessie.
- - Some untouched repos needed `svn relocate svn+ssh://timday@svn.code.sf.net/p/evolvotron/code https://svn.code.sf.net/p/evolvotron/code .`
+Release 0.8.0:
+ - Show lock icon on images and allow lock toggling with left click.
+ - Allow zooming with mouse wheel.
+ - Improve enlarged image display.
+ - Save window size, function path & image path in settings.
+ - Use standard shortcuts for some actions.
+ - Remove some boost dependencies.
+ - Update build to work on Debian Jessie.
 
 Release 0.7.1:
  - Uses `CONFIG += ordered` in `main.pro`; enables parallelised make.
