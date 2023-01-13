@@ -12,8 +12,6 @@ It's multithreaded (using Qt's threading API).
 
 Home page: http://www.bottlenose.net/share/evolvotron
 
-Author: timday at timday dot com
-
 This file describes how to build evolvotron.
 See the USAGE file for details of what the built executable can do.
 
