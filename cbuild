@@ -1,0 +1,73 @@
+#!/usr/bin/bash
+# Container build script for Evolvotron.
+
+if [ ! -s project.tar.gz ]; then
+    copr -a
+fi
+
+TIME=$(date +%H%M%S)
+SCRIPT=build-$TIME
+ID=${SCRIPT}
+HDIR=/tmp
+CDIR=/tmp
+AVER=$(./VERSION)
+ARC_DIR=/tmp/evolvotron-$AVER
+
+clean_dir () {
+    if [ -d "$1" ]; then rm -rf "$1"/*; else mkdir -p "$1"; fi
+}
+
+container_build () {
+	clean_dir ${ARC_DIR}
+
+	podman run -d -it --name=$ID $1 /bin/bash || exit
+	podman cp project.tar.gz $ID:$CDIR
+	podman cp $HDIR/${SCRIPT} $ID:$CDIR/${SCRIPT}
+	podman exec -it $ID /bin/bash $CDIR/${SCRIPT}
+}
+
+case $1 in
+windows)
+	echo '
+  mkdir evo
+  cd evo
+  tar xf /tmp/project.tar.gz
+  copr -t mingw
+' >$HDIR/${SCRIPT}
+
+	container_build dev/f35-mingw
+	podman cp $ID:/home/build/evo/evolv.exe ${ARC_DIR}/evolvotron.exe || exit
+	podman cp $ID:/home/build/evo/evolv_mutate.exe ${ARC_DIR}/evolvotron_mutate.exe
+	podman cp $ID:/home/build/evo/evolv_render.exe ${ARC_DIR}/evolvotron_render.exe
+
+	# Build zip archive.
+	if [ "$2" != "-b" ]; then
+		FN=`readlink -f arc/mingw-qt_app.tar.gz`
+		tar xf $FN -C ${ARC_DIR} --strip-components=1
+		cd ${ARC_DIR%/*}; zip -r evolvotron-$AVER.zip ${ARC_DIR##*/}
+	fi
+	;;
+
+linux)
+	echo '
+  mkdir evo
+  cd evo
+  tar xf /tmp/project.tar.gz
+  copr
+' >$HDIR/${SCRIPT}
+
+	container_build dev/f35
+	podman cp $ID:/home/build/evo/evolv ${ARC_DIR}/evolvotron || exit
+	podman cp $ID:/home/build/evo/evolv_mutate ${ARC_DIR}/evolvotron_mutate
+	podman cp $ID:/home/build/evo/evolv_render ${ARC_DIR}/evolvotron_render
+	;;
+
+*)
+	echo "Usage: $0 {linux|windows} [-b]"
+	echo -e '\nOptions:'
+	echo '  -b    Build binary only; do not create archive.'
+	exit 1
+esac
+
+echo "$SCRIPT done!"
+podman stop $ID
