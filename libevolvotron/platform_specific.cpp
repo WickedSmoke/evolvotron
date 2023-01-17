@@ -25,12 +25,10 @@
 
 #include <boost/optional.hpp>
 
-#ifdef PLATFORM_LINUX
+#ifdef __linux__
 #include <sched.h>           // for CPU count
 #include <sys/resource.h>    // for getpriority/setprioirty
-#endif
-
-#ifdef PLATFORM_BSD
+#elif defined(__unix__)
 #include <sys/param.h>       // for CPU count
 #include <sys/sysctl.h>      // for CPU count
 #include <sys/resource.h>    // for getpriority/setprioirty
@@ -40,7 +38,7 @@ uint get_number_of_processors()
 {
   boost::optional<uint> num_processors;
 
-#ifdef PLATFORM_LINUX
+#ifdef __linux__
  {
    cpu_set_t cpus;
    if (sched_getaffinity(0,sizeof(cpu_set_t),&cpus)==0)
@@ -53,19 +51,15 @@ uint get_number_of_processors()
        num_processors=bits;
      }
  }
-#endif
-
-#ifdef PLATFORM_BSD
+#elif defined(__unix__)
  {
-   // Code contributed by Linc Davis
+   // BSD code contributed by Linc Davis
    int count;
    size_t size=sizeof(count);
    if (!sysctlbyname("hw.ncpu",&count,&size,NULL,0))
      num_processors=count;
  }
-#endif
-
-#if !defined(PLATFORM_LINUX) && !defined(PLATFORM_BSD)
+#else
 #warning "No platform-specific implementation of get_number_of_processors selected"
 #endif
 
@@ -85,7 +79,7 @@ uint get_number_of_processors()
 
 void add_thread_niceness(uint n)
 {
-#if defined(PLATFORM_LINUX) || defined(PLATFORM_BSD)
+#ifdef __unix__
   /*! \todo: People porting to non-Linux (BSD, MacOS, Fink etc) please send
     a suitable #ifdef-able patch if you need something different here.
     Note that this code relies on Linux NPTL's non-Posix-compliant

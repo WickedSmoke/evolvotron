@@ -26,12 +26,6 @@
 
 #include "../libfunction/useful.h"
 
-// qt3 for Darwin appears to define this, so use it to definitely select the PLATFORM_BSD option
-#ifdef __DARWIN_X11__
-#define PLATFORM_BSD
-#undef PLATFORM_LINUX
-#endif
-
 //! Return the number of processors on the system
 extern uint get_number_of_processors();
 
