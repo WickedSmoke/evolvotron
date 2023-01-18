@@ -1,7 +1,9 @@
 #!/bin/sh
 
 # Script to echo the current version number.
-# THIS IS THE ONLY PLACE IN ALL THE EVOLVOTRON SOURCE A HARDWIRED VERSION NUMBER SHOULD APPEAR
+# The number is also hardcoded in these files:
+#   libevolvotron/common.h
+#   evolvotron.spec
 
 # NB If you edit this, "make distclean" and then rebuild (./BUILD) as there is no dependency checking
 

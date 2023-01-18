@@ -193,11 +193,9 @@ std::ostream& MutatableImage::save_function(std::ostream& out) const
 {
   out 
     << "<?xml version=\"1.0\"?>\n"
-    << "<evolvotron-image-function version="
-    << "\""
-    << stringify(EVOLVOTRON_VERSION)
-    << "\""
-    << " zsweep=\""
+    << "<evolvotron-image-function version=\""
+    << APP_VERSION
+    << "\" zsweep=\""
     << (_sinusoidal_z ? "sinusoidal" : "linear")
     << "\""
     << " projection=\""
@@ -297,10 +295,10 @@ public:
 	    else
 	      {
 		const QString version=atts.value(idx);
-		if (version!=QString(stringify(EVOLVOTRON_VERSION)))
+		if (version != APP_VERSION)
 		  {
 		    QString tmp;
-		    tmp="Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+QString(stringify(EVOLVOTRON_VERSION))+")\n";
+		    tmp="Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+APP_VERSION+")\n";
 		    _report+=tmp.toLocal8Bit().data();
 		  }
 	      }

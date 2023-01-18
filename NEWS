@@ -7,6 +7,7 @@ Release 0.8.0:
  - Save window size, function path & image path in settings.
  - Use standard shortcuts for some actions.
  - Remove some boost dependencies.
+ - Get Windows build working with MinGW.
  - Update build to work on Debian Jessie.
 
 Release 0.7.1:

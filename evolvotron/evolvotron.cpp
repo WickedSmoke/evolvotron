@@ -176,9 +176,7 @@ int main(int argc,char* argv[])
     }
 
   std::clog
-    << "Evolvotron version "
-    << stringify(EVOLVOTRON_BUILD)
-    << " starting with " 
+    << "Evolvotron version " APP_BUILD " starting with "
     << cols 
     << " by " 
     << rows 

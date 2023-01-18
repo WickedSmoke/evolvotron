@@ -8,11 +8,6 @@ QT += xml
 #######################################
 # Version numbering.  VERSION_NUMBER should have been set on the qmake command line (see .configure script)
 
-QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_VERSION="$$VERSION_NUMBER"'
-QMAKE_CXXFLAGS_DEBUG   += '-DEVOLVOTRON_VERSION="$$VERSION_NUMBER"'
-QMAKE_CXXFLAGS_RELEASE += '-DEVOLVOTRON_BUILD="$$VERSION_NUMBER (Build options: $$BUILD_INFO Release)"'
-QMAKE_CXXFLAGS_DEBUG   += '-DEVOLVOTRON_BUILD="$$VERSION_NUMBER (Build options: $$BUILD_INFO Debug)"'
-
 # qmake's library code can use this too (but only for shared libraries which we don't use)
 VERSION=$$VERSION_NUMBER
 

@@ -52,7 +52,7 @@ DialogAbout::DialogAbout(QWidget* parent,int n_threads,bool separate_farm_for_en
   std::ostringstream about_string;
   about_string
     << "<h1>Evolvotron</h1>\n"
-    << "<h3>" << stringify(EVOLVOTRON_BUILD) << "</h3>\n"
+    << "<h3>" APP_BUILD "</h3>\n"
     << "<p>Using "
     << (separate_farm_for_enlargements ? "2 pools" : "1 pool")
     << " of "

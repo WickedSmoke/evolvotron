@@ -68,6 +68,11 @@
 #include <QWaitCondition>
 #include <QWidget>
 
-#define stringify(S) __STRING(S)
+#define APP_VERSION "0.8.0"
+#ifdef DEBUG
+#define APP_BUILD  APP_VERSION " (Debug)"
+#else
+#define APP_BUILD  APP_VERSION
+#endif
 
 #endif
