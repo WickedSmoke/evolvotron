@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <cassert>
 #include <ctime>
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <cstdlib>
 #include <deque>
