@@ -21,7 +21,7 @@
   \brief Helper functions for hexagons.
 */
 
-#include "common.h"
+#include "useful.h"
 
 #include "xy.h"
 

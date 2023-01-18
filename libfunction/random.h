@@ -24,7 +24,7 @@
 #ifndef _random_h_
 #define _random_h_
 
-#include "common.h"
+#include "useful.h"
 
 //! Abstract base class for random number generation
 class Random

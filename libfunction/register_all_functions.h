@@ -25,7 +25,7 @@
 #ifndef _libevolvotron_register_all_functions_h_
 #define _libevolvotron_register_all_functions_h_
 
-#include "common.h"
+#include "useful.h"
 
 class FunctionRegistry;
 

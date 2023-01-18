@@ -24,7 +24,7 @@
 #ifndef _mutation_parameters_h_
 #define _mutation_parameters_h_
 
-#include "common.h"
+#include "useful.h"
 #include "random.h"
 
 class FunctionNode;

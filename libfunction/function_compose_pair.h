@@ -24,7 +24,7 @@
 #ifndef _function_compose_pair_h_
 #define _function_compose_pair_h_
 
-#include "common.h"
+#include "useful.h"
 
 #include "function_boilerplate.h"
 

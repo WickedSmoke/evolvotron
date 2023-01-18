@@ -24,7 +24,7 @@
 #ifndef _function_node_info_h_
 #define _function_node_info_h_
 
-#include "common.h"
+#include "useful.h"
 
 //! Trivial class used during XML parsing.
 /*! Encapsulates enough info to build a function tree from

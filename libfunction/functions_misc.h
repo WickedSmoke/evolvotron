@@ -26,7 +26,7 @@ out into separate files eventually.
 #ifndef _functions_misc_h_
 #define _functions_misc_h_
 
-#include "common.h"
+#include "useful.h"
 
 #include "function_boilerplate.h"
 

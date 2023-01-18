@@ -25,7 +25,7 @@
 #ifndef _functions_geometry_h_
 #define _functions_geometry_h_
 
-#include "common.h" 
+#include "useful.h"
 
 #include "function_boilerplate.h"
 

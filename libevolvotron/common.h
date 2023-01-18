@@ -25,8 +25,6 @@
 #ifndef _libevolvotron_precompiled_h_
 #define _libevolvotron_precompiled_h_
 
-#include "../libfunction/common.h"
-
 #include <stack>
 
 #include <QtXml>

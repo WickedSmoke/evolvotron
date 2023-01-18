@@ -21,8 +21,7 @@
   \brief Implementation of class MutationParametersQObject.
 */
 
-
-
+#include "useful.h"
 #include "render_parameters.h"
 
 RenderParameters::RenderParameters(bool j,uint m,QObject* parent)

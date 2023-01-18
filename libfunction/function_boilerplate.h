@@ -25,7 +25,7 @@
 #ifndef _function_boilerplate_h_
 #define _function_boilerplate_h_
 
-#include "common.h"
+#include "useful.h"
 
 #include "function_node.h"
 #include "function_node_info.h"

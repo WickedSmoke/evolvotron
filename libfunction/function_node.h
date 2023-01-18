@@ -24,7 +24,7 @@
 #ifndef _function_node_h_
 #define _function_node_h_
 
-#include "common.h"
+#include "useful.h"
 
 #include "xy.h"
 #include "xyz.h"

@@ -27,7 +27,7 @@
 #ifndef _function_top_h_
 #define _function_top_h_
 
-#include "common.h"
+#include "useful.h"
 
 #include "function_boilerplate.h"
 

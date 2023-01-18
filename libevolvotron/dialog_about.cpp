@@ -22,7 +22,7 @@
 */
 
 
-
+#include <sstream>
 #include "dialog_about.h"
 
 #include "license.h"

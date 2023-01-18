@@ -24,7 +24,7 @@
 #ifndef _noise_h_
 #define _noise_h_
 
-#include "common.h"
+#include "useful.h"
 
 #include "xyz.h"
 

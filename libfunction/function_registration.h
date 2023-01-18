@@ -24,7 +24,7 @@
 #ifndef _function_registration_h_
 #define _function_registration_h_
 
-#include "common.h"
+#include "useful.h"
 
 class FunctionNode;
 class FunctionRegistry;

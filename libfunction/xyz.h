@@ -24,7 +24,7 @@
 #ifndef _xyz_h_
 #define _xyz_h_
 
-#include "common.h"
+#include "useful.h"
 
 #include "xy.h"
 

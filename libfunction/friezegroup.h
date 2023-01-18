@@ -24,7 +24,7 @@
 #ifndef _friezegroup_h_
 #define _friezegroup_h_
 
-#include "common.h"
+#include "useful.h"
 
 #include "function_node.h"
 
