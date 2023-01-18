@@ -29,8 +29,6 @@
 
 #include <stack>
 
-#include <boost/optional.hpp>
-
 #include <QtXml>
 
 #include <QApplication>

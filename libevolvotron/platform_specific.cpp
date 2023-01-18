@@ -21,60 +21,15 @@
   \brief Implementation of platform specific functions.
 */
 
-#include "platform_specific.h"
+#include <QThread>
 
-#include <boost/optional.hpp>
-
-#ifdef __linux__
-#include <sched.h>           // for CPU count
-#include <sys/resource.h>    // for getpriority/setprioirty
-#elif defined(__unix__)
-#include <sys/param.h>       // for CPU count
-#include <sys/sysctl.h>      // for CPU count
+#ifdef __unix__
 #include <sys/resource.h>    // for getpriority/setprioirty
 #endif
 
 uint get_number_of_processors()
 {
-  boost::optional<uint> num_processors;
-
-#ifdef __linux__
- {
-   cpu_set_t cpus;
-   if (sched_getaffinity(0,sizeof(cpu_set_t),&cpus)==0)
-     {
-       uint bits=0;
-       for (int i=0;i<CPU_SETSIZE;i++)
-	 {
-	   if (CPU_ISSET(i,&cpus)) bits++;
-	 }
-       num_processors=bits;
-     }
- }
-#elif defined(__unix__)
- {
-   // BSD code contributed by Linc Davis
-   int count;
-   size_t size=sizeof(count);
-   if (!sysctlbyname("hw.ncpu",&count,&size,NULL,0))
-     num_processors=count;
- }
-#else
-#warning "No platform-specific implementation of get_number_of_processors selected"
-#endif
-
- if (!num_processors)
-   {
-     // If we can't find out... well, 2 is not uncommon these days.
-     num_processors=2;
-     std::cerr
-       << "Could not determine number of CPUs; guessing "
-       << num_processors.get()
-       << "\n";
-     //! todo For real fun, test the system and see what it scales to.
-   }
-
- return num_processors.get();
+    return QThread::idealThreadCount();
 }
 
 void add_thread_niceness(uint n)
