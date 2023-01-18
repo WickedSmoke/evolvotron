@@ -75,36 +75,6 @@ See the `USAGE` file (or in-app manual) for instructions.
 
 The author mainly tracks Debian stable.
 
-### Non-linux platform issues
-
-On the whole, Qt does an excellent job of insulating code from
-platform specific details.  However, there is a little bit of
-linux-specific code in evolvotron.
-
-If you don't have a PLATFORM_... define set, you'll get some warnings
-about no default implementations of functions in platform_specific.cpp,
-but should still get a working evolvotron (although missing some functionality
-with regard to automatically choosing how many threads to run and controlling
-thread priority).
-
-All the platform specific code should live in
-  `libevolvtron/platform_specific.cpp`
-and is selected by compile options
-  `-DPLATFORM_LINUX` or `-DPLATFORM_BSD`
-(with more potentially addable for other platforms).
-
-Setting the appropriate build options is most easily set by editing
-an appropriate
-
-    DEFINES+=PLATFORM_LINUX
-      or 
-    DEFINES+=PLATFORM_BSD
-
-near the top of the `common.pro` file.
-Qt doesn't make a fine enough distinction between unix platforms
-to decide completely automatically, and the situation is further complicated
-by e.g Fink's Qt not considering itself to be a Qt 'macx' build.
-
 ### Debugging builds
 
 Many build failures are simply because the necessary Qt build tools
@@ -174,8 +144,8 @@ up on sourceforge, but the "official" Debian ones (and Ubuntu
 derivatives) are more conventionally packaged by Gurkan Sengun. 
 Yada is obsoleted as of Debian's "Wheezy" release however.
 
-rpm/
- - directory for contributed RPM related resources.
+evolvotron.spec
+ - For building RPM packages.
 
 BUILDING CODE DOCUMENTATION
 ---------------------------
