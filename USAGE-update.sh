@@ -1,7 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Rebuilding built-in user documentation..."
-if ! ./text_to_markup.py -html < USAGE > evolvotron.html ; then echo "Couldn't build evolvotron.html" ; fi
-if ! ./text_to_markup.py -qml -s < USAGE > libevolvotron/usage_text.h ; then echo "Couldn't build libevolvotron/usage_text.h" ; fi
-if ! test -s libevolvotron/usage_text.h ; then echo "\"Full built-in user documentation not available due to problem during build configuration\"" > libevolvotron/usage_text.h ; echo "Something went wrong, used built-in user documentation fallback plan"; fi
+HTML=evolvotron.html
+QTDOC=libevolvotron/usage_text.h
+
+if command -v boron &> /dev/null ; then
+	./text_to_markup.b -html USAGE >$HTML || echo "Couldn't build $HTML"
+	./text_to_markup.b -qml -s USAGE >$QTDOC || echo "Couldn't build $QTDOC"
+else
+	./text_to_markup.py -html <USAGE >$HTML || echo "Couldn't build $HTML"
+	./text_to_markup.py -qml -s <USAGE >$QTDOC || echo "Couldn't build $QTDOC"
+fi
+
+if ! test -s $QTDOC ; then
+	echo "\"Full built-in user documentation not available due to problem during build configuration\"" > $QTDOC
+	echo "Something went wrong, used built-in user documentation fallback plan"
+fi
 echo "...built built-in user documentation"
