@@ -9,7 +9,7 @@ application: does [
     libs_from %. [%evolvotron %function]
     unix  [libs %boost_program_options]
     win32 [libs %boost_program_options-x64]
-    qt [widgets xml]
+    qt [widgets]
 ]
 
 default [

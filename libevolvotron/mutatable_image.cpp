@@ -21,6 +21,8 @@
   \brief Implementation of class MutatableImage.
 */
 
+#include <QXmlStreamReader>
+
 #include "mutatable_image.h"
 
 #include "function_node_info.h"
@@ -210,15 +212,12 @@ std::ostream& MutatableImage::save_function(std::ostream& out) const
   return out;
 }
 
-//! LoadHandler class overrides default handler's null methods.
 /*! Expect to see an <evolvotron-image> followed by nested
   <f>...</f> wrapping <type>...</type>, <i>...</i>, <p>...</p> and more <f> declarations.
  */
-class LoadHandler : public QXmlDefaultHandler
+class LoadHandler : public QXmlStreamReader
 {
 protected:
-
-  std::string _report;
 
   std::unique_ptr<FunctionNodeInfo>& _root;
 
@@ -238,8 +237,12 @@ protected:
 
 public:
 
-  LoadHandler(std::unique_ptr<FunctionNodeInfo>& root,bool* sinz,bool* smap)
-    :_root(root)
+  QString warning;
+
+  LoadHandler(const char* document, std::unique_ptr<FunctionNodeInfo>& root,
+              bool* sinz, bool* smap)
+    : QXmlStreamReader(document)
+     ,_root(root)
      ,_ret_sinusoidal_z(sinz)
      ,_ret_spheremap(smap)
      ,_expect_top_level_element(true)
@@ -261,231 +264,207 @@ public:
   {
     std::clog << "...completed document\n";
     if (_root.get()==0)
-      {
-	_report+="Error: No root function node found\n";
-	return false;
-      }
+    {
+      raiseError("Error: No root function node found\n");
+      return false;
+    }
     return true;
   }
   
   //! Called for start elements.
-  /*! Don't know anything about namespaces - parameters ignored.
-   */
-  bool startElement(const QString&,const QString& localName,const QString&,const QXmlAttributes& atts)
+  bool startElement(const QStringRef& localName,
+                    const QXmlStreamAttributes& atts)
   {
-    const std::string element(localName.toLocal8Bit().data());
-
     if (_expect_characters)
-      {
-	_report+="Error: Expected character data but got start element \""+element+"\"\n";
-	return false;
-      }
+    {
+      QString msg = "Error: Expected character data but got start element \""
+                    + localName + "\"\n";
+      raiseError(msg);
+      return false;
+    }
 
     if (_expect_top_level_element)
+    {
+      if (localName=="evolvotron-image-function")
       {
-	if (element=="evolvotron-image-function")
-	  {
-	    _expect_top_level_element=false;
+        _expect_top_level_element=false;
 
-	    int idx;
-	    if ((idx=atts.index("version"))==-1)
-	      {
-		_report+="Warning: File does not include evolvotron version\n";
-	      }
-	    else
-	      {
-		const QString version=atts.value(idx);
-		if (version != APP_VERSION)
-		  {
-		    QString tmp;
-		    tmp="Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+APP_VERSION+")\n";
-		    _report+=tmp.toLocal8Bit().data();
-		  }
-	      }
+        QStringRef version = atts.value(QString(), "version");
+        if (version.isEmpty())
+        {
+          warning += "Warning: File does not include evolvotron version\n";
+        }
+        else if (version != APP_VERSION)
+        {
+          warning += "Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+APP_VERSION+")\n";
+        }
 
-	    if ((idx=atts.index("zsweep"))==-1)
-	      {
-		_report+="Warning: zsweep attribute not found\nDefaulting to sinusoidal\n";
-		*_ret_sinusoidal_z=true;
-	      }
-	    else
-	      {
-		const QString zsweep=atts.value(idx);
-		if (zsweep==QString("sinusoidal"))
-		  *_ret_sinusoidal_z=true;
-		else if (zsweep==QString("linear"))
-		  *_ret_sinusoidal_z=false;
-		else
-		  {
-		    QString tmp;
-		    tmp="Error: zsweep attribute expected \"sinusoidal\" or \"linear\", but got \""+zsweep+"\"\n";
-		    _report+=tmp.toLocal8Bit().data();
-		    return false;
-		  }
-	      }
+        QStringRef zsweep = atts.value(QString(), "zsweep");
+        if (zsweep.isEmpty())
+        {
+          warning += "Warning: zsweep attribute not found\nDefaulting to sinusoidal\n";
+          *_ret_sinusoidal_z=true;
+        }
+        else
+        {
+          if (zsweep==QString("sinusoidal"))
+            *_ret_sinusoidal_z=true;
+          else if (zsweep==QString("linear"))
+            *_ret_sinusoidal_z=false;
+          else
+          {
+            QString msg = "Error: zsweep attribute expected \"sinusoidal\" or \"linear\", but got \""+zsweep+"\"\n";
+            raiseError(msg);
+            return false;
+          }
+        }
 
-	    if ((idx=atts.index("projection"))==-1)
-	      {
-		_report+="Warning: projection attribute not found\nDefaulting to planar\n";
-		*_ret_spheremap=false;
-	      }
-	    else
-	      {
-		const QString projection=atts.value(idx);
-		if (projection==QString("spheremap"))
-		  *_ret_spheremap=true;
-		else if (projection==QString("planar"))
-		  *_ret_spheremap=false;
-		else
-		  {
-		    QString tmp;
-		    tmp="Error: projection attribute expected \"spheremap\" or \"planar\", but got \""+projection+"\"\n";
-		    _report+=tmp.toLocal8Bit().data();
-		    return false;
-		  }
-	      }
-
-	  }
-	else
-	  {
-	    _report+="Error: Expected <evolvotron-image-function> but got \""+element+"\"\n";
-	    return false;
-	  }
+        QStringRef projection = atts.value(QString(), "projection");
+        if (projection.isEmpty())
+        {
+          warning += "Warning: projection attribute not found\nDefaulting to planar\n";
+          *_ret_spheremap=false;
+        }
+        else
+        {
+          if (projection==QString("spheremap"))
+            *_ret_spheremap=true;
+          else if (projection==QString("planar"))
+            *_ret_spheremap=false;
+          else
+          {
+            QString msg = "Error: projection attribute expected \"spheremap\" or \"planar\", but got \""+projection+"\"\n";
+            raiseError(msg);
+            return false;
+          }
+        }
       }
+      else
+      {
+        QString msg = "Error: Expected <evolvotron-image-function> but got \""+localName+"\"\n";
+        raiseError(msg);
+        return false;
+      }
+    }
     else
+    {
+      if (localName=="f")
       {
-	if (element=="f")
-	  {
-	    std::unique_ptr<FunctionNodeInfo> f(new FunctionNodeInfo());
-	    if (_stack.empty())
-	      {
-		if (_root.get()==0)
-		  {
-		    _stack.push(f.get());
-		    _root.reset(f.release());
-		  }
-		else
-		  {
-		    _report+="Error: Multiple top level <f> elements encountered\n";
-		    return false;
-		  }
-	      }
-	    else
-	      {
-		FunctionNodeInfo*const it=f.get();
-		_stack.top()->args().push_back(f.release());
-		_stack.push(it);
-	      }
-	  }
-	else if (element=="type")
-	  {
-	    _expect_characters=true;
-	    _expect_characters_type=true;
-	  }
-	else if (element=="i")
-	  {
-	    _expect_characters=true;
-	    _expect_characters_iterations=true;
-	  }
-	else if (element=="p")
-	  {
-	    _expect_characters=true;
-	    _expect_characters_parameter=true;
-	  }
-	else 
-	  {
-	    _report+="Error: Expected <f>, <type>, <i> or <p> but got \""+element+"\"\n";
-	    return false;
-	  }
+        std::unique_ptr<FunctionNodeInfo> f(new FunctionNodeInfo());
+        if (_stack.empty())
+        {
+          if (_root.get()==0)
+          {
+            _stack.push(f.get());
+            _root.reset(f.release());
+          }
+          else
+          {
+            raiseError("Error: Multiple top level <f> elements encountered\n");
+            return false;
+          }
+        }
+        else
+        {
+          FunctionNodeInfo*const it=f.get();
+          _stack.top()->args().push_back(f.release());
+          _stack.push(it);
+        }
       }
-	        
+      else if (localName=="type")
+      {
+        _expect_characters=true;
+        _expect_characters_type=true;
+      }
+      else if (localName=="i")
+      {
+        _expect_characters=true;
+        _expect_characters_iterations=true;
+      }
+      else if (localName=="p")
+      {
+        _expect_characters=true;
+        _expect_characters_parameter=true;
+      }
+      else
+      {
+        QString msg = "Error: Expected <f>, <type>, <i> or <p> but got \""
+                      + localName + "\"\n";
+        raiseError(msg);
+        return false;
+      }
+    }
+
     return true;
   }
 
   //! We don't need to check this matches startElement
-  /*! Don't know anything about namespaces - parameter ignored.
-  */
-  bool endElement(const QString&, const QString& localName, const QString&)
+  bool endElement(const QStringRef& localName)
   {
-    const std::string element(localName.toLocal8Bit().data());
-
     if (_expect_characters)
-      {
-	_report+="Error: Expected character data but got end element \""+element+"\"\n";
-	return false;
-      }
+    {
+      QString msg = "Error: Expected character data but got end element \""
+                    + localName + "\"\n";
+      raiseError(msg);
+      return false;
+    }
 
-    if (element=="f")
-      {
-	_stack.pop();
-      }
-
+    if (localName=="f")
+        _stack.pop();
     return true;
   }
   
-  bool characters(const QString& s)
+  bool characters(const QStringRef& s)
   {
-    QString stripped=s.simplified();
-    
-    if (stripped.isEmpty())
-      {
-	// Just keep going and hope something good turns up (maybe next line ?)
-	return true;
-      }
+    if (s.trimmed().isEmpty())
+    {
+      // Just keep going and hope something good turns up (maybe next line ?)
+      return true;
+    }
     else
+    {
+      if (!_expect_characters)
       {
-	if (!_expect_characters)
-	  {
-	    QString tmp;
-	    tmp = "Error: Unexpected character data : \""+s+"\"\n";
-	    _report += tmp.toLocal8Bit().data();
-	    return false;
-	  }
+        QString msg = "Error: Unexpected character data : \"" + s + "\"\n";
+        raiseError(msg);
+        return false;
       }
+    }
 
     //std::clog << "Non-blank expected character data\n";
 
     if (_expect_characters_type)
-      {
-	_stack.top()->type(s.toLocal8Bit().data());
-	_expect_characters_type=false;
-      }
+    {
+      _stack.top()->type(s.toLocal8Bit().data());
+      _expect_characters_type=false;
+    }
     else if (_expect_characters_iterations)
+    {
+      bool ok;
+      _stack.top()->iterations(s.toUInt(&ok));
+      _expect_characters_iterations=false;
+      if (!ok)
       {
-	bool ok;
-	_stack.top()->iterations(s.toUInt(&ok));
-	_expect_characters_iterations=false;
-	if (!ok)
-	  {
-	    QString tmp;
-	    tmp = "Error: Couldn't parse \""+s+"\" as an integer\n";
-	    _report += tmp.toLocal8Bit().data();
-	    return false;
-	  }
+        QString msg = "Error: Couldn't parse \"" + s + "\" as an integer\n";
+        raiseError(msg);
+        return false;
       }
+    }
     else if (_expect_characters_parameter)
+    {
+      bool ok;
+      _stack.top()->params().push_back(s.toFloat(&ok));
+      _expect_characters_parameter=false;
+      if (!ok)
       {
-	bool ok;
-	_stack.top()->params().push_back(s.toFloat(&ok));
-	_expect_characters_parameter=false;
-	if (!ok)
-	  {
-	    QString tmp;
-	    tmp = "Error: Couldn't parse \""+s+"\" as a real\n";
-	    _report+=tmp.toLocal8Bit().data();
-	    return false;
-	  }
-	
+        QString msg = "Error: Couldn't parse \"" + s + "\" as a real\n";
+        raiseError(msg);
+        return false;
       }
+    }
     
     _expect_characters=false;
-    
     return true;
-  }
-
-  QString errorString()
-  {
-    return QString(_report.c_str());
   }
 };
 
@@ -494,67 +473,83 @@ public:
 */
 boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report)
 {
-  // Don't want to faff with Qt's file classes so just read everything into a string.
+    // Don't want to faff with Qt's file classes so just read everything into a string.
+    std::string in_data;
+    char buf[1024];
+    while (in.read(buf, sizeof(buf)))
+        in_data.append(buf, sizeof(buf));
+    in_data.append(buf, in.gcount());
 
-  std::string in_data;
-  char c;
-  while (in.get(c)) in_data+=c;
 
-  QXmlInputSource xml_source;
-  xml_source.setData(QString(in_data.c_str()));
+    // The LoadHandler will set this to point at the root node.
+    std::unique_ptr<FunctionNodeInfo> info;
 
-  // The LoadHandler will set this to point at the root node.
-  std::unique_ptr<FunctionNodeInfo> info;
+    bool sinusoidal_z;
+    bool spheremap;
+    LoadHandler xml(in_data.c_str(), info, &sinusoidal_z, &spheremap);
 
-  bool sinusoidal_z;
-  bool spheremap;
-  LoadHandler load_handler(info,&sinusoidal_z,&spheremap);
-
-  QXmlSimpleReader xml_reader;
-  xml_reader.setContentHandler(&load_handler);
-
-  const bool ok=xml_reader.parse(&xml_source,false);
-
-  if (ok)
+    while (! xml.atEnd())
     {
-      // Might be a warning message in there.
-      report=load_handler.errorString().toLocal8Bit().data();
-
-      assert(info.get());
-      std::unique_ptr<FunctionNode> root(FunctionNode::create(function_registry,*info,report));
-      info.reset();
-      
-      if (root.get())
-	{
-	  if (!root->is_a_FunctionTop())
-	    {
-	      // Build a FunctionTop wrapper for compataibility with old .xml files
-
-	      boost::ptr_vector<FunctionNode> a;
-	      a.push_back(root.release());
-
-	      const TransformIdentity ti;
-	      std::vector<real> tiv=ti.get_columns();
-	      std::vector<real> p;
-	      p.insert(p.end(),tiv.begin(),tiv.end());
-	      p.insert(p.end(),tiv.begin(),tiv.end());
-	      
-	      root=std::unique_ptr<FunctionTop>(new FunctionTop(p,a,0));
-	    }
-	  assert(root->is_a_FunctionTop());
-	  std::unique_ptr<FunctionTop> root_as_top(root.release()->is_a_FunctionTop());  // Interestingly, if is_a_FunctionTop threw, the root would be leaked.
-	  return boost::shared_ptr<const MutatableImage>(new MutatableImage(root_as_top,sinusoidal_z,spheremap,false));
-	}
-      else
-	{
-	  return boost::shared_ptr<const MutatableImage>();
-	}
+        switch (xml.readNext())
+        {
+            case QXmlStreamReader::StartDocument:
+                xml.startDocument();
+                break;
+            case QXmlStreamReader::EndDocument:
+                xml.endDocument();
+                break;
+            case QXmlStreamReader::StartElement:
+                xml.startElement(xml.name(), xml.attributes());
+                break;
+            case QXmlStreamReader::EndElement:
+                xml.endElement(xml.name());
+                break;
+            case QXmlStreamReader::Characters:
+                xml.characters(xml.text());
+                break;
+            default:
+                break;
+        }
     }
-  else
+
+    if (xml.hasError())
     {
-      QString tmp;
-      tmp = "Parse error: "+load_handler.errorString()+"\n";
-      report=tmp.toLocal8Bit().data();
+        report = "Parse error: ";
+        report.append(xml.errorString().toLocal8Bit().data());
+        report.push_back('\n');
+        return boost::shared_ptr<const MutatableImage>();
+    }
+
+    // Might be a warning message in there.
+    report = xml.warning.toLocal8Bit().data();
+
+    assert(info.get());
+    std::unique_ptr<FunctionNode> root(FunctionNode::create(function_registry,*info,report));
+    info.reset();
+      
+    if (root.get())
+    {
+      if (!root->is_a_FunctionTop())
+        {
+          // Build a FunctionTop wrapper for compataibility with old .xml files
+
+          boost::ptr_vector<FunctionNode> a;
+          a.push_back(root.release());
+
+          const TransformIdentity ti;
+          std::vector<real> tiv=ti.get_columns();
+          std::vector<real> p;
+          p.insert(p.end(),tiv.begin(),tiv.end());
+          p.insert(p.end(),tiv.begin(),tiv.end());
+
+          root=std::unique_ptr<FunctionTop>(new FunctionTop(p,a,0));
+        }
+      assert(root->is_a_FunctionTop());
+      std::unique_ptr<FunctionTop> root_as_top(root.release()->is_a_FunctionTop());  // Interestingly, if is_a_FunctionTop threw, the root would be leaked.
+      return boost::shared_ptr<const MutatableImage>(new MutatableImage(root_as_top,sinusoidal_z,spheremap,false));
+    }
+    else
+    {
       return boost::shared_ptr<const MutatableImage>();
     }
 }

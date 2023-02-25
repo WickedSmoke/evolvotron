@@ -27,8 +27,6 @@
 
 #include <stack>
 
-#include <QtXml>
-
 #include <QApplication>
 #include <QButtonGroup>
 #include <QCheckBox>

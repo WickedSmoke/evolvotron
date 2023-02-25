@@ -3,7 +3,7 @@
 
 # append debug or release
 CONFIG+= qt thread stl exceptions release       #release  #debug
-QT += xml
+# QT +=
 
 #######################################
 # Version numbering.  VERSION_NUMBER should have been set on the qmake command line (see .configure script)
