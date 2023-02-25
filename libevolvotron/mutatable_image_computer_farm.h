@@ -41,7 +41,7 @@ class MutatableImageComputerFarm
  protected:
   
   //! Comparison class for STL template.
-  class CompareTaskPriorityLoResFirst : public std::binary_function<boost::shared_ptr<const MutatableImageComputerTask>,boost::shared_ptr<const MutatableImageComputerTask>,bool> 
+  class CompareTaskPriorityLoResFirst
     {
     public:
       //! Compare task priorities.
@@ -52,7 +52,7 @@ class MutatableImageComputerFarm
     };
 
   //! Comparison class for STL template.
-  class CompareTaskPriorityHiResFirst : public std::binary_function<boost::shared_ptr<const MutatableImageComputerTask>,boost::shared_ptr<const MutatableImageComputerTask>,bool> 
+  class CompareTaskPriorityHiResFirst
     {
     public:
       //! Compare task priorities.
