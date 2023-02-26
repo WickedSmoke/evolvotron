@@ -15,7 +15,7 @@ BuildRequires: gcc-c++ boost-devel qt5-qtbase-devel
 Evolvotron is interactive "generative art" software to evolve images/textures/patterns through an iterative process of random mutation and user-selection driven evolution. 
 
 %prep
-%setup -q -n %{name}
+%setup -q
 
 %build
 qmake-qt5 VERSION_NUMBER=%{version} main.pro
