@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Evolvotron
+Comment=Interactive generative art program
+Exec=evolvotron
+Icon=evolvotron
+Terminal=0
+Categories=Qt;Graphics;2DGraphics;

@@ -200,6 +200,13 @@ int main(int argc,char* argv[])
   app.setOrganizationName("Evolvotron");
   app.setApplicationName("Evolvotron");
 
+#ifdef __linux
+  {
+  QIcon icon("/usr/share/icons/hicolor/48x48/apps/evolvotron.png");
+  app.setWindowIcon(icon);
+  }
+#endif
+
   EvolvotronMain*const main_widget=new EvolvotronMain
       (
        0,
