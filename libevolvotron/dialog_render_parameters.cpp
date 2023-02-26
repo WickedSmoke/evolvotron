@@ -32,20 +32,20 @@ DialogRenderParameters::DialogRenderParameters(QMainWindow* parent,RenderParamet
   setWindowTitle("Render Parameters");
   setSizeGripEnabled(true);
 
-  setLayout(new QVBoxLayout);
+  QBoxLayout* lo = new QVBoxLayout(this);
   
-  layout()->addWidget(_checkbox_jittered_samples=new QCheckBox("Jittered samples"));
+  lo->addWidget(_checkbox_jittered_samples=new QCheckBox("Jittered samples"));
   _checkbox_jittered_samples->setToolTip("Jitter moves sampling positions randomly within a pixel.  This helps to break up aliasing and moire patterns.");
 
   _buttonvbox=new QGroupBox("Oversampling (antialiasing)");
-  _buttonvbox->setLayout(new QVBoxLayout);
-  layout()->addWidget(_buttonvbox);
+  QBoxLayout* loB = new QVBoxLayout(_buttonvbox);
+  lo->addWidget(_buttonvbox);
   
   QRadioButton* button[4];
-  _buttonvbox->layout()->addWidget(button[0]=new QRadioButton("1x1"));
-  _buttonvbox->layout()->addWidget(button[1]=new QRadioButton("2x2"));
-  _buttonvbox->layout()->addWidget(button[2]=new QRadioButton("3x3"));
-  _buttonvbox->layout()->addWidget(button[3]=new QRadioButton("4x4"));
+  loB->addWidget(button[0]=new QRadioButton("1x1"));
+  loB->addWidget(button[1]=new QRadioButton("2x2"));
+  loB->addWidget(button[2]=new QRadioButton("3x3"));
+  loB->addWidget(button[3]=new QRadioButton("4x4"));
 
   button[0]->setToolTip("No oversampling");
   button[1]->setToolTip("Enables a final antialiased rendering with 4 samples per pixel");
@@ -63,9 +63,11 @@ DialogRenderParameters::DialogRenderParameters(QMainWindow* parent,RenderParamet
   connect(_checkbox_jittered_samples,SIGNAL(stateChanged(int)),this,SLOT(changed_jittered_samples(int)));
   connect(_buttongroup,SIGNAL(buttonClicked(int)),this,SLOT(changed_oversampling(int)));
  
+  lo->addStretch();
+
   _ok=new QPushButton("OK");
   _ok->setDefault(true);
-  layout()->addWidget(_ok);
+  lo->addWidget(_ok);
 
   connect(
 	  _ok,SIGNAL(clicked()),

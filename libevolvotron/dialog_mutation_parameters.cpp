@@ -36,10 +36,10 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   setWindowTitle("Mutation Parameters");
   setSizeGripEnabled(true);
 
-  setLayout(new QVBoxLayout);
+  QBoxLayout* lo = new QVBoxLayout(this);
 
   _tabs=new QTabWidget();
-  layout()->addWidget(_tabs);
+  lo->addWidget(_tabs);
 
   _vbox_base_mutation=new QWidget;
   _vbox_base_mutation->setLayout(new QVBoxLayout);
@@ -47,15 +47,13 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
 
   _grid_buttons=new QWidget;
   _vbox_base_mutation->layout()->addWidget(_grid_buttons);
-  
-  QGridLayout*const grid_buttons_layout=new QGridLayout();
-  _grid_buttons->setLayout(grid_buttons_layout);
 
-  grid_buttons_layout->addWidget(_button_reset=new QPushButton("&Reset",_grid_buttons),0,0);
-  grid_buttons_layout->addWidget(_button_cool=new QPushButton("&Cool",_grid_buttons),0,1);
-  grid_buttons_layout->addWidget(_button_shield=new QPushButton("&Shield",_grid_buttons),0,2);
-  grid_buttons_layout->addWidget(_button_heat=new QPushButton("&Heat",_grid_buttons),0,3);
-  grid_buttons_layout->addWidget(_button_irradiate=new QPushButton("&Irradiate",_grid_buttons),0,4);
+  QGridLayout* grid = new QGridLayout(_grid_buttons);
+  grid->addWidget(_button_reset=new QPushButton("&Reset",_grid_buttons),0,0);
+  grid->addWidget(_button_cool=new QPushButton("&Cool",_grid_buttons),0,1);
+  grid->addWidget(_button_shield=new QPushButton("&Shield",_grid_buttons),0,2);
+  grid->addWidget(_button_heat=new QPushButton("&Heat",_grid_buttons),0,3);
+  grid->addWidget(_button_irradiate=new QPushButton("&Irradiate",_grid_buttons),0,4);
 
   _button_cool->setToolTip("Decrease size of constant perturbations during mutation.");
   _button_heat->setToolTip("Increase size of constant perturbations during mutation.");
@@ -68,76 +66,72 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   connect(_button_shield,   SIGNAL(clicked()),this,SLOT(shield()));
   connect(_button_irradiate,SIGNAL(clicked()),this,SLOT(irradiate()));
 
-  _vbox_autocool=new QWidget;
-  _vbox_autocool->setLayout(new QVBoxLayout);
-  _tabs->addTab(_vbox_autocool,"Autocool");
-
   _grid_base_mutation=new QWidget;
   _vbox_base_mutation->layout()->addWidget(_grid_base_mutation);
 
-  QGridLayout*const grid_base_mutation_layout=new QGridLayout();
-  _grid_base_mutation->setLayout(grid_base_mutation_layout);
+  QGridLayout* grid_base = new QGridLayout(_grid_base_mutation);
 
-  grid_base_mutation_layout->addWidget(new QLabel("Perturbation magnitude:"),0,0);
-  grid_base_mutation_layout->addWidget(_spinbox_magnitude=new QSpinBox,0,1);
+  grid_base->addWidget(new QLabel("Perturbation magnitude:"),0,0);
+  grid_base->addWidget(_spinbox_magnitude=new QSpinBox,0,1);
   _spinbox_magnitude->setRange(0,_scale);
   _spinbox_magnitude->setSingleStep(maximum(1,_scale/1000));
   _spinbox_magnitude->setSuffix(QString("/%1").arg(_scale));
   _spinbox_magnitude->setToolTip("Scale of function parameter perturbations.");
   
-  grid_base_mutation_layout->addWidget(new QLabel("p(Parameter reset)"),1,0);
-  grid_base_mutation_layout->addWidget(_spinbox_parameter_reset=new QSpinBox,1,1);
+  grid_base->addWidget(new QLabel("p(Parameter reset)"),1,0);
+  grid_base->addWidget(_spinbox_parameter_reset=new QSpinBox,1,1);
   _spinbox_parameter_reset->setRange(0,_scale);
   _spinbox_parameter_reset->setSingleStep(maximum(1,_scale/1000));
   _spinbox_parameter_reset->setSuffix(QString("/%1").arg(_scale));
   _spinbox_parameter_reset->setToolTip("Probability of function parameters being completely reset.");
 
-  grid_base_mutation_layout->addWidget(new QLabel("p(Glitch)"),2,0);
-  grid_base_mutation_layout->addWidget(_spinbox_glitch=new QSpinBox,2,1);
+  grid_base->addWidget(new QLabel("p(Glitch)"),2,0);
+  grid_base->addWidget(_spinbox_glitch=new QSpinBox,2,1);
   _spinbox_glitch->setRange(0,_scale);
   _spinbox_glitch->setSingleStep(maximum(1,_scale/1000));
   _spinbox_glitch->setSuffix(QString("/%1").arg(_scale));
   _spinbox_glitch->setToolTip("Probability of function branch being replaced by new random stub.");
 
-  grid_base_mutation_layout->addWidget(new QLabel("p(Shuffle)"),3,0);
-  grid_base_mutation_layout->addWidget(_spinbox_shuffle=new QSpinBox,3,1);
+  grid_base->addWidget(new QLabel("p(Shuffle)"),3,0);
+  grid_base->addWidget(_spinbox_shuffle=new QSpinBox,3,1);
   _spinbox_shuffle->setRange(0,_scale);
   _spinbox_shuffle->setSingleStep(maximum(1,_scale/1000));
   _spinbox_shuffle->setSuffix(QString("/%1").arg(_scale));
   _spinbox_shuffle->setToolTip("Probability of function branches being reordered.");
 
-  grid_base_mutation_layout->addWidget(new QLabel("p(Insert)"),4,0);
-  grid_base_mutation_layout->addWidget(_spinbox_insert=new QSpinBox,4,1);
+  grid_base->addWidget(new QLabel("p(Insert)"),4,0);
+  grid_base->addWidget(_spinbox_insert=new QSpinBox,4,1);
   _spinbox_insert->setRange(0,_scale);
   _spinbox_insert->setSingleStep(maximum(1,_scale/1000));
   _spinbox_insert->setSuffix(QString("/%1").arg(_scale));
   _spinbox_insert->setToolTip("Probability of function branch having random stub inserted.");
 
-  grid_base_mutation_layout->addWidget(new QLabel("p(Substitute)"),5,0);
-  grid_base_mutation_layout->addWidget(_spinbox_substitute=new QSpinBox,5,1);
+  grid_base->addWidget(new QLabel("p(Substitute)"),5,0);
+  grid_base->addWidget(_spinbox_substitute=new QSpinBox,5,1);
   _spinbox_substitute->setRange(0,_scale);
   _spinbox_substitute->setSingleStep(maximum(1,_scale/1000));
   _spinbox_substitute->setSuffix(QString("/%1").arg(_scale));
   _spinbox_substitute->setToolTip("Probability of function node's type being changed.");
 
-  _grid_autocool=new QWidget;
-  _vbox_autocool->layout()->addWidget(_grid_autocool);
-  QGridLayout*const grid_autocool_layout=new QGridLayout();
-  _grid_autocool->setLayout(grid_autocool_layout);
+  _grid_autocool = new QWidget;
+  _tabs->addTab(_grid_autocool, "Autocool");
+  QGridLayout* grid_ac = new QGridLayout(_grid_autocool);
 
-  grid_autocool_layout->addWidget(_checkbox_autocool_enable=new QCheckBox("Enable autocool"),0,1);
+  grid_ac->addWidget(_checkbox_autocool_enable=new QCheckBox("Enable autocool"),0,1);
   _checkbox_autocool_enable->setToolTip("Autocooling reduces the strength and probablility of mutations with increasing numbers of generations.");
 
-  grid_autocool_layout->addWidget(new QLabel("Half-life"),1,0);
-  grid_autocool_layout->addWidget(_spinbox_autocool_halflife=new QSpinBox,1,1);
+  grid_ac->addWidget(new QLabel("Half-life"),1,0);
+  grid_ac->addWidget(_spinbox_autocool_halflife=new QSpinBox,1,1);
   _spinbox_autocool_halflife->setRange(1,1000);
   _spinbox_autocool_halflife->setSingleStep(1);  
   _spinbox_autocool_halflife->setToolTip("Number of generations needed to halve mutation influence when autocooling.");
 
-  grid_autocool_layout->addWidget(_label_autocool_generations=new QLabel(""),2,0);
+  grid_ac->addWidget(_label_autocool_generations=new QLabel(""),2,0);
 
-  grid_autocool_layout->addWidget(_button_autocool_reheat=new QPushButton("Reheat"),2,1);
+  grid_ac->addWidget(_button_autocool_reheat=new QPushButton("Reheat"),2,1);
   connect(_button_autocool_reheat,SIGNAL(clicked()),this,SLOT(reheat()));
+
+  grid_ac->setRowStretch(3, 1);
 
   setup_from_mutation_parameters();
 
@@ -153,8 +147,10 @@ DialogMutationParameters::DialogMutationParameters(QMainWindow* parent,MutationP
   connect(_checkbox_autocool_enable,SIGNAL(stateChanged(int)),this,SLOT(changed_autocool_enable(int)));
   connect(_spinbox_autocool_halflife,SIGNAL(valueChanged(int)),this,SLOT(changed_autocool_halflife(int)));
  
+  lo->addStretch();
+
   _ok=new QPushButton("OK");
-  layout()->addWidget(_ok);
+  lo->addWidget(_ok);
   _ok->setDefault(true);
 
   connect(

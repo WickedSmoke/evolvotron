@@ -36,11 +36,11 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
   setWindowTitle("Favourite");
   setSizeGripEnabled(true);
 
-  setLayout(new QVBoxLayout);
-  
+  QBoxLayout* lo = new QVBoxLayout(this);
+
   QGroupBox*const group0=new QGroupBox("Function");
   group0->setLayout(new QVBoxLayout);
-  layout()->addWidget(group0);
+  lo->addWidget(group0);
 
   group0->layout()->addWidget(new QLabel("Root node for new image functions:"));
   _favourite=new QComboBox;
@@ -61,14 +61,16 @@ DialogFavourite::DialogFavourite(EvolvotronMain* parent)
 
   QGroupBox*const group1=new QGroupBox("Wrapping");
   group1->setLayout(new QVBoxLayout);
-  layout()->addWidget(group1);
+  lo->addWidget(group1);
   
   _unwrapped=new QCheckBox("Disable additional space/colour transforms");
   group1->layout()->addWidget(_unwrapped);
 
+  lo->addStretch();
+
   //! \todo: Add OK & reset/restart versions ?
   QPushButton*const ok=new QPushButton("OK");
-  layout()->addWidget(ok);
+  lo->addWidget(ok);
   ok->setDefault(true);
 
   update_gui_from_state();

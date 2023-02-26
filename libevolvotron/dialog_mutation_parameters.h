@@ -61,9 +61,6 @@ class DialogMutationParameters : public QDialog
   //! Grid for base parameter control spinners
   QWidget* _grid_base_mutation;
 
-  //! Group for autocool parameters
-  QWidget* _vbox_autocool;
-
   //! Grid for autocool parameters
   QWidget* _grid_autocool;
 
