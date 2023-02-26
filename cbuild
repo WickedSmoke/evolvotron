@@ -2,7 +2,7 @@
 # Container build script for Evolvotron.
 
 if [ ! -s project.tar.gz ]; then
-    copr -a
+    copr -a -t mingw
 fi
 
 TIME=$(date +%H%M%S)

@@ -31,6 +31,7 @@ exe %evolv [
     application
     sources [%evolvotron/icons.qrc]
     sources_cpp %evolvotron
+    win32 [sources [%dist/app.rc]]
 ]
 
 exe %evolv_mutate [
