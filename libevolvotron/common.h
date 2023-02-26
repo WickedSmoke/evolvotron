@@ -66,7 +66,7 @@
 #include <QWaitCondition>
 #include <QWidget>
 
-#define APP_VERSION "0.8.0"
+#define APP_VERSION "0.8.1"
 #ifdef DEBUG
 #define APP_BUILD  APP_VERSION " (Debug)"
 #else
