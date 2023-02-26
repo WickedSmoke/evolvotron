@@ -192,8 +192,6 @@ uint MutatableImageDisplay::simplify_constants(bool single_action)
 
   if (single_action)
     {
-      if (_icon.get()) _main->setWindowIcon(*_icon);
-
       std::stringstream msg;
       msg << "Eliminated " << nodes_eliminated << " redundant function nodes\n";
       QMessageBox::information(this,"Evolvotron",msg.str().c_str(),QMessageBox::Ok);
@@ -529,9 +527,6 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
       }
       else
       {
-        if (_icon.get())
-          _main->setWindowIcon(*_icon);
-
         menupick_spawn();
       }
     }
@@ -798,9 +793,6 @@ void MutatableImageDisplay::menupick_simplify()
  */
 void MutatableImageDisplay::menupick_save_image()
 {
-  if (_icon.get())
-      _main->setWindowIcon(*_icon);
-
   std::clog << "Save requested...\n";
 
   if (_current_display_level!=0 || _current_display_multisample_grid!=main().render_parameters().multisample_grid())
@@ -865,9 +857,6 @@ void MutatableImageDisplay::menupick_save_image()
 
 void MutatableImageDisplay::menupick_save_function()
 {
-  if (_icon.get())
-      _main->setWindowIcon(*_icon);
-
   const QString fn = QFileDialog::getSaveFileName(this,
      "Save image function to an XML file",
      _main->functionPath,
@@ -1022,7 +1011,6 @@ void MutatableImageDisplay::menupick_properties()
   image_function()->save_function(xml);
 
   _properties->set_content(msg.str(),xml.str());
-  if (_icon.get()) _properties->setWindowIcon(*_icon);
   _properties->exec();
 }
 
@@ -1038,9 +1026,6 @@ void MutatableImageDisplay::spawn_big(int w, int h)
   QBoxLayout* lo = new QVBoxLayout;
   lo->setContentsMargins(0, 0, 0, 0);
   window->setLayout(lo);
-
-  if (_icon.get())
-    window->setWindowIcon(*_icon);
 
   bool fixedSize = (w && h);
   MutatableImageDisplay* display = new MutatableImageDisplay(&main(),false,fixedSize,QSize(w,h),_frames,_framerate);
