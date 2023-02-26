@@ -1,5 +1,11 @@
 [Most recent at top]
 
+Release 0.8.1:
+ - Add application icons and Linux .desktop file.
+ - Remove deprectated code (binary_function & QXmlSimpleReader).
+ - Minor changes to built-in documentation.
+ - Tweak dialog layouts a bit.
+
 Release 0.8.0:
  - Show lock icon on images and allow lock toggling with left click.
  - Allow zooming with mouse wheel.
