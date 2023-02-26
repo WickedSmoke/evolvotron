@@ -1,6 +1,6 @@
 sources_cpp: func [path /local it] [
     files: read path
-    remove-each it files [not find it %.cpp]
+    remove-each it files [ne? %.cpp skip tail it -4]
     sources_from path files
 ]
 
@@ -22,7 +22,7 @@ lib %function [
 ]
 
 lib %evolvotron [
-    qt/no-link [widgets xml]
+    qt/no-link [widgets]
     include_from [%libfunction %libevolvotron]
     sources_cpp %libevolvotron
 ]
