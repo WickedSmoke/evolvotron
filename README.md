@@ -147,10 +147,8 @@ Yada is obsoleted as of Debian's "Wheezy" release however.
 evolvotron.spec
  - For building RPM packages.
 
-BUILDING CODE DOCUMENTATION
----------------------------
+CODE DOCUMENTATION
+------------------
 If you have doxygen (and graphviz too) and want to build
-the source code documentation, execute `./mkdoc` at the top level.
-The code documentation then appears in `./doc/html/`.
-This hasn't been tested in a long while now, although the
-doxygen commenting style has been kept up.
+the source code documentation, execute `doxygen` at the top level.
+The documentation then appears in `./doc/html/`.
