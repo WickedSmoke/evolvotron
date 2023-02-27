@@ -212,8 +212,10 @@ std::ostream& MutatableImage::save_function(std::ostream& out) const
   return out;
 }
 
-/*! Expect to see an <evolvotron-image> followed by nested
-  <f>...</f> wrapping <type>...</type>, <i>...</i>, <p>...</p> and more <f> declarations.
+/*! Evolvotron XML Reader.
+  Expects to see an `<evolvotron-image>` followed by nested `<f>`...`</f>`
+  wrapping `<type>`...`</type>`, `<i>`...`</i>`, `<p>`...`</p>` and more
+  `<f>` declarations.
  */
 class LoadHandler : public QXmlStreamReader
 {
@@ -224,7 +226,7 @@ protected:
   bool* _ret_sinusoidal_z;
   bool* _ret_spheremap;
 
-  //! Stack just used to track our progress through the nested <f>...</f> declarations.
+  //! Stack just used to track our progress through the nested `<f>`...`</f>` declarations.
   /*! Ownership is entirely under _root and the pointr-container in FunctionNodeInfo.
    */
   std::stack<FunctionNodeInfo*> _stack;

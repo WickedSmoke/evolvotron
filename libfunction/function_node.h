@@ -236,14 +236,14 @@ class FunctionNode : public Function
       return args()[n];
     }
  protected:
-  //@{
+  //! @{
   //! Useful constants used when some small sampling step is required (e.g gradient operators).
   static real epsilon() {return 1e-6;}
   static real epsilon2() {return 2.0*epsilon();}
   static real inv_epsilon() {return 1.0/epsilon();}
   static real inv_epsilon2() {return 1.0/epsilon2();}
   static real big_epsilon() {return sqrt(epsilon());}
-  //@}
+  //! @}
 };
 
 #endif
