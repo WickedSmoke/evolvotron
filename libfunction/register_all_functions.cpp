@@ -1,27 +1,8 @@
-/**************************************************************************/
-/*  Copyright 2012 Tim Day                                                */
-/*                                                                        */
-/*  This file is part of Evolvotron                                       */
-/*                                                                        */
-/*  Evolvotron is free software: you can redistribute it and/or modify    */
-/*  it under the terms of the GNU General Public License as published by  */
-/*  the Free Software Foundation, either version 3 of the License, or     */
-/*  (at your option) any later version.                                   */
-/*                                                                        */
-/*  Evolvotron is distributed in the hope that it will be useful,         */
-/*  but WITHOUT ANY WARRANTY; without even the implied warranty of        */
-/*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         */
-/*  GNU General Public License for more details.                          */
-/*                                                                        */
-/*  You should have received a copy of the GNU General Public License     */
-/*  along with Evolvotron.  If not, see <http://www.gnu.org/licenses/>.   */
-/**************************************************************************/
-
 /* AUTO GENERATED FILE.  DO NOT EDIT */
 
 /* Should be updated by update_register_all_functions script when new functions are added */
 
-
+/* #include "libfunction_precompiled.h" */
 
 #include "register_all_functions.h"
 
@@ -41,6 +22,9 @@ REGISTER_DCL(FunctionModulus);
 REGISTER_DCL(FunctionExp);
 REGISTER_DCL(FunctionSin);
 REGISTER_DCL(FunctionCos);
+REGISTER_DCL(FunctionTan);
+REGISTER_DCL(FunctionFDIM);
+REGISTER_DCL(FunctionFMA);
 REGISTER_DCL(FunctionChooseStrip);
 REGISTER_DCL(FunctionChooseStripBlend);
 REGISTER_DCL(FunctionChooseSphere);
@@ -115,8 +99,8 @@ REGISTER_DCL(FunctionMultiscaleNoiseOneChannel);
 REGISTER_DCL(FunctionNoiseThreeChannel);
 REGISTER_DCL(FunctionMultiscaleNoiseThreeChannel);
 REGISTER_DCL(FunctionPixelize);
-REGISTER_DCL(FunctionPixelizeHex);
 REGISTER_DCL(FunctionVoxelize);
+REGISTER_DCL(FunctionPixelizeHex);
 REGISTER_DCL(FunctionOrthoSphereShaded);
 REGISTER_DCL(FunctionOrthoSphereShadedBumpMapped);
 REGISTER_DCL(FunctionOrthoSphereReflect);
@@ -159,6 +143,9 @@ void register_all_functions(FunctionRegistry& r)
   register_FunctionExp(r);
   register_FunctionSin(r);
   register_FunctionCos(r);
+  register_FunctionTan(r);
+  register_FunctionFDIM(r);
+  register_FunctionFMA(r);
   register_FunctionChooseStrip(r);
   register_FunctionChooseStripBlend(r);
   register_FunctionChooseSphere(r);
@@ -233,8 +220,8 @@ void register_all_functions(FunctionRegistry& r)
   register_FunctionNoiseThreeChannel(r);
   register_FunctionMultiscaleNoiseThreeChannel(r);
   register_FunctionPixelize(r);
-  register_FunctionPixelizeHex(r);
   register_FunctionVoxelize(r);
+  register_FunctionPixelizeHex(r);
   register_FunctionOrthoSphereShaded(r);
   register_FunctionOrthoSphereShadedBumpMapped(r);
   register_FunctionOrthoSphereReflect(r);

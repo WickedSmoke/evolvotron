@@ -171,4 +171,40 @@ FUNCTION_END(FunctionCos)
 
 //------------------------------------------------------------------------------------------
 
+FUNCTION_BEGIN(FunctionTan,0,0,false,0)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return XYZ(tan(p.x()),tan(p.y()),tan(p.z()));
+    }
+  
+FUNCTION_END(FunctionTan)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFDIM,0,0,false,0)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return XYZ(fdim(p.x(),p.y()),fdim(p.y(),p.z()),fdim(p.z(),p.x()));
+    }
+  
+FUNCTION_END(FunctionFDIM)
+
+//------------------------------------------------------------------------------------------
+
+FUNCTION_BEGIN(FunctionFMA,0,0,false,0)
+
+  //! Evaluate function.
+  virtual const XYZ evaluate(const XYZ& p) const
+    {
+      return XYZ(fma(p.x(),p.y(),p.z()),fma(p.y(),p.z(),p.x()), fma(p.z(),p.x(),p.y()));
+    }
+  
+FUNCTION_END(FunctionFMA)
+
+
+
 #endif

@@ -7,5 +7,4 @@ echo "*** Other Qt setups may require removing the -qt=5 option from qmake and s
 echo "***"
 
 VERSION_NUMBER=`./VERSION`
-
 qtchooser -run-tool=qmake -qt=5 "VERSION_NUMBER=$VERSION_NUMBER" main.pro && make -j 4
