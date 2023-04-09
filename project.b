@@ -12,10 +12,6 @@ application: does [
     qt [widgets]
 ]
 
-default [
-    cxxflags "-std=c++11"
-]
-
 lib %function [
     include_from %libfunction
     sources_cpp %libfunction

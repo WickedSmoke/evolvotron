@@ -242,15 +242,22 @@ EvolvotronMain::EvolvotronMain
 
   _dialog_favourite=new DialogFavourite(this);
 
+#if QT_VERSION >= 0x060400
+#define KEY_ACTION(menu, L, M, K)   menu->addAction(L, K, this, M)
+#else
+#define KEY_ACTION(menu, L, M, K)   menu->addAction(L, this, M, K)
+#endif
+
   _popupmenu_file=menuBar()->addMenu("&File");
-  _popupmenu_file->addAction("Reset (Reset mutation parameters, clear locks)",this,SLOT(reset_cold()),QKeySequence("r"));
-  _popupmenu_file->addAction("Restart (Preserve mutation parameters and locks)",this,SLOT(reset_warm()),QKeySequence("t"));
-  _popupmenu_file->addAction("Remix (Randomize function weights and restart)",this,SLOT(reset_randomized()),QKeySequence("x"));
+  KEY_ACTION(_popupmenu_file, "Reset (Reset mutation parameters, clear locks)", SLOT(reset_cold()), QKeySequence("r"));
+  KEY_ACTION(_popupmenu_file, "Restart (Preserve mutation parameters and locks)", SLOT(reset_warm()), QKeySequence("t"));
+  KEY_ACTION(_popupmenu_file, "Remix (Randomize function weights and restart)", SLOT(reset_randomized()), QKeySequence("x"));
   _popupmenu_file->addSeparator();
-  _popupmenu_file->addAction("&Quit", this, SLOT(close()), QKeySequence::Quit);
+  KEY_ACTION(_popupmenu_file, "&Quit", SLOT(close()), QKeySequence::Quit);
 
   _popupmenu_edit=menuBar()->addMenu("&Edit");
-  _popupmenu_edit_undo_action=_popupmenu_edit->addAction("Undo",this,SLOT(undo()),QKeySequence("u"));
+  _popupmenu_edit_undo_action=
+      KEY_ACTION(_popupmenu_edit, "Undo", SLOT(undo()), QKeySequence("u"));
   _popupmenu_edit_undo_action->setEnabled(false);
   _popupmenu_edit->addSeparator();
   _popupmenu_edit->addAction("Simplify all functions",this,SLOT(simplify_constants()));
@@ -266,10 +273,12 @@ EvolvotronMain::EvolvotronMain
 
   _popupmenu_settings->addSeparator();
 
-  _menu_action_fullscreen=_popupmenu_settings->addAction("Fullscreen",this,SLOT(toggle_fullscreen()),QKeySequence(Qt::CTRL + Qt::Key_F));
+  _menu_action_fullscreen=
+      KEY_ACTION(_popupmenu_settings, "Fullscreen", SLOT(toggle_fullscreen()), QKeySequence(Qt::CTRL | Qt::Key_F));
   _menu_action_fullscreen->setCheckable(true);
   _menu_action_fullscreen->setChecked(start_fullscreen);
-  _menu_action_hide_menu=_popupmenu_settings->addAction("Hide menu and statusbar",this,SLOT(toggle_hide_menu()),QKeySequence(Qt::CTRL + Qt::Key_M));
+  _menu_action_hide_menu=
+      KEY_ACTION(_popupmenu_settings, "Hide menu and statusbar", SLOT(toggle_hide_menu()), QKeySequence(Qt::CTRL | Qt::Key_M));
   _menu_action_hide_menu->setCheckable(true);
   _menu_action_hide_menu->setChecked(start_menuhidden);
 
@@ -278,7 +287,9 @@ EvolvotronMain::EvolvotronMain
 
   _popupmenu_help=menuBar()->addMenu("&Help");
   _popupmenu_help->addAction("Quick &Reference",_dialog_help_short,SLOT(show()));
-  _popupmenu_help->addAction("User &Manual",_dialog_help_long,SLOT(show()),QKeySequence::HelpContents);
+  QAction* act =
+      _popupmenu_help->addAction("User &Manual",_dialog_help_long,SLOT(show()));
+  act->setShortcut(QKeySequence::HelpContents);
   _popupmenu_help->addSeparator();
   _popupmenu_help->addAction("&About",_dialog_about,SLOT(show()));
 

@@ -212,6 +212,13 @@ std::ostream& MutatableImage::save_function(std::ostream& out) const
   return out;
 }
 
+#if QT_VERSION >= 0x060000
+#define QStringRef  QStringView
+#define QS_EQUAL(SV,C)  SV == QLatin1StringView(C)
+#else
+#define QS_EQUAL(SR,C)  SR == C
+#endif
+
 /*! Evolvotron XML Reader.
   Expects to see an `<evolvotron-image>` followed by nested `<f>`...`</f>`
   wrapping `<type>`...`</type>`, `<i>`...`</i>`, `<p>`...`</p>` and more
@@ -272,22 +279,23 @@ public:
     }
     return true;
   }
-  
+
   //! Called for start elements.
   bool startElement(const QStringRef& localName,
                     const QXmlStreamAttributes& atts)
   {
     if (_expect_characters)
     {
-      QString msg = "Error: Expected character data but got start element \""
-                    + localName + "\"\n";
+      QString msg("Error: Expected character data but got start element \"");
+      msg.append(localName);
+      msg.append("\"\n");
       raiseError(msg);
       return false;
     }
 
     if (_expect_top_level_element)
     {
-      if (localName=="evolvotron-image-function")
+      if (QS_EQUAL(localName, "evolvotron-image-function"))
       {
         _expect_top_level_element=false;
 
@@ -296,9 +304,11 @@ public:
         {
           warning += "Warning: File does not include evolvotron version\n";
         }
-        else if (version != APP_VERSION)
+        else if (version != QString(APP_VERSION))
         {
-          warning += "Warning: File saved from a different evolvotron version: "+version+"\n(This is version "+APP_VERSION+")\n";
+          warning += "Warning: File saved from a different evolvotron version: ";
+          warning += version;
+          warning += "\n(This is version " APP_VERSION ")\n";
         }
 
         QStringRef zsweep = atts.value(QString(), "zsweep");
@@ -315,7 +325,9 @@ public:
             *_ret_sinusoidal_z=false;
           else
           {
-            QString msg = "Error: zsweep attribute expected \"sinusoidal\" or \"linear\", but got \""+zsweep+"\"\n";
+            QString msg("Error: zsweep attribute expected \"sinusoidal\" or \"linear\", but got \"");
+            msg.append(zsweep);
+            msg.append("\"\n");
             raiseError(msg);
             return false;
           }
@@ -335,7 +347,9 @@ public:
             *_ret_spheremap=false;
           else
           {
-            QString msg = "Error: projection attribute expected \"spheremap\" or \"planar\", but got \""+projection+"\"\n";
+            QString msg("Error: projection attribute expected \"spheremap\" or \"planar\", but got \"");
+            msg.append(projection);
+            msg.append("\"\n");
             raiseError(msg);
             return false;
           }
@@ -343,14 +357,16 @@ public:
       }
       else
       {
-        QString msg = "Error: Expected <evolvotron-image-function> but got \""+localName+"\"\n";
+        QString msg("Error: Expected <evolvotron-image-function> but got \"");
+        msg.append(localName);
+        msg.append("\"\n");
         raiseError(msg);
         return false;
       }
     }
     else
     {
-      if (localName=="f")
+      if (QS_EQUAL(localName, "f"))
       {
         std::unique_ptr<FunctionNodeInfo> f(new FunctionNodeInfo());
         if (_stack.empty())
@@ -373,25 +389,26 @@ public:
           _stack.push(it);
         }
       }
-      else if (localName=="type")
+      else if (QS_EQUAL(localName, "type"))
       {
         _expect_characters=true;
         _expect_characters_type=true;
       }
-      else if (localName=="i")
+      else if (QS_EQUAL(localName, "i"))
       {
         _expect_characters=true;
         _expect_characters_iterations=true;
       }
-      else if (localName=="p")
+      else if (QS_EQUAL(localName, "p"))
       {
         _expect_characters=true;
         _expect_characters_parameter=true;
       }
       else
       {
-        QString msg = "Error: Expected <f>, <type>, <i> or <p> but got \""
-                      + localName + "\"\n";
+        QString msg("Error: Expected <f>, <type>, <i> or <p> but got \"");
+        msg.append(localName);
+        msg.append("\"\n");
         raiseError(msg);
         return false;
       }
@@ -405,13 +422,14 @@ public:
   {
     if (_expect_characters)
     {
-      QString msg = "Error: Expected character data but got end element \""
-                    + localName + "\"\n";
+      QString msg("Error: Expected character data but got end element \"");
+      msg.append(localName);
+      msg.append("\"\n");
       raiseError(msg);
       return false;
     }
 
-    if (localName=="f")
+    if (QS_EQUAL(localName, "f"))
         _stack.pop();
     return true;
   }
@@ -427,7 +445,9 @@ public:
     {
       if (!_expect_characters)
       {
-        QString msg = "Error: Unexpected character data : \"" + s + "\"\n";
+        QString msg("Error: Unexpected character data : \"");
+        msg.append(s);
+        msg.append("\"\n");
         raiseError(msg);
         return false;
       }
@@ -447,7 +467,9 @@ public:
       _expect_characters_iterations=false;
       if (!ok)
       {
-        QString msg = "Error: Couldn't parse \"" + s + "\" as an integer\n";
+        QString msg("Error: Couldn't parse \"");
+        msg.append(s);
+        msg.append("\" as an integer\n");
         raiseError(msg);
         return false;
       }
@@ -459,7 +481,9 @@ public:
       _expect_characters_parameter=false;
       if (!ok)
       {
-        QString msg = "Error: Couldn't parse \"" + s + "\" as a real\n";
+        QString msg("Error: Couldn't parse \"");
+        msg.append(s);
+        msg.append("\" as a real\n");
         raiseError(msg);
         return false;
       }

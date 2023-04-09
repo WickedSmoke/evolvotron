@@ -506,6 +506,14 @@ void MutatableImageDisplay::snapshot(const char* name)
   main().history().end_action();
 }
 
+#if QT_VERSION >= 0x060000
+#define POS_X(ev)   int(ev->position().x())
+#define POS_Y(ev)   int(ev->position().y())
+#else
+#define POS_X(ev)   ev->x()
+#define POS_Y(ev)   ev->y()
+#endif
+
 void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
 {
   if (event->button()==Qt::RightButton)
@@ -521,7 +529,7 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
     }
   else if (_full_functionality && event->button()==Qt::LeftButton)
     {
-      if (event->x() > (width() - 32) && event->y() < 32)
+      if (POS_X(event) > (width() - 32) && POS_Y(event) < 32)
       {
         menupick_lock();
       }
