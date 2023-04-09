@@ -61,7 +61,13 @@ DialogRenderParameters::DialogRenderParameters(QMainWindow* parent,RenderParamet
   setup_from_render_parameters();
 
   connect(_checkbox_jittered_samples,SIGNAL(stateChanged(int)),this,SLOT(changed_jittered_samples(int)));
-  connect(_buttongroup,SIGNAL(buttonClicked(int)),this,SLOT(changed_oversampling(int)));
+  connect(_buttongroup,
+#if QT_VERSION >= 0x051500
+          SIGNAL(idClicked(int)),
+#else
+          SIGNAL(buttonClicked(int)),
+#endif
+          this,SLOT(changed_oversampling(int)));
  
   lo->addStretch();
 

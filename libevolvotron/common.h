@@ -50,7 +50,6 @@
 #include <QPainter>
 #include <QPushButton>
 #include <QRadioButton>
-#include <QRegExp>
 #include <QScrollArea>
 #include <QSize>
 #include <QSlider>

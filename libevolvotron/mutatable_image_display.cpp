@@ -512,7 +512,7 @@ void MutatableImageDisplay::mousePressEvent(QMouseEvent* event)
     {
       _menu->exec(QCursor::pos());
     }
-  else if (event->button()==Qt::MidButton)
+  else if (event->button() == Qt::MiddleButton)
     {
       snapshot("middle-button drag");
 
@@ -544,7 +544,7 @@ void MutatableImageDisplay::mouseTransform(const Transform& tf)
 
 void MutatableImageDisplay::mouseMoveEvent(QMouseEvent* event)
 {
-  if (event->buttons()&Qt::MidButton)
+  if (event->buttons() & Qt::MiddleButton)
     {
       if (locked())
 	{
