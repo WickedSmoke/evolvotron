@@ -1,12 +1,10 @@
 Summary: Evolvotron Interactive Art Generator
 Name: evolvotron
 Version: 0.8.1
-Release: 1%{?dist}
-License: GPLv2+
+Release: %autorelease
+License: GPL-2.0-or-later
 URL: http://sourceforge.net/projects/evolvotron
-Group: Applications/Graphics
-Source: %{name}-%{version}.tar.gz
-BuildRoot: %{_tmppath}/%{name}-%{version}-build
+Source: https://downloads.sourceforge.net/evolvotron/0.8/evolvotron-0.8.1.tar.gz
 BuildRequires: gcc-c++ boost-devel qt5-qtbase-devel
 
 %global debug_package %{nil}
