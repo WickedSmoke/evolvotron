@@ -22,6 +22,7 @@
   \todo Eliminate need to include function.h (and instantiate lots of stuff) by moving more into function_node.h/.cpp
 */
 
+#include <QElapsedTimer>
 #include <QSettings>
 
 #include "evolvotron_main.h"
