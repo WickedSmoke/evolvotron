@@ -4,8 +4,8 @@ Version: 0.8.2
 Release: %autorelease
 License: GPL-2.0-or-later
 URL: http://sourceforge.net/projects/evolvotron
-Source: https://downloads.sourceforge.net/evolvotron/0.8/evolvotron-%{version}.tar.gz
-BuildRequires: gcc-c++ boost-devel qt5-qtbase-devel
+Source: https://github.com/WickedSmoke/evolvotron/archive/refs/tags/v%{version}.tar.gz
+BuildRequires: gcc-c++ boost-devel qt6-qtbase-devel
 
 %global debug_package %{nil}
 
@@ -13,10 +13,10 @@ BuildRequires: gcc-c++ boost-devel qt5-qtbase-devel
 Evolvotron is interactive "generative art" software to evolve images/textures/patterns through an iterative process of random mutation and user-selection driven evolution. 
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}
 
 %build
-qmake-qt5 VERSION_NUMBER=%{version} main.pro
+qmake6 VERSION_NUMBER=%{version} main.pro
 make -j 4
 
 %install
@@ -47,6 +47,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/applications/evolvotron.desktop
 
 %changelog
+* Tue Apr 23 2024 Karl Robillard <wickedsmoke@users.sf.net> 0.8.2-1
+  - Update to build with Qt 6.
 * Sun Dec 18 2022 Karl Robillard <wickedsmoke@users.sf.net> 0.7.2-1
   - Update for v0.7.2
 * Fri Mar 28 2008 Karl Robillard <wickedsmoke@users.sf.net>
