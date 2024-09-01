@@ -62,7 +62,7 @@ DialogAbout::DialogAbout(QWidget* parent,int n_threads,bool separate_farm_for_en
     << "</p>\n"
        "<p>Authors: Tim Day, "
        "<a href=\"mailto:wickedsmoke@users.sf.net\">Karl Robillard</a></p>\n"
-       "<p><a href=\"http://www.bottlenose.net/share/evolvotron/\">[Home Page]"
+       "<p><a href=\"https://www.timday.com/share/evolvotron/\">[Home Page]"
        "</a>&nbsp;&nbsp;"
        "<a href=\"http://sourceforge.net/projects/evolvotron\">[Project Page]"
        "</a></p>\n";
