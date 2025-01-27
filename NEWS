@@ -2,7 +2,7 @@
 
 Release 0.8.1:
  - Add application icons and Linux .desktop file.
- - Remove deprectated code (binary_function & QXmlSimpleReader).
+ - Remove deprecated code (binary_function & QXmlSimpleReader).
  - Minor changes to built-in documentation.
  - Tweak dialog layouts a bit.
 
