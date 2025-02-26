@@ -4,5 +4,5 @@ Name=Evolvotron
 Comment=Interactive generative art program
 Exec=evolvotron
 Icon=evolvotron
-Terminal=0
+Terminal=false
 Categories=Qt;Graphics;2DGraphics;
