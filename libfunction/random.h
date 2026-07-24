@@ -111,25 +111,29 @@ template <typename T> void random_shuffle(boost::ptr_vector<T>& v,Random01& r01)
   v.transfer(v.end(),nv.begin(),nv.end(),nv);
 }
 
-//! Adapter to use our random number generator to feed std::random_shuffle
+//! Adapter to use our random number generator to feed std::shuffle
 class RandomInt
 {
  public:
+  typedef uint result_type;
+  static constexpr result_type min() { return 0; }
+  static constexpr result_type max() { return _maximum; }
   RandomInt(Random01& r01)
     :_r01(r01)
     {}
-  uint operator()(uint n)
+  uint operator()()
     {
-      return static_cast<uint>(_r01()*n);
+      return static_cast<uint>(_r01()*_maximum);
     }
  private:
+  static const uint _maximum = std::numeric_limits<uint>::max();
   Random01& _r01;
 };
 
 template <typename T> void random_shuffle(std::vector<T>& v,Random01& r01)
 {
   RandomInt r0n(r01);
-  std::random_shuffle(v.begin(),v.end(),r0n);
+  std::shuffle(v.begin(),v.end(),r0n);
 }
 
 #endif

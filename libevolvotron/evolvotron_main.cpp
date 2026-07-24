@@ -22,6 +22,7 @@
   \todo Eliminate need to include function.h (and instantiate lots of stuff) by moving more into function_node.h/.cpp
 */
 
+#include <random>
 #include <QElapsedTimer>
 #include <QSettings>
 
@@ -771,7 +772,9 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
   }
 
   if (_startup_shuffle) {
-    std::random_shuffle(_startup_filenames.begin(),_startup_filenames.end());
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::shuffle(_startup_filenames.begin(), _startup_filenames.end(), gen);
   }
 
   for (size_t i=0;i<displays().size();++i) {
