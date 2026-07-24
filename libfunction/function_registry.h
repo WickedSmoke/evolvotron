@@ -31,8 +31,9 @@
 /*! Intended to be used as singleton; get() obtains instance.
   This holds the "definitive" collection of registrations.  FunctionRegistrations can be compared using pointer identiy.
  */
-struct FunctionRegistry : public std::map<std::string,FunctionRegistration*>
+class FunctionRegistry : public std::map<std::string,FunctionRegistration*>
 {
+public:
     FunctionRegistry();
     ~FunctionRegistry();
 
