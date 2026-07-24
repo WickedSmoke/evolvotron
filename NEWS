@@ -1,6 +1,11 @@
-[Most recent at top]
+Release 0.8.3 (Jul 24, 2026):
+ - Support C++17.
 
-Release 0.8.1:
+Release 0.8.2 (Apr 23, 2024):
+ - Support Qt 6.
+ - Add extras/evolvotron_complexity script.
+
+Release 0.8.1 (Feb 25, 2023):
  - Add application icons and Linux .desktop file.
  - Remove deprecated code (binary_function & QXmlSimpleReader).
  - Minor changes to built-in documentation.
