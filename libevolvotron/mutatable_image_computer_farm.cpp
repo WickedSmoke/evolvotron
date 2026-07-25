@@ -46,10 +46,11 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
   std::clog << "Compute farm shut down begun...\n";
 
   // Kill all the computers (care needed to wake any waiting ones).
-  for (boost::ptr_vector<MutatableImageComputer>::iterator it = _computers.begin(); it != _computers.end(); it++)
-    (*it).kill();
+  for (auto it : _computers)
+    it->kill();
   _wait_condition.wakeAll();
-  _computers.clear();
+  for (auto it : _computers)
+    delete it;
 
   // Clear all the tasks in queues
   {
@@ -96,9 +97,9 @@ void MutatableImageComputerFarm::push_todo(const std::shared_ptr<MutatableImageC
     //! \todo: It would be better to just defer the lowest priority task if there's any less than the queued task.
     /*
     bool any_deferred=false;
-    for (boost::ptr_vector<MutatableImageComputer>::iterator it=_computers.begin();it!=_computers.end();it++)
+    for (auto it : _computers)
       {
-	if ((*it).defer_if_less_important_than(task->priority()))
+	if (it->defer_if_less_important_than(task->priority()))
 	  {
 	    any_deferred=true;
 	  }
@@ -189,9 +190,9 @@ void MutatableImageComputerFarm::abort_all()
   }
   _todo.clear();
 
-  for (boost::ptr_vector<MutatableImageComputer>::iterator it = _computers.begin(); it != _computers.end(); it++)
+  for (auto it : _computers)
   {
-    (*it).abort();
+    it->abort();
   }
 
   for (DoneQueueByDisplay::iterator it0 = _done.begin(); it0 != _done.end(); it0++)
@@ -221,9 +222,9 @@ void MutatableImageComputerFarm::abort_for(const MutatableImageDisplay *disp)
     }
   }
 
-  for (boost::ptr_vector<MutatableImageComputer>::iterator it = _computers.begin(); it != _computers.end(); it++)
+  for (auto it : _computers)
   {
-    (*it).abort_for(disp);
+    it->abort_for(disp);
   }
 
   DoneQueueByDisplay::iterator it0 = _done.find(disp);
@@ -250,9 +251,9 @@ uint MutatableImageComputerFarm::tasks() const
 {
   uint ret = 0;
 
-  for (boost::ptr_vector<MutatableImageComputer>::const_iterator it = _computers.begin(); it != _computers.end(); it++)
+  for (auto it : _computers)
   {
-    if ((*it).active())
+    if (it->active())
     {
       ret++;
     }

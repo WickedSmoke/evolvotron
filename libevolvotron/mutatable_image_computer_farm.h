@@ -69,7 +69,7 @@ class MutatableImageComputerFarm
   QWaitCondition _wait_condition;
 
   //! The compute threads
-  boost::ptr_vector<MutatableImageComputer> _computers;
+  std::vector<MutatableImageComputer*> _computers;
 
   //! Convenience typedef.
   typedef std::multiset<std::shared_ptr<MutatableImageComputerTask>,CompareTaskPriorityLoResFirst> TodoQueue;
