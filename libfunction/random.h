@@ -24,40 +24,19 @@
 #ifndef _random_h_
 #define _random_h_
 
+#include <boost/random.hpp>
 #include "useful.h"
 
-//! Abstract base class for random number generation
-class Random
-{
-public:
-  
-  //! Constructor (nothing to do in base class)
-  Random()
-    {}
-
-  //! Trivial destructor.
-  virtual ~Random()
-    {}
-  
-  //! Return a random number.
-  /*! \warning Returns double instead of real because suspect NegExp can return Inf otherwise.
-   */
-  virtual double operator()()
-    =0;
-};
-
 //! Generates random numbers in the range [0,1).
-class Random01 : public Random   
+class Random01
 {
 public:
   //! Constructor
-  Random01(uint seed);
+  Random01(uint seed) : _rng(seed), _dist(0.0,1.0), _gen(_rng,_dist) {}
 
-  //! Trivial destructor
-  virtual ~Random01();
-  
   //! Return next number in sequence.
-  virtual double operator()();
+  double operator()() { return _gen(); }
+
 private:
 
   //! Base generator
@@ -71,7 +50,7 @@ private:
 };
 
 //! Return negative-exponentially distributed random numbers.
-class RandomNegExp : public Random
+class RandomNegExp
 {
 protected:
 
@@ -89,12 +68,10 @@ public:
     ,_mean(m)
     {}
 
-  //! Trivial destructor.
-  virtual ~RandomNegExp()
-    {}
-  
   //! Return next number in sequence.
-  virtual double operator()()
+  /*! \warning Returns double instead of real because suspect NegExp can return Inf otherwise.
+   */
+  double operator()()
     {
       return -_mean*log(1.0-_generator());
     }  

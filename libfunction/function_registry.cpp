@@ -21,6 +21,7 @@
   \brief Implementation for class FunctionRegistry and associated classes.
 */
 
+#include <iostream>
 #include "function_registry.h"
 #include "register_all_functions.h"
 

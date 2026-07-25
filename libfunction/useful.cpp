@@ -17,6 +17,7 @@
 /*  along with Evolvotron.  If not, see <http://www.gnu.org/licenses/>.   */
 /**************************************************************************/
 
+#include <iostream>
 #include "useful.h"
 
 /*! \file
