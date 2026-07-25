@@ -24,7 +24,7 @@
 #ifndef _random_h_
 #define _random_h_
 
-#include <boost/random.hpp>
+#include <random>
 #include "useful.h"
 
 //! Generates random numbers in the range [0,1).
@@ -32,21 +32,17 @@ class Random01
 {
 public:
   //! Constructor
-  Random01(uint seed) : _rng(seed), _dist(0.0,1.0), _gen(_rng,_dist) {}
+  Random01(uint seed) : _rng(seed)/*, _dist(0.0,1.0)*/ {}
 
   //! Return next number in sequence.
-  double operator()() { return _gen(); }
+  double operator()() { return double(_rng()) / 4294967296.0; }
 
 private:
+  std::mt19937 _rng;
 
-  //! Base generator
-  boost::mt19937 _rng;
-
-  //! Distribution
-  boost::uniform_real<> _dist;
-
-  //! Actual generator
-  boost::variate_generator<boost::mt19937,boost::uniform_real<> > _gen;
+  // NOTE: Using _dist(_rng) skips every other number for some reason, which
+  // boost::uniform_real<> did not.  We just divide by 0x100000000 instead.
+  //std::uniform_real_distribution<> _dist;
 };
 
 //! Return negative-exponentially distributed random numbers.

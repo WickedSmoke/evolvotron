@@ -24,6 +24,7 @@
 
 #include "function_node.h"
 
+#include <sstream>
 #include "function_compose_pair.h"
 #include "function_constant.h"
 #include "function_node_info.h"
