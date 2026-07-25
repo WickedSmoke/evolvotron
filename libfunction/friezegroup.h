@@ -56,7 +56,7 @@ struct ClampZ
 template <class SYMMETRY,class ZPOLICY> 
   inline const XYZ FriezegroupEvaluate
     (
-     const Function& f,const XYZ& p,const SYMMETRY& sym,const ZPOLICY& zpol
+     const FunctionNode& f,const XYZ& p,const SYMMETRY& sym,const ZPOLICY& zpol
      )
 {
   return f(XYZ(sym(p.xy()),zpol(p.z())));
@@ -68,7 +68,7 @@ template <class SYMMETRY,class ZPOLICY>
 template<class BLEND,class ZPOLICY> 
   inline const XYZ FriezegroupBlend
     (
-     const Function& f0,const Function& f1,const XYZ& p,const BLEND& blend,const ZPOLICY& zpol
+     const FunctionNode& f0,const FunctionNode& f1,const XYZ& p,const BLEND& blend,const ZPOLICY& zpol
      )
 {
   const boost::tuple<real,XY,XY> b(blend(p.xy()));
@@ -80,7 +80,7 @@ template<class BLEND,class ZPOLICY>
 template<class BLEND,class ZPOLICY> 
   inline const XYZ FriezegroupBlend
     (
-     const Function& f,const XYZ& p,const BLEND& blend,const ZPOLICY& zpol
+     const FunctionNode& f,const XYZ& p,const BLEND& blend,const ZPOLICY& zpol
      )
 {
   return FriezegroupBlend(f,f,p,blend,zpol);
@@ -93,7 +93,7 @@ template<class BLEND,class ZPOLICY>
 template<class CUT,class ZPOLICY>
   inline const int FriezegroupCut
     (
-     const Function& f,const XYZ& p,const CUT& cut,const ZPOLICY& zpol
+     const FunctionNode& f,const XYZ& p,const CUT& cut,const ZPOLICY& zpol
      )
 {
   const XY pc(cut(p.xy()));
@@ -365,7 +365,7 @@ template <class ZPOLICY> struct SpinhopCut : public Friezegroup
   SpinhopCut(real width)
     :Friezegroup(width)
   {}
-  const int operator()(const Function& f,const XYZ& p,const ZPOLICY& zpol) const
+  const int operator()(const FunctionNode& f,const XYZ& p,const ZPOLICY& zpol) const
   {
     const XY pm(p.x()-0.5*width(),fabs(p.y()));    // Shift out of alignment with spinhop being cut, and add reflection about y=0
     const XY r(Sidle(width())(pm));                // in combo with sidle, gets us something suitable for cutting without breaking spinhop

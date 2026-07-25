@@ -37,14 +37,19 @@ class FunctionRegistry;
 class MutatableImage;
 class MutationParameters;
 
-class Function : boost::noncopyable
+//! Abstract base class for all kinds of mutatable image node.
+/*! MutatableImage declared a friend to help constification of the public accessors.
+ */
+class FunctionNode
 {
  public:
+  friend class MutatableImage;
 
-  virtual ~Function()
-    {}
+  // noncopyable
+  FunctionNode(const FunctionNode&) = delete;
+  FunctionNode& operator=(const FunctionNode&) = delete;
 
-  //! Convenience wrapper for evaluate (actually, evaluate is protected so can't be called externally anyway)
+  //! Convenience wrapper for evaluate.
   const XYZ operator()(const XYZ& p) const
     {
       return evaluate(p);
@@ -57,17 +62,7 @@ class Function : boost::noncopyable
     }
 
   //! This what distinguishes different types of function.
-  virtual const XYZ evaluate(const XYZ&) const
-    =0;
-};
-
-//! Abstract base class for all kinds of mutatable image node.
-/*! MutatableImage declared a friend to help constification of the public accessors.
- */
-class FunctionNode : public Function
-{
- public:
-  friend class MutatableImage;
+  virtual const XYZ evaluate(const XYZ&) const = 0;
 
  private:
   //! The arguments (ie child nodes) for this node.
