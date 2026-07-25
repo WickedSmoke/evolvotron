@@ -21,10 +21,5 @@
   \brief Header for license boilerplate.
 */
 
-#ifndef _license_h
-#define _license_h_
-
 //! String containing GPL text.
 extern const char*const license_string;
-
-#endif
