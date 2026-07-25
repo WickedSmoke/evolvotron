@@ -24,8 +24,8 @@
 #ifndef _friezegroup_h_
 #define _friezegroup_h_
 
+#include <tuple>
 #include "useful.h"
-
 #include "function_node.h"
 
 //! Functor implementing a pass-through Z coordinate policy
@@ -71,10 +71,9 @@ template<class BLEND,class ZPOLICY>
      const FunctionNode& f0,const FunctionNode& f1,const XYZ& p,const BLEND& blend,const ZPOLICY& zpol
      )
 {
-  const boost::tuple<real,XY,XY> b(blend(p.xy()));
-  return
-          b.get<0>() *f0(XYZ(b.get<1>(),zpol(p.z())))
-    +(1.0-b.get<0>())*f1(XYZ(b.get<2>(),zpol(p.z())));
+  const std::tuple<real,XY,XY> b(blend(p.xy()));
+  return  std::get<0>(b) *f0(XYZ(std::get<1>(b), zpol(p.z())))
+    +(1.0-std::get<0>(b))*f1(XYZ(std::get<2>(b), zpol(p.z())));
 }
 
 template<class BLEND,class ZPOLICY> 
@@ -164,10 +163,10 @@ struct HopBlend : public Friezegroup // subclassing doesn't make much sense real
   HopBlend(real width)
     :Friezegroup(width)
   {}
-  const boost::tuple<real,XY,XY> operator()(const XY& p) const
+  const std::tuple<real,XY,XY> operator()(const XY& p) const
   {
     const Hop hop(width());
-    return boost::tuple<real,XY,XY>
+    return std::tuple<real,XY,XY>
       (
        (2.0/width())*trianglef(p.x()-0.5*width(),0.5*width()),  // 0 at -width/2 and +width/2, 1 at 0
        hop(p),
@@ -220,7 +219,7 @@ struct JumpBlend : public HopBlend
   JumpBlend(real width)
     :HopBlend(width)
   {}
-  const boost::tuple<float,XY,XY> operator()(const XY& p) const
+  const std::tuple<float,XY,XY> operator()(const XY& p) const
   {
     return HopBlend::operator()(XY(p.x(),fabs(p.y())));
   }
@@ -343,10 +342,10 @@ struct SpinhopBlend : public Friezegroup // subclassing doesn't make much sense 
   SpinhopBlend(real width)
     :Friezegroup(width)
   {}
-  const boost::tuple<real,XY,XY> operator()(const XY& p) const
+  const std::tuple<real,XY,XY> operator()(const XY& p) const
   {
     const Hop hop(2*width());
-    return boost::tuple<real,XY,XY>
+    return std::tuple<real,XY,XY>
       (
        trianglef(p.x()-width(),width())/width(),  // zero at x=-width and +width, 1 at x=0
        hop(p),

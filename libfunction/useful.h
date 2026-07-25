@@ -36,7 +36,6 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/random.hpp>
-#include <boost/tuple/tuple.hpp>
 
 //! Convenience typedef.
 typedef unsigned int uint;
