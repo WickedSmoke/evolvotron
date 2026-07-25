@@ -26,29 +26,17 @@
 
 #include <algorithm>
 #include <cassert>
-#include <ctime>
-#define _USE_MATH_DEFINES
 #include <cmath>
-#include <cstdlib>
-#include <deque>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
 #include <map>
-#include <memory>
 #include <set>
 #include <string>
-#include <sstream>
 #include <vector>
 
-#include <boost/array.hpp>
-#include <boost/ptr_container/ptr_map.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/random.hpp>
-#include <boost/shared_array.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/utility.hpp>
-#include <boost/version.hpp>
 
 //! Convenience typedef.
 typedef unsigned int uint;
