@@ -45,7 +45,7 @@ class MutatableImageComputerFarm
     {
     public:
       //! Compare task priorities.
-      bool operator()(const boost::shared_ptr<const MutatableImageComputerTask>& t0,const boost::shared_ptr<const MutatableImageComputerTask>& t1) const
+      bool operator()(const std::shared_ptr<const MutatableImageComputerTask>& t0,const std::shared_ptr<const MutatableImageComputerTask>& t1) const
 	{ 
 	  return (t0->priority() < t1->priority());
 	}
@@ -56,7 +56,7 @@ class MutatableImageComputerFarm
     {
     public:
       //! Compare task priorities.
-      bool operator()(const boost::shared_ptr<const MutatableImageComputerTask>& t0,const boost::shared_ptr<const MutatableImageComputerTask>& t1) const
+      bool operator()(const std::shared_ptr<const MutatableImageComputerTask>& t0,const std::shared_ptr<const MutatableImageComputerTask>& t1) const
 	{ 
 	  return (t0->priority() > t1->priority());
 	}
@@ -72,13 +72,13 @@ class MutatableImageComputerFarm
   boost::ptr_vector<MutatableImageComputer> _computers;
 
   //! Convenience typedef.
-  typedef std::multiset<boost::shared_ptr<MutatableImageComputerTask>,CompareTaskPriorityLoResFirst> TodoQueue;
+  typedef std::multiset<std::shared_ptr<MutatableImageComputerTask>,CompareTaskPriorityLoResFirst> TodoQueue;
 
   //! Queue of tasks to be performed, lowest resolution first
   TodoQueue _todo;
 
   //! Conveniencetypedef.
-  typedef std::multiset<boost::shared_ptr<MutatableImageComputerTask>,CompareTaskPriorityHiResFirst> DoneQueue;
+  typedef std::multiset<std::shared_ptr<MutatableImageComputerTask>,CompareTaskPriorityHiResFirst> DoneQueue;
 
   //! Convenience typedef.  
   /*! const because never needs to do anything other than compare pointers
@@ -116,16 +116,16 @@ class MutatableImageComputerFarm
   void fasttrack_aborted();
 
   //! Enqueue a task for computing.
-  void push_todo(const boost::shared_ptr<MutatableImageComputerTask>&);
+  void push_todo(const std::shared_ptr<MutatableImageComputerTask>&);
 
   //! Remove a task from the head of the todo queue (returns null if none).
-  const boost::shared_ptr<MutatableImageComputerTask> pop_todo(MutatableImageComputer& requester);
+  const std::shared_ptr<MutatableImageComputerTask> pop_todo(MutatableImageComputer& requester);
 
   //! Enqueue a task for display.
-  void push_done(const boost::shared_ptr<MutatableImageComputerTask>&);
+  void push_done(const std::shared_ptr<MutatableImageComputerTask>&);
 
   //! Remove a task from the head of the display queue (returns null if none).
-  const boost::shared_ptr<MutatableImageComputerTask> pop_done();
+  const std::shared_ptr<MutatableImageComputerTask> pop_done();
 
   //! Flags all tasks in all queues as aborted, and signals the compute threads to abort their current task.
   void abort_all();

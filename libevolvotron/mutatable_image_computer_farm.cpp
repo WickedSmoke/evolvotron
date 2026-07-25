@@ -63,7 +63,7 @@ MutatableImageComputerFarm::~MutatableImageComputerFarm()
 
 #if 0
 //! Predicate function to test whether a task has been aborted
-static bool predicate_aborted(const boost::shared_ptr<const MutatableImageComputerTask> t)
+static bool predicate_aborted(const std::shared_ptr<const MutatableImageComputerTask> t)
 {
   return t->aborted();
 }
@@ -86,7 +86,7 @@ void MutatableImageComputerFarm::fasttrack_aborted()
   }
 }
 
-void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImageComputerTask> &task)
+void MutatableImageComputerFarm::push_todo(const std::shared_ptr<MutatableImageComputerTask> &task)
 {
   {
     QMutexLocker lock(&_mutex);
@@ -112,10 +112,10 @@ void MutatableImageComputerFarm::push_todo(const boost::shared_ptr<MutatableImag
   _wait_condition.wakeOne();
 }
 
-const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_todo(MutatableImageComputer &requester)
+const std::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_todo(MutatableImageComputer &requester)
 {
   _mutex.lock();
-  boost::shared_ptr<MutatableImageComputerTask> ret;
+  std::shared_ptr<MutatableImageComputerTask> ret;
   while (!ret)
   {
     TodoQueue::iterator it = _todo.begin();
@@ -137,17 +137,17 @@ const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::
   return ret;
 }
 
-void MutatableImageComputerFarm::push_done(const boost::shared_ptr<MutatableImageComputerTask> &task)
+void MutatableImageComputerFarm::push_done(const std::shared_ptr<MutatableImageComputerTask> &task)
 {
   QMutexLocker lock(&_mutex);
   _done[task->display()].insert(task);
 }
 
-const boost::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_done()
+const std::shared_ptr<MutatableImageComputerTask> MutatableImageComputerFarm::pop_done()
 {
   QMutexLocker lock(&_mutex);
 
-  boost::shared_ptr<MutatableImageComputerTask> ret;
+  std::shared_ptr<MutatableImageComputerTask> ret;
   if (_done_position == _done.end())
   {
     _done_position = _done.begin();

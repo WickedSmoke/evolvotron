@@ -47,7 +47,7 @@ class MutatableImageComputer : public QThread
   const int _niceness;
 
   //! The current task.  Can't be a const MutatableImageComputerTask because the task holds the calculated result.
-  boost::shared_ptr<MutatableImageComputerTask> _task;
+  std::shared_ptr<MutatableImageComputerTask> _task;
 
   //! Randomness for sampling jitter
   Random01 _r01;
@@ -153,7 +153,7 @@ class MutatableImageComputer : public QThread
     }
   
   //! Accessor.
-  const boost::shared_ptr<MutatableImageComputerTask>& task() const
+  const std::shared_ptr<MutatableImageComputerTask>& task() const
     {
       return _task;
     }

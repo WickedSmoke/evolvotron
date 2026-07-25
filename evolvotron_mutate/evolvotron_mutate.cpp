@@ -77,17 +77,17 @@ int main(int argc,char* argv[])
     MutationParameters mutation_parameters(seed,false,false);
     
     std::string report;
-    boost::shared_ptr<const MutatableImage> imagefn_out;
+    std::shared_ptr<const MutatableImage> imagefn_out;
     
     if (genesis)
       {
 	std::unique_ptr<FunctionTop> fn_top(FunctionTop::initial(mutation_parameters));
 	
-	imagefn_out=boost::shared_ptr<const MutatableImage>(new MutatableImage(fn_top,!linear,spheremap,false));
+	imagefn_out=std::shared_ptr<const MutatableImage>(new MutatableImage(fn_top,!linear,spheremap,false));
       }
     else
       {
-	const boost::shared_ptr<const MutatableImage> imagefn_in
+	const std::shared_ptr<const MutatableImage> imagefn_in
 	  (
 	   MutatableImage::load_function(mutation_parameters.function_registry(),std::cin,report)
 	   );

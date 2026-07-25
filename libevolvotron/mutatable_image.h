@@ -114,16 +114,16 @@ class MutatableImage
     }
 
   //! Clone this image.  The cloned image will not have locked state.
-  boost::shared_ptr<const MutatableImage> deepclone() const;
+  std::shared_ptr<const MutatableImage> deepclone() const;
 
   //! Clone this image, setting locked state to that specified.
-  boost::shared_ptr<const MutatableImage> deepclone(bool lock) const;
+  std::shared_ptr<const MutatableImage> deepclone(bool lock) const;
 
   //! Return a mutated version of this image
-  boost::shared_ptr<const MutatableImage> mutated(const MutationParameters& p) const;
+  std::shared_ptr<const MutatableImage> mutated(const MutationParameters& p) const;
 
   //! Return a simplified version of this image
-  boost::shared_ptr<const MutatableImage> simplified() const;
+  std::shared_ptr<const MutatableImage> simplified() const;
 
   //! Return the a 0-255-scaled RGB value at the specified location.
   const XYZ get_rgb(const XYZ& p) const;
@@ -144,7 +144,7 @@ class MutatableImage
   bool ok() const;
 
   //! Read a new function tree from the given stream.
-  static boost::shared_ptr<const MutatableImage> load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report);
+  static std::shared_ptr<const MutatableImage> load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report);
 };
 
 #endif

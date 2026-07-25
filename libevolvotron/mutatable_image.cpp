@@ -66,15 +66,15 @@ const FunctionTop& MutatableImage::top() const
   return *_top;
 }
 
-boost::shared_ptr<const MutatableImage> MutatableImage::deepclone() const
+std::shared_ptr<const MutatableImage> MutatableImage::deepclone() const
 {
   return deepclone(false);
 }
 
-boost::shared_ptr<const MutatableImage> MutatableImage::deepclone(bool lock) const
+std::shared_ptr<const MutatableImage> MutatableImage::deepclone(bool lock) const
 {
   std::unique_ptr<FunctionTop> root(top().typed_deepclone());
-  return boost::shared_ptr<const MutatableImage>(new MutatableImage(root,sinusoidal_z(),spheremap(),lock)); 
+  return std::shared_ptr<const MutatableImage>(new MutatableImage(root,sinusoidal_z(),spheremap(),lock)); 
 }
 
 bool MutatableImage::is_constant() const
@@ -125,18 +125,18 @@ const XYZ MutatableImage::sampling_coordinate(real x,real y,uint z,uint sx,uint 
     }
 }
 
-boost::shared_ptr<const MutatableImage> MutatableImage::mutated(const MutationParameters& p) const
+std::shared_ptr<const MutatableImage> MutatableImage::mutated(const MutationParameters& p) const
 {
   std::unique_ptr<FunctionTop> c(top().typed_deepclone());  
   c->mutate(p);
-  return boost::shared_ptr<const MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap(),false));
+  return std::shared_ptr<const MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap(),false));
 }
 
-boost::shared_ptr<const MutatableImage> MutatableImage::simplified() const
+std::shared_ptr<const MutatableImage> MutatableImage::simplified() const
 {
   std::unique_ptr<FunctionTop> c(top().typed_deepclone());  
   c->simplify_constants();
-  return boost::shared_ptr<const MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap(),false));
+  return std::shared_ptr<const MutatableImage>(new MutatableImage(c,sinusoidal_z(),spheremap(),false));
 }
 
 const XYZ MutatableImage::get_rgb(const XYZ& p) const
@@ -497,7 +497,7 @@ public:
 /*! If NULL is returned, then the import failed: error message in report.
   If an image is returned then report contains warning messages (probably version mismatch).
 */
-boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report)
+std::shared_ptr<const MutatableImage> MutatableImage::load_function(const FunctionRegistry& function_registry,std::istream& in,std::string& report)
 {
     // Don't want to faff with Qt's file classes so just read everything into a string.
     std::string in_data;
@@ -543,7 +543,7 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
         report = "Parse error: ";
         report.append(xml.errorString().toLocal8Bit().data());
         report.push_back('\n');
-        return boost::shared_ptr<const MutatableImage>();
+        return std::shared_ptr<const MutatableImage>();
     }
 
     // Might be a warning message in there.
@@ -572,10 +572,10 @@ boost::shared_ptr<const MutatableImage> MutatableImage::load_function(const Func
         }
       assert(root->is_a_FunctionTop());
       std::unique_ptr<FunctionTop> root_as_top(root.release()->is_a_FunctionTop());  // Interestingly, if is_a_FunctionTop threw, the root would be leaked.
-      return boost::shared_ptr<const MutatableImage>(new MutatableImage(root_as_top,sinusoidal_z,spheremap,false));
+      return std::shared_ptr<const MutatableImage>(new MutatableImage(root_as_top,sinusoidal_z,spheremap,false));
     }
     else
     {
-      return boost::shared_ptr<const MutatableImage>();
+      return std::shared_ptr<const MutatableImage>();
     }
 }

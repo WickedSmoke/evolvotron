@@ -100,7 +100,7 @@ class MutatableImageDisplay : public QWidget
   //! Type for staging area for incoming fragments.
   /*! Key is level and multisampling, mapped type is also itself a map from fragment number to tasks.
    */
-  typedef std::map<std::pair<uint,uint>,std::map<uint,boost::shared_ptr<const MutatableImageComputerTask> > > OffscreenImageInbox;
+  typedef std::map<std::pair<uint,uint>,std::map<uint,std::shared_ptr<const MutatableImageComputerTask> > > OffscreenImageInbox;
 
   //! Staging area for incoming fragments.
   /*! Fragments are accumulated for each (level,multisample) key, and completed levels passed on for display
@@ -111,7 +111,7 @@ class MutatableImageDisplay : public QWidget
   /*! The held image is const because references to it could be held by history archive, compute tasks etc,
     so it should be completely replaced rather than manipulated.
    */
-  boost::shared_ptr<const MutatableImage> _image_function;
+  std::shared_ptr<const MutatableImage> _image_function;
 
   //! Properties dialog.
   DialogMutatableImageDisplay* _properties;
@@ -147,7 +147,7 @@ class MutatableImageDisplay : public QWidget
   virtual ~MutatableImageDisplay();
 
   //! Accessor.
-  const boost::shared_ptr<const MutatableImage>& image_function()
+  const std::shared_ptr<const MutatableImage>& image_function()
     {
       return _image_function;
     }
@@ -181,10 +181,10 @@ class MutatableImageDisplay : public QWidget
   /*! When the one_of_many parameter is true, it implies many other images are also being updated
     (affects fragmentation strategy for multithreading).
    */
-  void image_function(const boost::shared_ptr<const MutatableImage>& image_fn,bool one_of_many);
+  void image_function(const std::shared_ptr<const MutatableImage>& image_fn,bool one_of_many);
 
   //! Evolvotron main calls this with completed (but possibly aborted) tasks.
-  void deliver(const boost::shared_ptr<const MutatableImageComputerTask>& task);
+  void deliver(const std::shared_ptr<const MutatableImageComputerTask>& task);
 
   //! Set the lock state.
   void lock(bool l,bool record_in_history);

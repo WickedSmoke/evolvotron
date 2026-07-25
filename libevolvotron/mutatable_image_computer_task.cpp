@@ -28,7 +28,7 @@
 MutatableImageComputerTask::MutatableImageComputerTask
 (
  MutatableImageDisplay*const disp,
- const boost::shared_ptr<const MutatableImage>& fn,
+ const std::shared_ptr<const MutatableImage>& fn,
  uint pri,
  const QSize& fo,
  const QSize& fs,

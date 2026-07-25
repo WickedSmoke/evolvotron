@@ -105,7 +105,7 @@ int main(int argc,char* argv[])
     FunctionRegistry function_registry;
     
     std::string report;
-    const boost::shared_ptr<const MutatableImage> imagefn(MutatableImage::load_function(function_registry,std::cin,report));
+    const std::shared_ptr<const MutatableImage> imagefn(MutatableImage::load_function(function_registry,std::cin,report));
 
     if (imagefn.get()==0)
       {

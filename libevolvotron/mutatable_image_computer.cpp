@@ -127,7 +127,7 @@ void MutatableImageComputer::run()
 
 bool MutatableImageComputer::defer_if_less_important_than(uint pri)
 {
-  const boost::shared_ptr<const MutatableImageComputerTask> task_tmp=_task;
+  const std::shared_ptr<const MutatableImageComputerTask> task_tmp=_task;
   if (task_tmp && task_tmp->priority()>pri)
     {
       communications().defer(true);

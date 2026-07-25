@@ -88,11 +88,11 @@ void EvolvotronMain::History::replacing(MutatableImageDisplay* display)
       begin_action("");
     }
   
-  const boost::shared_ptr<const MutatableImage> image_function=display->image_function();
+  const std::shared_ptr<const MutatableImage> image_function=display->image_function();
 
   if (image_function.get())
     {
-      const boost::shared_ptr<const MutatableImage> saved_image_function(image_function->deepclone(image_function->locked()));
+      const std::shared_ptr<const MutatableImage> saved_image_function(image_function->deepclone(image_function->locked()));
       _archive.front().second.insert(std::make_pair(display,saved_image_function));
     }
 }
@@ -179,7 +179,7 @@ void EvolvotronMain::History::undo()
   _main->set_undoable(undoable(),action_name);
 }
 
-void EvolvotronMain::last_spawned_image(const boost::shared_ptr<const MutatableImage>& image,SpawnMemberFn method)
+void EvolvotronMain::last_spawned_image(const std::shared_ptr<const MutatableImage>& image,SpawnMemberFn method)
 {
   _last_spawned_image=image;
   _last_spawn_method=method;
@@ -377,7 +377,7 @@ EvolvotronMain::~EvolvotronMain()
   std::clog << "(There are " << _known_displays.size() << " displays remaining)\n";
   for (std::set<MutatableImageDisplay*>::const_iterator it=_known_displays.begin();it!=_known_displays.end();it++)
     {
-      (*it)->image_function(boost::shared_ptr<const MutatableImage>(),true);
+      (*it)->image_function(std::shared_ptr<const MutatableImage>(),true);
       (*it)->main(0);
     }
 
@@ -408,9 +408,9 @@ void EvolvotronMain::favourite_function_unwrapped(bool v)
   _dialog_favourite->favourite_function_unwrapped(v);
 }
 
-void EvolvotronMain::spawn_normal(const boost::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display,bool one_of_many)
+void EvolvotronMain::spawn_normal(const std::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display,bool one_of_many)
 {
-  boost::shared_ptr<const MutatableImage> new_image_function;
+  std::shared_ptr<const MutatableImage> new_image_function;
 
   do
     {
@@ -422,17 +422,17 @@ void EvolvotronMain::spawn_normal(const boost::shared_ptr<const MutatableImage>&
   display->image_function(new_image_function,one_of_many);
 }
 
-void EvolvotronMain::spawn_recoloured(const boost::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display,bool one_of_many)
+void EvolvotronMain::spawn_recoloured(const std::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display,bool one_of_many)
 {  
   std::unique_ptr<FunctionTop> new_root(image_function->top().typed_deepclone());
   
   new_root->reset_posttransform_parameters(mutation_parameters());
   history().replacing(display);
-  boost::shared_ptr<const MutatableImage> it(new MutatableImage(new_root,image_function->sinusoidal_z(),image_function->spheremap(),false));
+  std::shared_ptr<const MutatableImage> it(new MutatableImage(new_root,image_function->sinusoidal_z(),image_function->spheremap(),false));
   display->image_function(it,one_of_many);
 }
 
-void EvolvotronMain::spawn_warped(const boost::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display,bool one_of_many)
+void EvolvotronMain::spawn_warped(const std::shared_ptr<const MutatableImage>& image_function,MutatableImageDisplay* display,bool one_of_many)
 {
   std::unique_ptr<FunctionTop> new_root=std::unique_ptr<FunctionTop>(image_function->top().typed_deepclone());
 
@@ -441,11 +441,11 @@ void EvolvotronMain::spawn_warped(const boost::shared_ptr<const MutatableImage>&
       
   new_root->concatenate_pretransform_on_right(transform);
   history().replacing(display);
-  boost::shared_ptr<const MutatableImage> it(new MutatableImage(new_root,image_function->sinusoidal_z(),image_function->spheremap(),false));
+  std::shared_ptr<const MutatableImage> it(new MutatableImage(new_root,image_function->sinusoidal_z(),image_function->spheremap(),false));
   display->image_function(it,one_of_many);
 }
 
-void EvolvotronMain::restore(MutatableImageDisplay* display,const boost::shared_ptr<const MutatableImage>& image_function,bool one_of_many)
+void EvolvotronMain::restore(MutatableImageDisplay* display,const std::shared_ptr<const MutatableImage>& image_function,bool one_of_many)
 {
   if (is_known(display)) display->image_function(image_function,one_of_many);
 }
@@ -488,7 +488,7 @@ void EvolvotronMain::spawn_all(MutatableImageDisplay* spawning_display,SpawnMemb
 
   // Issue new images (except to locked displays and to originator)
   // This will cause them to abort any running tasks
-  const boost::shared_ptr<const MutatableImage> spawning_image_function(spawning_display->image_function());
+  const std::shared_ptr<const MutatableImage> spawning_image_function(spawning_display->image_function());
 
   last_spawned_image(spawning_image_function,method);
   
@@ -599,7 +599,7 @@ void EvolvotronMain::tick()
       _statusbar_tasks_enlargement=tasks_enlargement;
     }
 
-  boost::shared_ptr<MutatableImageComputerTask> task;
+  std::shared_ptr<MutatableImageComputerTask> task;
 
   // If there are aborted jobs in the todo queue 
   // shift them straight over to done queue so the compute threads don't have to worry about them.
@@ -723,7 +723,7 @@ void EvolvotronMain::reset(MutatableImageDisplay* display)
     }
 
   history().replacing(display);
-  const boost::shared_ptr<const MutatableImage> image_function(new MutatableImage(root,!_linear_zsweep,_spheremap,false));
+  const std::shared_ptr<const MutatableImage> image_function(new MutatableImage(root,!_linear_zsweep,_spheremap,false));
   display->image_function(image_function,true);
 }
 
@@ -786,7 +786,7 @@ void EvolvotronMain::reset(bool reset_mutation_parameters,bool clear_locks)
     }
   }
 
-  last_spawned_image(boost::shared_ptr<const MutatableImage>(),&EvolvotronMain::spawn_normal);
+  last_spawned_image(std::shared_ptr<const MutatableImage>(),&EvolvotronMain::spawn_normal);
 
   history().end_action();
 }

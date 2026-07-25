@@ -223,7 +223,7 @@ void MutatableImageDisplay::frame_advance()
   repaint();  // Use repaint rather than update because we really do want this to happen immediately.
 }
 
-void MutatableImageDisplay::image_function(const boost::shared_ptr<const MutatableImage>& i,bool one_of_many)
+void MutatableImageDisplay::image_function(const std::shared_ptr<const MutatableImage>& i,bool one_of_many)
 {
   assert(_image_function.get()==0 || _image_function->ok());
   assert(i.get()==0 || i->ok());
@@ -301,7 +301,7 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
 	      for (std::vector<uint>::const_iterator multisample_it=multisample_grid.begin();multisample_it!=multisample_grid.end();multisample_it++)
 		{
 		  //! \todo Should computed animation frames be constant or reduced c.f spatial resolution ?  (Do full z resolution for now)
-		  const boost::shared_ptr<const MutatableImage> task_image(_image_function);
+		  const std::shared_ptr<const MutatableImage> task_image(_image_function);
 		  assert(task_image->ok());
 		  
 		  // Use number of samples in unfragmented image as priority
@@ -311,7 +311,7 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
 		  for (int f=0;f<fragments;f++)
 		    {
 		      const int fragment_end_row=(render_size.height()*(f+1))/fragments;
-		      const boost::shared_ptr<MutatableImageComputerTask> task
+		      const std::shared_ptr<MutatableImageComputerTask> task
 			(
 			 new MutatableImageComputerTask
 			 (
@@ -339,7 +339,7 @@ void MutatableImageDisplay::image_function(const boost::shared_ptr<const Mutatab
     }
 }
 
-void MutatableImageDisplay::deliver(const boost::shared_ptr<const MutatableImageComputerTask>& task)
+void MutatableImageDisplay::deliver(const std::shared_ptr<const MutatableImageComputerTask>& task)
 {
   // Ignore tasks which were aborted or which have somehow got out of order 
   // (entirely possible with multiple compute threads).
@@ -435,7 +435,7 @@ void MutatableImageDisplay::lock(bool l,bool record_in_history)
 	  main().history().begin_action(l ? "lock" : "unlock");
 	  main().history().replacing(this);
 	}
-      const boost::shared_ptr<const MutatableImage> new_image_function(_image_function->deepclone(l));
+      const std::shared_ptr<const MutatableImage> new_image_function(_image_function->deepclone(l));
       image_function(new_image_function,false);
       if (record_in_history)
 	{
@@ -546,7 +546,7 @@ void MutatableImageDisplay::mouseTransform(const Transform& tf)
   new_root->concatenate_pretransform_on_right(tf);
 
   // Install new image (triggers recompute).
-  const boost::shared_ptr<const MutatableImage> new_image_function(new MutatableImage(new_root,image_function()->sinusoidal_z(),image_function()->spheremap(),false));
+  const std::shared_ptr<const MutatableImage> new_image_function(new MutatableImage(new_root,image_function()->sinusoidal_z(),image_function()->spheremap(),false));
   image_function(new_image_function,false);
 }
 
@@ -899,7 +899,7 @@ void MutatableImageDisplay::load_function_file(const QString& load_filename)
   else
   {
     std::string report;
-    boost::shared_ptr<const MutatableImage> new_image_function(MutatableImage::load_function(_main->mutation_parameters().function_registry(),file,report));
+    std::shared_ptr<const MutatableImage> new_image_function(MutatableImage::load_function(_main->mutation_parameters().function_registry(),file,report));
 
     if (new_image_function.get()==0)
     {

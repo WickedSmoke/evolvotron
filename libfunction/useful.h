@@ -46,7 +46,6 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/random.hpp>
 #include <boost/shared_array.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/utility.hpp>
 #include <boost/version.hpp>
